@@ -3,6 +3,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import DisplayProducts from './components/ProductSelectionPage/ProduceProductSelection/displayProduct';
 import Store from './components/Store/Store';
 import Landing from './components/Home/Landing';
+import Login from '../src/manifest/Login'
 import Signup from './components/SignUp/Signup';
 import SocialSignUp from './components/SignUp/SocialSignUp';
 import AuthAdminRoute from './auth/AuthAdminRoute';
@@ -21,7 +22,7 @@ import MobilePaypalCheckout from './mobile/MobilePaypalCheckout';
 function Nav(authLevel, isAuth) {
   return (
     <Switch>
-      <Route exact path="/" component={Landing} />
+      <Route exact path="/" component={Login} />
       <Route exact path="/signup" component={Signup} />
       <Route exact path="/socialsignup" component={SocialSignUp} />
       <Route exact path="/products" component={DisplayProducts} />

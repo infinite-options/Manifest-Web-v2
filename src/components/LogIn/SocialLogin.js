@@ -45,7 +45,7 @@ function SocialLogin(props) {
   }, [Auth, props]);
 
   const responseGoogle = (response) => {
-    console.log(response);
+    console.log('response', response.profileObj.email);
     if (response.profileObj) {
       console.log('Google login successful');
       let email = response.profileObj.email;
@@ -71,90 +71,92 @@ function SocialLogin(props) {
   };
 
   const _socialLoginAttempt = (email, accessToken, socialId, platform) => {
-    axios
-      .post(process.env.REACT_APP_SERVER_BASE_URI + 'Login/', {
-        email: email,
-        password: '',
-        social_id: socialId,
-        signup_platform: platform,
-      })
+    axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/loginSocialTA/" + email)
+      // .post(process.env.REACT_APP_SERVER_BASE_URI + 'Login/', {
+      //   email: email,
+      //   password: '',
+      //   social_id: socialId,
+      //   signup_platform: platform,
+      // })
       .then((res) => {
-        console.log(res);
-        if (res.data.code === 200) {
-          let customerInfo = res.data.result[0];
-          // Successful log in, Try to update tokens, then continue to next page based on role
-          axios
-            .post(
-              process.env.REACT_APP_SERVER_BASE_URI +
-                'token_fetch_update/update_web',
-              {
-                uid: customerInfo.customer_uid,
-                user_access_token: accessToken,
-                user_refresh_token: 'FALSE',
-              }
-            )
-            .then((res) => {
-              console.log(res);
-            })
-            .catch((err) => {
-              if (err.response) {
-                console.log(err.response);
-              }
-              console.log(err);
-            })
-            .finally(() => {
-              console.log(customerInfo);
-              Cookies.set('login-session', 'good');
-              Cookies.set('customer_uid', customerInfo.customer_uid);
-              Auth.setIsAuth(true);
-              let newAccountType = customerInfo.role.toLowerCase();
-              switch (newAccountType) {
-                case 'admin':
-                  Auth.setAuthLevel(2);
-                  props.history.push('/admin');
-                  break;
-                case 'farmer':
-                  Auth.setAuthLevel(1);
-                  props.history.push('/admin');
-                  break;
-                case 'customer':
-                  Auth.setAuthLevel(0);
-                  props.history.push('/store');
-                  break;
-                // Farmer roles are moving towared business Id string
-                default:
-                  Auth.setAuthLevel(1);
-                  props.history.push('/admin');
-                  break;
-              }
-            });
-        } else if (res.data.code === 404) {
-          props.history.push('/socialsignup', {
-            email: email,
-            accessToken: accessToken,
-            socialId: socialId,
-            platform: platform,
-          });
-        } else if (res.data.code === 411) {
-          console.log('Wrong social media');
-          props.setError('social');
-          let startIndex = res.data.message.indexOf("'");
-          startIndex += 1;
-          let endIndex = res.data.message.indexOf("'", startIndex + 1);
-          let socialMediaUsed = res.data.message.slice(startIndex, endIndex);
-          console.log(socialMediaUsed);
-          let socialMediaUsedFormat =
-            socialMediaUsed.charAt(0) + socialMediaUsed.slice(1).toLowerCase();
-          let newErrorMessage = 'Use ' + socialMediaUsedFormat + ' to login';
-          props.setErrorMessage(newErrorMessage);
-        } else if (res.data.code === 406) {
-          console.log('Use Password Login');
-          props.setError('social');
-          props.setErrorMessage('Use email and password to log in');
-        } else {
-          console.log('Unknown log in error');
-          props.setError('Log in failed, try again');
-        }
+        console.log('res', res);
+        Auth.setAuthLevel(0);
+        props.history.push('/store');
+        // if (res.data.code === 200) {
+        //   let customerInfo = res.data.result[0];
+        //   // Successful log in, Try to update tokens, then continue to next page based on role
+        //   axios
+        //     .post(
+        //       process.env.REACT_APP_SERVER_BASE_URI +
+        //       'token_fetch_update/update_web',
+        //       {
+        //         uid: customerInfo.customer_uid,
+        //         user_access_token: accessToken,
+        //         user_refresh_token: 'FALSE',
+        //       }
+        //     )
+        //     .then((res) => {
+        //       console.log(res);
+        //     })
+        //     .catch((err) => {
+        //       if (err.response) {
+        //         console.log(err.response);
+        //       }
+        //       console.log(err);
+        //     })
+        //     .finally(() => {
+        //       console.log(customerInfo);
+        //       Cookies.set('login-session', 'good');
+        //       Cookies.set('customer_uid', customerInfo.customer_uid);
+        //       Auth.setIsAuth(true);
+        //       let newAccountType = customerInfo.role.toLowerCase();
+        //       switch (newAccountType) {
+        //         case 'admin':
+        //           Auth.setAuthLevel(2);
+        //           props.history.push('/admin');
+        //           break;
+        //         case 'farmer':
+        //           Auth.setAuthLevel(1);
+        //           props.history.push('/admin');
+        //           break;
+        //         case 'customer':
+        //           Auth.setAuthLevel(0);
+        //           props.history.push('/store');
+        //           break;
+        //         // Farmer roles are moving towared business Id string
+        //         default:
+        //           Auth.setAuthLevel(1);
+        //           props.history.push('/admin');
+        //           break;
+        //       }
+        //     });
+        // } else if (res.data.code === 404) {
+        //   props.history.push('/socialsignup', {
+        //     email: email,
+        //     accessToken: accessToken,
+        //     socialId: socialId,
+        //     platform: platform,
+        //   });
+        // } else if (res.data.code === 411) {
+        //   console.log('Wrong social media');
+        //   props.setError('social');
+        //   let startIndex = res.data.message.indexOf("'");
+        //   startIndex += 1;
+        //   let endIndex = res.data.message.indexOf("'", startIndex + 1);
+        //   let socialMediaUsed = res.data.message.slice(startIndex, endIndex);
+        //   console.log(socialMediaUsed);
+        //   let socialMediaUsedFormat =
+        //     socialMediaUsed.charAt(0) + socialMediaUsed.slice(1).toLowerCase();
+        //   let newErrorMessage = 'Use ' + socialMediaUsedFormat + ' to login';
+        //   props.setErrorMessage(newErrorMessage);
+        // } else if (res.data.code === 406) {
+        //   console.log('Use Password Login');
+        //   props.setError('social');
+        //   props.setErrorMessage('Use email and password to log in');
+        // } else {
+        //   console.log('Unknown log in error');
+        //   props.setError('Log in failed, try again');
+        // }
       })
       .catch((err) => {
         if (err.response) {
@@ -181,7 +183,7 @@ function SocialLogin(props) {
               src={Fb_Login}
               onClick={renderProps.onClick}
               disabled={renderProps.disabled}
-              alt = {''}
+              alt={''}
             ></img>
           )}
         />
@@ -190,6 +192,7 @@ function SocialLogin(props) {
         <Button style={{}}>
           <GoogleLogin
             clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+            //  clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
             isSignedIn={false}
@@ -201,7 +204,7 @@ function SocialLogin(props) {
                 src={Google}
                 onClick={renderProps.onClick}
                 disabled={renderProps.disabled}
-                alt = {''}
+                alt={''}
               ></img>
             )}
           />
@@ -212,7 +215,7 @@ function SocialLogin(props) {
         <img
           src={Apple_Login}
           variant="contained"
-          alt = {''}
+          alt={''}
           onClick={() => {
             window.AppleID.auth.signIn();
           }}

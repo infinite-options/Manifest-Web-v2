@@ -93,6 +93,7 @@ export default class BusiApiReqs {
   };
 
   getProduceByLocation = async function (long, lat) {
+    console.log("responses", long, lat)
     return await axios
       .get(this.BASE_URL + 'ProduceByLocation/' + long + ',' + lat)
       .then((response) => {
