@@ -207,6 +207,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 /* Importing the custom pages as each components */
 import { Navigation } from './Home/navigation';
 import Home from './Home/Home.jsx';
+import Matts from './Matts/Matts_v3';
 // import { Login } from './Login/Login';
 
 import WeekCalendar from 'react-week-calendar';
@@ -226,7 +227,7 @@ export default function App() {
 
         <Switch>
           <Route path="/">
-            <Home />
+            <Matts />
           </Route>
 
           {/* <Route path="/login">
