@@ -66,7 +66,7 @@ const useStyles = makeStyles({
             if (response.data.result !== false) {
               setLoggedIn(true);
               console.log("response id",response.data.result, loggedIn)
-              history.push("/home");
+              history.push("/main");
             }else{
               setLoggedIn(false);
               setValidation(response.data.message)
@@ -94,7 +94,7 @@ const useStyles = makeStyles({
               console.log(response.data);
               if (response.data !== false) {
                 console.log("Login successful")
-                history.push("/store");
+                history.push("/main");
               } else {
                 console.log("social sign up with", e);
                 this.setState({
@@ -183,10 +183,10 @@ const useStyles = makeStyles({
                         </Button>
                     </Box>
                     <Box>
-                    <SocialLogin/>
+                    {/* <SocialLogin/> */}
                        
 
-                            {/* <GoogleLogin
+                            <GoogleLogin
                                 clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
                                 render={renderProps => (
                                 <Button 
@@ -201,7 +201,7 @@ const useStyles = makeStyles({
                                 isSignedIn={false}
                                 disable={false}
                                 cookiePolicy={"single_host_origin"}
-                                />           */}
+                                />          
                     </Box>
                     <Box>
                         <Button

@@ -10,6 +10,7 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import "./Home.css";
 import Routine from "../Routines/Routine"
+import Main from "../OldManifest/Main"
 // import WeekEvents from "./src/component/WeekEvents.jsx";
 
 // import {
@@ -59,7 +60,7 @@ const useStyles = makeStyles({
 });
 
 /* Navigation Bar component function */
-export function Home() {
+export default function Home() {
   const [calendarView] = useState();
   const history = useHistory();
   const classes = useStyles();
@@ -80,6 +81,7 @@ export function Home() {
   }
 
   useEffect(() =>{
+    
     axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/100-000027")
       .then((response) => {
         for(var i =0; i< response.data.result.length; i++){
@@ -89,6 +91,7 @@ export function Home() {
           routinesId.push(response.data.result[i].gr_unique_id);
           } 
         }
+
       })
       .catch((error) => {
         console.log(error);
@@ -130,14 +133,16 @@ export function Home() {
         <Box height="75vh" style={{backgroundColor:'#bbc8d7'}}>
         Routine  
         <Button onClick = {()=> setRoutine(!routine)}> Click  </Button>  
-        {routinesTitle.map(item => {
+        {/* {routinesTitle.map(item => {
           return <li>{item}</li>;
-        })}
+        })} */}
+
       </Box>
       </Box>
 
-      <Box flex='2'>
-            <Routine items={routinesTitle} itemId={routinesId} />
+      <Box flex='3'>
+            {/* <Routine items={routinesTitle} itemId={routinesId} /> */}
+            {/* <Main/> */}
          </Box>
       </Box>
 
