@@ -204,7 +204,11 @@ export default function MainPage() {
                 }
                 else if(bigList[i].type == "Action"){
                     if(bigList[i].days[d] == "not started"){
-                        bigList[i].days[d] = <div className = "nsA"></div>;
+                        if(checkAbove(bigList[i].under, d)){
+                            console.log("FOuDND HALD");
+                            bigList[i].days[d] = "half circle";
+                        }
+                        else{bigList[i].days[d] = <div className = "nsA"></div>;}
                     }
                     else if(bigList[i].days[d] == "completed"){
                         bigList[i].days[d] = <div className = "cA"></div>;
@@ -217,7 +221,10 @@ export default function MainPage() {
                 }
                 else{
                     if(bigList[i].days[d] == "not started"){
-                        bigList[i].days[d] = <div className = "nsI"></div>;
+                        if(checkAbove(bigList[i].under, d)){
+                            bigList[i].days[d] = "half circle";
+                        }
+                        else{bigList[i].days[d] = <div className = "nsI"></div>;}
                     }
                     else if(bigList[i].days[d] == "completed"){
                         bigList[i].days[d] = <div className = "cI"></div>;
@@ -226,6 +233,19 @@ export default function MainPage() {
             }
         }
         return(bigList);
+
+        function checkAbove(above, d){
+            for (const checks of bigList){
+                if(above == checks.title){
+                    console.log("found above");
+                    if (checks.days[d] == "completed" || checks.days[d] == <div className = "cR"></div>){
+                        return true;
+                    }
+                    else{return checkAbove(checks.under, d)}
+                }
+            }
+            return false;
+        }
     }
 
     function addNames(bigList){

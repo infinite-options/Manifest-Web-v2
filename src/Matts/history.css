@@ -1,45 +1,47 @@
 .nsR {
     border-radius: 50%;
     border: solid 2px #FF6B4A;
-    width: 30px;
-    height: 30px;
+    width: 30px; height: 30px;
   }
 .nsA {
     border-radius: 50%;
     border: solid 2px #F8BE28;
-    width: 30px;
-    height: 30px;
+    width: 30px; height: 30px;
 }
 .nsI {
     border-radius: 50%;
     border: solid 2px #67ABFC;
-    width: 30px;
-    height: 30px;
+    width: 30px; height: 30px;
     
 }
 
 .cR{
     border-radius: 50%;
     border: solid 2px #FF6B4A;
-    width: 30px;
-    height: 30px;
-    display: inline-block;
+    width: 30px; height: 30px;
     background-color:#FF6B4A ;
 }
 .cA{
     border-radius: 50%;
     border: solid 2px #F8BE28;
-    width: 30px;
-    height: 30px;
+    width: 30px; height: 30px;
     background-color:#F8BE28 ;
 }
 .cI{
     border-radius: 50%;
     border: solid 2px #67ABFC;
-    width: 30px;
-    height: 30px;
-    display: inline-block;
+    width: 30px; height: 30px;
     background-color:#67ABFC ;
+}
+
+/* half circles - need wrapper */
+.whiteHalf{
+    background-color: white;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    height:100%; width: 50%;
+    display: inline-block;
+    border-left: solid white 1px;
 }
 
 .routineName {
@@ -72,7 +74,7 @@
 }
 .instructionName {
     width: 180px;
-    height: 50px;
+    height: 40px;
     background: #67ABFC 0% 0% no-repeat padding-box;
     border-radius: 20px;
     opacity: 1;
