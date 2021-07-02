@@ -42,6 +42,9 @@ import userContext from './userContext';
 /* Navigation Bar component function */
 
 export default function Home(props) {
+
+  const history = useHistory();
+
   /* useEffect() is used to render API calls as minimumly 
   as possible based on past experience, if not included 
   causes alarms and excessive rendering */
@@ -1191,7 +1194,7 @@ export default function Home(props) {
               Routines
             </Button>
 
-            <Button className={classes.buttonSelection} id="one">
+            <Button className={classes.buttonSelection} onClick={()=> history.push("/main") } id="one">
               Goals
             </Button>
             <Button className={classes.buttonSelection} id="one">

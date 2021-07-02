@@ -66,6 +66,8 @@ export default function Home() {
   const classes = useStyles();
   const [routinesTitle, setRoutinesTitle] = useState([]);
   const [routinesId, setRoutinesId] = useState([]);
+  const [routinesEdit, setRoutinesEdit] = useState(false);
+
 
   const [routine, setRoutine] = useState(true);
   function routineNavigation() {
@@ -79,6 +81,7 @@ export default function Home() {
       </button>
     </Box>;
   }
+
 
   useEffect(() =>{
     
@@ -102,6 +105,9 @@ export default function Home() {
   console.log(routinesId)
 
 
+  function ToggleShowEditRoutine(){
+    history.push("/main")
+}
   return (
 
     <div style={{ width: "100%", height: "100vh", backgroundColor: "#f2f7fc" }}>
@@ -123,7 +129,7 @@ export default function Home() {
           >
             Routines
           </Button>
-          <Button className={classes.buttonSelection} id="one">
+          <Button className={classes.buttonSelection} id="one" onClick={ToggleShowEditRoutine}>
             Goals
           </Button>
           <Button className={classes.buttonSelection} id="one">
@@ -140,9 +146,8 @@ export default function Home() {
       </Box>
       </Box>
 
-      <Box flex='3'>
+      <Box flex='1' hidden={routinesEdit}>
             {/* <Routine items={routinesTitle} itemId={routinesId} /> */}
-            {/* <Main/> */}
          </Box>
       </Box>
 
