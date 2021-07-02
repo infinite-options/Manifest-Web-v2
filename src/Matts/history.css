@@ -1,0 +1,88 @@
+.nsR {
+    border-radius: 50%;
+    border: solid 2px #FF6B4A;
+    width: 30px; height: 30px;
+  }
+.nsA {
+    border-radius: 50%;
+    border: solid 2px #F8BE28;
+    width: 30px; height: 30px;
+}
+.nsI {
+    border-radius: 50%;
+    border: solid 2px #67ABFC;
+    width: 30px; height: 30px;
+    
+}
+
+.cR{
+    border-radius: 50%;
+    border: solid 2px #FF6B4A;
+    width: 30px; height: 30px;
+    background-color:#FF6B4A ;
+}
+.cA{
+    border-radius: 50%;
+    border: solid 2px #F8BE28;
+    width: 30px; height: 30px;
+    background-color:#F8BE28 ;
+}
+.cI{
+    border-radius: 50%;
+    border: solid 2px #67ABFC;
+    width: 30px; height: 30px;
+    background-color:#67ABFC ;
+}
+
+/* half circles - need wrapper */
+.whiteHalf{
+    background-color: white;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    height:100%; width: 50%;
+    display: inline-block;
+    border-left: solid white 1px;
+}
+
+.routineName {
+    width: 250px;
+    height: 75px;
+    background: #FF6B4A 0% 0% no-repeat padding-box;
+    border-radius: 20px;
+    opacity: 1;
+    font: var(--unnamed-font-style-normal) normal var(--unnamed-font-weight-bold) 30px/var(--unnamed-line-spacing-29) var(--unnamed-font-family-sf-pro);
+    letter-spacing: var(--unnamed-character-spacing-0);
+    color: var(--unnamed-color-ffffff);
+    text-align: center;
+    font: normal normal bold 30px/29px SF Pro;
+    letter-spacing: 0px;
+    color: #FFFFFF;
+}
+.actionName {
+    width: 210px;
+    height: 60px;
+    background: #F8BE28 0% 0% no-repeat padding-box;
+    border-radius: 20px;
+    opacity: 1;
+    font: var(--unnamed-font-style-normal) normal var(--unnamed-font-weight-bold) 30px/var(--unnamed-line-spacing-29) var(--unnamed-font-family-sf-pro);
+    letter-spacing: var(--unnamed-character-spacing-0);
+    color: var(--unnamed-color-ffffff);
+    text-align: center;
+    font: normal normal bold 30px/29px SF Pro;
+    letter-spacing: 0px;
+    color: #FFFFFF;
+}
+.instructionName {
+    width: 180px;
+    height: 40px;
+    background: #67ABFC 0% 0% no-repeat padding-box;
+    border-radius: 20px;
+    opacity: 1;
+    font: var(--unnamed-font-style-normal) normal var(--unnamed-font-weight-bold) var(--unnamed-font-size-24)/var(--unnamed-line-spacing-29) var(--unnamed-font-family-sf-pro);
+    letter-spacing: var(--unnamed-character-spacing-0);
+    color: var(--unnamed-color-ffffff);
+    text-align: center;
+    font: normal normal bold 24px/29px SF Pro;
+    letter-spacing: 0px;
+    color: #FFFFFF;
+}
