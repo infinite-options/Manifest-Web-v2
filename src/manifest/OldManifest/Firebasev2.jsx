@@ -42,6 +42,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import Home from "../Home/Home"
+import { DriveEta } from "@material-ui/icons";
 // import moment from "moment";
 
 /**
@@ -312,7 +313,7 @@ export default class FirebaseV2 extends React.Component {
 
       res.push(
         <div key={"AT" + i}>
-         <ListGroup.Item
+         <div
            // style={{ height:'5rem', width:'18rem', backgroundColor:'#00000029' , marginBottom:'2px' }}
             // onClick={() => {
             //   // Disable IS layer
@@ -577,7 +578,7 @@ export default class FirebaseV2 extends React.Component {
             )}
           </div>
 
-          </ListGroup.Item>
+          </div>
         </div>
       );
     }
@@ -605,7 +606,7 @@ export default class FirebaseV2 extends React.Component {
 
       res.push(
         <div key={"IS" + i} >
-          <ListGroup.Item
+          <div
             // onClick={() => {
             //   this.ISonClickEvent(tempTitle);
             // }}
@@ -762,7 +763,7 @@ export default class FirebaseV2 extends React.Component {
                 </Row>
               </div>
             )}
-          </ListGroup.Item>
+          </div>
         </div>
       );
     }
@@ -2798,7 +2799,7 @@ shows entire list of goals and routines
     */
   abstractedRoutineList = (displayRoutines) => {
     return (
-      <Modal.Dialog
+      <div
         style={{
         //  width: this.state.modalWidth,
        
@@ -2806,7 +2807,6 @@ shows entire list of goals and routines
         }}
       >
         {/* <Modal.Header onHide={this.props.closeRoutine} closeButton> */}
-        <Modal.Header>
           {/* <div style={{ display:'flex',justifyContent:'space-evenly', alignItems:'flex-end' , backgroundColor:"#FF6B4A" , borderRadius:'15px', height:'5rem' }} >
           <h5 style={{color:'#ffffff'}}  >Routines</h5>
           <button
@@ -2836,9 +2836,9 @@ shows entire list of goals and routines
               </button>
             </Col>
           </Row> */}
-        </Modal.Header>
+     
 
-        <Modal.Body>
+       
           {/**
            * To allow for the Modals to pop up in front of one another
            * I have inserted the IS and AT lists inside the RT Goal Modal */}
@@ -2865,15 +2865,15 @@ shows entire list of goals and routines
               {displayRoutines}
             </div>
           
-        </Modal.Body>
-      </Modal.Dialog>
+      
+      </div>
     );
   };
 
 
   abstractedRoutineSingleList = (displayRoutines) => {
     return (
-      <Modal.Dialog
+      <div
         style={{
           marginTop: "3rem",
           marginLeft:'2px',
@@ -2883,7 +2883,7 @@ shows entire list of goals and routines
         }}
       >
         {/* <Modal.Header onHide={this.props.closeRoutine} closeButton> */}
-        <Modal.Header>
+        <div>
           <div style={{ display:'flex',justifyContent:'space-evenly', alignItems:'flex-end' , backgroundColor:"#FF6B4A" , borderRadius:'15px', height:'5rem' }} >
           <h5 style={{color:'#ffffff'}}  >Routines</h5>
           <button
@@ -2913,9 +2913,9 @@ shows entire list of goals and routines
               </button>
             </Col>
           </Row> */}
-        </Modal.Header>
+        </div>
 
-        <Modal.Body>
+        <div>
           {/**
            * To allow for the Modals to pop up in front of one another
            * I have inserted the IS and AT lists inside the RT Goal Modal */}
@@ -2942,8 +2942,8 @@ shows entire list of goals and routines
               {displayRoutines}
             </div>
           
-        </Modal.Body>
-      </Modal.Dialog>
+        </div>
+      </div>
     );
   };
 
@@ -3716,13 +3716,13 @@ axios.get( this.props.BASE_URL + `currentStatus/${userId}`).then((response) => {
    */
   abstractedInstructionsAndStepsList = () => {
     return (
-      <Modal.Dialog
+      <div
         style={{
           marginTop:'3rem',
           marginLeft:'2px'
         }}
       >
-        <Modal.Header
+        <div
          // closeButton
           // onHide={() => {
           //   this.setState({ singleAT: { show: false } });
@@ -3749,8 +3749,8 @@ axios.get( this.props.BASE_URL + `currentStatus/${userId}`).then((response) => {
             </div>
           </div>
           </div>
-        </Modal.Header>
-        <Modal.Body>
+        </div>
+        <div>
           <div
             style={{
               borderRadius: "15px",
@@ -3786,8 +3786,8 @@ axios.get( this.props.BASE_URL + `currentStatus/${userId}`).then((response) => {
             <div style={{ height: "500px", marginTop:'1rem' }}>
               {this.state.singleAT.arr}
             </div>
-        </Modal.Body>
-      </Modal.Dialog>
+        </div>
+      </div>
     );
   };
 
@@ -3800,14 +3800,14 @@ axios.get( this.props.BASE_URL + `currentStatus/${userId}`).then((response) => {
   abstractedActionsAndTaskList = (props) => {
     // console.log("in abstractedactions");
     return (
-      <Modal.Dialog
+      <div
         style={{
           marginTop:'3rem',
           marginLeft: "2px",
-         width:this.state.modalWidth,
+       //  width:this.state.modalWidth,
         }}
       >
-        <Modal.Header
+        <div
           // closeButton
           // onHide={() => {
           //   this.setState({ singleGR: { show: false } });
@@ -3827,11 +3827,10 @@ axios.get( this.props.BASE_URL + `currentStatus/${userId}`).then((response) => {
               </button>
             </div>
           </div>
-        </Modal.Header>
-        <Modal.Body>
+        </div>
+        <div>
           <div
             style={{
-              borderRadius: "15px",
               boxShadow:
                 "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
             }}
@@ -3866,8 +3865,8 @@ axios.get( this.props.BASE_URL + `currentStatus/${userId}`).then((response) => {
               {this.state.singleGR.arr}
             </div>
             </ListGroup>
-        </Modal.Body>
-      </Modal.Dialog>
+        </div>
+      </div>
     );
   };
 
