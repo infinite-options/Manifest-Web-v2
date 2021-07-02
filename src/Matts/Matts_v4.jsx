@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react';
+//import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import DayRoutines from '../Home/DayRoutines';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -195,15 +197,17 @@ export default function MainPage() {
                         bigList[i].days[d] = <div className = "cR"></div>;
                     }
                     else if(bigList[i].days[d] == "in_progress"){
-                        bigList[i].days[d] = (<div className = "cR">
-                                                <div className = "whiteHalf"></div>
+                        bigList[i].days[d] = (<div className = "ipR">
+                                                <div className = "whiteHalfSide"></div>
                                                 </div>);
                     }                    
                 }
                 else if(bigList[i].type == "Action"){
                     if(bigList[i].days[d] == "not started"){
                         if(checkAbove(bigList[i].under, d)){
-                            bigList[i].days[d] = "half circle";
+                            bigList[i].days[d] = (<div className = "ipA">
+                                                    <div className = "whiteHalfTop"></div>
+                                                 </div>);
                         }
                         else{bigList[i].days[d] = <div className = "nsA"></div>;}
                     }
@@ -211,15 +215,17 @@ export default function MainPage() {
                         bigList[i].days[d] = <div className = "cA"></div>;
                     }
                     else if(bigList[i].days[d] == "in_progress"){
-                        bigList[i].days[d] = (<div className = "cA">
-                                                <div className = "whiteHalf"></div>
+                        bigList[i].days[d] = (<div className = "ipA">
+                                                <div className = "whiteHalfSide"></div>
                                                 </div>);
                     }
                 }
                 else{
                     if(bigList[i].days[d] == "not started"){
                         if(checkAbove(bigList[i].under, d)){
-                            bigList[i].days[d] = "half circle";
+                            bigList[i].days[d] = (<div className = "ipI">
+                                                    <div className = "whiteHalfTop" ></div>
+                                                </div>);
                         }
                         else{bigList[i].days[d] = <div className = "nsI"></div>;}
                     }
@@ -234,13 +240,11 @@ export default function MainPage() {
         function checkAbove(above, d){
             for (const checks of bigList){
                 if(above == checks.title){
-                    console.log("found above");
-                    console.log(checks.days[d].props);
                     if (checks.days[d] == "completed"){
                         return true;}
                     if(checks.days[d]. props != undefined){
-                        if (checks.days[d].props.className == "cR" || checks.days[d].props.className == "cA"){
-                            console.log("GERE!");
+                        if (checks.days[d].props.className == "cR" || checks.days[d].props.className == "cA"
+                            || checks.days[d].props.className == "ipA"){
                             return true;
                         }
                     }
