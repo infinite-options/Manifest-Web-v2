@@ -17,6 +17,7 @@ import TermsAndConditions from './components/TermsAndConditions/TermsAndConditio
 import MobilePaypalCheckout from './mobile/MobilePaypalCheckout';
 import MainPage from '../src/manifest/OldManifest/Main';
 import Home from 'manifest/Home/Home'
+import Matts from './Matts/Matts_v3'
 // Nav here will take all the adress from children page to this and give
 // it to the switch route
 
@@ -25,6 +26,7 @@ function Nav(authLevel, isAuth) {
     <Switch>
       <Route exact path="/" component={Login} />
       <Route exact path="/main" component={MainPage} />
+      <Route exact path="/matts" component={Matts} />
       {/* <Route exact path="/signup" component={Signup} />
       <Route exact path="/socialsignup" component={SocialSignUp} />
       <Route exact path="/products" component={DisplayProducts} />
