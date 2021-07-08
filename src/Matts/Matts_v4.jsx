@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react';
+//import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import DayRoutines from '../Home/DayRoutines';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -9,22 +11,70 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import './history.css'
-  
+import { useHistory, Redirect } from 'react-router-dom';
+import Box from '@material-ui/core/Box';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Button from '@material-ui/core/Button';
+import {
+    faChevronLeft,
+    faChevronRight,
+  } from '@fortawesome/free-solid-svg-icons';
+import Moment from 'moment';
+import { Navigation } from '../Home/navigation';
+
+
+import {
+    Form,
+    Container,
+    Row,
+    Col,
+    Modal,
+    Dropdown,
+    DropdownButton,
+    Spinner,
+  } from 'react-bootstrap';
+import { wait } from '@testing-library/dom';
+
 
 const useStyles = makeStyles({
     table: {
       minWidth: 650,
     },
+    buttonSelection: {
+        width: '8%',
+        height: '70px',
+        borderBottomLeftRadius: '25%',
+        borderBottomRightRadius: '25%',
+        color: '#FFFFFF',
+        backgroundColor: '#bbc8d7',
+      },
+      buttonContainer: {
+        flex: 1,
+        display: 'flex',
+        justifyContent: 'flex-end',
+        textTransform: 'lowercase',
+      },
+  
+      dateContainer: {
+        height: '70px',
+        width: 'relative',
+        color: '#FFFFFF',
+        // flex: 1,
+        // display: 'flex',
+      },
 })
 
-export default function MainPage() {
+export default function MainPage(props) {
 //    const { profile, setProfile } = useContext(AuthContext);
 //    console.log(profile);
 
-    const currentUser = "100-000072"; //matts testing 72
+    const currentUser = props.location.state; //matts testing 72
+    console.log(props.location.state);
     const [historyGot] = useState([]);
     const inRange = [];
-    const currentDate = new Date(Date.now());
+    const [currentDate, setCurDate] = useState(new Date(Date.now()))
+
+    const history = useHistory();
 
     //table things:
     const classes = useStyles();
@@ -36,24 +86,7 @@ export default function MainPage() {
     const [isLoading, setLoading] = useState(true);
 
     //api call and store response in historyGot
-
-    // useEffect(() => {
-    //     const fetchData = async ()=> {
-    //         const result = await axios(
-    //             "https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getHistory/" + currentUser,
-    //         );
-    //         console.log(result);
-    //         for(var i=0; i <result.data.result.length; i++){
-    //             //console.log(result.data.result[i]);
-    //             historyGot.push(result.data.result[i]);
-    //         }
-    //     };
-    //     fetchData();
-    //     console.log(historyGot);
-    //     cleanData(historyGot);
-    // }, []);       
-
-
+ 
     useEffect(() => {
         axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getHistory/" + currentUser)
         .then((response) =>{
@@ -63,7 +96,7 @@ export default function MainPage() {
             }
             console.log(historyGot);
             // console.log(response.data.result[1].details);
-            cleanData(historyGot);
+            cleanData(historyGot, currentDate);
         })
         .catch((error) => {
             console.log(error);
@@ -73,13 +106,15 @@ export default function MainPage() {
 
 
      //-------- clean historyGot - just dates we want, just info we want, and structure vertical to horizontal   --------
-    function cleanData(historyGot){
-        //go through at find historyGots that are within 7 days of currentDate
+    function cleanData(historyGot, useDate){
+        
+        //go through at find historyGots that are within 7 days of useDate
+        console.log("date:" + useDate);
         const temp = [];
         for(var i=0; i <historyGot.length; i++){
             var historyDate = new Date(historyGot[i].date);
-            if ((historyDate.getTime() >= currentDate.getTime() - 604800000)    //filter for within 7 datets
-            && historyDate.getTime() <= currentDate.getTime()){                 // 7: 604800000    2: 172800000
+            if ((historyDate.getTime() >= useDate.getTime() - 604800000)    //filter for within 7 datets
+            && historyDate.getTime() <= useDate.getTime()){                 // 7: 604800000    2: 172800000
                 temp.push(historyGot[i]);
             }
         }
@@ -169,17 +204,20 @@ export default function MainPage() {
         
         //Now bigList has data in new object style. 
         //of that we transfer what we want to display to rows
+        setRows("hi");
+        console.log("ROWS" + rows);
         bigList = addCircles(bigList);
         bigList = addNames(bigList);
         for (var i=0; i< bigList.length; i++){
             rows.push(createData(bigList[i].title, bigList[i].days[6], bigList[i].days[5], bigList[i].days[4], bigList[i].days[3],
                  bigList[i].days[2], bigList[i].days[1], bigList[i].days[0], bigList[i].show, bigList[i].under, bigList[i].tBox));
         }
-        //console.log(rows);
         setRows(rows);
         setLoading(false);
         console.log(rows);
-        return(rows);
+        console.log("GERE");
+        console.log(getUrlParam("userID", window.location.href));
+        return(true);
     }
 
 
@@ -195,15 +233,17 @@ export default function MainPage() {
                         bigList[i].days[d] = <div className = "cR"></div>;
                     }
                     else if(bigList[i].days[d] == "in_progress"){
-                        bigList[i].days[d] = (<div className = "cR">
-                                                <div className = "whiteHalf"></div>
+                        bigList[i].days[d] = (<div className = "ipR">
+                                                <div className = "whiteHalfSide"></div>
                                                 </div>);
                     }                    
                 }
                 else if(bigList[i].type == "Action"){
                     if(bigList[i].days[d] == "not started"){
                         if(checkAbove(bigList[i].under, d)){
-                            bigList[i].days[d] = "half circle";
+                            bigList[i].days[d] = (<div className = "ipA">
+                                                    <div className = "whiteHalfTop"></div>
+                                                 </div>);
                         }
                         else{bigList[i].days[d] = <div className = "nsA"></div>;}
                     }
@@ -211,15 +251,17 @@ export default function MainPage() {
                         bigList[i].days[d] = <div className = "cA"></div>;
                     }
                     else if(bigList[i].days[d] == "in_progress"){
-                        bigList[i].days[d] = (<div className = "cA">
-                                                <div className = "whiteHalf"></div>
+                        bigList[i].days[d] = (<div className = "ipA">
+                                                <div className = "whiteHalfSide"></div>
                                                 </div>);
                     }
                 }
                 else{
                     if(bigList[i].days[d] == "not started"){
                         if(checkAbove(bigList[i].under, d)){
-                            bigList[i].days[d] = "half circle";
+                            bigList[i].days[d] = (<div className = "ipI">
+                                                    <div className = "whiteHalfTop" ></div>
+                                                </div>);
                         }
                         else{bigList[i].days[d] = <div className = "nsI"></div>;}
                     }
@@ -234,13 +276,11 @@ export default function MainPage() {
         function checkAbove(above, d){
             for (const checks of bigList){
                 if(above == checks.title){
-                    console.log("found above");
-                    console.log(checks.days[d].props);
                     if (checks.days[d] == "completed"){
                         return true;}
                     if(checks.days[d]. props != undefined){
-                        if (checks.days[d].props.className == "cR" || checks.days[d].props.className == "cA"){
-                            console.log("GERE!");
+                        if (checks.days[d].props.className == "cR" || checks.days[d].props.className == "cA"
+                            || checks.days[d].props.className == "ipA"){
                             return true;
                         }
                     }
@@ -328,11 +368,32 @@ export default function MainPage() {
         }
     }
 
+    function prevWeek(){
+        // TO DO! WEEKS
+        // setRows([]);
+        console.log("clocked pre");
+        // setCurDate(new Date(currentDate.getTime() - 604800000));
+    }
+    function nextWeek(){
+        console.log("clocked nex");
+    }
+
+    function getUrlParam(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return "";
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+      };
+
     //-----------------------
 
     if(isLoading){
         return (
             <div>
+                <br></br>
                 <br></br>
                 <h1>Loading...</h1>;
             </div>
@@ -340,9 +401,86 @@ export default function MainPage() {
     }
     return (
         <div>
+            <Navigation userID= {currentUser} />
             <div>
                 <br></br>
-                <br></br>
+                <Box paddingTop={3} backgroundColor="#bbc8d7">
+                    <div className={classes.buttonContainer}>
+                        <Box
+                            bgcolor="#889AB5"
+                            className={classes.dateContainer}
+                            style={{ width: '100%' }}
+                            // flex
+                        >
+                            <Container>
+                <Row style={{ marginTop: '15px' }}>
+                  <Col>
+                    <div>
+                      <FontAwesomeIcon
+                        // style={{ marginLeft: "50%" }}
+
+                        icon={faChevronLeft}
+                        size="2x"
+                        onClick={(e) => {
+                          prevWeek();
+                        }}
+                      />
+                    </div>
+                  </Col>
+                  <Col
+                    md="auto"
+                    style={{ textAlign: 'center' }}
+                    className="bigfancytext"
+                  >
+                    <p> Week of {Moment(currentDate).format('D MMMM YYYY')} </p>
+                    <p
+                      style={{ marginBottom: '0', height: '19.5px' }}
+                      className="normalfancytext"
+                    >
+                      {Intl.DateTimeFormat().resolvedOptions().timeZone}
+                    </p>
+                  </Col>
+                  <Col>
+                    <FontAwesomeIcon
+                      // style={{ marginLeft: "50%" }}
+                      style={{ float: 'right' }}
+                      icon={faChevronRight}
+                      size="2x"
+                      className="X"
+                      onClick={(e) => {
+                        nextWeek();
+                      }}
+                    />
+                  </Col>
+                </Row>
+              </Container>
+                        </Box>
+                        <Button className={classes.buttonSelection} onClick={()=> history.push("/matts") } id="one">
+                          History
+                        </Button>
+                        <Button className={classes.buttonSelection} id="one">
+                          Events
+                        </Button>
+                        <Button
+                            className={classes.buttonSelection}
+                            // onClick={toggleShowRoutine}
+                            id="one">
+                            Routines
+                        </Button>
+
+                        <Button className={classes.buttonSelection} onClick={()=> history.push(
+                            {pathname: "/main", state: currentUser}) } id="one">
+                         Goals
+                        </Button>
+                        <Button className={classes.buttonSelection} id="one">
+                            About
+                        </Button>
+
+                        
+                    </div>
+                </Box>
+            </div>   
+            <div>
                 <TableContainer component={Paper}>
                     <Table className={classes.table} aria-label="simple table">
                         <TableHead>
@@ -375,7 +513,7 @@ export default function MainPage() {
                         </TableBody>
                     </Table>
                 </TableContainer>
-            </div>        
+            </div>     
         </div>
     );
 }

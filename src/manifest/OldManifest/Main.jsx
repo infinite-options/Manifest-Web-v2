@@ -37,7 +37,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Navigation from "../navigation";
+import {Navigation} from "../../Home/navigation";
 
 export default class MainPage extends React.Component {
   constructor(props) {
@@ -241,6 +241,7 @@ export default class MainPage extends React.Component {
   }
 
 
+  
   convertTimeToHRMMSS = (e) => {
     // console.log(e.target.value);
     let num = e.target.value;
@@ -501,7 +502,9 @@ export default class MainPage extends React.Component {
   };
 
   grabFireBaseRoutinesGoalsData = () => {
-    let url = "https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/100-000027";
+    console.log(this.props.location.state);
+    // this.setState({currentUserId: this.props.location.state});
+    let url = "https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/" + this.props.location.state;
     //this.state.BASE_URL + "getgoalsandroutines/";
     console.log("routineURL", url)
     let routine = [];
@@ -3343,7 +3346,7 @@ this will close repeat modal.
             }}
           >
             {/* {this.abstractedMainEventGRShowButtons()} */}
-            <Navigation/>
+            <Navigation userID= {this.props.location.state}/>
           </div>
 
           <div>
@@ -3374,7 +3377,7 @@ this will close repeat modal.
               {this.state.currentUserId == "" && (
                 <Firebasev2
                   BASE_URL={this.state.BASE_URL}
-                  theCurrentUserID={this.state.currentUserId}
+                  theCurrentUserID={this.props.location.state}
                   theCurrentTAID={this.state.ta_people_id}
                   toggleShowRoutine={this.toggleShowRoutine}
                   grabFireBaseRoutinesGoalsData={
@@ -3733,6 +3736,7 @@ this will close repeat modal.
           // alignItems: "center"
         }}
       >
+            {/* <Navigation /> */}
 
         
  

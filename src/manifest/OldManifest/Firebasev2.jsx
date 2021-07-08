@@ -43,6 +43,8 @@ import {
 import axios from "axios";
 import Home from "../Home/Home"
 import { DriveEta } from "@material-ui/icons";
+import {Link} from 'react-router-dom';
+
 // import moment from "moment";
 
 /**
@@ -2975,14 +2977,17 @@ shows entire list of goals and routines
     display: "flex",
     justifyContent: "flex-start",
     textTransform: "none",}}>            
-          <Button style={{
-    height: "4rem",
-    borderBottomLeftRadius: "25%",
-    borderBottomRightRadius: "25%",
-    color: "#FFFFFF",
-    backgroundColor: "#bbc8d7",}} id="one">
-            History
-          </Button>
+          <Link to=
+          {{pathname: "/matts", state: this.props.theCurrentUserID}}>
+            <Button style={{
+      height: "4rem",
+      borderBottomLeftRadius: "25%",
+      borderBottomRightRadius: "25%",
+      color: "#FFFFFF",
+      backgroundColor: "#bbc8d7",}} id="one">
+              History
+            </Button>
+          </Link>
           <Button style={{ 
     height: "4rem",
     borderBottomLeftRadius: "25%",

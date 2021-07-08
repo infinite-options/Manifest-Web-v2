@@ -10,6 +10,7 @@ import { useHistory, Redirect } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import './Home.css';
+import { Navigation } from "./navigation";
 
 import {
   Form,
@@ -42,8 +43,16 @@ import userContext from './userContext';
 /* Navigation Bar component function */
 
 export default function Home(props) {
+  
 
   const history = useHistory();
+
+  if(props.location.state === undefined){
+    console.log("No User Logged In");
+    history.push("/");
+  }
+  console.log("UserID from login:");
+  console.log(props.location.state);
 
   /* useEffect() is used to render API calls as minimumly 
   as possible based on past experience, if not included 
@@ -62,6 +71,41 @@ export default function Home(props) {
       });
     }, []);
   }
+
+  // var userID;
+  // useEffect(() => {
+  //   async function fetchMyAPI(){
+  //     let url = "https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/usersOfTA/" + props.location.state;
+  //     let config = {};
+  //     const response = await axios.get(url);
+  //     console.log(response);
+  //     if (response.result !== false){
+  //             userID = response.data.result[0].user_unique_id;
+  //             console.log(userID);
+  //             setStateValue((prevState) => {
+  //               return {
+  //                 ...prevState,
+  //                 currentUserId: userID,
+  //               };
+  //             });
+  //             console.log(stateValue.currentUserId);
+  //           }
+  //           else{console.log("No User Found");}
+  //   }
+  //   fetchMyAPI();
+    // axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/usersOfTA/" + props.location.state)
+    // .then((response) =>{
+    //     console.log(response);
+    //     if (response.result !== false){
+    //       userID = response.data.result[0].user_unique_id;
+    //       console.log(userID);
+    //     }
+    //     else{console.log("No User Found");}
+    // })
+    // .catch((error) => {
+    //     console.log(error);
+    // });
+  // },[])
 
   /*----------------------------Use states to define variables----------------------------*/
   const [stateValue, setStateValue] = useState({
@@ -174,7 +218,7 @@ export default function Home(props) {
     goal_ids: [],
     showRoutineGoalModal: false,
     showGoalModal: false,
-    showRoutineModal: false,
+    showRoutineModal: true,
     showAboutModal: false,
     noteToFuture: false,
     showPeopleModal: false,
@@ -252,7 +296,7 @@ export default function Home(props) {
     currentUserPicUrl: '',
     currentUserName: '',
     currentUserTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    currentUserId: '100-000071',
+    currentUserId: props.location.state,
     currentAdvisorCandidateName: '',
     currentAdvisorCandidateId: '',
     // profileName: "",
@@ -724,14 +768,16 @@ export default function Home(props) {
               BASE_URL={stateValue.BASE_URL}
             />
           </Row> */}
-        <Row style={{ float: 'right', width: '90%' }}>
+        <div 
+        // style={{ float: 'left', width: '90%' }}
+        >
           <WeekRoutines
             timeZone={stateValue.currentUserTimeZone}
             routines={stateValue.routines}
             dateContext={stateValue.dateContext}
             BASE_URL={stateValue.BASE_URL}
           />
-        </Row>
+        </div>
         {/* </Container> */}
       </div>
     );
@@ -1162,6 +1208,8 @@ export default function Home(props) {
     /*----------------------------button
         selection----------------------------*/
     <div>
+      <Navigation userID= {stateValue.currentUserId}/>
+
       <userContext.Provider
         value={
           (stateValue.itemToEdit,
@@ -1180,7 +1228,8 @@ export default function Home(props) {
         HOME
         <Box paddingTop={3} backgroundColor="#bbc8d7">
           <div className={classes.buttonContainer}>
-            <Button className={classes.buttonSelection} id="one">
+            <Button className={classes.buttonSelection} onClick={()=> history.push(
+              {pathname: "/matts", state: stateValue.currentUserId}) } id="one">
               History
             </Button>
             <Button className={classes.buttonSelection} id="one">
@@ -1189,12 +1238,12 @@ export default function Home(props) {
             <Button
               className={classes.buttonSelection}
               onClick={toggleShowRoutine}
-              id="one"
-            >
+              id="one">
               Routines
             </Button>
 
-            <Button className={classes.buttonSelection} onClick={()=> history.push("/main") } id="one">
+            <Button className={classes.buttonSelection} onClick={()=> history.push(
+              {pathname: "/main", state: stateValue.currentUserId}) } id="one">
               Goals
             </Button>
             <Button className={classes.buttonSelection} id="one">
@@ -1342,7 +1391,7 @@ export default function Home(props) {
             // background: "lightblue",
           }}
         >
-          <Container
+          {/* <Container
             fluid
             style={{
               marginTop: '15px',
@@ -1352,8 +1401,8 @@ export default function Home(props) {
               //   // justifyContent: "center",
               //   // alignItems: "center",
               //   // width: "100%"
-            }}
-          >
+            }} */}
+          {/* > */}
             <Row
               style={{
                 marginTop: '0',
@@ -1368,7 +1417,8 @@ export default function Home(props) {
               {/* {this.grabFireBaseRoutinesGoalsData()} */}
               {/* the modal for routine/goal is called Firebasev2 currently */}
               {/* <userContext.Provider value={stateValue}> */}
-              <Col>
+              <Col
+              md = {3}>
                 {stateValue.currentUserId != '' && (
                   <FirebaseV2
                     BASE_URL={stateValue.BASE_URL}
@@ -1418,22 +1468,23 @@ export default function Home(props) {
                 )}
               </Col>
               <Col
-                sm="auto"
-                md="auto"
-                lg="auto"
+                sm={{size: 13, offset: 1}}
+                // sm="auto"
+                // md="auto"
+                // lg="auto"
                 // fluid={true}
                 // style={onlyCal ? { marginLeft: '22%' } : { marginRight: '35px' }}
-                style={
-                  onlyCal || stateValue.currentUserId === ''
-                    ? { marginLeft: '300px' }
-                    : { marginRight: '0px' }
-                }
+                // style={
+                //   onlyCal || stateValue.currentUserId === ''
+                //     ? { marginLeft: '0px' }
+                //     : { marginRight: '0px' }
+                // }
                 // style={{ MarginRight: '0px' }}
               >
                 {showCalendarView()}
               </Col>
             </Row>
-          </Container>
+          {/* </Container> */}
         </div>
       </userContext.Provider>
     </div>

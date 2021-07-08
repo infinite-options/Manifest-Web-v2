@@ -237,7 +237,7 @@ export default function App() {
 
         {/* <Link to="/">Home</Link> */}
 
-        <Navigation />
+        {/* <Navigation /> */}
 
         {/* <Switch>
           <Route path="/"> */}
