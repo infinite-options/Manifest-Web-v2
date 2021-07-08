@@ -314,7 +314,7 @@ export default class editGR extends Component {
          "Sun, 23 Feb 2020 00:08:43 GMT";
     }
   
-    let url = this.props.BASE_URL +  "updateGR"
+    let url = this.props.BASE_URL +  "/api/v2/updateGR"
   
     let body = temp
   
@@ -940,14 +940,15 @@ export default class editGR extends Component {
           marginLeft: "0px",
           border: "2px",
           padding: "15px",
-          marginTop: "10px",
+          width:'100%',
+          marginTop: "1rem",
           backgroundColor:"#FF6B4A"
         }}
       >
         <label style={{fontWeight:'bold', display:'flex', color:'#ffffff'}}>Routine Name</label>
         <div className="input-group mb-3">
           <input
-            style={{ width: "100%", height:'1rem', borderRadius:'5px' }}
+            style={{ width: "100%", height:'2rem', borderRadius:'5px' }}
             placeholder="Enter Title"
             value={this.state.itemToEdit.title}
             onChange={(e) => {
@@ -1150,7 +1151,7 @@ export default class editGR extends Component {
         <Form.Group>
           <div style={{display:'flex', justifyContent:'space-evenly', marginTop:'1rem'}}>
           <Button
-            variant="outline"
+            variant="secondary"
             onClick={(e) => {
               e.stopPropagation();
               // this.setState({ showEditModal: false });
@@ -1465,7 +1466,7 @@ export default class editGR extends Component {
             this.setState({ showEditModal: true });
           }}
           icon={faEdit}
-          size="lg"
+          size="small"
         />
       </div>
     );
@@ -1477,7 +1478,7 @@ export default class editGR extends Component {
           e.stopPropagation();
         }}
       >
-        {this.props.showModal && this.props.i === this.props.indexEditing ? (
+         {this.props.showModal && this.props.i === this.props.indexEditing ? (
           this.editGRForm()
         ) : (
           <div> </div>

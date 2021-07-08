@@ -461,7 +461,7 @@ export default class AddNewGRItem extends Component {
   };
 
   addNewDoc = () => {
-    let url =  this.props.BASE_URL + "addGR";
+    let url =  this.props.BASE_URL + "/api/v2/addGR";
 
     let newArr = this.state.grArr;
     let temp = this.state.itemToEdit;

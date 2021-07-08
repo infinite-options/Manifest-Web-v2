@@ -187,9 +187,10 @@ body.photo_url = this.state.photo_url
       // <div style={{margin: '0', width: "315px", padding:'20px'}}>
       <Row
         style={{
-          marginLeft: this.props.marginLeftV,
+          marginLeft: '0rem',
+          width:'300px',
           border: "2px",
-          marginTop: "5rem",
+          marginTop: "1rem",
           backgroundColor:'#67ABFC'
         }}
       >

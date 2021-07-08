@@ -64,7 +64,7 @@ export default class editAT extends Component {
          "Sun, 23 Feb 2020 00:08:43 GMT";
     }
     
-    let url = this.props.BASE_URL +  "updateAT"
+    let url = this.props.BASE_URL +  "/api/v2/updateAT"
   
     // let body = JSON.parse(JSON.stringify(newArr[this.props.i]));
   
@@ -82,7 +82,7 @@ export default class editAT extends Component {
     console.log(body)
     let formData = new FormData();
     Object.entries(body).forEach(entry => {
-        if (typeof entry[1].name == 'string'){
+        if (typeof entry[0].name == 'string'){
         
             formData.append(entry[0], entry[1]);
         }
@@ -262,10 +262,11 @@ export default class editAT extends Component {
       // <div style={{ margin: '0', width: "315px", padding:'20px'}}>
       <Row
         style={{
-          marginLeft: this.props.marginLeftV,
-          width:"300px",
-          marginTop:'3rem',
+          marginLeftV : this.props.marginLeftV,
+          marginTop:'4rem',
+          marginLeft:'0rem',
           border: "2px",
+          width:'300px',
           backgroundColor:'#F8BE28'
         }}
       >
@@ -463,8 +464,10 @@ export default class editAT extends Component {
       <div
         onClick={(e) => {
           e.stopPropagation();
+         
         }}
       >
+        
         {this.state.showEditModal ? this.editATForm() : this.showIcon()}
       </div>
     );

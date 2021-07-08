@@ -359,7 +359,7 @@ changeCurrentTACandidate1 = (taId, data) => {
   showIcon = () => {
 
     return (
-      <div style={{ marginLeft: "5px" }}>
+      <div >
         <FontAwesomeIcon
           title="Edit Item"
           onMouseOver={(event) => {

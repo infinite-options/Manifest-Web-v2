@@ -42,6 +42,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import Home from "../Home/Home"
+import plus from "../../sf-svg-icons/plus.svg"
 import { DriveEta } from "@material-ui/icons";
 // import moment from "moment";
 
@@ -183,7 +184,7 @@ export default class FirebaseV2 extends React.Component {
 
   componentDidMount() {
     //Grab the
-    // this.grabFireBaseRoutinesGoalsData();
+     this.grabFireBaseRoutinesGoalsData();
     // console.log("going into compoent did mount");
   }
 
@@ -322,10 +323,12 @@ export default class FirebaseV2 extends React.Component {
             style={{ marginBottom: "3px" }}
           >
 
-          <div style={{ display:'flex', justifyContent:'space-between', backgroundColor:'#00000029'  }}>
-                <div flex='1' style={{ marginTop:'10px', height:'4rem', borderRadius:'10px',width:'15rem', display:'flex', justifyContent:'space-evenly', backgroundColor:'#F8BE28'}}>
+          <div style={{ display:'flex', justifyContent:'space-between', backgroundColor:'#BBC7D7'  }}>
+                <div flex='1' style={{marginTop:'1rem',marginLeft:'1rem' , height:'4.5rem', borderRadius:'10px',width:'70%', display:'flex', justifyContent:'space-evenly', backgroundColor:'#F8BE28', boxShadow:
+                "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
+              zIndex:'50%'}}>
                 <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start'}} >
-                <div >
+                <div style={{marginLeft:'1rem'}}>
                 {this.props.routines[i]["start_day_and_time"] && this.props.routines[i]["end_day_and_time"] ? (
                   <div
                     style={{
@@ -357,7 +360,7 @@ export default class FirebaseV2 extends React.Component {
                     
                     {/* ({date}) */}
               </div>
-              <div>
+              <div style={{marginTop:'1rem'}}>
                 <img
                     src={tempPhoto}
                     alt="Action/Task"
@@ -366,17 +369,84 @@ export default class FirebaseV2 extends React.Component {
                     width="28px"
                   />
                 </div>
+
+        
               </div>
 
+            <div style={{display:'flex', marginTop:'1rem'}}>
+            <div style={{marginRight:'1rem',display:'flex', flexDirection:'column', justifyContent:'space-evenly'}}>
+              <div>
+              {tempAvailable ? (
+                      <div>
+                        <FontAwesomeIcon
+                          title="Available to User"
+                          style={{ color: this.state.availabilityColorCode }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            alert("Item Is Availble to User");
+                          }}
+                          icon={faUser}
+                          size="small"
+                        />{" "}
+                      </div>
+                    ) : (
+                      <div>
+                        <FontAwesomeIcon
+                          title="Unavailable to User"
+                          style={{ color: "#000000" }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            alert("Item Is NOT Availble to User");
+                          }}
+                          icon={faUserAltSlash}
+                          size="small"
+                        />
+                      </div>
+                    )}
+              </div>
 
+              <div>
+              <DeleteAT
+                    BASE_URL={this.props.BASE_URL}
+                      deleteIndex={i}
+                      type={"actions&tasks"}
+                      Array={this.state.singleATitemArr} //Holds the raw data for all the is in the single action
+                      Item={this.state.singleGR} //holds complete data for action task: fbPath, title, etc
+                      refresh={this.refreshATItem}
+                      // refreshGR={this.grabFireBaseRoutinesGoalsData}
+                      updateNewWentThroughATDelete={
+                        this.handleWentThroughATListObj
+                      }
+                    />
+              </div>
+            </div>
 
-            <Row
-              style={{ margin: "0", marginBottom: "10px" }}
-              className="d-flex flex-row-center"
-            >
-              <Col>
-              </Col>
-            </Row>
+            <div style={{display:'flex', flexDirection:'column', justifyContent:'space-evenly'}}>
+            
+      
+
+                <div style={{marginTop:'-1rem'}}>
+                {is_sublist_available ? (
+                          <div>
+                          <FontAwesomeIcon
+                            icon={faList}
+                            title="SubList Available"
+                            style={{ color: "#D6A34C" }}
+                            size="small"
+                            onClick={() => {
+                                // Disable IS layer
+                                this.ATonClickEvent(tempTitle, tempID);
+                              }}
+                          />
+                        </div>
+                        ) : (
+                          <div>
+                          </div>
+                        )}
+
+                </div>
+            </div>
+            </div>
 
             {tempPhoto ? (
               <Row>
@@ -391,33 +461,7 @@ export default class FirebaseV2 extends React.Component {
                 </Col>
                 <Col style={{ paddingLeft: "0px" , display:'flex' }}>
                   <Row style={{ marginTop: "10px" }}>
-                    {tempAvailable ? (
-                      <div style={{ marginLeft: "5px" }}>
-                        <FontAwesomeIcon
-                          title="Available to User"
-                          style={{ color: this.state.availabilityColorCode }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            alert("Item Is Availble to User");
-                          }}
-                          icon={faUser}
-                          size="lg"
-                        />{" "}
-                      </div>
-                    ) : (
-                      <div>
-                        <FontAwesomeIcon
-                          title="Unavailable to User"
-                          style={{ color: "#000000" }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            alert("Item Is NOT Availble to User");
-                          }}
-                          icon={faUserAltSlash}
-                          size="lg"
-                        />
-                      </div>
-                    )}
+          
                     <div style={{marginTop:'5px'}}>
 
                     <ShowISList
@@ -429,66 +473,27 @@ export default class FirebaseV2 extends React.Component {
                     </div>
 
                     <div style={{marginTop:'5px'}}>
-
+{/* 
                     <MustDoAT
                     BASE_URL={this.props.BASE_URL}
                       Index={i}
                       Array={this.state.singleATitemArr}
                       SingleAT={this.state.singleATitemArr[i]}
                       Path={this.state.singleGR.fbPath}
-                    />
+                    /> */}
                     </div>
 
-                    {is_sublist_available ? (
-                          <div>
-                          <FontAwesomeIcon
-                            icon={faList}
-                            title="SubList Available"
-                            style={{ color: "#D6A34C", marginTop:'10px' }}
-                            size="small"
-                            onClick={() => {
-                                // Disable IS layer
-                                this.ATonClickEvent(tempTitle, tempID);
-                              }}
-                          />
-                        </div>
-                        ) : (
-                          <div>
-                          </div>
-                        )}
-
+                   
                   </Row>
                  
                   <Row style={{ marginTop: "15px", marginBottom: "10px" }}>
-                    <DeleteAT
-                    BASE_URL={this.props.BASE_URL}
-                      deleteIndex={i}
-                      type={"actions&tasks"}
-                      Array={this.state.singleATitemArr} //Holds the raw data for all the is in the single action
-                      Item={this.state.singleGR} //holds complete data for action task: fbPath, title, etc
-                      refresh={this.refreshATItem}
-                      refreshGR={this.grabFireBaseRoutinesGoalsData}
-                      updateNewWentThroughATDelete={
-                        this.handleWentThroughATListObj
-                      }
-                    />
-                    <EditAT
-                    BASE_URL={this.props.BASE_URL}
-                      marginLeftV="-17.8rem"
-                      widthOfModal = "400px"
-                      i={i} //index to edit
-                      timeSlot={this.state.timeSlotForAT}
-                      ATArray={this.state.singleATitemArr} //Holds the raw data for all the is in the single action
-                      FBPath={this.state.singleGR.fbPath} //holds the path to the array data
-                      refresh={this.refreshATItem} //function to refresh AT data
-                      updateWentThroughATListObj={
-                        this.handleWentThroughATListObj
-                      }
-                      currentUserId={this.props.theCurrentUserID}
-                    />
+                  
+             
                   </Row>
                 </Col>
               </Row>
+
+              
             ) : (
               <div style={{display:"flex", justifyContent:'flex-start'}}>
                 <Row style={{ marginLeft: "100px" }} className="d-flex ">
@@ -555,7 +560,7 @@ export default class FirebaseV2 extends React.Component {
                   BASE_URL={this.props.BASE_URL}
                     deleteIndex={i}
                     type={"actions&tasks"}
-                    refreshGR={this.grabFireBaseRoutinesGoalsData}
+                    // refreshGR={this.grabFireBaseRoutinesGoalsData}
                     Array={this.state.singleATitemArr} //Holds the raw data for all the is in the single action
                     Item={this.state.singleGR} //holds complete data for action task: fbPath, title, etc
                     refresh={this.refreshATItem}
@@ -565,11 +570,12 @@ export default class FirebaseV2 extends React.Component {
                   />
                   <EditAT
                   BASE_URL={this.props.BASE_URL}
-                  marginLeftV="-10rem"
+                  marginLeftV="-3rem"
                     i={i} //index to edit
                     ATArray={this.state.singleATitemArr} //Holds the raw data for all the is in the single action
                     FBPath={this.state.singleGR.fbPath} //holds the path to the array data
                     refresh={this.refreshATItem} //function to refresh AT data
+                    // refreshGR = { this.grabFireBaseRoutinesGoalsData()}
                     updateWentThroughATListObj={this.handleWentThroughATListObj}
                     currentUserId={this.props.theCurrentUserID}
                   />
@@ -579,6 +585,24 @@ export default class FirebaseV2 extends React.Component {
           </div>
 
           </div>
+                
+          <div style={{display:"flex", justifyContent:'flex-end', marginRight:'1rem', marginTop:'-2rem', marginBottom:'2rem'}} >
+                  
+                  <EditAT
+                          BASE_URL={this.props.BASE_URL}
+                            marginLeftV="2rem"
+                            i={i} //index to edit
+                            timeSlot={this.state.timeSlotForAT}
+                            ATArray={this.state.singleATitemArr} //Holds the raw data for all the is in the single action
+                            FBPath={this.state.singleGR.fbPath} //holds the path to the array data
+                            refresh={this.refreshATItem} //function to refresh AT data
+                            // refreshGR = { this.grabFireBaseRoutinesGoalsData()}
+                            updateWentThroughATListObj={
+                              this.handleWentThroughATListObj
+                            }
+                            currentUserId={this.props.theCurrentUserID}
+                          />
+                      </div>
         </div>
       );
     }
@@ -610,11 +634,16 @@ export default class FirebaseV2 extends React.Component {
             // onClick={() => {
             //   this.ISonClickEvent(tempTitle);
             // }}
-           style={{ width:'18rem', backgroundColor:'#00000029' , marginBottom:'2px'}}
+           style={{ backgroundColor:'#BBC7D7' , marginBottom:'2px'}}
            
           >
            <div style={{display:'flex', justifyContent:'space-between'}}>
-           <div style={{alignItems:'center',  marginLeft:'1rem', marginTop:'10px', height:'4rem', borderRadius:'10px',width:'15rem', display:'flex', justifyContent:'space-evenly', backgroundColor:'#67ABFC'}}>
+       
+           <div style={{alignItems:'center', marginTop:'1rem', marginLeft:'1rem', height:'4.5rem', borderRadius:'10px',width:'70%', display:'flex', justifyContent:'space-evenly', backgroundColor:'#67ABFC',boxShadow:
+                "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
+              zIndex:'50%'}}>
+           <div style={{backgroundColor:'#ffffff',width:'2rem', height:'2rem',  borderRadius:'25px', paddingLeft:'0.75rem'}}> { i + 1}
+                </div> 
            <div className="fancytext">{tempTitle}</div>
 
            <div>
@@ -631,37 +660,6 @@ export default class FirebaseV2 extends React.Component {
            <div style={{flex:'1', display:'flex', paddingLeft:'1rem'}}>
               <div style={{display:'flex' , flexDirection:'column', justifyContent:'space-evenly', marginRight:'0.5rem' }}>
               <div>
-              <DeleteISItem
-                    BASE_URL={this.props.BASE_URL}
-                      deleteIndex={i}
-                      Array={this.state.singleATitemArr}
-                      ISArray={this.state.singleISitemArr} //Holds the raw data for all the is in the single action
-                      ISItem={this.state.singleAT} //holds complete data for action task: fbPath, title, etc
-                      refresh={this.refreshISItem}
-                      refreshAT={this.refreshATItem}
-                      updateNewWentThroughISDelete={
-                        this.handleWentThroughATListObj
-                      }
-                    />
-              </div>
-              </div>
-              <div style={{display:'flex' , flexDirection:'column', justifyContent:'space-evenly'}}>
-                <div>
-                <EditIS
-                    BASE_URL={this.props.BASE_URL}
-                      marginLeftV="-17.2rem"
-                      timeSlot={this.state.timeSlotForAT}
-                      i={i} //index to edit
-                      ISArray={this.state.singleISitemArr} //Holds the raw data for all the is in the single action
-                      FBPath={this.state.singleAT.fbPath} //holds the fbPath to arr to be updated
-                      refresh={this.refreshISItem} //function to refresh IS data
-                      updateWentThroughATListObjIS={
-                        this.handleWentThroughATListObj
-                      }
-                    />
-                </div>
-
-                <div>
                 {tempAvailable ? (
                       <div >
                         <FontAwesomeIcon
@@ -690,10 +688,46 @@ export default class FirebaseV2 extends React.Component {
                       </div>
                     )}
                 </div>
+              
+              <div>
+              <DeleteISItem
+                    BASE_URL={this.props.BASE_URL}
+                      deleteIndex={i}
+                      Array={this.state.singleATitemArr}
+                      ISArray={this.state.singleISitemArr} //Holds the raw data for all the is in the single action
+                      ISItem={this.state.singleAT} //holds complete data for action task: fbPath, title, etc
+                      refresh={this.refreshISItem}
+                      refreshAT={this.refreshATItem}
+                      updateNewWentThroughISDelete={
+                        this.handleWentThroughATListObj
+                      }
+                    />
+              </div>
+              </div>
+              <div style={{display:'flex' , flexDirection:'column', justifyContent:'space-evenly'}}>
+           
+
+                
               </div>
            </div>
 
+        
            </div>
+
+           <div  style={{display:"flex", justifyContent:'flex-end', marginRight:'1rem', marginTop:'-2rem', marginBottom:'2rem'}}>
+                <EditIS
+                    BASE_URL={this.props.BASE_URL}
+                      marginLeftV="-16rem"
+                      timeSlot={this.state.timeSlotForAT}
+                      i={i} //index to edit
+                      ISArray={this.state.singleISitemArr} //Holds the raw data for all the is in the single action
+                      FBPath={this.state.singleAT.fbPath} //holds the fbPath to arr to be updated
+                      refresh={this.refreshISItem} //function to refresh IS data
+                      updateWentThroughATListObjIS={
+                        this.handleWentThroughATListObj
+                      }
+                    />
+                </div>
             {tempPhoto ? (
               <Row>
                
@@ -932,15 +966,19 @@ export default class FirebaseV2 extends React.Component {
         
         displayRoutines.push(
           <div key={"test0" + i} >
+            <div style={{ width:"100%", height:'1px', backgroundColor:'#ffffff', marginTop:'1rem'  }}></div>
+
             <div
             
-              style={{ height:'5rem', width:'18rem', backgroundColor:'#00000029' , marginBottom:'2px'}}
+              style={{ height:'5rem', width:'100%', backgroundColor:'#BBC7D7' , marginBottom:'2px', }}
             >
-              
-              <div style={{ display:'flex', justifyContent:'space-between' }}>
-                <div flex='1' style={{marginLeft:'1rem', marginTop:'10px', height:'4rem', borderRadius:'10px',width:'15rem', display:'flex', justifyContent:'space-between', backgroundColor:'#FF6B4A'}}>
+ 
+              <div style={{ display:'flex', justifyContent:'space-between', marginTop:'1rem' }}>
+                <div flex='1' style={{marginLeft:'1rem', marginTop:'10px', height:'4.5rem', borderRadius:'10px',width:'65%', display:'flex', justifyContent:'space-between', backgroundColor:'#FF6B4A',  boxShadow:
+                "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
+              zIndex:'50%'}}>
                 <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
-                <div >
+                <div style={{marginLeft:'1rem'}}>
                 {this.props.routines[i]["start_day_and_time"] && this.props.routines[i]["end_day_and_time"] ? (
                   <div
                     style={{
@@ -971,10 +1009,10 @@ export default class FirebaseV2 extends React.Component {
                     {/* ({date}) */}
               </div>
 
-             <div flex='1'>
+             <div flex='1' style={{display:'flex', flexDirection:'column'}}>
                 <div>
 
-                <Col xs={7} style={{ paddingRight: "1rem"  ,marginTop:'0.5rem'}}>
+                <Col xs={7} style={{marginTop:'0.5rem'}}>
                       <img
                         src={this.props.routines[i]["photo"]}
                         alt="Routines"
@@ -984,7 +1022,7 @@ export default class FirebaseV2 extends React.Component {
                       />
                     </Col>
                 </div>
-                <div>
+                <div style={{marginLeft:'1.5rem'}}>
                 {this.props.routines[i]["is_sublist_available"] ? (
                           <div>
                           <FontAwesomeIcon
@@ -992,9 +1030,9 @@ export default class FirebaseV2 extends React.Component {
                             title="SubList Available"
                             style={{ color: "#ffffff" }}
                             onClick={() => {
-                             // this.GRonClickEvent(tempTitle, tempID, tempPersist, tempGR);
+                              this.GRonClickEvent(tempTitle, tempID, tempPersist, tempGR);
                              this.getSingleRoutines(tempTitle, tempID, tempPersist, tempGR)
-                             this.grabFireBaseRoutinesGoalsData()
+                             this.ATonClickEvent(tempTitle, tempID);
 
                             }}
                             // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
@@ -1012,9 +1050,9 @@ export default class FirebaseV2 extends React.Component {
                 </div>
               </div>
 
-              <div style={{ display:"flex", paddingRight:'0.5rem'}}>
-                <div style={{display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
-                  <div flex='1'>
+              <div style={{ display:"flex", marginTop:'0.5rem'}}>
+                <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
+                  <div style={{flex:'1'}}>
 
                 <CopyIcon
                     openCopyModal={() => {
@@ -1030,60 +1068,8 @@ export default class FirebaseV2 extends React.Component {
                   />
                   </div>
 
-                    <div flex='1'  >
-                  <DeleteGR
-                        BASE_URL={this.props.BASE_URL}
-                          deleteIndex={this.findIndexByID(tempID)}
-                          Array={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                          // Path={firebase
-                          //   .firestore()
-                          //   .collection("users")
-                          //   .doc(this.props.theCurrentUserID)}
-                          refresh={this.grabFireBaseRoutinesGoalsData}
-                          theCurrentUserId={this.props.theCurrentUserID}
-                          theCurrentTAID={this.props.theCurrentTAID}
-                        />
-                       </div>
-                </div>
-                  <div style={{display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
-                    <div>
-                    <FontAwesomeIcon
-                            icon={faList}
-                            title="SubList Available"
-                            style={{ color: "#ffffff"}}
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
-                            onClick={(e)=>{
-                            //  style.color = "#000000"
-                            }}
-                            size="small"
-                          />
-                    </div>
-
-                    <div>
-                    <EditIcon
-                          openEditModal={() => {
-                            this.setState({
-                              showEditModal: true,
-                              indexEditing: this.findIndexByID(tempID),
-                            });
-                            
-                          }}
-                          showModal={this.state.showEditModal}
-                          indexEditing={this.state.indexEditing}
-                          i={this.findIndexByID(tempID)} //index to edit
-                          ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                          // FBPath={firebase
-                          //   .firestore()
-                          //   .collection("users")
-                          //   .doc(this.props.theCurrentUserID)}
-                          refresh={this.grabFireBaseRoutinesGoalsData}
-                        />
-
-                    </div>
-
-                    <div>
-
-                      <Row >
+                  <div style={{flex:'1', marginLeft:'1rem'}}>
+                       <Row >
                         {this.props.routines[i]["is_available"] ? (
                           <div >
                             <FontAwesomeIcon
@@ -1115,6 +1101,73 @@ export default class FirebaseV2 extends React.Component {
                         )}
                        
                       </Row>
+
+                  </div>
+
+
+                  <div style={{flex:'1'}} >
+                       <DeleteGR
+                        BASE_URL={this.props.BASE_URL}
+                          deleteIndex={this.findIndexByID(tempID)}
+                          Array={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
+                          // Path={firebase
+                          //   .firestore()
+                          //   .collection("users")
+                          //   .doc(this.props.theCurrentUserID)}
+                          // refresh={this.grabFireBaseRoutinesGoalsData}
+                          theCurrentUserId={this.props.theCurrentUserID}
+                          theCurrentTAID={this.props.theCurrentTAID}
+                        />
+                  </div>
+                </div>
+                  <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
+                    <div style={{flex:'1'}}>
+                    <MustDoAT
+                    BASE_URL={this.props.BASE_URL}
+                      Index={i}
+                       Array={this.props.originalGoalsAndRoutineArr}
+                      // SingleAT={this.state.singleATitemArr[i]}
+                      // Path={this.state.singleGR.fbPath}
+                    />
+                    </div>
+
+                    <div style={{flex:'1'}} >
+                    <EditIcon
+                           
+                          openEditModal={() => {
+                            this.setState({
+                              showEditModal: true,
+                              indexEditing: this.findIndexByID(tempID),
+                              
+                            });
+                            
+                          }}
+                    
+                          showModal={this.state.showEditModal}
+                          indexEditing={this.state.indexEditing}
+                          i={this.findIndexByID(tempID)} //index to edit
+                          ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
+                          // FBPath={firebase
+                          //   .firestore()
+                          //   .collection("users")
+                          //   .doc(this.props.theCurrentUserID)}
+                        
+                          // refresh={this.grabFireBaseRoutinesGoalsData()}
+                        />
+
+                    </div>
+
+                    <div style={{flex:'1'}}>
+                    <FontAwesomeIcon
+                            icon={faList}
+                            title="SubList Available"
+                            style={{ color: "#ffffff"}}
+                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
+                            onClick={(e)=>{
+                            //  style.color = "#000000"
+                            }}
+                            size="small"
+                          />
                     </div>
                   </div>
               </div>
@@ -1205,7 +1258,7 @@ export default class FirebaseV2 extends React.Component {
                       //   .firestore()
                       //   .collection("users")
                       //   .doc(this.props.theCurrentUserID)}
-                      refresh={this.grabFireBaseRoutinesGoalsData}
+                      // refresh={this.grabFireBaseRoutinesGoalsData}
                       theCurrentUserId={this.props.theCurrentUserID}
                       theCurrentTAID={this.props.theCurrentTAID}
                     />
@@ -1228,7 +1281,7 @@ export default class FirebaseV2 extends React.Component {
                     /> */}
                   </Row>
                   <Row>
-                    {/* <EditGR
+                    <EditGR
                     BASE_URL={this.props.BASE_URL}
                       closeEditModal={() => {
                         this.setState({ showEditModal: false });
@@ -1242,10 +1295,10 @@ export default class FirebaseV2 extends React.Component {
                       //   .firestore()
                       //   .collection("users")
                       //   .doc(this.props.theCurrentUserID)}
-                      refresh={this.grabFireBaseRoutinesGoalsData} //function to refresh IS data
+                      //refresh={this.grabFireBaseRoutinesGoalsData} //function to refresh IS data
                       theCurrentUserId={this.props.theCurrentUserID}
                       theCurrentTAID={this.props.theCurrentTAID}
-                    /> */}
+                    />
                   </Row>
                 </div>
               )}
@@ -1263,7 +1316,7 @@ export default class FirebaseV2 extends React.Component {
                     title={tempTitle}
                     gr_id={tempID}
                     ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                    refresh={this.grabFireBaseRoutinesGoalsData}
+                    // refresh={this.grabFireBaseRoutinesGoalsData}
                     theCurrentUserId={this.props.theCurrentUserID}
                     theCurrentTAID={this.props.theCurrentTAID}
                   />
@@ -1315,13 +1368,15 @@ getSingleRoutines = (tempTitle, tempID, tempPersist, tempGR) => {
         <div key={"test0" + i} >
           <div
           
-            style={{ height:'5rem', width:'300px', backgroundColor:'#00000029' , marginBottom:'2px'}}
+            style={{ height:'5rem', width:'300px', backgroundColor:'#BBC7D7' , marginBottom:'2px'}}
           >
             
             <div style={{ display:'flex', justifyContent:'space-between' }}>
-              <div flex='1' style={{marginLeft:'1rem', marginTop:'10px', height:'4rem', borderRadius:'10px',width:'15rem', display:'flex', justifyContent:'space-between', backgroundColor:'#FF6B4A'}}>
+              <div flex='1' style={{marginLeft:'1rem', marginTop:'1rem', height:'4.5rem', borderRadius:'10px',width:'65%', display:'flex', justifyContent:'space-between', backgroundColor:'#FF6B4A', boxShadow:
+                "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
+              zIndex:'50%'}}>
               <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
-              <div >
+              <div style={{ marginLeft:'1rem'}} >
               {this.props.routines[i]["start_day_and_time"] && this.props.routines[i]["end_day_and_time"] ? (
                 <div
                   style={{
@@ -1352,7 +1407,7 @@ getSingleRoutines = (tempTitle, tempID, tempPersist, tempGR) => {
                   {/* ({date}) */}
             </div>
 
-           <div flex='1'>
+           <div style={{display:'flex', flexDirection:'column', justifyContent:'space-evenly'}}>
               <div>
 
               <Col xs={7} style={{ paddingRight: "1rem"  ,marginTop:'0.5rem'}}>
@@ -1365,7 +1420,7 @@ getSingleRoutines = (tempTitle, tempID, tempPersist, tempGR) => {
                     />
                   </Col>
               </div>
-              <div>
+              <div style={{marginLeft:'1.5rem'}}>
               {this.props.routines[i]["is_sublist_available"] ? (
                         <div>
                         <FontAwesomeIcon
@@ -1391,9 +1446,9 @@ getSingleRoutines = (tempTitle, tempID, tempPersist, tempGR) => {
               </div>
             </div>
 
-            <div style={{ display:"flex", paddingRight:'0.5rem'}}>
-              <div style={{display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
-                <div flex='1'>
+            <div style={{ display:"flex" , marginTop:'1rem'}}>
+              <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
+                <div style={{flex:'1'}}>
 
               <CopyIcon
                   openCopyModal={() => {
@@ -1409,60 +1464,9 @@ getSingleRoutines = (tempTitle, tempID, tempPersist, tempGR) => {
                 />
                 </div>
 
-                  <div flex='1'  >
-                <DeleteGR
-                      BASE_URL={this.props.BASE_URL}
-                        deleteIndex={this.findIndexByID(tempID)}
-                        Array={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                        // Path={firebase
-                        //   .firestore()
-                        //   .collection("users")
-                        //   .doc(this.props.theCurrentUserID)}
-                        refresh={this.grabFireBaseRoutinesGoalsData}
-                        theCurrentUserId={this.props.theCurrentUserID}
-                        theCurrentTAID={this.props.theCurrentTAID}
-                      />
-                     </div>
-              </div>
-                <div style={{display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
-                  <div>
-                  <FontAwesomeIcon
-                          icon={faList}
-                          title="SubList Available"
-                          style={{ color: "#ffffff"}}
-                          // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
-                          onClick={(e)=>{
-                          //  style.color = "#000000"
-                          }}
-                          size="small"
-                        />
-                  </div>
+                <div style={{flex:'1', marginLeft:'1rem'}}>
 
-                  <div>
-                  {/* <EditIcon
-                        openEditModal={() => {
-                          this.setState({
-                            showEditModal: true,
-                            indexEditing: this.findIndexByID(tempID),
-                          });
-                          
-                        }}
-                        showModal={this.state.showEditModal}
-                        indexEditing={this.state.indexEditing}
-                        i={this.findIndexByID(tempID)} //index to edit
-                        ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                        // FBPath={firebase
-                        //   .firestore()
-                        //   .collection("users")
-                        //   .doc(this.props.theCurrentUserID)}
-                        refresh={this.grabFireBaseRoutinesGoalsData}
-                      /> */}
-
-                  </div>
-
-                  <div>
-
-                    <Row >
+                <Row >
                       {this.props.routines[i]["is_available"] ? (
                         <div >
                           <FontAwesomeIcon
@@ -1494,6 +1498,68 @@ getSingleRoutines = (tempTitle, tempID, tempPersist, tempGR) => {
                       )}
                      
                     </Row>
+                </div>
+
+                  <div style={{flex:'1'}} >
+                <DeleteGR
+                      BASE_URL={this.props.BASE_URL}
+                        deleteIndex={this.findIndexByID(tempID)}
+                        Array={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
+                        // Path={firebase
+                        //   .firestore()
+                        //   .collection("users")
+                        //   .doc(this.props.theCurrentUserID)}
+                        // refresh={this.grabFireBaseRoutinesGoalsData}
+                        theCurrentUserId={this.props.theCurrentUserID}
+                        theCurrentTAID={this.props.theCurrentTAID}
+                      />
+                     </div>
+              </div>
+                <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
+              
+                  <div>
+                  <MustDoAT
+                    BASE_URL={this.props.BASE_URL}
+                      Index={i}
+                       Array={this.props.originalGoalsAndRoutineArr}
+                      // SingleAT={this.state.singleATitemArr[i]}
+                      // Path={this.state.singleGR.fbPath}
+                    />
+                  </div>
+
+                  <div>
+                  <EditIcon
+                        openEditModal={() => {
+                          this.setState({
+                            showEditModal: true,
+                            indexEditing: this.findIndexByID(tempID),
+                          });
+                          
+                        }}
+                        showModal={this.state.showEditModal}
+                        indexEditing={this.state.indexEditing}
+                        i={this.findIndexByID(tempID)} //index to edit
+                        ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
+                        // FBPath={firebase
+                        //   .firestore()
+                        //   .collection("users")
+                        //   .doc(this.props.theCurrentUserID)}
+                        // refresh={this.grabFireBaseRoutinesGoalsData}
+                      />
+
+                  </div>
+
+                  <div>
+                  <FontAwesomeIcon
+                          icon={faList}
+                          title="SubList Available"
+                          style={{ color: "#ffffff"}}
+                          // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
+                          onClick={(e)=>{
+                          //  style.color = "#000000"
+                          }}
+                          size="small"
+                        />
                   </div>
                 </div>
             </div>
@@ -1516,7 +1582,7 @@ getSingleRoutines = (tempTitle, tempID, tempPersist, tempGR) => {
                     //   .firestore()
                     //   .collection("users")
                     //   .doc(this.props.theCurrentUserID)}
-                    refresh={this.grabFireBaseRoutinesGoalsData} //function to refresh IS data
+                    // refresh={this.grabFireBaseRoutinesGoalsData} //function to refresh IS data
                     theCurrentUserId={this.props.theCurrentUserID}
                     theCurrentTAID={this.props.theCurrentTAID}
                     // chnagePhoto = {this.changePhotoIcon()}
@@ -1584,7 +1650,7 @@ getSingleRoutines = (tempTitle, tempID, tempPersist, tempGR) => {
                     //   .firestore()
                     //   .collection("users")
                     //   .doc(this.props.theCurrentUserID)}
-                    refresh={this.grabFireBaseRoutinesGoalsData}
+                    // refresh={this.grabFireBaseRoutinesGoalsData}
                     theCurrentUserId={this.props.theCurrentUserID}
                     theCurrentTAID={this.props.theCurrentTAID}
                   />
@@ -1603,16 +1669,18 @@ getSingleRoutines = (tempTitle, tempID, tempPersist, tempGR) => {
                     //   .firestore()
                     //   .collection("users")
                     //   .doc(this.props.theCurrentUserID)}
-                    refresh={this.grabFireBaseRoutinesGoalsData}
+                    // refresh={this.grabFireBaseRoutinesGoalsData}
+                    
                   />
                 </Row>
                 <Row>
                   <EditGR
                   BASE_URL={this.props.BASE_URL}
                     closeEditModal={() => {
-                      this.setState({ showEditModal: true });
+                      this.setState({ showEditModal: false });
                       this.props.updateFBGR();
                     }}
+                 
                     showModal={this.state.showEditModal}
                     indexEditing={this.state.indexEditing}
                     i={this.findIndexByID(tempID)} //index to edit
@@ -1621,7 +1689,7 @@ getSingleRoutines = (tempTitle, tempID, tempPersist, tempGR) => {
                     //   .firestore()
                     //   .collection("users")
                     //   .doc(this.props.theCurrentUserID)}
-                    refresh={this.grabFireBaseRoutinesGoalsData} //function to refresh IS data
+                    // refresh={this.grabFireBaseRoutinesGoalsData} //function to refresh IS data
                     theCurrentUserId={this.props.theCurrentUserID}
                     theCurrentTAID={this.props.theCurrentTAID}
                   />
@@ -1642,7 +1710,7 @@ getSingleRoutines = (tempTitle, tempID, tempPersist, tempGR) => {
                   title={tempTitle}
                   gr_id={tempID}
                   ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                  refresh={this.grabFireBaseRoutinesGoalsData}
+                  // refresh={this.grabFireBaseRoutinesGoalsData}
                   theCurrentUserId={this.props.theCurrentUserID}
                   theCurrentTAID={this.props.theCurrentTAID}
                 />
@@ -1962,7 +2030,7 @@ return this.state.displaySingleRoutines;
                           //   .firestore()
                           //   .collection("users")
                           //   .doc(this.props.theCurrentUserID)}
-                          refresh={this.grabFireBaseRoutinesGoalsData}
+                          // refresh={this.grabFireBaseRoutinesGoalsData}
                           theCurrentUserId={this.props.theCurrentUserID}
                           theCurrentTAID={this.props.theCurrentTAID}
                         />
@@ -1981,7 +2049,7 @@ return this.state.displaySingleRoutines;
                           //   .firestore()
                           //   .collection("users")
                           //   .doc(this.props.theCurrentUserID)}
-                          refresh={this.grabFireBaseRoutinesGoalsData}
+                          // refresh={this.grabFireBaseRoutinesGoalsData}
                         />
                       </Row>
                     </Col>
@@ -2001,7 +2069,7 @@ return this.state.displaySingleRoutines;
                       //   .firestore()
                       //   .collection("users")
                       //   .doc(this.props.theCurrentUserID)}
-                      refresh={this.grabFireBaseRoutinesGoalsData} //function to refresh IS data
+                      // refresh={this.grabFireBaseRoutinesGoalsData} //function to refresh IS data
                       theCurrentUserId={this.props.theCurrentUserID}
                       theCurrentTAID={this.props.theCurrentTAID}
                     />
@@ -2069,7 +2137,7 @@ return this.state.displaySingleRoutines;
                       //   .firestore()
                       //   .collection("users")
                       //   .doc(this.props.theCurrentUserID)}
-                      refresh={this.grabFireBaseRoutinesGoalsData}
+                      // refresh={this.grabFireBaseRoutinesGoalsData}
                       theCurrentUserId={this.props.theCurrentUserID}
                       theCurrentTAID={this.props.theCurrentTAID}
                     />
@@ -2088,7 +2156,7 @@ return this.state.displaySingleRoutines;
                       //   .firestore()
                       //   .collection("users")
                       //   .doc(this.props.theCurrentUserID)}
-                      refresh={this.grabFireBaseRoutinesGoalsData}
+                      // refresh={this.grabFireBaseRoutinesGoalsData}
                     />
                   </Row>
                   <Row>
@@ -2106,7 +2174,7 @@ return this.state.displaySingleRoutines;
                       //   .firestore()
                       //   .collection("users")
                       //   .doc(this.props.theCurrentUserID)}
-                      refresh={this.grabFireBaseRoutinesGoalsData} //function to refresh IS data
+                      // refresh={this.grabFireBaseRoutinesGoalsData} //function to refresh IS data
                       theCurrentUserId={this.props.theCurrentUserID}
                       theCurrentTAID={this.props.theCurrentTAID}
                     />
@@ -2129,7 +2197,7 @@ return this.state.displaySingleRoutines;
                     theCurrentUserId={this.props.theCurrentUserID}
                     theCurrentTAID={this.props.theCurrentTAID}
                     ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                    refresh={this.grabFireBaseRoutinesGoalsData}
+                    // refresh={this.grabFireBaseRoutinesGoalsData}
                   />
               </Row>
 
@@ -2326,7 +2394,7 @@ return this.state.displaySingleRoutines;
                   onClick={(e) => {
                     e.stopPropagation();
                     this.resetRoutinesGoals(this.props.goals[i]);
-                    this.grabFireBaseRoutinesGoalsData();
+                    // this.grabFireBaseRoutinesGoalsData();
                   }}
                 >
                   Reset
@@ -2517,7 +2585,7 @@ return this.state.displaySingleRoutines;
                   onClick={(e) => {
                     e.stopPropagation();
                     this.resetRoutinesGoals(this.props.routines[i]);
-                    this.grabFireBaseRoutinesGoalsData();
+                    // this.grabFireBaseRoutinesGoalsData();
                   }}
                 >
                   Reset
@@ -2625,8 +2693,10 @@ return this.state.displaySingleRoutines;
           <div> </div>
         )}
         <div style={{display:'flex'}}>  
-        <div>
+        <div >
+            <div>
               {this.abstractedMainEventGRShowButtons()}
+            </div>
               <div>
               {this.abstractedRoutineList(displayRoutines)}
               </div>
@@ -2637,7 +2707,6 @@ return this.state.displaySingleRoutines;
             style={{
               width: this.state.modalWidth,
               marginTop: "0",
-              marginRight: "15px",
             }}
             sm="auto"
             md="auto"
@@ -2654,7 +2723,7 @@ return this.state.displaySingleRoutines;
                 <div></div>
               )}
 
-              <div flex='1'>
+              <div style={{flex:'2'}}>
 
               {this.state.singleGR.show ? (
           this.abstractedActionsAndTaskList()
@@ -2663,7 +2732,7 @@ return this.state.displaySingleRoutines;
         )}
               </div>
 
-              <div flex='1'>
+              <div style={{flex:'2'}}>
               {this.state.singleAT.show ? (
               this.abstractedInstructionsAndStepsList()
             ): (
@@ -2673,8 +2742,6 @@ return this.state.displaySingleRoutines;
               </div>
             </div>
           </Col>
-        ) 
-
       </div>
       </div>
         {this.props.showGoal ? (
@@ -2682,7 +2749,6 @@ return this.state.displaySingleRoutines;
             style={{
               width: this.state.modalWidth,
               marginTop: "0",
-              marginRight: "15px",
             }}
             sm="auto"
             md="auto"
@@ -2802,8 +2868,6 @@ shows entire list of goals and routines
       <div
         style={{
         //  width: this.state.modalWidth,
-       
-         
         }}
       >
         {/* <Modal.Header onHide={this.props.closeRoutine} closeButton> */}
@@ -2843,14 +2907,14 @@ shows entire list of goals and routines
            * To allow for the Modals to pop up in front of one another
            * I have inserted the IS and AT lists inside the RT Goal Modal */}
 
-          <div
+          {/* <div
             style={{
               boxShadow:
                 "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
             }}
           >
             {this.state.addNewGRModalShow ? this.AddNewGRModalAbstracted() : ""}
-          </div>
+          </div> */}
           <div
             style={{
               boxShadow:
@@ -2861,7 +2925,9 @@ shows entire list of goals and routines
          {/* { this.abstractedRoutineListOnClick(displayRoutines)}     */}
               </div>
 
-            <div style={{ marginTop:'1rem', height: "1400px" }}>
+            <div style={{ marginTop:'1rem', backgroundColor:'#BBC7D7', height:'100vh',  boxShadow:
+                "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
+              zIndex:'50%'}}>
               {displayRoutines}
             </div>
           
@@ -2877,7 +2943,6 @@ shows entire list of goals and routines
         style={{
           marginTop: "3rem",
           marginLeft:'2px',
-          width: this.state.modalWidth,
        
          
         }}
@@ -2888,12 +2953,11 @@ shows entire list of goals and routines
           <h5 style={{color:'#ffffff'}}  >Routines</h5>
           <button
                size="small"
-               style={{height:'1rem'}}
+               style={{height:'1.5rem',width:'1.5rem', backgroundColor:'#FF6B4A',  backgroundImage: `url(${plus})` , borderColor:'#FF6B4A', border:'0px'}}
                 onClick={() => {
                   this.addRoutineOnClick();
                 }}
               >
-                Add Routine
               </button>
           </div>
 
@@ -2938,7 +3002,7 @@ shows entire list of goals and routines
          {/* { this.abstractedRoutineListOnClick(displayRoutines)}     */}
               </div>
 
-            <div style={{ marginTop:'1rem', height: "1400px" }}>
+            <div style={{ marginTop:'1rem', height: "100vh",  backgroundColor:'#BBC7D7'  }}>
               {displayRoutines}
             </div>
           
@@ -2999,7 +3063,7 @@ shows entire list of goals and routines
           color: "#FFFFFF",
           backgroundColor: "#bbc8d7",}}
             onClick={() => {
-              this.props.grabFireBaseRoutinesGoalsData();
+              // this.props.grabFireBaseRoutinesGoalsData();
               this.props.toggleShowRoutine(); 
               // this.setState({
               //   showRoutineGoalModal: !this.state.showRoutineGoalModal,
@@ -3091,7 +3155,7 @@ shows entire list of goals and routines
           this.setState({ addNewGRModalShow: false });
         }}
         ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-        refresh={this.grabFireBaseRoutinesGoalsData}
+        // refresh={this.grabFireBaseRoutinesGoalsData}
         isRoutine={this.state.isRoutine}
         width={this.state.modalWidth}
         todayDateObject={this.props.todayDateObject}
@@ -3719,7 +3783,8 @@ axios.get( this.props.BASE_URL + `currentStatus/${userId}`).then((response) => {
       <div
         style={{
           marginTop:'3rem',
-          marginLeft:'2px'
+          marginLeft:'2px',
+          width:this.state.modalWidth,
         }}
       >
         <div
@@ -3804,7 +3869,7 @@ axios.get( this.props.BASE_URL + `currentStatus/${userId}`).then((response) => {
         style={{
           marginTop:'3rem',
           marginLeft: "2px",
-       //  width:this.state.modalWidth,
+         width:this.state.modalWidth,
         }}
       >
         <div
@@ -3841,7 +3906,7 @@ axios.get( this.props.BASE_URL + `currentStatus/${userId}`).then((response) => {
                 timeSlot={this.state.timeSlotForAT} //timeSlot[0]== start_time, timeSlot[1] == end_time
                 refresh={this.refreshATItem} //refreshes the list of AT
                 ATArray={this.state.singleATitemArr}
-                refreshGR={this.grabFireBaseRoutinesGoalsData}
+                // refreshGR={this.grabFireBaseRoutinesGoalsData}
 
                 ATItem={this.state.singleGR} //The parent item
                 hideNewATModal={() => {
@@ -3861,7 +3926,7 @@ axios.get( this.props.BASE_URL + `currentStatus/${userId}`).then((response) => {
          
         
           <ListGroup>
-            <div style={{marginTop:'1rem', height: "500px"}}>
+            <div style={{marginTop:'1rem', height: "100vh", backgroundColor:"#BBC7D7"}}>
               {this.state.singleGR.arr}
             </div>
             </ListGroup>

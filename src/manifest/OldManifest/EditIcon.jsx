@@ -9,14 +9,14 @@ export default class EditIcon extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showEditModal: false,
+            showEditModal: true,
         };
     }
 
     showIcon = () => {
       console.log("In edit icon")
         return (
-          <div style={{ marginLeft: "5px" }}>
+          <div>
             <FontAwesomeIcon
               title="Edit Item"
               onMouseOver={(event) => {

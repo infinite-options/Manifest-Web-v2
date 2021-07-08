@@ -16,7 +16,7 @@ export default class CopyIcon extends Component {
     showIcon = () => {
         console.log(this.props.showModal)
         return (
-          <div style={{ marginLeft: "5px" }}>
+          <div >
             <FontAwesomeIcon
               title="Copy Item"
 
