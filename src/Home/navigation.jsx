@@ -49,14 +49,17 @@ const useStyles = makeStyles({
 });
 
 /* Navigation Bar component function */
-export function Navigation() {
+export function Navigation({userID}) {
   const history = useHistory();
 
   const classes = useStyles();
 
   /* History of the HomePage URL which is shown url tab */
   function homeNavigation() {
-    history.push('/home');
+    console.log("NAV HERE");
+    console.log(userID);
+    history.push(
+      {pathname: "/home", state: userID});
   }
 
   /* History of the ContactPage URL which is shown url tab */

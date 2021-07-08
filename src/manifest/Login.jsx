@@ -16,7 +16,7 @@ import { AuthContext } from '../auth/AuthContext';
 
 import { GoogleLogin } from "react-google-login";
 import axios from "axios";
-import { useState, useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import SocialLogin from '../components/LogIn/SocialLogin'
 
 
@@ -66,7 +66,8 @@ const useStyles = makeStyles({
             if (response.data.result !== false) {
               setLoggedIn(true);
               console.log("response id",response.data.result, loggedIn)
-              history.push("/home");
+              GetUserID(email);
+              // useEffect(() => {GetUserID(email.toString());},[])
             }else{
               setLoggedIn(false);
               setValidation(response.data.message)
@@ -91,10 +92,11 @@ const useStyles = makeStyles({
              // username: e,  1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com
             //})
             .then((response) => {
-              console.log(response.data);
+              console.log(response);
               if (response.data !== false) {
                 console.log("Login successful")
-                history.push("/home");
+                // useEffect(() => {GetUserID(e);},[])
+                GetUserID(e);
               } else {
                 console.log("social sign up with", e);
                 this.setState({
@@ -109,6 +111,28 @@ const useStyles = makeStyles({
             });
         }
       };
+  
+
+
+      function GetUserID(e){
+        // useEffect(() => {
+          axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/usersOfTA/" + e)
+          .then((response) =>{
+              console.log(response);
+              if (response.result !== false){
+                const userID = response.data.result[0].user_unique_id;
+                console.log(userID);
+                  history.push({
+                    pathname: "/home",
+                    state: userID});
+              }
+              else{console.log("No User Found");}
+          })
+          .catch((error) => {
+              console.log(error);
+          });
+        // },[])
+      } 
 
     return(
 
