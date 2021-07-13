@@ -21,6 +21,11 @@ import {
   } from '@fortawesome/free-solid-svg-icons';
 import Moment from 'moment';
 import { Navigation } from '../Home/navigation';
+import Firebasev2 from "../manifest/OldManifest/Firebasev2";
+import {
+    faList,
+  } from "@fortawesome/free-solid-svg-icons";
+
 
 
 import {
@@ -66,7 +71,9 @@ const useStyles = makeStyles({
 
 export default function MainPage(props) {
 //    const { profile, setProfile } = useContext(AuthContext);
-//    console.log(profile);
+//    console.log(props.location.state);
+//    console.log(props.location.routines);
+//    console.log(props.routines);
 
     const currentUser = props.location.state; //matts testing 72
     console.log(props.location.state);
@@ -85,11 +92,31 @@ export default function MainPage(props) {
     const [rows, setRows] = useState([]);
     const [isLoading, setLoading] = useState(true);
 
+    //things for firebasev2
+    const BASE_URL = props.location.BASE_URL;
+    const theCurrentUserID= props.location.state;
+    const theCurrentTAID= props.location.ta_people_id;
+    const toggleShowRoutine= props.location.toggleShowRoutine;
+    const grabFireBaseRoutinesGoalsData= props.location.grabFireBaseRoutinesGoalsData;
+    const originalGoalsAndRoutineArr= props.location.originalGoalsAndRoutineArr;
+    const goals= props.location.goals;
+    const routines= props.location.routines;
+    const showRoutineGoalModal= false;
+    const closeGoal= true;
+    const closeRoutine= true;
+    const showRoutine= props.location.showRoutineModal;
+    const showGoal= props.location.showGoalModal;
+    const todayDateObject= props.location.todayDateObject;
+    const calendarView= props.location.calendarView;
+    const dateContext= props.location.dateContext;
+    const updateFBGR= props.location.updateFBGR;
+
     //api call and store response in historyGot
  
     useEffect(() => {
         axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getHistory/" + currentUser)
         .then((response) =>{
+            console.log("Got Axios");
             for(var i=0; i <response.data.result.length; i++){
                // console.log(response.data.result[i]);
                 historyGot.push(response.data.result[i]);
@@ -247,7 +274,7 @@ export default function MainPage(props) {
                         }
                         else{bigList[i].days[d] = <div className = "nsA"></div>;}
                     }
-                    else if(bigList[i].days[d] == "completed"){
+                    else if(bigList[i].days[d] == "complete"){
                         bigList[i].days[d] = <div className = "cA"></div>;
                     }
                     else if(bigList[i].days[d] == "in_progress"){
@@ -265,7 +292,7 @@ export default function MainPage(props) {
                         }
                         else{bigList[i].days[d] = <div className = "nsI"></div>;}
                     }
-                    else if(bigList[i].days[d] == "completed"){
+                    else if(bigList[i].days[d] == "complete"){
                         bigList[i].days[d] = <div className = "cI"></div>;
                     }
                 }
@@ -276,11 +303,10 @@ export default function MainPage(props) {
         function checkAbove(above, d){
             for (const checks of bigList){
                 if(above == checks.title){
-                    if (checks.days[d] == "completed"){
+                    if (checks.days[d] == "completed" || checks.days[d] == "complete"){
                         return true;}
-                    if(checks.days[d]. props != undefined){
-                        if (checks.days[d].props.className == "cR" || checks.days[d].props.className == "cA"
-                            || checks.days[d].props.className == "ipA"){
+                    if(checks.days[d].props != undefined){
+                        if (checks.days[d].props.className == "cR" || checks.days[d].props.className == "cA"){
                             return true;
                         }
                     }
@@ -292,16 +318,24 @@ export default function MainPage(props) {
     }
 
     function addNames(bigList){
+        // let tempTitle = routines[i].title;
         for (var i=0; i< bigList.length; i++){
+            var x =0;
+            for (x=0; x < routines.length; x++){
+                if(bigList[i].title == routines[x].title){break;}
+            }
+            console.log(x);
             for(var d=0; d<bigList[i].days.length; d++){
                 if(bigList[i].type == "Routine"){
-                    bigList[i].tBox = <div className = "routineName">{bigList[i].title}</div>
+                    bigList[i].tBox = routineBoxes(x);
                 }
                 else if(bigList[i].type == "Action"){
-                    bigList[i].tBox = <div className = "actionName">{bigList[i].title}</div>
+                    bigList[i].tBox = actionBoxes(bigList[i].title);
+                    // bigList[i].tBox = <div className = "actionName">{bigList[i].title}</div>
                 }
                 else{
-                    bigList[i].tBox = <div className = "instructionName">{bigList[i].title}</div>
+                    bigList[i].tBox = insBoxes(bigList[i].title);
+                    // bigList[i].tBox = <div className = "instructionName">{bigList[i].title}</div>
                 }
 
             }
@@ -309,6 +343,170 @@ export default function MainPage(props) {
         return (bigList);
     }
 
+
+    //---------just returns the css for the routines -----------
+    function routineBoxes(x) {
+    // <div className = "routineName">{bigList[i].title}</div>
+    return(
+    <div style={{ height: '5rem', width: '300px', backgroundColor: '#BBC7D7', marginBottom: '2px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div flex='1' style={{
+                marginTop: '1rem', marginLeft: '1rem', height: '4.5rem', borderRadius: '10px', width: '85%', display: 'flex', justifyContent: 'space-between', backgroundColor: '#FF6B4A', boxShadow:
+                    "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
+                zIndex: '50%'
+            }}>
+                <div flex='1' style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }} >
+                    <div style={{ marginLeft: '1rem' }}>
+                        {routines[x]["start_day_and_time"] && routines[x]["end_day_and_time"] ? (
+                            <div
+                                style={{
+                                    fontSize: "8px",
+                                    color: '#ffffff'
+                                }}
+                            >
+                                { formatDateTime(routines[x]["start_day_and_time"])}
+                          -
+                                { formatDateTime(routines[x]["end_day_and_time"])}
+                            </div>
+                        ) : (
+                            <Col> </Col>
+                        )}
+
+                    </div>
+
+                    <div style={{ color: '#ffffff', size: '24px', textDecoration: 'underline', fontWeight: 'bold', marginLeft: "10px" }}>
+                        {routines[x].title}
+                    </div>
+
+                    {/* ({date}) */}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                    <div>
+
+                        <Col xs={7} style={{ paddingRight: "1rem", marginTop: '0.5rem' }}>
+                            <img
+                                src={routines[x]["photo"]}
+                                alt="Routines"
+                                className="center"
+                                height="28px"
+                                width="28px"
+                            />
+                        </Col>
+                    </div>
+                    <div style={{ paddingRight: "1.3rem", marginLeft: '1.5rem' }}>
+                        {routines[x]["is_sublist_available"] ? (
+                            <div>
+                                <FontAwesomeIcon
+                                    icon={faList}
+                                    title="SubList Available"
+                                    style={{ color: "#ffffff" }}
+                                    // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
+                                    //onClick={this.ListFalse}
+                                    size="small"
+                                />
+                            </div>
+                        ) : (
+                            <div
+                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShowATModal: false})}}>
+                            >
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>);
+}
+
+function actionBoxes(title) {
+    // <div className = "routineName">{bigList[i].title}</div>
+    return(
+    // <div style={{ height: '5rem', width: '300px', backgroundColor: '#BBC7D7', marginBottom: '2px' }}>
+    //     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div flex='1' style={{
+                marginTop: '1rem', marginLeft: '1rem', height: '4.5rem', borderRadius: '10px', width: '13rem', display: 'flex', justifyContent: 'space-between', backgroundColor: '#F8BE28', boxShadow:
+                    "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
+                zIndex: '50%'
+            }}>
+                <div flex='1' style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }} >
+                    <div style={{ color: '#ffffff', size: '24px', textDecoration: 'underline', fontWeight: 'bold', marginLeft: "10px" }}>
+                        {title}
+                    </div>
+                </div>
+                {/* <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                    {/* <div style={{ paddingRight: "1.3rem", marginLeft: '1.5rem' }}>
+                        {routines[x]["is_sublist_available"] ? (
+                            <div>
+                                <FontAwesomeIcon
+                                    icon={faList}
+                                    title="SubList Available"
+                                    style={{ color: "#ffffff" }}
+                                    // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
+                                    //onClick={this.ListFalse}
+                                    size="small"
+                                />
+                            </div>
+                        ) : (
+                            <div
+                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShowATModal: false})}}>
+                            >
+                            </div>
+                        )}
+                    </div> */}
+                </div> 
+
+
+            // </div>
+        // </div>
+    // </div>
+    );
+}
+
+function insBoxes(title) {
+    // <div className = "routineName">{bigList[i].title}</div>
+    return(
+    // <div style={{ height: '5rem', width: '300px', backgroundColor: '#BBC7D7', marginBottom: '2px' }}>
+    //     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div flex='1' style={{
+                marginTop: '1rem', marginLeft: '1rem', height: '4.5rem', borderRadius: '10px', width: '13rem', display: 'flex', justifyContent: 'space-between', backgroundColor: '#67ABFC', boxShadow:
+                    "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
+                zIndex: '50%'
+            }}>
+                <div flex='1' style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }} >
+                    <div style={{ color: '#ffffff', size: '24px', textDecoration: 'underline', fontWeight: 'bold', marginLeft: "10px" }}>
+                        {title}
+                    </div>
+                </div>
+                {/* <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                    {/* <div style={{ paddingRight: "1.3rem", marginLeft: '1.5rem' }}>
+                        {routines[x]["is_sublist_available"] ? (
+                            <div>
+                                <FontAwesomeIcon
+                                    icon={faList}
+                                    title="SubList Available"
+                                    style={{ color: "#ffffff" }}
+                                    // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
+                                    //onClick={this.ListFalse}
+                                    size="small"
+                                />
+                            </div>
+                        ) : (
+                            <div
+                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShowATModal: false})}}>
+                            >
+                            </div>
+                        )}
+                    </div> */}
+                </div> 
+
+
+            // </div>
+        // </div>
+    // </div>
+    );
+}
 
 // --------   when routine is clicked on. set children show to true, re-render with setRows ----------
     function clickHandle(name){
@@ -388,6 +586,12 @@ export default function MainPage(props) {
         return decodeURIComponent(results[2].replace(/\+/g, " "));
       };
 
+    function formatDateTime(str) {
+        let newTime = new Date(str).toLocaleTimeString();
+        newTime = newTime.substring(0, 5) + " " + newTime.slice(-2);
+        return newTime;
+      }
+
     //-----------------------
 
     if(isLoading){
@@ -395,125 +599,152 @@ export default function MainPage(props) {
             <div>
                 <br></br>
                 <br></br>
-                <h1>Loading...</h1>;
+                <h1>Loading...</h1>
             </div>
         )
     }
     return (
         <div>
-            <Navigation userID= {currentUser} />
-            <div>
-                <br></br>
-                <Box paddingTop={3} backgroundColor="#bbc8d7">
-                    <div className={classes.buttonContainer}>
-                        <Box
-                            bgcolor="#889AB5"
-                            className={classes.dateContainer}
-                            style={{ width: '100%' }}
+            <Navigation userID={currentUser} />
+            <div display= "flex" flex-direction="row">
+                {/* <col /> */}
+                <div>
+                    <br></br>
+                    <Box paddingTop={3} backgroundColor="#bbc8d7">
+                        <div className={classes.buttonContainer}>
+                            <Box
+                                bgcolor="#889AB5"
+                                className={classes.dateContainer}
+                                style={{ width: '100%' }}
                             // flex
-                        >
-                            <Container>
-                <Row style={{ marginTop: '15px' }}>
-                  <Col>
-                    <div>
-                      <FontAwesomeIcon
-                        // style={{ marginLeft: "50%" }}
+                            >
+                                <Container>
+                                    <Row style={{ marginTop: '15px' }}>
+                                        <Col>
+                                            <div>
+                                                <FontAwesomeIcon
+                                                    // style={{ marginLeft: "50%" }}
 
-                        icon={faChevronLeft}
-                        size="2x"
-                        onClick={(e) => {
-                          prevWeek();
-                        }}
-                      />
-                    </div>
-                  </Col>
-                  <Col
-                    md="auto"
-                    style={{ textAlign: 'center' }}
-                    className="bigfancytext"
-                  >
-                    <p> Week of {Moment(currentDate).format('D MMMM YYYY')} </p>
-                    <p
-                      style={{ marginBottom: '0', height: '19.5px' }}
-                      className="normalfancytext"
-                    >
-                      {Intl.DateTimeFormat().resolvedOptions().timeZone}
-                    </p>
-                  </Col>
-                  <Col>
-                    <FontAwesomeIcon
-                      // style={{ marginLeft: "50%" }}
-                      style={{ float: 'right' }}
-                      icon={faChevronRight}
-                      size="2x"
-                      className="X"
-                      onClick={(e) => {
-                        nextWeek();
-                      }}
-                    />
-                  </Col>
-                </Row>
-              </Container>
-                        </Box>
-                        <Button className={classes.buttonSelection} onClick={()=> history.push("/matts") } id="one">
-                          History
-                        </Button>
-                        <Button className={classes.buttonSelection} id="one">
-                          Events
-                        </Button>
-                        <Button
-                            className={classes.buttonSelection}
-                            // onClick={toggleShowRoutine}
-                            id="one">
-                            Routines
-                        </Button>
+                                                    icon={faChevronLeft}
+                                                    size="2x"
+                                                    onClick={(e) => {
+                                                        prevWeek();
+                                                    }}
+                                                />
+                                            </div>
+                                        </Col>
+                                        <Col
+                                            md="auto"
+                                            style={{ textAlign: 'center' }}
+                                            className="bigfancytext"
+                                        >
+                                            <p> Week of {Moment(currentDate).format('D MMMM YYYY')} </p>
+                                            <p
+                                                style={{ marginBottom: '0', height: '19.5px' }}
+                                                className="normalfancytext"
+                                            >
+                                                {Intl.DateTimeFormat().resolvedOptions().timeZone}
+                                            </p>
+                                        </Col>
+                                        <Col>
+                                            <FontAwesomeIcon
+                                                // style={{ marginLeft: "50%" }}
+                                                style={{ float: 'right' }}
+                                                icon={faChevronRight}
+                                                size="2x"
+                                                className="X"
+                                                onClick={(e) => {
+                                                    nextWeek();
+                                                }}
+                                            />
+                                        </Col>
+                                    </Row>
+                                </Container>
 
-                        <Button className={classes.buttonSelection} onClick={()=> history.push(
-                            {pathname: "/main", state: currentUser}) } id="one">
-                         Goals
-                        </Button>
-                        <Button className={classes.buttonSelection} id="one">
-                            About
-                        </Button>
+                            </Box>
+                            <Button className={classes.buttonSelection} onClick={()=> history.push("/matts") } id="one">
+                            History
+                            </Button>
+                            <Button className={classes.buttonSelection} id="one">
+                            Events
+                            </Button>
+                            <Button
+                                className={classes.buttonSelection}
+                                // onClick={toggleShowRoutine}
+                                id="one">
+                                Routines
+                            </Button>
 
-                        
-                    </div>
-                </Box>
-            </div>   
-            <div>
-                <TableContainer component={Paper}>
-                    <Table className={classes.table} aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell align="left">{getDayName(7)}</TableCell>
-                                <TableCell align="left">{getDayName(6)}</TableCell>
-                                <TableCell align="left">{getDayName(5)}</TableCell>
-                                <TableCell align="left">{getDayName(4)}</TableCell>
-                                <TableCell align="left">{getDayName(3)}</TableCell>
-                                <TableCell align="left">{getDayName(2)}</TableCell>
-                                <TableCell align="left">{getDayName(1)}</TableCell>
-                                <TableCell align="right"></TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {onlyAllowed().map((row) => (
-                                <TableRow key={row.name} >
-                                <TableCell align="right">{row.sun}</TableCell>
-                                <TableCell align="right">{row.mon}</TableCell>
-                                <TableCell align="right">{row.tue}</TableCell>
-                                <TableCell align="right">{row.wed}</TableCell>
-                                <TableCell align="right">{row.thurs}</TableCell>
-                                <TableCell align="right">{row.fri}</TableCell>
-                                <TableCell align="right">{row.sat}</TableCell>
-                                <TableCell align="right" component="th" scope="row" onClick={() =>clickHandle(row.name)}>
-                                    {row.tBox}
-                                </TableCell>
+                            <Button className={classes.buttonSelection} onClick={()=> history.push(
+                                {pathname: "/main", state: currentUser}) } id="one">
+                            Goals
+                            </Button>
+                            <Button className={classes.buttonSelection} id="one">
+                                About
+                            </Button>
+
+
+                        </div>
+                    </Box>
+                    {/* <col /> */}
+                    <TableContainer component={Paper}>
+                        <Table className={classes.table} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell align="left">{getDayName(7)}</TableCell>
+                                    <TableCell align="left">{getDayName(6)}</TableCell>
+                                    <TableCell align="left">{getDayName(5)}</TableCell>
+                                    <TableCell align="left">{getDayName(4)}</TableCell>
+                                    <TableCell align="left">{getDayName(3)}</TableCell>
+                                    <TableCell align="left">{getDayName(2)}</TableCell>
+                                    <TableCell align="left">{getDayName(1)}</TableCell>
+                                    <TableCell align="right"></TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </div>     
+                            </TableHead>
+                            <TableBody>
+                                {onlyAllowed().map((row) => (
+                                    <TableRow key={row.name} >
+                                        <TableCell align="right">{row.sun}</TableCell>
+                                        <TableCell align="right">{row.mon}</TableCell>
+                                        <TableCell align="right">{row.tue}</TableCell>
+                                        <TableCell align="right">{row.wed}</TableCell>
+                                        <TableCell align="right">{row.thurs}</TableCell>
+                                        <TableCell align="right">{row.fri}</TableCell>
+                                        <TableCell align="right">{row.sat}</TableCell>
+                                        <TableCell align="right" component="th" scope="row" onClick={() => clickHandle(row.name)}>
+                                            {row.tBox}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </div>
+                {/* <col /> */}
+                {/* <col> */}
+                <Firebasev2
+                    BASE_URL={BASE_URL}
+                    theCurrentUserID={theCurrentUserID}
+                    theCurrentTAID={theCurrentTAID}
+                    toggleShowRoutine={toggleShowRoutine}
+                    grabFireBaseRoutinesGoalsData={
+                        grabFireBaseRoutinesGoalsData}
+                    originalGoalsAndRoutineArr={
+                        originalGoalsAndRoutineArr}
+                    goals={goals}
+                    routines={routines}
+                    showRoutineGoalModal={false}
+                    closeGoal={true}
+                    closeRoutine={true}
+                    showRoutine={showRoutine}
+                    showGoal={showGoal}
+                    todayDateObject={todayDateObject}
+                    calendarView={calendarView}
+                    dateContext={dateContext}
+                    updateFBGR={updateFBGR}
+                />
+                {/* </col> */}
+            </div>
         </div>
     );
 }

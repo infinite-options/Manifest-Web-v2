@@ -3042,7 +3042,22 @@ shows entire list of goals and routines
     justifyContent: "flex-start",
     textTransform: "none",}}>            
           <Link to=
-          {{pathname: "/matts", state: this.props.theCurrentUserID}}>
+          {{pathname: "/matts", state: this.props.theCurrentUserID,
+          BASE_URL: this.props.BASE_URL,
+          ta_people_id: this.props.theCurrentTAID,
+          toggleShowRoutine: this.props.toggleShowRoutine,
+          grabFireBaseRoutinesGoalsData: this.props.grabFireBaseRoutinesGoalsData,
+          originalGoalsAndRoutineArr: this.props.originalGoalsAndRoutineArr,
+          goals: this.props.goals,
+          routines: this.props.routines,
+          showRoutineGoalModal: true,
+          showRoutineModal: this.props.showRoutine,
+          showGoalModal: this.props.showGoal,
+          todayDateObject: this.props.todayDateObject,
+          calendarView: this.props.calendarView,
+          dateContext: this.props.dateContext,
+          updateFBGR: this.props.updateFBGR
+          }}>
             <Button style={{
       height: "4rem",
       borderBottomLeftRadius: "25%",
