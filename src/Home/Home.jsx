@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import './Home.css';
 import { Navigation } from "./navigation";
+import VerticalRoutine from 'Matts/verticalRoutine';
 
 import {
   Form,
@@ -1207,7 +1208,7 @@ export default function Home(props) {
     // console.log('home routines', stateValue.routines),
     /*----------------------------button
         selection----------------------------*/
-    <div>
+    <div style={{marginTop:'1rem'}}>
       <Navigation userID= {stateValue.currentUserId}/>
 
       <userContext.Provider
@@ -1237,7 +1238,7 @@ export default function Home(props) {
             </Button>
             <Button
               className={classes.buttonSelection}
-              onClick={toggleShowRoutine}
+             // onClick={toggleShowRoutine}
               id="one">
               Routines
             </Button>
@@ -1381,8 +1382,8 @@ export default function Home(props) {
           className="normalfancytext"
           style={{
             marginLeft: '0px',
-            height: '100%',
-            width: '80%',
+          //  height: '100%',
+          //  width: '80%',
             // width: "100%",
             // display: "flex",
             // flexDirection: "column",
@@ -1408,7 +1409,7 @@ export default function Home(props) {
                 marginTop: '0',
                 // width: '100%',
                 display: 'flex',
-                flexDirection: 'flex-betewen',
+              //  flexDirection: 'flex-betewen',
                 // justifyContent: 'left',
                 // alignItems: 'center',
               }}
@@ -1421,54 +1422,12 @@ export default function Home(props) {
               md = {3}>
                 {stateValue.currentUserId != '' && (
                   <FirebaseV2
-                    BASE_URL={stateValue.BASE_URL}
-                    theCurrentUserID={stateValue.currentUserId}
-                    theCurrentTAID={stateValue.ta_people_id}
-                    // itemToEdit={stateValue.itemToEdit}
-                    grabFireBaseRoutinesGoalsData={
-                      GrabFireBaseRoutinesGoalsData
-                    }
-                    originalGoalsAndRoutineArr={
-                      stateValue.originalGoalsAndRoutineArr
-                    }
-                    goals={stateValue.goals}
-                    routines={stateValue.routines}
-                    closeRoutineGoalModal={(props) => {
-                      setStateValue((prevState) => {
-                        return {
-                          ...prevState,
-                          showRoutineGoalModal: false,
-                        };
-                      });
-                    }}
-                    showRoutineGoalModal={stateValue.showRoutineGoalModal}
-                    closeGoal={() => {
-                      setStateValue((prevState) => {
-                        return {
-                          ...prevState,
-                          showGoalModal: false,
-                        };
-                      });
-                    }}
-                    closeRoutine={() => {
-                      setStateValue((prevState) => {
-                        return {
-                          ...prevState,
-                          showRoutineModal: false,
-                        };
-                      });
-                    }}
-                    showRoutine={stateValue.showRoutineModal}
-                    showGoal={stateValue.showGoalModal}
-                    todayDateObject={stateValue.todayDateObject}
-                    calendarView={stateValue.calendarView}
-                    dateContext={stateValue.dateContext}
-                    updateFBGR={updateFBGR()}
+                  theCurrentUserID={stateValue.currentUserId}
                   />
                 )}
               </Col>
               <Col
-                sm={{size: 13, offset: 1}}
+               // sm={{size: 13, offset: 1}}
                 // sm="auto"
                 // md="auto"
                 // lg="auto"

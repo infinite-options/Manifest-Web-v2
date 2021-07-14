@@ -163,7 +163,7 @@ export default function VerticalRoutine(userID) {
             
                 style={{ height:'6rem', width:'100%', backgroundColor:'#BBC7D7' , marginBottom:'0px', marginTop: '2px'}}
             >
-                
+              
                 <div style={{ display:'flex', justifyContent:'space-between' }}>
                 <div flex='1' style={{marginLeft:'1rem', marginTop:'1rem', height:'4.5rem', borderRadius:'10px',width:'65%', display:'flex', justifyContent:'space-between', backgroundColor:'#FF6B4A', boxShadow:
                     "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
@@ -177,6 +177,7 @@ export default function VerticalRoutine(userID) {
                         color:'#ffffff'
                     }}
                     >
+                        
                     {
                         formatDateTime(
                         r["start_day_and_time"]  
@@ -1321,7 +1322,6 @@ export default function VerticalRoutine(userID) {
         </Button>
             <Button
                 className={classes.buttonSelection}
-                // onClick={toggleShowRoutine}
                 id="one">
                 Routines
         </Button>

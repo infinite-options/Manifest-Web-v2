@@ -781,7 +781,7 @@ export default class WeekRoutines extends Component {
         <Col key={'day' + i}>
           <Col
             style={{
-              textAlign: 'right',
+              textAlign: 'left',
               height: this.state.pxPerHour,
             }}
           >
@@ -799,11 +799,12 @@ export default class WeekRoutines extends Component {
       return (
         <Col
           key={'routine' + day}
-          className="fancytext"
+         // className="fancytext"
           style={{
             // borderLeft: ' 2px solid #b1b3b6',
-            textAlign: 'center',
-            paddingBottom: '2%',
+            textAlign: 'left',
+          //  paddingBottom: '2%',
+           
           }}
         >
           {day}
@@ -812,17 +813,23 @@ export default class WeekRoutines extends Component {
     });
     return (
       <Container>
+        <div style={{ borderBottom:'1px solid black',}}>
         <Row
           style={{
             // height: '560px',
-            overflowX: 'hidden',
-            overflowY: 'visible',
+           overflowX: 'hidden',
+           overflowY: 'visible',
+         //  width:'100vh',
+         //  backgroundColor:'#000000'
           }}
         >
           <Col className="fancytext"></Col>
           {weekdays}
+        
         </Row>
-        <Row>{this.dateDisplay()}</Row>
+        
+        <Row style={{ marginLeft:'5rem'}}>{this.dateDisplay()}</Row>
+        </div>
         <Row
           ref={this.hourDisplay}
           noGutters={true}
@@ -831,7 +838,7 @@ export default class WeekRoutines extends Component {
         >
           <Col>
             <Container style={{ margin: '0', padding: '0', width: '10px' }}>
-              {this.timeDisplay()}
+              {this.timeDisplay()} 
             </Container>
           </Col>
 
