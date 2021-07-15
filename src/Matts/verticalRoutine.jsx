@@ -68,7 +68,7 @@ const useStyles = makeStyles({
       },
 })
 
-export default function VerticalRoutine(userID) {
+const VerticalRoutine = ({userID, sendRoutineToParent}) => {
     const history = useHistory();
     const currentUser = userID;
     const [routinesGot, setRoutines] = useState([]);
@@ -150,6 +150,9 @@ export default function VerticalRoutine(userID) {
                 if(myRoutine.gr_unique_id == routineCopy[r].gr_unique_id){
                     console.log("found and replaced");
                     routineCopy[r].showBelow = !routineCopy[r].showBelow;
+                    for(var a=0; a<routineCopy[r].actions_tasks.length; a++){
+                        routineCopy[r].actions_tasks[a].showBelow = false;
+                    }
                 }
             }
         }
@@ -221,7 +224,10 @@ export default function VerticalRoutine(userID) {
                             title="SubList Available"
                             style={{ color: "#ffffff" }}
                             size="small"
-                            onClick = {()=> changeShowBelow(r)}
+                            onClick = {()=> {
+                                changeShowBelow(r);
+                                sendRoutineToParent(r.gr_title);
+                            }}
                             />
                         </div>
                         ) : (
@@ -543,7 +549,7 @@ export default function VerticalRoutine(userID) {
         return(
             <div
             
-                style={{ height:'6rem', width:'100%', backgroundColor:'#BBC7D7' , marginBottom:'0px'}}
+                style={{ height:'98px', width:'100%', backgroundColor:'#BBC7D7' , marginBottom:'0px'}}
             >
                 
                 <div style={{ display:'flex', justifyContent:'space-between' }}>
@@ -603,7 +609,9 @@ export default function VerticalRoutine(userID) {
                             title="SubList Available"
                             style={{ color: "#ffffff" }}
                             size="small"
-                            onClick = {()=> changeShowBelow(a)}
+                            onClick = {()=> {
+                                changeShowBelow(a);
+                                sendRoutineToParent(a.at_title);}}
                             />
                         </div>
                         ) : (
@@ -925,7 +933,7 @@ export default function VerticalRoutine(userID) {
         return(
             <div
             
-                style={{ height:'6rem', width:'100%', backgroundColor:'#BBC7D7' , marginBottom:'0px'}}
+                style={{ height:'98px', width:'100%', backgroundColor:'#BBC7D7' , marginBottom:'0px'}}
             >
                 
                 <div style={{ display:'flex', justifyContent:'space-between' }}>
@@ -1313,7 +1321,8 @@ export default function VerticalRoutine(userID) {
     }
     return(
         <Box width = "350px">
-            <Button className={classes.buttonSelection} onClick={() => history.push("/matts")} id="one">
+            <Button className={classes.buttonSelection} onClick={() => history.push(
+                {pathname: "/matts", state: currentUser})} id="one">
                 History
         </Button>
             <Button className={classes.buttonSelection} id="one">
@@ -1333,7 +1342,7 @@ export default function VerticalRoutine(userID) {
             <Button className={classes.buttonSelection} id="one">
                 About
         </Button>
-        <p></p>
+        <p style={{height:"54.5px", margin:"0px"}}></p>
         <row>
                 {rows}
         </row>
@@ -1341,3 +1350,5 @@ export default function VerticalRoutine(userID) {
     )
 
 }
+
+export default VerticalRoutine;

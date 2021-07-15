@@ -123,7 +123,7 @@ export default function MainPage(props) {
             }
             console.log(historyGot);
             // console.log(response.data.result[1].details);
-            cleanData(historyGot, currentDate);
+            cleanData(historyGot, currentDate, routines);
         })
         .catch((error) => {
             console.log(error);
@@ -133,9 +133,10 @@ export default function MainPage(props) {
 
 
      //-------- clean historyGot - just dates we want, just info we want, and structure vertical to horizontal   --------
-    function cleanData(historyGot, useDate){
+    function cleanData(historyGot, useDate, routines){
         
         //go through at find historyGots that are within 7 days of useDate
+        console.log(routines);
         console.log("date:" + useDate);
         const temp = [];
         for(var i=0; i <historyGot.length; i++){
@@ -231,16 +232,21 @@ export default function MainPage(props) {
         
         //Now bigList has data in new object style. 
         //of that we transfer what we want to display to rows
-        setRows("hi");
+        setRows([]);
         console.log("ROWS" + rows);
+        console.log(bigList);
         bigList = addCircles(bigList);
-        bigList = addNames(bigList);
+        console.log(bigList);
+        bigList = addNames(bigList, routines);
+        console.log(bigList);
+        var tempRows = [];
         for (var i=0; i< bigList.length; i++){
-            rows.push(createData(bigList[i].title, bigList[i].days[6], bigList[i].days[5], bigList[i].days[4], bigList[i].days[3],
+            tempRows.push(createData(bigList[i].title, bigList[i].days[6], bigList[i].days[5], bigList[i].days[4], bigList[i].days[3],
                  bigList[i].days[2], bigList[i].days[1], bigList[i].days[0], bigList[i].show, bigList[i].under, bigList[i].tBox));
         }
-        setRows(rows);
+        console.log(tempRows);
         setLoading(false);
+        setRows(tempRows);
         console.log(rows);
         console.log("GERE");
         console.log(getUrlParam("userID", window.location.href));
@@ -317,8 +323,9 @@ export default function MainPage(props) {
         }
     }
 
-    function addNames(bigList){
+    function addNames(bigList, routines){
         // let tempTitle = routines[i].title;
+        console.log("HERE!!");
         for (var i=0; i< bigList.length; i++){
             var x =0;
             for (x=0; x < routines.length; x++){
@@ -327,7 +334,7 @@ export default function MainPage(props) {
             console.log(x);
             for(var d=0; d<bigList[i].days.length; d++){
                 if(bigList[i].type == "Routine"){
-                    bigList[i].tBox = routineBoxes(x);
+                    bigList[i].tBox = routineBoxes(x, routines);
                 }
                 else if(bigList[i].type == "Action"){
                     bigList[i].tBox = actionBoxes(bigList[i].title);
@@ -345,7 +352,7 @@ export default function MainPage(props) {
 
 
     //---------just returns the css for the routines -----------
-    function routineBoxes(x) {
+    function routineBoxes(x, routines) {
     // <div className = "routineName">{bigList[i].title}</div>
     return(
     <div style={{ height: '5rem', width: '300px', backgroundColor: '#BBC7D7', marginBottom: '2px' }}>
@@ -607,7 +614,6 @@ function insBoxes(title) {
         <div>
             <Navigation userID={currentUser} />
             <div display= "flex" flex-direction="row">
-                {/* <col /> */}
                 <div>
                     <br></br>
                     <Box paddingTop={3} backgroundColor="#bbc8d7">
@@ -662,31 +668,9 @@ function insBoxes(title) {
                                 </Container>
 
                             </Box>
-                            <Button className={classes.buttonSelection} onClick={()=> history.push("/matts") } id="one">
-                            History
-                            </Button>
-                            <Button className={classes.buttonSelection} id="one">
-                            Events
-                            </Button>
-                            <Button
-                                className={classes.buttonSelection}
-                                // onClick={toggleShowRoutine}
-                                id="one">
-                                Routines
-                            </Button>
-
-                            <Button className={classes.buttonSelection} onClick={()=> history.push(
-                                {pathname: "/main", state: currentUser}) } id="one">
-                            Goals
-                            </Button>
-                            <Button className={classes.buttonSelection} id="one">
-                                About
-                            </Button>
-
-
+                            
                         </div>
                     </Box>
-                    {/* <col /> */}
                     <TableContainer component={Paper}>
                         <Table className={classes.table} aria-label="simple table">
                             <TableHead>
@@ -720,30 +704,6 @@ function insBoxes(title) {
                         </Table>
                     </TableContainer>
                 </div>
-                {/* <col /> */}
-                {/* <col> */}
-                <Firebasev2
-                    BASE_URL={BASE_URL}
-                    theCurrentUserID={theCurrentUserID}
-                    theCurrentTAID={theCurrentTAID}
-                    toggleShowRoutine={toggleShowRoutine}
-                    grabFireBaseRoutinesGoalsData={
-                        grabFireBaseRoutinesGoalsData}
-                    originalGoalsAndRoutineArr={
-                        originalGoalsAndRoutineArr}
-                    goals={goals}
-                    routines={routines}
-                    showRoutineGoalModal={false}
-                    closeGoal={true}
-                    closeRoutine={true}
-                    showRoutine={showRoutine}
-                    showGoal={showGoal}
-                    todayDateObject={todayDateObject}
-                    calendarView={calendarView}
-                    dateContext={dateContext}
-                    updateFBGR={updateFBGR}
-                />
-                {/* </col> */}
             </div>
         </div>
     );
