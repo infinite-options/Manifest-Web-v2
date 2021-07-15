@@ -40,6 +40,9 @@ import DayRoutines from './DayRoutines.jsx';
 import WeekRoutines from './WeekRoutines.jsx';
 import userContext from './userContext';
 
+import EditRTSContext from './EditRTS/EditRTSContext';
+import EditRTS from './EditRTS/EditRTS';
+
 // const userContext = React.createContext();
 /* Navigation Bar component function */
 
@@ -321,6 +324,51 @@ export default function Home(props) {
       'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/',
   });
   // console.log(calendarView);
+  /* Another state for edit routine, task, step */
+  const initialEditingRTSState = {
+    editing: false,
+    type: '',
+    id: '',
+    newItem: {
+      name: '',
+      startDate: '',
+      startTime: '',
+      endDate: '',
+      endTime: '',
+      numMins: '',
+      repeating: false,
+      repeatDays: '',
+      repeatEndOption: '',
+      repeatEndOn: '',
+      repeatEndOccurences: '',
+      location: '',
+      availableToUser: false,
+      notifications: {
+        beforeStartTime: {
+          mins: '',
+          user: false,
+          userMessage: '',
+          ta: false,
+          taMessage: '',
+        },
+        afterStartTime: {
+          mins: '',
+          user: false,
+          userMessage: '',
+          ta: false,
+          taMessage: '',
+        },
+        afterEndTime: {
+          mins: '',
+          user: false,
+          userMessage: '',
+          ta: false,
+          taMessage: '',
+        },
+      }
+    }
+  }
+  const [editingRTS, setEditingRTS] = useState(initialEditingRTSState)
   /*----------------------------Custom Hook to make styles----------------------------*/
   const useStyles = makeStyles({
     buttonSelection: {
@@ -1210,7 +1258,12 @@ export default function Home(props) {
         selection----------------------------*/
     <div style={{marginTop:'1rem'}}>
       <Navigation userID= {stateValue.currentUserId}/>
-
+      <EditRTSContext.Provider
+        value={{
+          editingRTS: editingRTS,
+          setEditingRTS: setEditingRTS
+        }}
+      >
       <userContext.Provider
         value={
           (stateValue.itemToEdit,
@@ -1250,7 +1303,74 @@ export default function Home(props) {
             <Button className={classes.buttonSelection} id="one">
               About
             </Button>
-
+            {
+            editingRTS.editing
+            ?
+            <div
+              style={{
+                width: '100%',
+              }}
+            >
+              <div
+                style={{
+                  width: '35%',
+                  height: '80px',
+                  backgroundColor: '#F57045'
+                }}
+              >
+                <div
+                  style={{
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}
+                >
+                  <div
+                    style={{
+                      flex:'4',
+                    }}
+                  >
+                    <p
+                      style={{
+                        textAlign: 'center',
+                        fontSize: '2.5rem',
+                        color: '#ffffff',
+                        textDecoration: 'underline',
+                      }}
+                    >
+                      Routine
+                    </p>
+                  </div>
+                  <div
+                    style={{
+                      flex:'1',
+                    }}
+                  >
+                    <button
+                      style={{
+                        padding: '0',
+                        margin: '0',
+                        backgroundColor: 'inherit',
+                        border: 'none',
+                        width: '100%',
+                        height: '100%',
+                        textAlign: 'center',
+                        fontSize: '2.5rem',
+                        color: '#ffffff'
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        console.log('Clicked add RTS')
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+              :
             <Box
               bgcolor="#889AB5"
               className={classes.dateContainer}
@@ -1364,6 +1484,7 @@ export default function Home(props) {
                 </Col> */}
               {/* </Container> */}
             </Box>
+            }
           </div>
         </Box>
         {/* {console.log('Home showRoutineModal', stateValue.showRoutineModal)} */}
@@ -1440,12 +1561,13 @@ export default function Home(props) {
                 // }
                 // style={{ MarginRight: '0px' }}
               >
-                {showCalendarView()}
+                {editingRTS.editing ? <EditRTS /> : showCalendarView()}
               </Col>
             </Row>
           {/* </Container> */}
         </div>
       </userContext.Provider>
+      </EditRTSContext.Provider>
     </div>
   );
 }
