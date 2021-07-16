@@ -4,6 +4,8 @@ import { Container, Row, Col } from 'react-bootstrap';
 import './Home.css';
 import { BorderColor } from '@material-ui/icons';
 import zIndex from '@material-ui/core/styles/zIndex';
+import greenTick from '../manifest/LoginAssets/GreenTick.svg'
+import yelloTick from '../manifest/LoginAssets/YellowTick.svg'
 
 export default class WeekRoutines extends Component {
   constructor(props) {
@@ -179,6 +181,7 @@ export default class WeekRoutines extends Component {
     let startDay = startObject.startOf('week');
     let curDate2 = startDay.clone();
     curDate2.add(day, 'days');
+    let today = new Date();
     var res = [];
     var tempStart = null;
     var tempEnd = null;
@@ -191,6 +194,7 @@ export default class WeekRoutines extends Component {
       return;
     }
     for (let i = 0; i < arr.length; i++) {
+      
       tempStart = arr[i].start_day_and_time;
       tempEnd = arr[i].end_day_and_time;
       /**
@@ -467,16 +471,19 @@ export default class WeekRoutines extends Component {
                         '\nEnd: ' +
                         tempEndTime
                       }
-                      onMouseOver={(e) => {
-                        e.target.style.color = 'white';
-                        e.target.style.background = 'skyblue';
-                        e.target.style.zIndex = '2';
-                      }}
-                      onMouseOut={(e) => {
-                        e.target.style.zIndex = '1';
-                        e.target.style.color = '#000000';
-                        e.target.style.background = color;
-                      }}
+
+                      // onMouseOver={(e) => {
+                      //   e.target.style.color = 'white';
+                      //   e.target.style.background = 'skyblue';
+                      //   e.target.style.zIndex = '2';
+                      // }}
+                 
+                      // onMouseOut={(e) => {
+                      //   e.target.style.zIndex = '1';
+                      // //  e.target.style.color = '#000000';
+                      //   e.target.style.background = color;
+                      // }}
+                  
                       key={i}
                       style={{
                         zIndex: this.state.zIndex,
@@ -484,18 +491,34 @@ export default class WeekRoutines extends Component {
                         padding: '5px',
                         fontSize: fontSize + 'px',
                         // border: '1px lightgray solid ',
+                        border: this.props.highLight  === arr[i].title ? '2px solid #FF6B4A ' : '',
                         float: 'left',
-                        borderRadius: '15px',
-                        background: color,
+                        borderRadius: '10px',
+                        background: curDate2.format('D') === today.getDate().toString() ? '#FF6B4A' : arr[i].is_complete ? '#BBC7D7' : 'lightslategray', 
                         width: itemWidth + 'px',
                         position: 'absolute',
-                        height: height + 'px',
+                        height: height + 'px' + 10,
                         marginLeft: addmarginLeft + 'px',
+                        display:'flex',
+                        justifyContent:'space-between',
+            
                       }}
                     >
                       {/* insert border change here: */}
+                      <div>
                       {arr[i].title}
+                      </div>
+                
+                      <div style={{
+                       width:'8px',
+                       height:'8px', 
+                       backgroundImage: arr[i].is_complete ? `url(${greenTick})` : arr[i].is_in_progress ? `url(${yelloTick})` : ""
+
+                    }}>
                     </div>
+                    </div>
+
+                  
                   </div>
                 );
                 // console.log(newElement);
@@ -540,7 +563,7 @@ export default class WeekRoutines extends Component {
                         marginTop: minsToMarginTop + 'px',
                         padding: '5px',
                         fontSize: fontSize + 'px',
-                        // border: '1px lightgray solid ',
+                        border: '10px solid red ',
                         float: 'left',
                         borderRadius: '15px',
                         background: color,
@@ -551,6 +574,7 @@ export default class WeekRoutines extends Component {
                       }}
                     >
                       {arr[i].title}
+                      
                     </div>
                   </div>
                 );
@@ -735,6 +759,7 @@ export default class WeekRoutines extends Component {
     // this creates the events adjusting their div size to reflecting the time it's slotted for
     var res = [];
     var arr = this.props.routines;
+    console.log("getgoals", this.props.routines)
     let dic = this.sortRoutines();
     for (let i = 0; i < arr.length; i++) {
       arr[i].is_displayed_today = false;
@@ -776,6 +801,7 @@ export default class WeekRoutines extends Component {
     let startObject = this.props.dateContext.clone();
     let startDay = startObject.startOf('week');
     let curDate = startDay.clone();
+    let today = new Date();
     for (let i = 0; i < 7; i++) {
       arr.push(
         <Col key={'day' + i}>
@@ -783,6 +809,7 @@ export default class WeekRoutines extends Component {
             style={{
               textAlign: 'left',
               height: this.state.pxPerHour,
+              color: curDate.format('D') === today.getDate().toString() ? '#FF6B4A' : ''
             }}
           >
             {curDate.format('MMM' + ' ' + 'D')}
@@ -795,14 +822,38 @@ export default class WeekRoutines extends Component {
   };
 
   render() {
+    let today = "";
+    switch (new Date().getDay()) {
+      case 0:
+        today = "Sunday";
+        break;
+      case 1:
+        today = "Monday";
+        break;
+      case 2:
+        today = "Tuesday";
+        break;
+      case 3:
+        today = "Wednesday";
+        break;
+      case 4:
+        today = "Thursday";
+        break;
+      case 5:
+        today = "Friday";
+        break;
+      case 6:
+        today = "Saturday";
+    }
     let weekdays = moment.weekdays().map((day) => {
       return (
         <Col
           key={'routine' + day}
          // className="fancytext"
           style={{
-            // borderLeft: ' 2px solid #b1b3b6',
+            color: day === today.toString() ? '#FF6B4A' : '',
             textAlign: 'left',
+            fontWeight:'bold'
           //  paddingBottom: '2%',
            
           }}
@@ -813,7 +864,7 @@ export default class WeekRoutines extends Component {
     });
     return (
       <Container>
-        <div style={{ borderBottom:'1px solid black',}}>
+        <div>
         <Row
           style={{
             // height: '560px',
@@ -828,7 +879,7 @@ export default class WeekRoutines extends Component {
         
         </Row>
         
-        <Row style={{ marginLeft:'5rem'}}>{this.dateDisplay()}</Row>
+        <Row style={{ marginLeft:'5rem', fontWeight:'bold'}}>{this.dateDisplay()}</Row>
         </div>
         <Row
           ref={this.hourDisplay}

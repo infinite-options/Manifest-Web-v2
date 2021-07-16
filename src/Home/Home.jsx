@@ -109,6 +109,7 @@ export default function Home(props) {
   // },[])
 
   /*----------------------------Use states to define variables----------------------------*/
+  const [hightlight, setHightlight] = useState('')
   const [stateValue, setStateValue] = useState({
     itemToEdit: {
       title: '',
@@ -122,6 +123,7 @@ export default function Home(props) {
 
       is_displayed_today: false,
       is_in_progress: false,
+     // highLight:false,
       // todayDateObject: this.props.todayDateObject,
       // available_end_time: this.props.singleGR.available_end_time,
       // available_start_time: this.props.singleGR.available_start_time,
@@ -339,7 +341,7 @@ export default function Home(props) {
     },
 
     dateContainer: {
-      height: '70px',
+  
       width: 'relative',
       color: '#FFFFFF',
       // flex: 1,
@@ -777,6 +779,7 @@ export default function Home(props) {
             routines={stateValue.routines}
             dateContext={stateValue.dateContext}
             BASE_URL={stateValue.BASE_URL}
+            highLight = {hightlight}
           />
         </div>
         {/* </Container> */}
@@ -821,12 +824,13 @@ export default function Home(props) {
     // console.log('base url id ', stateValue.currentUserId);
 
     useEffect(() => {
+      console.log('getgoalsandroutines', url + stateValue.currentUserId)
       axios
         .get(url + stateValue.currentUserId)
         .then((response) => {
           if (response.data.result && response.data.result.length !== 0) {
             let x = response.data.result;
-            console.log(x);
+            console.log("getgoalsand", x);
             x.sort((a, b) => {
               // console.log(a);
               // console.log(b);
@@ -1273,13 +1277,13 @@ export default function Home(props) {
                     </div>
                   </Col>
                   <Col
-                    md="auto"
-                    style={{ textAlign: 'center' }}
+                    style={{ textAlign: 'center'}}
                     className="bigfancytext"
                   >
-                    <p> Week of {startWeek.format('D MMMM YYYY')} </p>
+                    {/* <p> Week of {startWeek.format('D MMMM YYYY')} </p> */}
+                    <p   style={{ fontWeight:'bold' }}> Today </p>
                     <p
-                      style={{ marginBottom: '0', height: '19.5px' }}
+                      style={{ marginBottom: '0',  }}
                       className="normalfancytext"
                     >
                       {stateValue.currentUserTimeZone}
@@ -1382,6 +1386,7 @@ export default function Home(props) {
           className="normalfancytext"
           style={{
             marginLeft: '0px',
+            marginTop:'1rem'
           //  height: '100%',
           //  width: '80%',
             // width: "100%",
@@ -1423,6 +1428,8 @@ export default function Home(props) {
                 {stateValue.currentUserId != '' && (
                   <FirebaseV2
                   theCurrentUserID={stateValue.currentUserId}
+                  sethighLight = {setHightlight}
+                  highLight = {hightlight}
                   />
                 )}
               </Col>

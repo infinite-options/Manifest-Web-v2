@@ -2719,7 +2719,7 @@ return this.state.displaySingleRoutines;
              
               {this.props.showRoutine ? (
               <div >
-               {this.abstractedRoutineSingleList(this.state.displaySingleRoutines)}
+               {/* {this.abstractedRoutineSingleList(this.state.displaySingleRoutines)} */}
               </div>
                ) : (
                 <div></div>

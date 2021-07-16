@@ -169,10 +169,10 @@ export default class AddNewGRItem extends Component {
   }
 
   getGRDataFromFB = () => {
-    let url = "https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/100-000028"; //this.props.BASE_URL + "getgoalsandroutines/";
+    let url = "https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/"; //this.props.BASE_URL + "getgoalsandroutines/";
 
     axios
-      .get(url)//this.props.theCurrentUserId)
+      .get(url + this.props.theCurrentUserId)
       .then((response) => {
         if (response.data.result && response.data.result.length !== 0) {
           let x = response.data.result;

@@ -77,12 +77,16 @@ export default function Firebasev2(props) {
 
 
   useEffect(() => {
-      axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/rts/" + currentUser)
+      console.log("currentIDFirbaseMatt", currentUser)
+      axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/" + currentUser)
       .then((response) => {
           for(var i=0; i<response.data.result.length; i++){
+              if(response.data.result[i].is_persistent === "True"){
               routinesGot.push(response.data.result[i]);
+              }
           }
           console.log(routinesGot);
+          
           setRoutines(routinesGot);
         //  setLoading(false);
           addShows(routinesGot);
@@ -158,13 +162,16 @@ export default function Firebasev2(props) {
 
   function displayRoutines(r){
       return(
-          <div
+          <ListGroup.Item
           
-              style={{ height:'6rem', width:'100%', backgroundColor:'#BBC7D7' , marginBottom:'0px', marginTop: '2px'}}
+              style={{ height:'6rem', width:'100%', backgroundColor:'#BBC7D7' , marginBottom:'0px'}}
+              onClick={() => {
+                props.sethighLight(r["gr_title"])
+              }}
           >
             
-              <div style={{ display:'flex', justifyContent:'space-between' }}>
-              <div flex='1' style={{marginLeft:'1rem', marginTop:'1rem', height:'4.5rem', borderRadius:'10px',width:'65%', display:'flex', justifyContent:'space-between', backgroundColor:'#FF6B4A', boxShadow:
+              <div style={{ display:'flex', justifyContent:'space-between' , borderTopColor:'#ffffff'}}>
+              <div flex='1' style={{marginLeft:'1rem', height:'4.5rem', borderRadius:'10px',width:'65%', display:'flex', justifyContent:'space-between', backgroundColor:'#FF6B4A', boxShadow:
                   "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
               zIndex:'50%'}}>
               <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
@@ -234,7 +241,7 @@ export default function Firebasev2(props) {
               </div>
               </div>
 
-              <div style={{ display:"flex" , marginTop:'1rem'}}>
+              <div style={{ display:"flex"}}>
               <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
                   <div style={{flex:'1'}}>
 
@@ -249,6 +256,7 @@ export default function Firebasev2(props) {
                   //   indexEditing={this.state.indexEditing}
                   //     i={this.findIndexByID(tempID)} //index to edit
                   //   showModal={this.state.showCopyModal}
+                  
                   />
                   </div>
 
@@ -535,9 +543,9 @@ export default function Firebasev2(props) {
                   {this.thisTakesMeGivenVsSelected(i, tempID)}
               </Col> */}
               </Row>
-          </div>
+          </ListGroup.Item>
       )
-  }
+ }
 
   function displayActions(a, r){
       return(

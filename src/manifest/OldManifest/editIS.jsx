@@ -188,13 +188,16 @@ body.photo_url = this.state.photo_url
       <Row
         style={{
           marginLeft: '0rem',
-          width:'300px',
+          width:'600px',
           border: "2px",
           marginTop: "1rem",
-          backgroundColor:'#67ABFC'
+          backgroundColor:'#67ABFC',
         }}
       >
-        {/* <label style={{fontWeight:'bold', color:'#ffffff'}}>Title</label>
+        <div style={{display:'flex', flexDirection:'column'}}>
+        <div style={{display:'flex', marginLeft:'1rem'}}>
+          <div>
+       <label style={{fontWeight:'bold', color:'#ffffff', marginTop:'1rem'}}>Title</label>
         <div className="input-group mb-3">
           <input
             style={{ width: "200px" }}
@@ -207,11 +210,11 @@ body.photo_url = this.state.photo_url
               this.setState({ itemToEdit: temp });
             }}
           />
-        </div> */}
+        </div> 
 
         <Form.Group>
           <Row>
-          <div style={{display:'flex', justifyContent:'space-between', marginTop:'3rem', marginLeft:'1rem', paddingRight:'1rem'}}>
+          <div style={{display:'flex', justifyContent:'space-between', marginTop:'1rem', marginLeft:'1rem', paddingRight:'1rem'}}>
             <div style={{display:'flex', flexDirection:'column'}}>
             <Form.Label style={{display:'flex', fontWeight:'bold', color:'#ffffff', marginTop:'1rem'}}> Change Icon </Form.Label>
             <div>
@@ -238,6 +241,23 @@ body.photo_url = this.state.photo_url
           </div>
           </Row>
         </Form.Group>
+        </div>
+        {/* <label style={{fontWeight:'bold', color:'#ffffff'}}>Title</label>
+        <div className="input-group mb-3">
+          <input
+            style={{ width: "200px" }}
+            placeholder="Enter Title"
+            value={this.state.itemToEdit.title}
+            onChange={(e) => {
+              e.stopPropagation();
+              let temp = this.state.itemToEdit;
+              temp.title = e.target.value;
+              this.setState({ itemToEdit: temp });
+            }}
+          />
+        </div> */}
+
+        
 
         {/* <Row style={{ marginLeft: "3px" }}>
           <section>
@@ -273,7 +293,7 @@ body.photo_url = this.state.photo_url
                 }}
               />
             </div> */}
-            
+          <div>
           <div style={{marginLeft:'1rem', marginTop:'1rem'}}>
           <label  style={{fontWeight:'bold', display:'flex', color:'#ffffff'}}>
           This Takes Me
@@ -302,7 +322,7 @@ body.photo_url = this.state.photo_url
             </Col>
           </Row>
         </div>
-        <div className="input-group mb-3" style={{ marginTop: "1rem", display:'flex', justifyContent:'space-between', padding:'1rem' }}>
+        <div className="input-group mb-3" style={{ marginTop: "1rem", display:'flex', justifyContent:'space-evenly' }}>
           <label style={{fontWeight:'bold', color:'#ffffff'}} className="form-check-label">Time the user</label>
           <input
             style={{ marginTop: "5px", marginLeft: "5px" }}
@@ -319,7 +339,7 @@ body.photo_url = this.state.photo_url
           />
         </div>
 
-        <div className="input-group mb-3" style={{ display:'flex', justifyContent:'space-between', padding:'1rem' }}>
+        <div className="input-group mb-3" style={{ display:'flex', justifyContent:'space-evenly', padding:'1rem' }}>
           <label  style={{fontWeight:'bold', color:'#ffffff'}} className="form-check-label">Available to the user</label>
           <input
             style={{ marginTop: "5px", marginLeft: "5px" }}
@@ -335,6 +355,8 @@ body.photo_url = this.state.photo_url
             }}
           />
         </div>
+          </div>
+          </div>
 
         {/* {this.state.itemToEdit.is_available && (
           <ShowNotifications
@@ -342,6 +364,8 @@ body.photo_url = this.state.photo_url
             notificationChange={this.handleNotificationChange}
           />
         )} */}
+
+        <div style={{display:'flex', justifyContent:'space-evenly'}}>
 
         <Button
           variant="secondary"
@@ -361,6 +385,8 @@ body.photo_url = this.state.photo_url
         >
           Save changes
         </Button>
+        </div>
+        </div>
         {/* </div> */}
       </Row>
     );
