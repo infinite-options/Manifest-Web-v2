@@ -330,23 +330,10 @@ export default function Firebasev2(props) {
 
                   <div>
                   <EditIcon
-                          // openEditModal={() => {
-                          //   this.setState({
-                          //     showEditModal: true,
-                          //     indexEditing: this.findIndexByID(tempID),
-                          //   });
-                          
-                          // }}
-                          // showModal={this.state.showEditModal}
-                          // indexEditing={this.state.indexEditing}
-                          // i={this.findIndexByID(tempID)} //index to edit
-                          // ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                          // // FBPath={firebase
-                          // //   .firestore()
-                          // //   .collection("users")
-                          // //   .doc(this.props.theCurrentUserID)}
-                          // // refresh={this.grabFireBaseRoutinesGoalsData}
-                      />
+                    routine={r}
+                    task={null}
+                    step={null}  
+                  />
 
                   </div>
 
@@ -456,22 +443,9 @@ export default function Firebasev2(props) {
                   //     theCurrentTAID={this.props.theCurrentTAID}
                   />
                   <EditIcon
-                      // openEditModal={() => {
-                      //   this.setState({
-                      //     showEditModal: true,
-                      //     indexEditing: this.findIndexByID(tempID),
-                      //   });
-                      // }}
-                      // showModal={this.state.showEditModal}
-                      // indexEditing={this.state.indexEditing}
-                      // i={this.findIndexByID(tempID)} //index to edit
-                      // ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                      // // FBPath={firebase
-                      // //   .firestore()
-                      // //   .collection("users")
-                      // //   .doc(this.props.theCurrentUserID)}
-                      // // refresh={this.grabFireBaseRoutinesGoalsData}
-                      
+                    routine={r}
+                    task={null}
+                    step={null}  
                   />
                   </Row>
                   <Row>
@@ -712,23 +686,10 @@ export default function Firebasev2(props) {
 
                   <div>
                   <EditIcon
-                          // openEditModal={() => {
-                          //   this.setState({
-                          //     showEditModal: true,
-                          //     indexEditing: this.findIndexByID(tempID),
-                          //   });
-                          
-                          // }}
-                          // showModal={this.state.showEditModal}
-                          // indexEditing={this.state.indexEditing}
-                          // i={this.findIndexByID(tempID)} //index to edit
-                          // ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                          // // FBPath={firebase
-                          // //   .firestore()
-                          // //   .collection("users")
-                          // //   .doc(this.props.theCurrentUserID)}
-                          // // refresh={this.grabFireBaseRoutinesGoalsData}
-                      />
+                    routine={r}
+                    task={a}
+                    step={null}  
+                  />
 
                   </div>
 
@@ -838,22 +799,9 @@ export default function Firebasev2(props) {
                   //     theCurrentTAID={this.props.theCurrentTAID}
                   />
                   <EditIcon
-                      // openEditModal={() => {
-                      //   this.setState({
-                      //     showEditModal: true,
-                      //     indexEditing: this.findIndexByID(tempID),
-                      //   });
-                      // }}
-                      // showModal={this.state.showEditModal}
-                      // indexEditing={this.state.indexEditing}
-                      // i={this.findIndexByID(tempID)} //index to edit
-                      // ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                      // // FBPath={firebase
-                      // //   .firestore()
-                      // //   .collection("users")
-                      // //   .doc(this.props.theCurrentUserID)}
-                      // // refresh={this.grabFireBaseRoutinesGoalsData}
-                      
+                    routine={r}
+                    task={a}
+                    step={null}  
                   />
                   </Row>
                   <Row>
@@ -1093,23 +1041,10 @@ export default function Firebasev2(props) {
 
                   <div>
                   <EditIcon
-                          // openEditModal={() => {
-                          //   this.setState({
-                          //     showEditModal: true,
-                          //     indexEditing: this.findIndexByID(tempID),
-                          //   });
-                          
-                          // }}
-                          // showModal={this.state.showEditModal}
-                          // indexEditing={this.state.indexEditing}
-                          // i={this.findIndexByID(tempID)} //index to edit
-                          // ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                          // // FBPath={firebase
-                          // //   .firestore()
-                          // //   .collection("users")
-                          // //   .doc(this.props.theCurrentUserID)}
-                          // // refresh={this.grabFireBaseRoutinesGoalsData}
-                      />
+                    routine={r}
+                    task={a}
+                    step={i}  
+                  />
 
                   </div>
 
@@ -1219,22 +1154,9 @@ export default function Firebasev2(props) {
                   //     theCurrentTAID={this.props.theCurrentTAID}
                   />
                   <EditIcon
-                      // openEditModal={() => {
-                      //   this.setState({
-                      //     showEditModal: true,
-                      //     indexEditing: this.findIndexByID(tempID),
-                      //   });
-                      // }}
-                      // showModal={this.state.showEditModal}
-                      // indexEditing={this.state.indexEditing}
-                      // i={this.findIndexByID(tempID)} //index to edit
-                      // ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                      // // FBPath={firebase
-                      // //   .firestore()
-                      // //   .collection("users")
-                      // //   .doc(this.props.theCurrentUserID)}
-                      // // refresh={this.grabFireBaseRoutinesGoalsData}
-                      
+                    routine={r}
+                    task={a}
+                    step={i}  
                   />
                   </Row>
                   <Row>

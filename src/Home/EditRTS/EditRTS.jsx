@@ -5,6 +5,10 @@ import EditRTSContext from './EditRTSContext';
 const EditRTS = () => {
   const editingRTSContext = useContext(EditRTSContext);
 
+  const updateRTS = (e) => {
+    e.stopPropagation()
+  }
+
   return (
     <div
       style={{
@@ -324,7 +328,7 @@ const EditRTS = () => {
             <span> Available to User </span>
             <input
               type='checkbox'
-              checked={editingRTSContext.editingRTS.newItem.repeating}
+              checked={editingRTSContext.editingRTS.newItem.availableToUser}
               onChange={(e) => {
                 editingRTSContext.setEditingRTS({
                   ...editingRTSContext.editingRTS,
@@ -347,7 +351,7 @@ const EditRTS = () => {
                   <input
                     type='number'
                     style={{width: '60px'}}
-                    value={editingRTSContext.editingRTS.newItem.notifications.beforeStartTime.mins}
+                    value={editingRTSContext.editingRTS.newItem.beforeStartTime.mins}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -367,7 +371,7 @@ const EditRTS = () => {
                   User
                   <input
                     type='checkbox'
-                    checked={editingRTSContext.editingRTS.newItem.notifications.beforeStartTime.user}
+                    checked={editingRTSContext.editingRTS.newItem.beforeStartTime.user}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -382,7 +386,7 @@ const EditRTS = () => {
                     }}
                   />
                   <input
-                    value={editingRTSContext.editingRTS.newItem.notifications.beforeStartTime.userMessage}
+                    value={editingRTSContext.editingRTS.newItem.beforeStartTime.userMessage}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -401,7 +405,7 @@ const EditRTS = () => {
                   TA 
                   <input
                     type='checkbox'
-                    checked={editingRTSContext.editingRTS.newItem.notifications.beforeStartTime.ta}
+                    checked={editingRTSContext.editingRTS.newItem.beforeStartTime.ta}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -416,7 +420,7 @@ const EditRTS = () => {
                     }}
                   />
                   <input
-                    value={editingRTSContext.editingRTS.newItem.notifications.beforeStartTime.taMessage}
+                    value={editingRTSContext.editingRTS.newItem.beforeStartTime.taMessage}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -437,7 +441,7 @@ const EditRTS = () => {
                   <input
                     type='number'
                     style={{width: '60px'}}
-                    value={editingRTSContext.editingRTS.newItem.notifications.afterStartTime.mins}
+                    value={editingRTSContext.editingRTS.newItem.afterStartTime.mins}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -457,7 +461,7 @@ const EditRTS = () => {
                   User
                   <input
                     type='checkbox'
-                    checked={editingRTSContext.editingRTS.newItem.notifications.afterStartTime.user}
+                    checked={editingRTSContext.editingRTS.newItem.afterStartTime.user}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -472,7 +476,7 @@ const EditRTS = () => {
                     }}
                   />
                   <input
-                    value={editingRTSContext.editingRTS.newItem.notifications.afterStartTime.userMessage}
+                    value={editingRTSContext.editingRTS.newItem.afterStartTime.userMessage}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -489,14 +493,128 @@ const EditRTS = () => {
                 </div>
                 <div>
                   TA
-                  <input type='checkbox' />
-                  <input />
+                  <input
+                    type='checkbox'
+                    checked={editingRTSContext.editingRTS.newItem.afterStartTime.ta}
+                    onChange={(e) => {
+                      editingRTSContext.setEditingRTS({
+                        ...editingRTSContext.editingRTS,
+                        newItem: {
+                          ...editingRTSContext.editingRTS.newItem,
+                          afterStartTime: {
+                            ...editingRTSContext.editingRTS.newItem.afterStartTime,
+                            ta: e.target.checked
+                          }
+                        }
+                      })
+                    }}
+                  />
+                  <input
+                    value={editingRTSContext.editingRTS.newItem.afterStartTime.taMessage}
+                    onChange={(e) => {
+                      editingRTSContext.setEditingRTS({
+                        ...editingRTSContext.editingRTS,
+                        newItem: {
+                          ...editingRTSContext.editingRTS.newItem,
+                          afterStartTime: {
+                            ...editingRTSContext.editingRTS.newItem.afterStartTime,
+                            taMessage: e.target.value
+                          }
+                        }
+                      })
+                    }}
+                  />
                 </div>
               </Col>
               <Col md={4}>
-                <div><input type='number' style={{width: '60px'}} /> Mins After End Time </div>
-                <div> User <input type='checkbox' /> <input /> </div>
-                <div> TA <input type='checkbox' /> <input /> </div>
+                <div>
+                  <input
+                    type='number'
+                    style={{width: '60px'}}
+                    value={editingRTSContext.editingRTS.newItem.afterEndTime.mins}
+                    onChange={(e) => {
+                      editingRTSContext.setEditingRTS({
+                        ...editingRTSContext.editingRTS,
+                        newItem: {
+                          ...editingRTSContext.editingRTS.newItem,
+                          afterEndTime: {
+                            ...editingRTSContext.editingRTS.newItem.afterEndTime,
+                            mins: e.target.value
+                          }
+                        }
+                      })
+                    }}
+                  />
+                  Mins After End Time
+                </div>
+                <div>
+                  User
+                  <input
+                    type='checkbox'
+                    checked={editingRTSContext.editingRTS.newItem.afterEndTime.user}
+                    onChange={(e) => {
+                      editingRTSContext.setEditingRTS({
+                        ...editingRTSContext.editingRTS,
+                        newItem: {
+                          ...editingRTSContext.editingRTS.newItem,
+                          afterEndTime: {
+                            ...editingRTSContext.editingRTS.newItem.afterEndTime,
+                            user: e.target.checked
+                          }
+                        }
+                      })
+                    }}
+                  />
+                  <input
+                    value={editingRTSContext.editingRTS.newItem.afterEndTime.userMessage}
+                    onChange={(e) => {
+                      editingRTSContext.setEditingRTS({
+                        ...editingRTSContext.editingRTS,
+                        newItem: {
+                          ...editingRTSContext.editingRTS.newItem,
+                          afterEndTime: {
+                            ...editingRTSContext.editingRTS.newItem.afterEndTime,
+                            userMessage: e.target.value
+                          }
+                        }
+                      })
+                    }}
+                  />
+                </div>
+                <div>
+                  TA
+                  <input
+                    type='checkbox'
+                    checked={editingRTSContext.editingRTS.newItem.afterEndTime.ta}
+                    onChange={(e) => {
+                      editingRTSContext.setEditingRTS({
+                        ...editingRTSContext.editingRTS,
+                        newItem: {
+                          ...editingRTSContext.editingRTS.newItem,
+                          afterEndTime: {
+                            ...editingRTSContext.editingRTS.newItem.afterEndTime,
+                            ta: e.target.checked
+                          }
+                        }
+                      })
+                    }}
+                  />
+                  <input
+                    value={editingRTSContext.editingRTS.newItem.afterEndTime.taMessage}
+                    onChange={(e) => {
+                      editingRTSContext.setEditingRTS({
+                        ...editingRTSContext.editingRTS,
+                        newItem: {
+                          ...editingRTSContext.editingRTS.newItem,
+                          afterEndTime: {
+                            ...editingRTSContext.editingRTS.newItem.afterEndTime,
+                            taMessage: e.target.value
+                          }
+                        }
+                      })
+                    }}
+                  />
+                </div>
               </Col>
             </Row>
             </Container>
@@ -532,6 +650,7 @@ const EditRTS = () => {
                   color: '#ffffff',
                   textAlign: 'center',
                 }}
+                onClick={updateRTS}
               >
                 Save
               </button>

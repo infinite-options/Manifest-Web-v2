@@ -11,8 +11,10 @@ const EditIcon = ({routine, task, step}) => {
   let rowId = '';
   if (step) {
     rowType = 'step';
+    rowId = step.unique_id;
   } else if(task) {
     rowType = 'task';
+    rowId = task.at_unique_id;
   } else if (routine) {
     rowType = 'routine';
     rowId = routine.gr_unique_id;

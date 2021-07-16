@@ -343,29 +343,27 @@ export default function Home(props) {
       repeatEndOccurences: '',
       location: '',
       availableToUser: false,
-      notifications: {
-        beforeStartTime: {
-          mins: '',
-          user: false,
-          userMessage: '',
-          ta: false,
-          taMessage: '',
-        },
-        afterStartTime: {
-          mins: '',
-          user: false,
-          userMessage: '',
-          ta: false,
-          taMessage: '',
-        },
-        afterEndTime: {
-          mins: '',
-          user: false,
-          userMessage: '',
-          ta: false,
-          taMessage: '',
-        },
-      }
+      beforeStartTime: {
+        mins: '',
+        user: false,
+        userMessage: '',
+        ta: false,
+        taMessage: '',
+      },
+      afterStartTime: {
+        mins: '',
+        user: false,
+        userMessage: '',
+        ta: false,
+        taMessage: '',
+      },
+      afterEndTime: {
+        mins: '',
+        user: false,
+        userMessage: '',
+        ta: false,
+        taMessage: '',
+      },
     }
   }
   const [editingRTS, setEditingRTS] = useState(initialEditingRTSState)
