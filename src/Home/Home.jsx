@@ -331,42 +331,85 @@ export default function Home(props) {
     editing: false,
     type: '',
     id: '',
+    user_id: props.location.state,
     newItem: {
-      name: '',
-      startDate: '',
-      startTime: '',
-      endDate: '',
-      endTime: '',
+      audio: '',
+      datetime_completed: '',
+      datetime_started: '',
+      title: '',
+      // When making API call, combine start_day and start_time to start_day_and_time
+      start_day: '',
+      start_time: '',
+      // When making API call, combine end_day and end_time to end_day_and_time
+      end_day: '',
+      end_time: '',
+      // When making API call, convert numMins to expected_completion_time
       numMins: '',
-      repeating: false,
-      repeatDays: '',
-      repeatEndOption: '',
-      repeatEndOn: '',
-      repeatEndOccurences: '',
+      repeat: false,
+      repeat_frequency: 'Day',
+      repeat_every: '',
+      repeat_type: '',
+      repeat_ends_on: '',
+      repeat_occurences: '',
+      repeat_week_days: {
+        "0": "",
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": "",
+        "5": "",
+        "6": ""
+      },
       location: '',
-      availableToUser: false,
-      beforeStartTime: {
-        mins: '',
-        user: false,
-        userMessage: '',
-        ta: false,
-        taMessage: '',
+      is_available: false,
+      is_persistent: false,
+      is_complete: true,
+      is_displayed_today: true,
+      is_timed: false,
+      is_sublist_available: true,
+      photo: '',
+      photo_url: '',
+      ta_notifications: {
+        before: {
+          is_enabled: false,
+          is_set: false,
+          message: '',
+          time: '',
+        },
+        during: {
+          is_enabled: false,
+          is_set: false,
+          message: '',
+          time: '',
+        },
+        after: {
+          is_enabled: false,
+          is_set: false,
+          message: '',
+          time: '',
+        }
       },
-      afterStartTime: {
-        mins: '',
-        user: false,
-        userMessage: '',
-        ta: false,
-        taMessage: '',
+      user_notifications: {
+        before: {
+          is_enabled: false,
+          is_set: false,
+          message: '',
+          time: '',
+        },
+        during: {
+          is_enabled: false,
+          is_set: false,
+          message: '',
+          time: '',
+        },
+        after: {
+          is_enabled: false,
+          is_set: false,
+          message: '',
+          time: '',
+        }
       },
-      afterEndTime: {
-        mins: '',
-        user: false,
-        userMessage: '',
-        ta: false,
-        taMessage: '',
-      },
-    }
+    },
   }
   const [editingRTS, setEditingRTS] = useState(initialEditingRTSState)
   /*----------------------------Custom Hook to make styles----------------------------*/

@@ -78,7 +78,9 @@ export default function Firebasev2(props) {
 
   useEffect(() => {
       console.log("currentIDFirbaseMatt", currentUser)
-      axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/" + currentUser)
+      // Need rts endpoint to expand routines/goals to tasks/actions and steps/instructions
+      //   axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/" + currentUser)
+      axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/rts/" + currentUser)
       .then((response) => {
           for(var i=0; i<response.data.result.length; i++){
               if(response.data.result[i].is_persistent === "True"){
