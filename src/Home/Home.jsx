@@ -362,7 +362,7 @@ export default function Home(props) {
       },
       location: '',
       is_available: false,
-      is_persistent: false,
+      is_persistent: true,
       is_complete: true,
       is_displayed_today: true,
       is_timed: false,

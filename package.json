@@ -57,7 +57,7 @@
     "react-slick": "^0.28.1",
     "rsuite": "^4.8.9",
     "slick-carousel": "^1.8.1",
-    "stripe": "^8.129.0",
+    "stripe": "^8.163.0",
     "universal-cookie": "^4.0.4"
   },
   "scripts": {

@@ -9,10 +9,10 @@ const EditRTS = () => {
   const updateRTS = (e) => {
     e.stopPropagation()
     let object = {...editingRTSContext.editingRTS.newItem}
-    object.start_day_and_time = `${object.start_day} ${object.start_time}`;
+    object.start_day_and_time = `${object.start_day} ${object.start_time}:00`;
     delete object.start_day;
     delete object.start_time;
-    object.end_day_and_time = `${object.end_day} ${object.end_time}`;
+    object.end_day_and_time = `${object.end_day} ${object.end_time}:00`;
     delete object.end_day;
     delete object.end_time;
     const numHours = object.numMins / 60;
