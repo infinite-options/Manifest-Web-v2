@@ -332,6 +332,7 @@ export default function Home(props) {
     type: '',
     id: '',
     user_id: props.location.state,
+    gr_array: [],
     newItem: {
       audio: '',
       datetime_completed: '',
@@ -956,7 +957,7 @@ export default function Home(props) {
               gr.is_sublist_available =
                 x[i].is_sublist_available.toLowerCase() === 'true';
               gr.is_timed = x[i].is_timed.toLowerCase() === 'true';
-
+              console.log(x[i].photo)
               gr.photo = x[i].photo;
               gr.repeat = x[i].repeat.toLowerCase() === 'true';
               gr.repeat_type = x[i].repeat_type || 'Never';
@@ -1263,6 +1264,10 @@ export default function Home(props) {
                 routines: routine,
               };
             });
+            setEditingRTS({
+              ...editingRTS,
+              gr_array: gr_array,
+            })
           } else {
             setStateValue((prevState) => {
               return {
@@ -1354,13 +1359,15 @@ export default function Home(props) {
             <div
               style={{
                 width: '100%',
+                marginLeft: '1rem',
               }}
             >
               <div
                 style={{
                   width: '35%',
                   height: '80px',
-                  backgroundColor: '#F57045'
+                  backgroundColor: '#F57045',
+                  borderRadius: '0 0 30px 30px',
                 }}
               >
                 <div
@@ -1373,44 +1380,32 @@ export default function Home(props) {
                 >
                   <div
                     style={{
+                      padding: '0',
+                      margin: '0',
                       flex:'4',
+                      height: '100%',
+                      textAlign: 'center',
+                      fontSize: '2.5rem',
+                      color: '#ffffff',
+                      textDecoration: 'underline',
                     }}
                   >
-                    <p
-                      style={{
-                        textAlign: 'center',
-                        fontSize: '2.5rem',
-                        color: '#ffffff',
-                        textDecoration: 'underline',
-                      }}
-                    >
-                      Routine
-                    </p>
+                    Routine
                   </div>
                   <div
                     style={{
                       flex:'1',
+                      height: '100%',
+                      textAlign: 'center',
+                      fontSize: '2.5rem',
+                      color: '#ffffff',
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      console.log('Clicked add RTS')
                     }}
                   >
-                    <button
-                      style={{
-                        padding: '0',
-                        margin: '0',
-                        backgroundColor: 'inherit',
-                        border: 'none',
-                        width: '100%',
-                        height: '100%',
-                        textAlign: 'center',
-                        fontSize: '2.5rem',
-                        color: '#ffffff'
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        console.log('Clicked add RTS')
-                      }}
-                    >
-                      +
-                    </button>
+                    +
                   </div>
                 </div>
               </div>

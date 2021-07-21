@@ -8,13 +8,20 @@ const EditRTS = () => {
 
   const updateRTS = (e) => {
     e.stopPropagation()
-    let object = {...editingRTSContext.editingRTS.newItem}
-    object.start_day_and_time = `${object.start_day} ${object.start_time}:00`;
+    let object = {...editingRTSContext.editingRTS.newItem};
+    // Get start_day_and_time
+    const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
+    const start_day_and_time_string = new Date(start_day_and_time_simple_string).toString();
+    object.start_day_and_time = start_day_and_time_string;
     delete object.start_day;
     delete object.start_time;
-    object.end_day_and_time = `${object.end_day} ${object.end_time}:00`;
+    // Get end_day_and_time
+    const end_day_and_time_simple_string = `${object.end_day} ${object.end_time}:00`;
+    const end_day_and_time_string = new Date(end_day_and_time_simple_string).toString();
+    object.end_day_and_time = end_day_and_time_string;
     delete object.end_day;
     delete object.end_time;
+    // Get expected_completion_time
     const numHours = object.numMins / 60;
     let numMins = object.numMins % 60;
     if(numMins < 10)
@@ -42,8 +49,15 @@ const EditRTS = () => {
   });
     axios
     .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateGR', formData)
-    .then((response) => {
-      console.log(response);
+    .then((_) => {
+      const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
+      const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
+      new_gr_array[gr_array_index] = object;
+      editingRTSContext.setEditingRTS({
+        ...editingRTSContext.editingRTS,
+        gr_array: new_gr_array,
+
+      })
     })
     .catch((err) => {
       if(err.response) {
@@ -66,7 +80,8 @@ const EditRTS = () => {
     >
       <Container
         style={{
-          padding: '2rem',
+          paddingLeft: '2rem',
+          paddingTop: '1rem',
         }}
       >
         <Row>
@@ -74,6 +89,9 @@ const EditRTS = () => {
             <div>
               <div>Routine Name </div>
               <input
+                style={{
+                  borderRadius: '10px',
+                }}
                 value={editingRTSContext.editingRTS.newItem.title}
                 onChange={(e) => {
                   editingRTSContext.setEditingRTS({
@@ -93,10 +111,15 @@ const EditRTS = () => {
             <Row>
               <Col
                 sm={6}
+                style={{
+                  margin: '0',
+                  padding: '0',
+                }}
               >
                 <input
                   style={{
                     width: '100%',
+                    borderRadius: '10px',
                   }}
                   type='date'
                   value={editingRTSContext.editingRTS.newItem.start_day}
@@ -117,6 +140,7 @@ const EditRTS = () => {
                 <input
                   style={{
                     width: '100%',
+                    borderRadius: '10px',
                   }}
                   type='time'
                   value={editingRTSContext.editingRTS.newItem.start_time}
@@ -140,10 +164,15 @@ const EditRTS = () => {
             <Row>
               <Col
                 sm={6}
+                style={{
+                  margin: '0',
+                  padding: '0',
+                }}
               >
                 <input
                   style={{
                     width: '100%',
+                    borderRadius: '10px',
                   }}
                   type='date'
                   value={editingRTSContext.editingRTS.newItem.end_day}
@@ -164,6 +193,7 @@ const EditRTS = () => {
                 <input
                   style={{
                     width: '100%',
+                    borderRadius: '10px',
                   }}
                   type='time'
                   value={editingRTSContext.editingRTS.newItem.end_time}
@@ -182,7 +212,14 @@ const EditRTS = () => {
             </Container>
           </Col>
         </Row>
-        <Row>
+        <Row
+          style={{
+            padding: '20px 0',
+            borderBottomWidth: '1px',
+            borderBottomStyle: 'solid',
+            borderBottomColor: '#ffffff',
+          }}
+        >
           <Col md={4}>
             <div>Change Icon</div>
             <Container>
@@ -203,6 +240,9 @@ const EditRTS = () => {
             <div>
               <input
                 type='number'
+                style={{
+                  borderRadius: '10px',
+                }}
                 value={editingRTSContext.editingRTS.newItem.numMins}
                 onChange={(e) => {
                   editingRTSContext.setEditingRTS({
@@ -218,7 +258,14 @@ const EditRTS = () => {
             </div>
           </Col>
         </Row>
-        <Row>
+        <Row
+          style={{
+            padding: '20px 0',
+            borderBottomWidth: '1px',
+            borderBottomStyle: 'solid',
+            borderBottomColor: '#ffffff',
+          }}
+        >
           <Col md={8}>
             <div>Repeating Options</div>
             <Container>
@@ -228,7 +275,11 @@ const EditRTS = () => {
                   Repeat Every
                   <input
                     type='number'
-                    style={{width: '60px'}}
+                    style={{
+                      width: '60px',
+                      margin: '5px 0',
+                      borderRadius: '10px',
+                    }}
                     value={editingRTSContext.editingRTS.newItem.repeat_every}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
@@ -242,7 +293,11 @@ const EditRTS = () => {
                   />
                   Days
                 </div>
-                <div>
+                <div
+                  style={{
+                    margin: '10px 0',
+                  }}
+                >
                   Does not repeat 
                   <input
                     name='repeating'
@@ -267,11 +322,19 @@ const EditRTS = () => {
                     <div> Ends </div>
                   </Col>
                   <Col md={9}>
-                    <div>
+                    <div
+                      style={{
+                        marginBottom: '10px',
+                      }}
+                    >
                       <input
+                        style={{
+                          borderRadius: '10px',
+                        }}
                         name='repeatingEnd'
                         type='radio'
                         value='On'
+                        checked={editingRTSContext.editingRTS.newItem.repeat_type === 'On'}
                         onChange={(e) => {
                           editingRTSContext.setEditingRTS({
                             ...editingRTSContext.editingRTS,
@@ -284,6 +347,9 @@ const EditRTS = () => {
                       />
                       On
                       <input
+                        style={{
+                          borderRadius: '10px',
+                        }}
                         type='date'
                         value={editingRTSContext.editingRTS.newItem.repeat_ends_on}
                         onChange={(e) => {
@@ -297,11 +363,19 @@ const EditRTS = () => {
                         }}
                       />
                       </div>
-                    <div>
+                    <div
+                      style={{
+                        margin: '10px 0',
+                      }}
+                    >
                       <input
+                        style={{
+                          borderRadius: '10px',
+                        }}
                         name='repeatingEnd'
                         type='radio'
-                        value='occurences'
+                        value='Occurences'
+                        checked={editingRTSContext.editingRTS.newItem.repeat_type === 'Occurences'}
                         onChange={(e) => {
                           editingRTSContext.setEditingRTS({
                             ...editingRTSContext.editingRTS,
@@ -314,8 +388,11 @@ const EditRTS = () => {
                       />
                       After
                       <input
+                        style={{
+                          width: '60px',
+                          borderRadius: '10px',
+                        }}
                         type='number'
-                        style={{width: '60px'}}
                         value={editingRTSContext.editingRTS.newItem.repeat_occurences}
                         onChange={(e) => {
                           editingRTSContext.setEditingRTS({
@@ -329,11 +406,19 @@ const EditRTS = () => {
                       />
                       Occurences
                     </div>
-                    <div>
+                    <div
+                      style={{
+                        margin: '10px 0',
+                      }}
+                    >
                       <input
+                        style={{
+                          borderRadius: '10px',
+                        }}
                         name='repeatingEnd'
                         type='radio'
                         value='Never'
+                        checked={editingRTSContext.editingRTS.newItem.repeat_type === 'Never'}
                         onChange={(e) => {
                           editingRTSContext.setEditingRTS({
                             ...editingRTSContext.editingRTS,
@@ -357,6 +442,10 @@ const EditRTS = () => {
             <div>Location</div>
             <div>
               <input
+                style={{
+                  margin: '5px 0',
+                  borderRadius: '10px',
+                }}
                 value={editingRTSContext.editingRTS.newItem.location}
                 onChange={(e) => {
                   editingRTSContext.setEditingRTS({
@@ -385,16 +474,31 @@ const EditRTS = () => {
             />
           </Col>
         </Row>
-        <Row>
+        <Row
+          style={{
+              padding: '20px 0',
+          }}
+        >
           <Col md={12}>
             <div> Notification </div>
             <Container>
-            <Row>
+            <Row
+              style={{
+                padding: '10px 0',
+              }}
+            >
               <Col md={4}>
-                <div>
+                <div
+                  style={{
+                    margin: '10px 0',
+                  }}
+                >
                   <input
                     type='number'
-                    style={{width: '60px'}}
+                    style={{
+                      width: '60px',
+                      borderRadius: '10px',
+                    }}
                     value={editingRTSContext.editingRTS.newItem.ta_notifications.before.time}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
@@ -419,10 +523,16 @@ const EditRTS = () => {
                       })
                     }}
                   />
+                  &nbsp;
                   Mins Before Start Time
                 </div>
-                <div>
+                <div
+                  style={{
+                    margin: '10px 0',
+                  }}
+                >
                   User
+                  &nbsp;
                   <input
                     type='checkbox'
                     checked={editingRTSContext.editingRTS.newItem.user_notifications.before.is_enabled}
@@ -443,7 +553,11 @@ const EditRTS = () => {
                       })
                     }}
                   />
+                  &nbsp;
                   <input
+                    style={{
+                      borderRadius: '10px',
+                    }}
                     value={editingRTSContext.editingRTS.newItem.user_notifications.before.message}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
@@ -462,8 +576,13 @@ const EditRTS = () => {
                     }}
                   />
                   </div>
-                <div>
-                  TA 
+                <div
+                  style={{
+                    margin: '10px 0',
+                  }}
+                >
+                  TA
+                  &nbsp;&nbsp;&nbsp;
                   <input
                     type='checkbox'
                     checked={editingRTSContext.editingRTS.newItem.ta_notifications.before.is_enabled}
@@ -484,7 +603,11 @@ const EditRTS = () => {
                       })
                     }}
                   />
+                  &nbsp;
                   <input
+                    style={{
+                      borderRadius: '10px',
+                    }}
                     value={editingRTSContext.editingRTS.newItem.ta_notifications.before.message}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
@@ -505,10 +628,17 @@ const EditRTS = () => {
                 </div>
               </Col>
               <Col md={4}>
-                <div>
+                <div
+                  style={{
+                    margin: '10px 0',
+                  }}
+                >
                   <input
                     type='number'
-                    style={{width: '60px'}}
+                    style={{
+                      width: '60px',
+                      borderRadius: '10px',
+                    }}
                     value={editingRTSContext.editingRTS.newItem.ta_notifications.during.time}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
@@ -533,10 +663,16 @@ const EditRTS = () => {
                       })
                     }}
                   />
+                  &nbsp;
                   Mins After Start Time
                 </div>
-                <div>
+                <div
+                  style={{
+                    margin: '10px 0',
+                  }}
+                >
                   User
+                  &nbsp;
                   <input
                     type='checkbox'
                     checked={editingRTSContext.editingRTS.newItem.user_notifications.during.is_enabled}
@@ -557,7 +693,11 @@ const EditRTS = () => {
                       })
                     }}
                   />
+                  &nbsp;
                   <input
+                    style={{
+                      borderRadius: '10px',
+                    }}
                     value={editingRTSContext.editingRTS.newItem.user_notifications.during.message}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
@@ -576,8 +716,13 @@ const EditRTS = () => {
                     }}
                   />
                 </div>
-                <div>
+                <div
+                  style={{
+                    margin: '10px 0',
+                  }}
+                >
                   TA
+                  &nbsp;&nbsp;&nbsp;
                   <input
                     type='checkbox'
                     checked={editingRTSContext.editingRTS.newItem.ta_notifications.during.is_enabled}
@@ -598,7 +743,11 @@ const EditRTS = () => {
                       })
                     }}
                   />
+                  &nbsp;
                   <input
+                    style={{
+                      borderRadius: '10px',
+                    }}
                     value={editingRTSContext.editingRTS.newItem.ta_notifications.during.message}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
@@ -619,10 +768,17 @@ const EditRTS = () => {
                 </div>
               </Col>
               <Col md={4}>
-                <div>
+                <div
+                  style={{
+                    margin: '10px 0',
+                  }}
+                >
                   <input
                     type='number'
-                    style={{width: '60px'}}
+                    style={{
+                      width: '60px',
+                      borderRadius: '10px',
+                    }}
                     value={editingRTSContext.editingRTS.newItem.ta_notifications.after.time}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
@@ -649,8 +805,13 @@ const EditRTS = () => {
                   />
                   Mins After End Time
                 </div>
-                <div>
+                <div
+                  style={{
+                    margin: '10px 0',
+                  }}
+                >
                   User
+                  &nbsp;
                   <input
                     type='checkbox'
                     checked={editingRTSContext.editingRTS.newItem.user_notifications.after.is_enabled}
@@ -671,7 +832,11 @@ const EditRTS = () => {
                       })
                     }}
                   />
+                  &nbsp;
                   <input
+                    style={{
+                      borderRadius: '10px',
+                    }}
                     value={editingRTSContext.editingRTS.newItem.user_notifications.after.message}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
@@ -690,8 +855,13 @@ const EditRTS = () => {
                     }}
                   />
                 </div>
-                <div>
+                <div
+                  style={{
+                    margin: '10px 0',
+                  }}
+                >
                   TA
+                  &nbsp;&nbsp;&nbsp;
                   <input
                     type='checkbox'
                     checked={editingRTSContext.editingRTS.newItem.ta_notifications.after.is_enabled}
@@ -712,7 +882,11 @@ const EditRTS = () => {
                       })
                     }}
                   />
+                  &nbsp;
                   <input
+                    style={{
+                      borderRadius: '10px',
+                    }}
                     value={editingRTSContext.editingRTS.newItem.ta_notifications.after.message}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
@@ -736,7 +910,11 @@ const EditRTS = () => {
             </Container>
           </Col>
         </Row>
-        <Row>
+        <Row
+          style={{
+            padding: '20px 0',
+          }}
+        >
           <Col md={12}>
             <div
               style={{
@@ -745,11 +923,12 @@ const EditRTS = () => {
             >
               <button
                 style={{
-                  width: '100px',
+                  width: '150px',
                   padding: '0',
                   margin: '0 20px',
                   backgroundColor: 'inherit',
                   border: '3px white solid',
+                  borderRadius: '30px',
                   color: '#ffffff',
                   textAlign: 'center',
                 }}
@@ -758,17 +937,18 @@ const EditRTS = () => {
               </button>
               <button
                 style={{
-                  width: '100px',
+                  width: '150px',
                   padding: '0',
                   margin: '0 20px',
                   backgroundColor: 'inherit',
                   border: '3px white solid',
+                  borderRadius: '30px',
                   color: '#ffffff',
                   textAlign: 'center',
                 }}
                 onClick={updateRTS}
               >
-                Save
+                Save Changes
               </button>
             </div>
           </Col>
