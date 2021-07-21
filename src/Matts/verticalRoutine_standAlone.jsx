@@ -24,16 +24,8 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 //import DeleteAT from "../manifest/OldManifest";
 import DeleteGR from "../manifest/OldManifest/deleteGR.jsx";
-import EditGR from "../manifest/OldManifest/editGR.jsx";
-import EditIS from "../manifest/OldManifest/editIS.jsx";
-import EditAT from "../manifest/OldManifest/EditAT.jsx";
-import ShowATList from "../manifest/OldManifest/ShowATList";
-import ShowISList from "../manifest/OldManifest/ShowISList";
-import MustDoAT from "../manifest/OldManifest/MustDoAT";
 import EditIcon from "../manifest/OldManifest/EditIcon.jsx";
 import CopyIcon from "../manifest/OldManifest/CopyIcon.jsx";
-import CopyGR from "../manifest/OldManifest/CopyGR.jsx";
-import { Container } from 'react-grid-system';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
@@ -68,82 +60,190 @@ const useStyles = makeStyles({
       },
 })
 
-var firstTime = true;
-const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
+const VerticalRoutine = ({userID}) => {
     const history = useHistory();
+    const inRange = [];
     const currentUser = userID;
-    const [routinesGot, setRoutines] = useState([]);
     const [isLoading, setLoading] = useState(true);
-    const [rows, setRows] = useState([]);
+    const [listOfBlocks, setlistOfBlocks] = useState([]);
+    const [historyGot, setHG] = useState([]);
+    //NOTE This gives you routines within 7 days of current date. Change currentDate to change that
+    const [currentDate, setCurDate] = useState(new Date(Date.now()))
     const classes = useStyles();
-    console.log(justRoutines);
+    const [rows, setRows] = useState([]);
+    function createData(name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type){    //rows structure
+        return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type}
+    }
+
+    useEffect(() => {
+        axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getHistory/" + currentUser)
+        .then((response) =>{
+            for(var i=0; i <response.data.result.length; i++){
+                historyGot.push(response.data.result[i]);
+            }
+            console.log(historyGot);
+            cleanData(historyGot, currentDate);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    },[])
+
     
+    //This clean data is from History Page - it creates "rows" of routines actions and instructions
 
-    if (firstTime){
-        firstTime = false;
-
-        // useEffect(() => {
-            axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/rts/" + currentUser)
-            .then((response) => {
-                for(var i=0; i<response.data.result.length; i++){
-                    routinesGot.push(response.data.result[i]);
-                }
-                console.log(routinesGot);
-                setRoutines(routinesGot);
-                setLoading(false);
-                addShows(routinesGot);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-        // },[])
-    }
-    else{
-       // displayThings(routinesGot);
-    }
-
-    function addShows(routinesGot){
-        var routineCopy = [];
-        for(var r=0; r<routinesGot.length; r++){
-            for(var i=0; i<justRoutines.length; i++){
-                if(routinesGot[r].gr_title == justRoutines[i]){
-                    routineCopy.push(routinesGot[r]);
-                }
+     //-------- clean historyGot - just dates we want, just info we want, and structure vertical to horizontal   --------
+     function cleanData(historyGot, useDate){
+        
+        //go through at find historyGots that are within 7 days of useDate
+        console.log("date:" + useDate);
+        const temp = [];
+        for(var i=0; i <historyGot.length; i++){
+            var historyDate = new Date(historyGot[i].date);
+            if ((historyDate.getTime() >= useDate.getTime() - 604800000)    //filter for within 7 datets
+            && historyDate.getTime() <= useDate.getTime()){                 // 7: 604800000    2: 172800000
+                temp.push(historyGot[i]);
             }
         }
-        console.log(routineCopy);
-        // var routineCopy = routinesGot;
-        for(var r=0; r<routineCopy.length; r++){
-            routineCopy[r].showBelow = false;
-            if(routineCopy[r].actions_tasks != undefined){
-                console.log(routineCopy[r].actions_tasks);
-                for(var a=0; r<routineCopy[r].actions_tasks.length; a++){
-                    if(routineCopy[r].actions_tasks[a] == undefined){break;}
-                    routineCopy[r].actions_tasks[a].showBelow = false;
-                }
+        //now temp has data we want
+    // move temp to inRange with no repeats
+        const map = new Map();
+        for (const item of temp){
+            if(!map.has(item.date)){
+                map.set(item.date, true);
+                inRange.push({
+                    date: item.date,
+                    details: item.details
+                })
             }
         }
-        setRoutines(routineCopy);
-        console.log(routinesGot);
-        displayThings(routinesGot);
-    }
+        inRange.reverse();//put latest day at end
 
-    function displayThings(routinesGot){
-        var tempRows = [];
-        for(const r of routinesGot){
-            tempRows.push(displayRoutines(r));  //put display routine here
-            if(r.showBelow){
-                for(const a of r.actions_tasks){
-                    tempRows.push(displayActions(a, r));  //put display action here
-                    if(a.showBelow){
-                        for(const i of a.instructions_steps){
-                            tempRows.push(displayInstructions(i, a, r));
+
+        //bigList will hold new data format sidewase
+        var bigList = [];       
+        for (var d = 0; d < inRange.length; d++){
+            const obj = JSON.parse(inRange[d].details)
+            console.log(obj);
+            //sort obj by time of day
+            obj.sort((a, b) => a.start_day_and_time - b.start_day_and_time);
+            for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
+                // console.log(r);
+                if(obj[r].title){
+                    // console.log("gere");
+                    var isNewR = true;
+                    for (var s=0; s<bigList.length; s++){       //check through and see if this is a new routine
+                        if (bigList[s].type == "Routine" && bigList[s].title == obj[r].title){
+                            bigList[s].days[d] = obj[r].status;   //if already there- just update that day status
+                            isNewR = false;
+                            break;
                         }
                     }
+                    if (isNewR){
+                        var currentR = {type: "Routine", title: obj[r].title, under: "", days: [], tBox: {}, 
+                        show: true, photo: obj[r].photo, startTime: obj[r].start_day_and_time, 
+                        endTime: obj[r].end_day_and_time, is_sublist_available: obj[r].is_sublist_available}; //if new, make object and put in bigList
+                        currentR.days[d] = obj[r].status;
+                        bigList.push(currentR);
+                    }
+
+                    if(obj[r].actions!= undefined){
+                        var actions = obj[r].actions;
+                        for (var a=0; a < actions.length; a++){         //FOR ACTIONS
+                            if(actions[a].title){
+                                var isNewA = true;
+                                for (var s=0; s<bigList.length; s++){
+                                    if(bigList[s].type == "Action" && bigList[s].title == actions[a].title){
+                                        bigList[s].days[d] = actions[a].status;
+                                        isNewA = false;
+                                        break;
+                                    }
+                                }
+                                if(isNewA){
+                                    var currentA = {type: "Action", title: actions[a].title, under: obj[r].title, days:[], tBox: {}, show: false};
+                                    currentA.days[d] = actions[a].status;
+                                    bigList.push(currentA);
+                                }
+                                if(actions[a].instructions != undefined){
+                                    var insts = actions[a].instructions;
+                                    for(var i=0; i < insts.length; i++){        //FOR INSTRUCTIONS
+                                        if (insts[i].title){
+                                            var isNewI = true;
+                                            for(var s=0; s<bigList.length; s++){
+                                                if (bigList[s].type == "Instruction" && bigList[s].title == insts[i].title){
+                                                    bigList[s].days[d] = insts[i].status;
+                                                    isNewI = false;
+                                                    break;
+                                                }
+                                            }
+                                            if(isNewI){
+                                                var currentI = {type: "Instruction", title: insts[i].title, under: actions[a].title, days:[], tBox: {}, show: false};
+                                                currentI.days[d] = insts[i].status;
+                                                bigList.push(currentI);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+
                 }
             }
         }
-        setRows(tempRows);
+        
+        setRows([]);
+        console.log("ROWS" + rows);
+        console.log(bigList);
+        // bigList = addCircles(bigList);
+        // console.log(bigList);
+       // bigList = addNames(bigList, routines);
+        // console.log(bigList);
+        for (var i=0; i< bigList.length; i++){
+            rows.push(createData(bigList[i].title, bigList[i].days[6], bigList[i].days[5], bigList[i].days[4], bigList[i].days[3],
+                 bigList[i].days[2], bigList[i].days[1], bigList[i].days[0], bigList[i].show, bigList[i].under, bigList[i].photo,
+                 bigList[i].startTime, bigList[i].endTime, bigList[i].is_sublist_available, bigList[i].type));
+        }
+        // console.log(tempRows);
+        setLoading(false);
+        // setRows(tempRows);
+        console.log(rows);
+        // console.log("GERE");
+        makeDisplays(onlyAllowed(rows));
+        return(true);
+    }
+
+
+
+      //only return rows with "show"
+    function onlyAllowed(rows){
+        var newRows = [];
+        for (var r=0; r < rows.length; r ++){
+            if (rows[r].show){
+                //console.log("here: " + rows[r].name);
+                newRows.push(rows[r]);
+            }
+        }
+        return(newRows);
+    }
+
+    //makes listOfBlocks with list of displays routiens and such
+    function makeDisplays(onlyAllowed){     //add displays to tempRows
+        var tempRows = [];
+        for (var i=0; i <onlyAllowed.length; i++){
+            if (onlyAllowed[i].type == "Routine"){
+                tempRows.push(displayRoutines(onlyAllowed[i]));
+            }
+            else if (onlyAllowed[i].type == "Action"){
+                tempRows.push(displayActions(onlyAllowed[i]));
+            }
+            else {tempRows.push(displayInstructions(onlyAllowed[i]))}
+        }
+        console.log(tempRows);
+        setlistOfBlocks(tempRows);
+        console.log(listOfBlocks);
+        setLoading(false);
     }
 
     function formatDateTime(str) {
@@ -152,30 +252,42 @@ const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
         return newTime;
       }
 
-    function changeShowBelow(myRoutine){
-        var routineCopy = routinesGot;
-        console.log("change show " + myRoutine.gr_title); //change for at_title
-        for (var r=0; r<routineCopy.length; r++){
-            if(myRoutine.at_unique_id != undefined){
-                for (var a=0; a<routineCopy[r].actions_tasks.length; a++){
-                    if(routineCopy[r].actions_tasks[a].at_unique_id == myRoutine.at_unique_id){
-                        routineCopy[r].actions_tasks[a].showBelow = !routineCopy[r].actions_tasks[a].showBelow;
-                    }
-                }
-            }
-            else{
-                if(myRoutine.gr_unique_id == routineCopy[r].gr_unique_id){
-                    console.log("found and replaced");
-                    routineCopy[r].showBelow = !routineCopy[r].showBelow;
-                    for(var a=0; a<routineCopy[r].actions_tasks.length; a++){
-                        routineCopy[r].actions_tasks[a].showBelow = false;
-                    }
-                }
+    //when clicking the subroutines button
+    function clickHandle(name){
+        console.log(rows);
+        var newRows = [];
+        //take out duplicates of rows (copy into newRows)
+        const map = new Map();
+        for (const item of rows){
+            if(!map.has(item.name)){
+                map.set(item.name, true);
+                newRows.push(item)
             }
         }
-        setRoutines(routineCopy);
-        displayThings(routinesGot);
+        //if clicked on, change show of things underneath
+        console.log("click." + name);
+        console.log(newRows);
+        for (var r =0; r < newRows.length; r++){
+            if (rows[r].under == name){
+                //console.log("got " + rows[r].name);
+                newRows[r].show = !rows[r].show;
+                console.log(rows[r].name + " -> " + newRows[r].show);
+                //also close instructions of routines clicked on. 2 levels deep
+                for (var i=0; i<newRows.length; i++){
+                    if(rows[i].under == rows[r].name && rows[i].show){
+                        newRows[i].show = !rows[i].show;
+                        console.log(rows[i].name + " -> " + newRows[i].show);
+                    }
+                }
+            }
+
+        }
+        // console.log(childIn);
+        setRows(newRows);    //update rows with newRows
+        makeDisplays(onlyAllowed(newRows));
     }
+
+    //Creates actual boxes to display
 
     function displayRoutines(r){
         return(
@@ -190,7 +302,7 @@ const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
                 zIndex:'50%'}}>
                 <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
                 <div style={{ marginLeft:'1rem'}} >
-                {r["start_day_and_time"] && r["end_day_and_time"] ? (
+                {r["startTime"] && r["endTime"] ? (
                     <div
                     style={{
                         fontSize: "8px",
@@ -199,12 +311,12 @@ const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
                     >
                     {
                         formatDateTime(
-                        r["start_day_and_time"]  
+                        r["startTime"]  
                         )}
                         -
                     {
                         formatDateTime(
-                        r["end_day_and_time"]
+                        r["endTime"]
                         )}
                     </div>
                 ) : (
@@ -214,7 +326,7 @@ const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
                 </div>
 
                 <div style={{color:'#ffffff', size:'24px', textDecoration:'underline', fontWeight:'bold', marginLeft: "10px",}}>
-                {r["gr_title"]}
+                {r["name"]}
                 </div>
                     
                     {/* ({date}) */}
@@ -242,8 +354,9 @@ const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
                             style={{ color: "#ffffff" }}
                             size="small"
                             onClick = {()=> {
-                                changeShowBelow(r);
-                                sendRoutineToParent(r.gr_title);
+                                // sendRoutineToParent(r.name);
+                                clickHandle(r.name)
+                                // setLoading(!isLoading);
                             }}
                             />
                         </div>
@@ -386,183 +499,11 @@ const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
                     </div>
                 </div>
                 </div>
-
-                {r["photo"] ? (
-                <div>
-            
-                    {/* <EditGR
-                    BASE_URL={this.props.BASE_URL}
-                        closeEditModal={() => {
-                        this.setState({ showEditModal: true });
-                        this.props.updateFBGR();
-                        }}
-                        showModal={this.state.showEditModal}
-                        indexEditing={this.state.indexEditing}
-                        i={this.findIndexByID(tempID)} //index to edit
-                        ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                        // FBPath={firebase
-                        //   .firestore()
-                        //   .collection("users")
-                        //   .doc(this.props.theCurrentUserID)}
-                        // refresh={this.grabFireBaseRoutinesGoalsData} //function to refresh IS data
-                        theCurrentUserId={this.props.theCurrentUserID}
-                        theCurrentTAID={this.props.theCurrentTAID}
-                        // chnagePhoto = {this.changePhotoIcon()}
-                    /> */}
-                </div>
-                ) : (
-                <div>
-                    <Row style={{ marginLeft: "100px" }} className="d-flex ">
-                    {r["is_available"] ? (
-                        <div style={{ marginLeft: "5px" }}>
-                        <FontAwesomeIcon
-                            title="Available to the user"
-                            //style={{ color: this.state.availabilityColorCode }}
-                            onClick={(e) => {
-                            e.stopPropagation();
-                            alert("Item Is Availble to the user");
-                            }}
-                            icon={faUser}
-                            size="lg"
-                        />{" "}
-                        </div>
-                    ) : (
-                        <div>
-                        <FontAwesomeIcon
-                            title="Unavailable to the user"
-                            style={{ color: "#000000" }}
-                            onClick={(e) => {
-                            e.stopPropagation();
-                            alert("Item Is NOT Availble to the user");
-                            }}
-                            icon={faUserAltSlash}
-                            size="lg"
-                        />
-                        </div>
-                    )}
-                    {(r.is_sublist_available === "True") ? (
-                            <div>
-                            <FontAwesomeIcon
-                            icon={faList}
-                            title="SubList Available"
-                            style={{ color: "#D6A34C", marginLeft: "20px" }}
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
-                            //onClick={this.ListFalse}
-                            size="lg"
-                            />
-                        </div>
-                        ) : (
-                            <div
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShowATModal: false})}}>
-                            >
-                            
-                            </div>
-                        )}
-                    </Row>
-                    <Row
-                    style={{ marginTop: "15px", marginLeft: "100px" }}
-                    className="d-flex "
-                    >
-                    <DeleteGR
-                    //   BASE_URL={this.props.BASE_URL}
-                    //     deleteIndex={this.findIndexByID(tempID)}
-                    //     Array={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                    //     // Path={this.state.firebaseRootPath} //holds complete data for action task: fbPath, title, etc
-                    //     // Path={firebase
-                    //     //   .firestore()
-                    //     //   .collection("users")
-                    //     //   .doc(this.props.theCurrentUserID)}
-                    //     // refresh={this.grabFireBaseRoutinesGoalsData}
-                    //     theCurrentUserId={this.props.theCurrentUserID}
-                    //     theCurrentTAID={this.props.theCurrentTAID}
-                    />
-                    <EditIcon
-                        // openEditModal={() => {
-                        //   this.setState({
-                        //     showEditModal: true,
-                        //     indexEditing: this.findIndexByID(tempID),
-                        //   });
-                        // }}
-                        // showModal={this.state.showEditModal}
-                        // indexEditing={this.state.indexEditing}
-                        // i={this.findIndexByID(tempID)} //index to edit
-                        // ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                        // // FBPath={firebase
-                        // //   .firestore()
-                        // //   .collection("users")
-                        // //   .doc(this.props.theCurrentUserID)}
-                        // // refresh={this.grabFireBaseRoutinesGoalsData}
-                        
-                    />
-                    </Row>
-                    <Row>
-                    <EditGR
-                    //   BASE_URL={this.props.BASE_URL}
-                    //     closeEditModal={() => {
-                    //       this.setState({ showEditModal: false });
-                    //       this.props.updateFBGR();
-                    //     }}
-                    
-                    //     showModal={this.state.showEditModal}
-                    //     indexEditing={this.state.indexEditing}
-                    //     i={this.findIndexByID(tempID)} //index to edit
-                    //     ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                    //     // FBPath={firebase
-                    //     //   .firestore()
-                    //     //   .collection("users")
-                    //     //   .doc(this.props.theCurrentUserID)}
-                    //     // refresh={this.grabFireBaseRoutinesGoalsData} //function to refresh IS data
-                    //     theCurrentUserId={this.props.theCurrentUserID}
-                    //     theCurrentTAID={this.props.theCurrentTAID}
-                    />
-                    </Row>
-                </div>
-                )}
-                <Row>
-                <CopyGR
-                    //   BASE_URL={this.props.BASE_URL}
-                    //   indexEditing={this.state.indexEditing}
-                    //     i={this.findIndexByID(tempID)}
-                    //   closeCopyModal={() => {
-                    //     this.setState({
-                    //     showCopyModal: false,
-                    //     });
-                    //   }}
-                    //   showModal={this.state.showCopyModal}
-                    //   title={tempTitle}
-                    //   gr_id={tempID}
-                    //   ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                    //   // refresh={this.grabFireBaseRoutinesGoalsData}
-                    //   theCurrentUserId={this.props.theCurrentUserID}
-                    //   theCurrentTAID={this.props.theCurrentTAID}
-                    />
-                </Row>
-            
-
-                <Row>
-                {/* {this.props.showRoutine &&
-                    (this.state.WentThroughATList[tempID] === false ||
-                    this.state.WentThroughATList[tempID] === undefined)} */}
-
-                {/* <Col
-                    style={{
-                    paddingRight: "0px",
-                    paddingLeft: "0px",
-                    marginLeft: "10px",
-                    }}
-                >
-                    {this.showRoutineRepeatStatus(i)}
-                </Col>
-
-                <Col xs={6} style={{ paddingLeft: "0px", paddingRight: "0px" }}>
-                    {this.thisTakesMeGivenVsSelected(i, tempID)}
-                </Col> */}
-                </Row>
             </div>
         )
     }
 
-    function displayActions(a, r){
+    function displayActions(a){
         return(
             <div
             
@@ -575,7 +516,7 @@ const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
                 zIndex:'50%'}}>
                 <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
                 <div style={{ marginLeft:'1rem'}} >
-                {r["start_day_and_time"] && r["end_day_and_time"] ? (
+                {true ? (
                     <div
                     style={{
                         fontSize: "8px",
@@ -584,12 +525,12 @@ const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
                     >
                     {
                         formatDateTime(
-                        r["start_day_and_time"]  
+                            "6/23/2021, 7:31:19 AM"  
                         )}
                         -
                     {
                         formatDateTime(
-                        r["end_day_and_time"]
+                            "6/23/2021, 8:31:56 AM"
                         )}
                     </div>
                 ) : (
@@ -599,7 +540,7 @@ const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
                 </div>
 
                 <div style={{color:'#ffffff', size:'24px', textDecoration:'underline', fontWeight:'bold', marginLeft: "10px",}}>
-                {a["at_title"]}
+                {a["name"]}
                 </div>
                     
                     {/* ({date}) */}
@@ -627,8 +568,10 @@ const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
                             style={{ color: "#ffffff" }}
                             size="small"
                             onClick = {()=> {
-                                changeShowBelow(a);
-                                sendRoutineToParent(a.at_title);}}
+                                // sendRoutineToParent(a.name);
+                                clickHandle(a.name)
+                                // setLoading(!isLoading);
+                            }}
                             />
                         </div>
                         ) : (
@@ -662,7 +605,7 @@ const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
                     <div style={{flex:'1', marginLeft:'1rem'}}>
 
                     <Row >
-                        {a["is_available"] ? (
+                        {(a.is_available === "True") ? (
                             <div >
                             <FontAwesomeIcon
                                 title="Available to the user"
@@ -771,182 +714,11 @@ const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
                 </div>
                 </div>
 
-                {a["photo"] ? (
-                <div>
-            
-                    {/* <EditGR
-                    BASE_URL={this.props.BASE_URL}
-                        closeEditModal={() => {
-                        this.setState({ showEditModal: true });
-                        this.props.updateFBGR();
-                        }}
-                        showModal={this.state.showEditModal}
-                        indexEditing={this.state.indexEditing}
-                        i={this.findIndexByID(tempID)} //index to edit
-                        ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                        // FBPath={firebase
-                        //   .firestore()
-                        //   .collection("users")
-                        //   .doc(this.props.theCurrentUserID)}
-                        // refresh={this.grabFireBaseRoutinesGoalsData} //function to refresh IS data
-                        theCurrentUserId={this.props.theCurrentUserID}
-                        theCurrentTAID={this.props.theCurrentTAID}
-                        // chnagePhoto = {this.changePhotoIcon()}
-                    /> */}
-                </div>
-                ) : (
-                <div>
-                    <Row style={{ marginLeft: "100px" }} className="d-flex ">
-                    {a["is_available"] ? (
-                        <div style={{ marginLeft: "5px" }}>
-                        <FontAwesomeIcon
-                            title="Available to the user"
-                            //style={{ color: this.state.availabilityColorCode }}
-                            onClick={(e) => {
-                            e.stopPropagation();
-                            alert("Item Is Availble to the user");
-                            }}
-                            icon={faUser}
-                            size="lg"
-                        />{" "}
-                        </div>
-                    ) : (
-                        <div>
-                        <FontAwesomeIcon
-                            title="Unavailable to the user"
-                            style={{ color: "#000000" }}
-                            onClick={(e) => {
-                            e.stopPropagation();
-                            alert("Item Is NOT Availble to the user");
-                            }}
-                            icon={faUserAltSlash}
-                            size="lg"
-                        />
-                        </div>
-                    )}
-                    {(a.is_sublist_available === "True") ? (
-                            <div>
-                            <FontAwesomeIcon
-                            icon={faList}
-                            title="SubList Available"
-                            style={{ color: "#D6A34C", marginLeft: "20px" }}
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
-                            //onClick={this.ListFalse}
-                            size="lg"
-                            />
-                        </div>
-                        ) : (
-                            <div
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShowATModal: false})}}>
-                            >
-                            
-                            </div>
-                        )}
-                    </Row>
-                    <Row
-                    style={{ marginTop: "15px", marginLeft: "100px" }}
-                    className="d-flex "
-                    >
-                    <DeleteGR
-                    //   BASE_URL={this.props.BASE_URL}
-                    //     deleteIndex={this.findIndexByID(tempID)}
-                    //     Array={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                    //     // Path={this.state.firebaseRootPath} //holds complete data for action task: fbPath, title, etc
-                    //     // Path={firebase
-                    //     //   .firestore()
-                    //     //   .collection("users")
-                    //     //   .doc(this.props.theCurrentUserID)}
-                    //     // refresh={this.grabFireBaseRoutinesGoalsData}
-                    //     theCurrentUserId={this.props.theCurrentUserID}
-                    //     theCurrentTAID={this.props.theCurrentTAID}
-                    />
-                    <EditIcon
-                        // openEditModal={() => {
-                        //   this.setState({
-                        //     showEditModal: true,
-                        //     indexEditing: this.findIndexByID(tempID),
-                        //   });
-                        // }}
-                        // showModal={this.state.showEditModal}
-                        // indexEditing={this.state.indexEditing}
-                        // i={this.findIndexByID(tempID)} //index to edit
-                        // ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                        // // FBPath={firebase
-                        // //   .firestore()
-                        // //   .collection("users")
-                        // //   .doc(this.props.theCurrentUserID)}
-                        // // refresh={this.grabFireBaseRoutinesGoalsData}
-                        
-                    />
-                    </Row>
-                    <Row>
-                    <EditGR
-                    //   BASE_URL={this.props.BASE_URL}
-                    //     closeEditModal={() => {
-                    //       this.setState({ showEditModal: false });
-                    //       this.props.updateFBGR();
-                    //     }}
-                    
-                    //     showModal={this.state.showEditModal}
-                    //     indexEditing={this.state.indexEditing}
-                    //     i={this.findIndexByID(tempID)} //index to edit
-                    //     ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                    //     // FBPath={firebase
-                    //     //   .firestore()
-                    //     //   .collection("users")
-                    //     //   .doc(this.props.theCurrentUserID)}
-                    //     // refresh={this.grabFireBaseRoutinesGoalsData} //function to refresh IS data
-                    //     theCurrentUserId={this.props.theCurrentUserID}
-                    //     theCurrentTAID={this.props.theCurrentTAID}
-                    />
-                    </Row>
-                </div>
-                )}
-                <Row>
-                <CopyGR
-                    //   BASE_URL={this.props.BASE_URL}
-                    //   indexEditing={this.state.indexEditing}
-                    //     i={this.findIndexByID(tempID)}
-                    //   closeCopyModal={() => {
-                    //     this.setState({
-                    //     showCopyModal: false,
-                    //     });
-                    //   }}
-                    //   showModal={this.state.showCopyModal}
-                    //   title={tempTitle}
-                    //   gr_id={tempID}
-                    //   ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                    //   // refresh={this.grabFireBaseRoutinesGoalsData}
-                    //   theCurrentUserId={this.props.theCurrentUserID}
-                    //   theCurrentTAID={this.props.theCurrentTAID}
-                    />
-                </Row>
-            
-
-                <Row>
-                {/* {this.props.showRoutine &&
-                    (this.state.WentThroughATList[tempID] === false ||
-                    this.state.WentThroughATList[tempID] === undefined)} */}
-
-                {/* <Col
-                    style={{
-                    paddingRight: "0px",
-                    paddingLeft: "0px",
-                    marginLeft: "10px",
-                    }}
-                >
-                    {this.showRoutineRepeatStatus(i)}
-                </Col>
-
-                <Col xs={6} style={{ paddingLeft: "0px", paddingRight: "0px" }}>
-                    {this.thisTakesMeGivenVsSelected(i, tempID)}
-                </Col> */}
-                </Row>
             </div>
         )
     }
 
-    function displayInstructions(i, a, r){
+    function displayInstructions(i){
         return(
             <div
             
@@ -959,7 +731,7 @@ const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
                 zIndex:'50%'}}>
                 <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
                 <div style={{ marginLeft:'1rem'}} >
-                {r["start_day_and_time"] && r["end_day_and_time"] ? (
+                {true ? (
                     <div
                     style={{
                         fontSize: "8px",
@@ -968,12 +740,12 @@ const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
                     >
                     {
                         formatDateTime(
-                        r["start_day_and_time"]  
+                            "6/23/2021, 8:31:56 AM"  
                         )}
                         -
                     {
                         formatDateTime(
-                        r["end_day_and_time"]
+                            "6/23/2021, 8:31:56 AM"
                         )}
                     </div>
                 ) : (
@@ -983,7 +755,7 @@ const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
                 </div>
 
                 <div style={{color:'#ffffff', size:'24px', textDecoration:'underline', fontWeight:'bold', marginLeft: "10px",}}>
-                {i["title"]}
+                {i["name"]}
                 </div>
                     
                     {/* ({date}) */}
@@ -1043,7 +815,7 @@ const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
                     <div style={{flex:'1', marginLeft:'1rem'}}>
 
                     <Row >
-                        {i["is_available"] ? (
+                        {i.is_available ? (
                             <div >
                             <FontAwesomeIcon
                                 title="Available to the user"
@@ -1152,177 +924,7 @@ const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
                 </div>
                 </div>
 
-                {i["photo"] ? (
-                <div>
-            
-                    {/* <EditGR
-                    BASE_URL={this.props.BASE_URL}
-                        closeEditModal={() => {
-                        this.setState({ showEditModal: true });
-                        this.props.updateFBGR();
-                        }}
-                        showModal={this.state.showEditModal}
-                        indexEditing={this.state.indexEditing}
-                        i={this.findIndexByID(tempID)} //index to edit
-                        ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                        // FBPath={firebase
-                        //   .firestore()
-                        //   .collection("users")
-                        //   .doc(this.props.theCurrentUserID)}
-                        // refresh={this.grabFireBaseRoutinesGoalsData} //function to refresh IS data
-                        theCurrentUserId={this.props.theCurrentUserID}
-                        theCurrentTAID={this.props.theCurrentTAID}
-                        // chnagePhoto = {this.changePhotoIcon()}
-                    /> */}
-                </div>
-                ) : (
-                <div>
-                    <Row style={{ marginLeft: "100px" }} className="d-flex ">
-                    {i["is_available"] ? (
-                        <div style={{ marginLeft: "5px" }}>
-                        <FontAwesomeIcon
-                            title="Available to the user"
-                            //style={{ color: this.state.availabilityColorCode }}
-                            onClick={(e) => {
-                            e.stopPropagation();
-                            alert("Item Is Availble to the user");
-                            }}
-                            icon={faUser}
-                            size="lg"
-                        />{" "}
-                        </div>
-                    ) : (
-                        <div>
-                        <FontAwesomeIcon
-                            title="Unavailable to the user"
-                            style={{ color: "#000000" }}
-                            onClick={(e) => {
-                            e.stopPropagation();
-                            alert("Item Is NOT Availble to the user");
-                            }}
-                            icon={faUserAltSlash}
-                            size="lg"
-                        />
-                        </div>
-                    )}
-                    {/* {a["is_sublist_available"] ? (
-                            <div>
-                            <FontAwesomeIcon
-                            icon={faList}
-                            title="SubList Available"
-                            style={{ color: "#D6A34C", marginLeft: "20px" }}
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
-                            //onClick={this.ListFalse}
-                            size="lg"
-                            />
-                        </div>
-                        ) : (
-                            <div
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShowATModal: false})}}>
-                            >
-                            
-                            </div>
-                        )} */}
-                    </Row>
-                    <Row
-                    style={{ marginTop: "15px", marginLeft: "100px" }}
-                    className="d-flex "
-                    >
-                    <DeleteGR
-                    //   BASE_URL={this.props.BASE_URL}
-                    //     deleteIndex={this.findIndexByID(tempID)}
-                    //     Array={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                    //     // Path={this.state.firebaseRootPath} //holds complete data for action task: fbPath, title, etc
-                    //     // Path={firebase
-                    //     //   .firestore()
-                    //     //   .collection("users")
-                    //     //   .doc(this.props.theCurrentUserID)}
-                    //     // refresh={this.grabFireBaseRoutinesGoalsData}
-                    //     theCurrentUserId={this.props.theCurrentUserID}
-                    //     theCurrentTAID={this.props.theCurrentTAID}
-                    />
-                    <EditIcon
-                        // openEditModal={() => {
-                        //   this.setState({
-                        //     showEditModal: true,
-                        //     indexEditing: this.findIndexByID(tempID),
-                        //   });
-                        // }}
-                        // showModal={this.state.showEditModal}
-                        // indexEditing={this.state.indexEditing}
-                        // i={this.findIndexByID(tempID)} //index to edit
-                        // ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                        // // FBPath={firebase
-                        // //   .firestore()
-                        // //   .collection("users")
-                        // //   .doc(this.props.theCurrentUserID)}
-                        // // refresh={this.grabFireBaseRoutinesGoalsData}
-                        
-                    />
-                    </Row>
-                    <Row>
-                    <EditGR
-                    //   BASE_URL={this.props.BASE_URL}
-                    //     closeEditModal={() => {
-                    //       this.setState({ showEditModal: false });
-                    //       this.props.updateFBGR();
-                    //     }}
-                    
-                    //     showModal={this.state.showEditModal}
-                    //     indexEditing={this.state.indexEditing}
-                    //     i={this.findIndexByID(tempID)} //index to edit
-                    //     ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                    //     // FBPath={firebase
-                    //     //   .firestore()
-                    //     //   .collection("users")
-                    //     //   .doc(this.props.theCurrentUserID)}
-                    //     // refresh={this.grabFireBaseRoutinesGoalsData} //function to refresh IS data
-                    //     theCurrentUserId={this.props.theCurrentUserID}
-                    //     theCurrentTAID={this.props.theCurrentTAID}
-                    />
-                    </Row>
-                </div>
-                )}
-                <Row>
-                <CopyGR
-                    //   BASE_URL={this.props.BASE_URL}
-                    //   indexEditing={this.state.indexEditing}
-                    //     i={this.findIndexByID(tempID)}
-                    //   closeCopyModal={() => {
-                    //     this.setState({
-                    //     showCopyModal: false,
-                    //     });
-                    //   }}
-                    //   showModal={this.state.showCopyModal}
-                    //   title={tempTitle}
-                    //   gr_id={tempID}
-                    //   ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                    //   // refresh={this.grabFireBaseRoutinesGoalsData}
-                    //   theCurrentUserId={this.props.theCurrentUserID}
-                    //   theCurrentTAID={this.props.theCurrentTAID}
-                    />
-                </Row>
-            
-
-                <Row>
-                {/* {this.props.showRoutine &&
-                    (this.state.WentThroughATList[tempID] === false ||
-                    this.state.WentThroughATList[tempID] === undefined)} */}
-
-                {/* <Col
-                    style={{
-                    paddingRight: "0px",
-                    paddingLeft: "0px",
-                    marginLeft: "10px",
-                    }}
-                >
-                    {this.showRoutineRepeatStatus(i)}
-                </Col>
-
-                <Col xs={6} style={{ paddingLeft: "0px", paddingRight: "0px" }}>
-                    {this.thisTakesMeGivenVsSelected(i, tempID)}
-                </Col> */}
-                </Row>
+                
             </div>
         )
     }
@@ -1361,7 +963,7 @@ const VerticalRoutine = ({userID, sendRoutineToParent, justRoutines}) => {
         </Button>
         <p style={{height:"54.5px", margin:"0px"}}></p>
         <row>
-                {rows}
+                {listOfBlocks}
         </row>
         </Box>
     )

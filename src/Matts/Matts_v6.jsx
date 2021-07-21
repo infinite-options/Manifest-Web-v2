@@ -23,7 +23,7 @@ import Moment from 'moment';
 import { Navigation } from '../Home/navigation';
 import Firebasev2 from "../manifest/OldManifest/Firebasev2";
 import {faList} from "@fortawesome/free-solid-svg-icons";
-import VerticalRoutine from './verticalRoutine';
+import VerticalRoutine from './verticalRoutine_v2';
 
 
 import {
@@ -84,35 +84,14 @@ export default function MainPage(props) {
     //table things:
     const classes = useStyles();
     
-    function createData(name, sun, mon, tue, wed, thurs, fri, sat, show, under, tBox){    //rows structure
-        return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, tBox}
+    function createData(name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type){    //rows structure
+        return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type}
     }
     const [rows, setRows] = useState([]);
     const [isLoading, setLoading] = useState(true);
-    const [rslFound, setRSL] = useState(false);
-    const [hgFound, setHGF] = useState(false);
     const [childIn, setChildIn] = useState("");
-    const [rSecondList, setSecond] = useState([]);
-    const [justRoutines, setJR] = useState([]);
     
     
-    //api call and store response in historyGot
-    useEffect(() => {
-        axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/rts/" + currentUser)
-        .then((response) => {
-            for(var i=0; i<response.data.result.length; i++){
-                rSecondList.push(response.data.result[i]);
-            }
-            // setSecond(rSecondList);
-            console.log(rSecondList);
-            setRSL(true);
-            
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    },[])
-
     useEffect(() => {
         axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getHistory/" + currentUser)
         .then((response) =>{
@@ -122,7 +101,7 @@ export default function MainPage(props) {
             }
             // setHG(historyGot);
             console.log(historyGot);
-            setHGF(true);
+            cleanData(historyGot, currentDate);
             // console.log(response.data.result[1].details);
            // cleanData(historyGot, currentDate);
 
@@ -132,16 +111,18 @@ export default function MainPage(props) {
         });
     },[])
 
-    if(hgFound && rslFound){
-        setHGF(false);
-        setRSL(false);
-        cleanData(historyGot, currentDate, rSecondList);
+
+
+    function formatTime(dateTime){
+        var temp = new Date(dateTime);
+        console.log(temp);
+        temp = (temp).toLocaleTimeString();
+        console.log(temp);
+        return temp
     }
 
-    
-
      //-------- clean historyGot - just dates we want, just info we want, and structure vertical to horizontal   --------
-    function cleanData(historyGot, useDate, rSecondList){
+    function cleanData(historyGot, useDate){
         
         //go through at find historyGots that are within 7 days of useDate
         console.log("date:" + useDate);
@@ -172,7 +153,11 @@ export default function MainPage(props) {
         var bigList = [];       
         for (var d = 0; d < inRange.length; d++){
             const obj = JSON.parse(inRange[d].details)
-            // console.log(obj);
+            console.log(obj);
+
+            //sort obj by time of day
+            obj.sort((a, b) => formatTime(a.start_day_and_time) - formatTime(b.start_day_and_time));
+
             for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
                 // console.log(r);
                 if(obj[r].title){
@@ -180,13 +165,15 @@ export default function MainPage(props) {
                     var isNewR = true;
                     for (var s=0; s<bigList.length; s++){       //check through and see if this is a new routine
                         if (bigList[s].type == "Routine" && bigList[s].title == obj[r].title){
-                            bigList[s].days[d] = obj[r].status;   //if already there- just update that day statys
+                            bigList[s].days[d] = obj[r].status;   //if already there- just update that day status
                             isNewR = false;
                             break;
                         }
                     }
                     if (isNewR){
-                        var currentR = {type: "Routine", title: obj[r].title, under: "", days: [], tBox: {}, show: true}; //if new, make object and put in bigList
+                        var currentR = {type: "Routine", title: obj[r].title, under: "", days: [], tBox: {}, 
+                        show: true, photo: obj[r].photo, startTime: obj[r].start_day_and_time, 
+                        endTime: obj[r].end_day_and_time, is_sublist_available: obj[r].is_sublist_available}; //if new, make object and put in bigList
                         currentR.days[d] = obj[r].status;
                         bigList.push(currentR);
                     }
@@ -237,43 +224,6 @@ export default function MainPage(props) {
             }
         }
         
-        //need to rearange bigList to match ordering of routines in rSecondList
-        const newBigList = [];
-        // console.log(bigList);
-        // console.log(rSecondList);
-        for (var r=0; r< rSecondList.length; r++){
-            var i=0;
-            while (i <bigList.length){
-                if(bigList[i].title == rSecondList[r].gr_title){
-                    newBigList.push(bigList[i]);
-                    // console.log(bigList[i].title + " - " + rSecondList[r].gr_title);
-                    i++;
-                    while (bigList[i] != undefined && bigList[i].type != "Routine"){
-                        // console.log(bigList[i]);
-                        newBigList.push(bigList[i]);
-                        i++;
-                    }
-                    break;
-                }
-                i++;
-            }
-        }
-        // console.log(newBigList);
-        bigList = newBigList;
-
-        //just get routines in bigList
-        setJR([])
-        const jrTemp = [];
-        for(const items of bigList){
-            if (items.type === "Routine"){
-                jrTemp.push(items.title);
-            }
-        }
-        setJR(jrTemp);
-        console.log(justRoutines);
-
-        //Now bigList has data in new object style. 
-        //of that we transfer what we want to display to rows
         setRows([]);
         console.log("ROWS" + rows);
         console.log(bigList);
@@ -284,7 +234,8 @@ export default function MainPage(props) {
         var tempRows = [];
         for (var i=0; i< bigList.length; i++){
             tempRows.push(createData(bigList[i].title, bigList[i].days[6], bigList[i].days[5], bigList[i].days[4], bigList[i].days[3],
-                 bigList[i].days[2], bigList[i].days[1], bigList[i].days[0], bigList[i].show, bigList[i].under, bigList[i].tBox));
+                 bigList[i].days[2], bigList[i].days[1], bigList[i].days[0], bigList[i].show, bigList[i].under, bigList[i].photo,
+                 bigList[i].startTime, bigList[i].endTime, bigList[i].is_sublist_available, bigList[i].type));
         }
         console.log(tempRows);
         setLoading(false);
@@ -435,7 +386,7 @@ export default function MainPage(props) {
         // TO DO! WEEKS
         // setRows([]);
         console.log("clocked pre");
-        cleanData(historyGot, new Date(currentDate.getTime() - 604800000), rSecondList);
+        cleanData(historyGot, new Date(currentDate.getTime() - 604800000));
         setCurDate(new Date(currentDate.getTime() - 604800000));
         setLoading(true);
         setLoading(false);
@@ -443,7 +394,7 @@ export default function MainPage(props) {
     }
     function nextWeek(){
         console.log("clocked nex");
-        cleanData(historyGot, new Date(currentDate.getTime() + 604800000), rSecondList);
+        cleanData(historyGot, new Date(currentDate.getTime() + 604800000));
         setCurDate(new Date(currentDate.getTime() + 604800000));
     }
 
@@ -575,7 +526,7 @@ export default function MainPage(props) {
                 <Col marginLeft = "0px" xs="auto" style={{padding:"0px"}}>
                     <br></br>
                     <br></br>
-                    <VerticalRoutine userID = {currentUser} sendRoutineToParent={sendRoutineToParent} justRoutines={justRoutines}/>
+                    <VerticalRoutine onlyAllowed = {onlyAllowed()} userID = {currentUser} sendRoutineToParent={sendRoutineToParent}/>
                     {/* <Container style={{padding:"0px"}}>{vertRou}</Container> */}
                 </Col>
             </Row>

@@ -17,7 +17,7 @@ import TermsAndConditions from './components/TermsAndConditions/TermsAndConditio
 import MobilePaypalCheckout from './mobile/MobilePaypalCheckout';
 import MainPage from '../src/manifest/OldManifest/Main';
 import Home from '../src/Home/Home'
-import Matts from './Matts/Matts_v5'
+import Matts from './Matts/Matts_v6'
 // Nav here will take all the adress from children page to this and give
 // it to the switch route
 
