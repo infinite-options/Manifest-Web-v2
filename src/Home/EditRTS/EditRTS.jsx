@@ -484,7 +484,7 @@ const EditRTS = () => {
             <Container>
             <Row
               style={{
-                padding: '10px 0',
+                padding: '10px 0 0 0',
               }}
             >
               <Col md={4}>
@@ -582,7 +582,7 @@ const EditRTS = () => {
                   }}
                 >
                   TA
-                  &nbsp;&nbsp;&nbsp;
+                  &nbsp;&nbsp;&nbsp;&nbsp;
                   <input
                     type='checkbox'
                     checked={editingRTSContext.editingRTS.newItem.ta_notifications.before.is_enabled}
@@ -722,7 +722,7 @@ const EditRTS = () => {
                   }}
                 >
                   TA
-                  &nbsp;&nbsp;&nbsp;
+                  &nbsp;&nbsp;&nbsp;&nbsp;
                   <input
                     type='checkbox'
                     checked={editingRTSContext.editingRTS.newItem.ta_notifications.during.is_enabled}
@@ -861,7 +861,7 @@ const EditRTS = () => {
                   }}
                 >
                   TA
-                  &nbsp;&nbsp;&nbsp;
+                  &nbsp;&nbsp;&nbsp;&nbsp;
                   <input
                     type='checkbox'
                     checked={editingRTSContext.editingRTS.newItem.ta_notifications.after.is_enabled}
@@ -912,7 +912,7 @@ const EditRTS = () => {
         </Row>
         <Row
           style={{
-            padding: '20px 0',
+            padding: '0 0 20px 0',
           }}
         >
           <Col md={12}>
