@@ -3693,7 +3693,9 @@ const FirebaseV2 = (props) => {
             </div>
           </Col>
         ) : (
-          <div></div>
+          <div
+            
+          ></div>
         )}
         {props.showRoutine ? (
           <Col
@@ -3710,7 +3712,21 @@ const FirebaseV2 = (props) => {
             {abstractedRoutineList(displayRoutines)}
           </Col>
         ) : (
-          <div></div>
+          <Col
+            style={{
+              // width: stateValue.modalWidth,
+              marginTop: '0px',
+              marginRight: '0px',
+              marginLeft: '0px',
+              float: 'left'
+            }}
+            sm="auto"
+            md="auto"
+            lg="auto"
+          >
+            
+            {/* {abstractedRoutineList(displayRoutines)} */}
+          </Col>
         )}
 
         {/* {this.props.showGoal ? (

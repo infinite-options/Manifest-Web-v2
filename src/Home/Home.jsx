@@ -281,10 +281,13 @@ export default function Home(props) {
     buttonSelection: {
       width: '8%',
       height: '70px',
-      borderBottomLeftRadius: '25%',
-      borderBottomRightRadius: '25%',
+      // borderBottomLeftRadius: '25%',
+      // borderBottomRightRadius: '25%',
+      margin: "1px",
+      borderRadius: '0%',
       color: '#FFFFFF',
       backgroundColor: '#bbc8d7',
+      textTransform: 'capitalize'
     },
     buttonContainer: {
       flex: 1,
@@ -534,11 +537,11 @@ export default function Home(props) {
     return (
       <div
         style={{
-          borderRadius: '20px',
+          // borderRadius: '20px',
           background: 'white',
           width: '100%',
-          marginLeft: '10px',
-          padding: '20px',
+          // marginLeft: '10px',
+          // padding: '20px',
           border: '1px black solid',
           boxShadow:
             '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)',
@@ -724,7 +727,7 @@ export default function Home(props) {
               BASE_URL={stateValue.BASE_URL}
             />
           </Row> */}
-        <Row style={{ float: 'right', width: '90%' }}>
+        <Row style={{ float: 'right', width: '100%', marginRight: 'auto' }}>
           <WeekRoutines
             timeZone={stateValue.currentUserTimeZone}
             routines={stateValue.routines}
@@ -1162,6 +1165,7 @@ export default function Home(props) {
     /*----------------------------button
         selection----------------------------*/
     <div>
+      <div style={{height: '15px'}}></div>
       <userContext.Provider
         value={
           (stateValue.itemToEdit,
@@ -1194,12 +1198,28 @@ export default function Home(props) {
               Routines
             </Button>
 
-            <Button className={classes.buttonSelection} onClick={()=> history.push("/main") } id="one">
+            <Button 
+              className={classes.buttonSelection} 
+              // onClick={()=> history.push("/main") } 
+              id="one"
+            >
               Goals
             </Button>
             <Button className={classes.buttonSelection} id="one">
               About
             </Button>
+            {stateValue.showRoutineModal
+              ? (
+                  <Button className={classes.buttonSelection} id="one">
+                    Add Routine
+                  </Button>
+                )
+              : (
+                  <div style={{width: '8%', margin: "1px",}}>
+
+                  </div>
+                )
+              }
 
             <Box
               bgcolor="#889AB5"
@@ -1333,7 +1353,7 @@ export default function Home(props) {
           style={{
             marginLeft: '0px',
             height: '100%',
-            width: '80%',
+            width: '100%',
             // width: "100%",
             // display: "flex",
             // flexDirection: "column",
@@ -1368,7 +1388,7 @@ export default function Home(props) {
               {/* {this.grabFireBaseRoutinesGoalsData()} */}
               {/* the modal for routine/goal is called Firebasev2 currently */}
               {/* <userContext.Provider value={stateValue}> */}
-              <Col>
+              <Col style = {{width: "25%"}}>
                 {stateValue.currentUserId != '' && (
                   <FirebaseV2
                     BASE_URL={stateValue.BASE_URL}
@@ -1425,8 +1445,9 @@ export default function Home(props) {
                 // style={onlyCal ? { marginLeft: '22%' } : { marginRight: '35px' }}
                 style={
                   onlyCal || stateValue.currentUserId === ''
-                    ? { marginLeft: '300px' }
-                    : { marginRight: '0px' }
+                    ? { marginLeft: '0px', width: "75%"}
+                    : { marginRight: '0px', width: "75%"}
+                  
                 }
                 // style={{ MarginRight: '0px' }}
               >
