@@ -12,7 +12,7 @@ export default class WeekRoutines extends Component {
     super(props);
     this.state = {
       pxPerHour: '30px', //preset size for all columns
-      pxPerHourForConversion: 30, // if pxPerHour is change, this should change to reflect it
+      pxPerHourForConversion: 60, // if pxPerHour is change, this should change to reflect it
       zIndex: 1, //thought i needed to increment zIndex for div overlaps but seems to be fine being at 1 for all divs
       eventBoxSize: 80, //width size for event box
       marginFromLeft: 0,
@@ -497,10 +497,11 @@ export default class WeekRoutines extends Component {
                         background: curDate2.format('D') === today.getDate().toString() ? '#FF6B4A' : arr[i].is_complete ? '#BBC7D7' : 'lightslategray', 
                         width: itemWidth + 'px',
                         position: 'absolute',
-                        height: height + 'px' + 10,
+                        height: height + 'px',
                         marginLeft: addmarginLeft + 'px',
                         display:'flex',
                         justifyContent:'space-between',
+                        alignItems:'center'
             
                       }}
                     >

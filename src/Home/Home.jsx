@@ -43,6 +43,11 @@ import userContext from './userContext';
 import EditRTSContext from './EditRTS/EditRTSContext';
 import EditRTS from './EditRTS/EditRTS';
 
+import EditATSContext from './EditATS/EditATSContext';
+import EditATS from './EditATS/EditATS';
+
+import EditISContext from './EditIS/EditISContext';
+import EditIS from './EditIS/EditIS';
 // const userContext = React.createContext();
 /* Navigation Bar component function */
 
@@ -411,7 +416,41 @@ export default function Home(props) {
       },
     },
   }
+
+  const initialEditingATSState = {
+    editing: false,
+    type: '',
+    id: '',
+    user_id: props.location.state,
+    newItem: {
+      id: '',
+      audio: '',
+      datetime_completed: '',
+      datetime_started: '',
+      title: '',
+      // When making API call, combine start_day and start_time to start_day_and_time
+      start_day: '',
+      start_time: '',
+      // When making API call, combine end_day and end_time to end_day_and_time
+      end_day: '',
+      end_time: '',
+      // When making API call, convert numMins to expected_completion_time
+      numMins: '',
+     
+      location: '',
+      is_available: false,
+      is_persistent: true,
+      is_complete: true,
+      is_displayed_today: true,
+      is_timed: false,
+      is_sublist_available: true,
+      photo: '',
+      photo_url: '',
+    },
+  }
   const [editingRTS, setEditingRTS] = useState(initialEditingRTSState)
+  const [editingATS, setEditingATS] = useState(initialEditingRTSState)
+  const [editingIS, setEditingIS] = useState(initialEditingRTSState)
   /*----------------------------Custom Hook to make styles----------------------------*/
   const useStyles = makeStyles({
     buttonSelection: {
@@ -1309,6 +1348,21 @@ export default function Home(props) {
           setEditingRTS: setEditingRTS
         }}
       >
+
+      <EditATSContext.Provider
+        value={{
+          editingATS: editingATS,
+          setEditingATS: setEditingATS
+        }}
+      >
+   
+   <EditISContext.Provider
+        value={{
+          editingIS: editingIS,
+          setEditingIS: setEditingIS
+        }}
+      >
+        
       <userContext.Provider
         value={
           (stateValue.itemToEdit,
@@ -1349,7 +1403,7 @@ export default function Home(props) {
               About
             </Button>
             {
-            editingRTS.editing
+            editingATS.editing
             ?
             <div
               style={{
@@ -1589,6 +1643,7 @@ export default function Home(props) {
               md = {3}>
                 {stateValue.currentUserId != '' && (
                   <FirebaseV2
+
                   theCurrentUserID={stateValue.currentUserId}
                   sethighLight = {setHightlight}
                   highLight = {hightlight}
@@ -1609,12 +1664,19 @@ export default function Home(props) {
                 // }
                 // style={{ MarginRight: '0px' }}
               >
-                {editingRTS.editing ? <EditRTS /> : showCalendarView()}
+                {editingRTS.editing ? <EditRTS /> : editingATS.editing ? <EditATS /> : showCalendarView()}
+               
+               <EditATS/>
+               <EditIS/> 
+
+                {}
               </Col>
             </Row>
           {/* </Container> */}
         </div>
       </userContext.Provider>
+      </EditISContext.Provider>
+      </EditATSContext.Provider>
       </EditRTSContext.Provider>
     </div>
   );

@@ -26,6 +26,9 @@ const EditRTS = () => {
     object.ta_people_id = '';
     console.log(object);
     let formData = new FormData();
+    for (var pair of formData.entries()) {
+      console.log("formdata", pair[0]+ ', ' + pair[1]); 
+    }
     Object.entries(object).forEach(entry => {
       if (typeof entry[1].name == 'string'){
       
@@ -40,6 +43,8 @@ const EditRTS = () => {
           formData.append(entry[0], entry[1]);
       }
   });
+
+
     axios
     .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateGR', formData)
     .then((response) => {

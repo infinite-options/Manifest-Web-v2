@@ -2,10 +2,10 @@ import React, { useContext } from 'react';
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import EditRTSContext from './EditRTSContext';
+import EditATSContext from './EditATSContext';
 
 const EditIcon = ({routine, task, step}) => {
-  const editingRTSContext = useContext(EditRTSContext);
+  const editingATSContext = useContext(EditATSContext);
   
   let rowType = '';
   let rowId = '';
@@ -34,9 +34,9 @@ const EditIcon = ({routine, task, step}) => {
         icon={faEdit}
         onClick={(e) => {
           e.stopPropagation();
-          editingRTSContext.setEditingRTS({
-            ...editingRTSContext.editingRTS,
-            editing: rowId === editingRTSContext.editingRTS.id ? !editingRTSContext.editingRTS.editing : true,
+          editingATSContext.setEditingATS({
+            ...editingATSContext.editingATS,
+            editing: rowId === editingATSContext.editingATS.id ? !editingATSContext.editingATS.editing : true,
             type: rowType,
             id: rowId
           })
