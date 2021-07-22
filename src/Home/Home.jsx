@@ -10,6 +10,7 @@ import { useHistory, Redirect } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import './Home.css';
+import VerticalRoutine from './verticalRoutine_standAlone';
 
 import {
   Form,
@@ -281,10 +282,12 @@ export default function Home(props) {
     buttonSelection: {
       width: '8%',
       height: '70px',
-      borderBottomLeftRadius: '25%',
-      borderBottomRightRadius: '25%',
+      borderBottomLeftRadius: '0%',
+      borderBottomRightRadius: '0%',
       color: '#FFFFFF',
       backgroundColor: '#bbc8d7',
+      textTransform: "capitalize",
+      marginLeft: "1px"
     },
     buttonContainer: {
       flex: 1,
@@ -1180,7 +1183,7 @@ export default function Home(props) {
         HOME
         <Box paddingTop={3} backgroundColor="#bbc8d7">
           <div className={classes.buttonContainer}>
-            <Button className={classes.buttonSelection} id="one">
+            {/* <Button className={classes.buttonSelection} id="one">
               History
             </Button>
             <Button className={classes.buttonSelection} id="one">
@@ -1200,6 +1203,18 @@ export default function Home(props) {
             <Button className={classes.buttonSelection} id="one">
               About
             </Button>
+
+            {stateValue.showRoutineModal ? (
+              <Button className={classes.buttonSelection} id="one">
+                About
+              </Button>
+            ) : (
+              <div style = {{
+                width: '8%',
+                height: '70px',
+                marginLeft: "1px"
+            }}></div>
+            )} */}
 
             <Box
               bgcolor="#889AB5"
@@ -1370,51 +1385,56 @@ export default function Home(props) {
               {/* <userContext.Provider value={stateValue}> */}
               <Col>
                 {stateValue.currentUserId != '' && (
-                  <FirebaseV2
-                    BASE_URL={stateValue.BASE_URL}
-                    theCurrentUserID={stateValue.currentUserId}
-                    theCurrentTAID={stateValue.ta_people_id}
-                    // itemToEdit={stateValue.itemToEdit}
-                    grabFireBaseRoutinesGoalsData={
-                      GrabFireBaseRoutinesGoalsData
-                    }
-                    originalGoalsAndRoutineArr={
-                      stateValue.originalGoalsAndRoutineArr
-                    }
-                    goals={stateValue.goals}
-                    routines={stateValue.routines}
-                    closeRoutineGoalModal={(props) => {
-                      setStateValue((prevState) => {
-                        return {
-                          ...prevState,
-                          showRoutineGoalModal: false,
-                        };
-                      });
-                    }}
-                    showRoutineGoalModal={stateValue.showRoutineGoalModal}
-                    closeGoal={() => {
-                      setStateValue((prevState) => {
-                        return {
-                          ...prevState,
-                          showGoalModal: false,
-                        };
-                      });
-                    }}
-                    closeRoutine={() => {
-                      setStateValue((prevState) => {
-                        return {
-                          ...prevState,
-                          showRoutineModal: false,
-                        };
-                      });
-                    }}
-                    showRoutine={stateValue.showRoutineModal}
-                    showGoal={stateValue.showGoalModal}
-                    todayDateObject={stateValue.todayDateObject}
-                    calendarView={stateValue.calendarView}
-                    dateContext={stateValue.dateContext}
-                    updateFBGR={updateFBGR()}
+                  <VerticalRoutine
+                    userID = {stateValue.currentUserId}
                   />
+                  // <FirebaseV2
+                  //   BASE_URL={stateValue.BASE_URL}
+                  //   theCurrentUserID={stateValue.currentUserId}
+                  //   theCurrentTAID={stateValue.ta_people_id}
+                  //   // itemToEdit={stateValue.itemToEdit}
+                  //   grabFireBaseRoutinesGoalsData={
+                  //     GrabFireBaseRoutinesGoalsData
+                  //   }
+                  //   originalGoalsAndRoutineArr={
+                  //     stateValue.originalGoalsAndRoutineArr
+                  //   }
+                  //   goals={stateValue.goals}
+                  //   routines={stateValue.routines}
+                  //   closeRoutineGoalModal={(props) => {
+                  //     setStateValue((prevState) => {
+                  //       return {
+                  //         ...prevState,
+                  //         showRoutineGoalModal: false,
+                  //       };
+                  //     });
+                  //   }}
+                  //   showRoutineGoalModal={stateValue.showRoutineGoalModal}
+                  //   closeGoal={() => {
+                  //     setStateValue((prevState) => {
+                  //       return {
+                  //         ...prevState,
+                  //         showGoalModal: false,
+                  //       };
+                  //     });
+                  //   }}
+                  //   closeRoutine={() => {
+                  //     setStateValue((prevState) => {
+                  //       return {
+                  //         ...prevState,
+                  //         showRoutineModal: false,
+                  //       };
+                  //     });
+                  //   }}
+                  //   showRoutine={stateValue.showRoutineModal}
+                  //   showGoal={stateValue.showGoalModal}
+                  //   todayDateObject={stateValue.todayDateObject}
+                  //   calendarView={stateValue.calendarView}
+                  //   dateContext={stateValue.dateContext}
+                  //   updateFBGR={updateFBGR()}
+                  // />
+                  
+                  
                 )}
               </Col>
               <Col
