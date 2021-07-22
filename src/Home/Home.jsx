@@ -43,6 +43,14 @@ import userContext from './userContext';
 
 export default function Home(props) {
 
+
+  const [userID, setUserID] = useState("100-000071");
+
+
+  console.log(props.location.state);
+
+  // GetUserID(props.location.state);
+
   const history = useHistory();
 
   /* useEffect() is used to render API calls as minimumly 
@@ -62,6 +70,31 @@ export default function Home(props) {
       });
     }, []);
   }
+
+  // const [userID, setUserID] = useState(" ");
+  
+  // function GetUserID(e){
+    useEffect(() => {
+      console.log(props.location.state);
+      axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/usersOfTA/" + props.location.state)
+      .then((response) =>{
+          console.log(response);
+          if (response.result !== false){
+            const curUserID = response.data.result[0].user_unique_id;
+            console.log(curUserID);
+            setUserID(curUserID);
+            console.log(userID);
+            GrabFireBaseRoutinesGoalsData();
+            // return userID;
+          }
+          else{console.log("No User Found");}
+      })
+      .catch((error) => {
+          console.log(error);
+      });
+    },[])
+  // } 
+
 
   /*----------------------------Use states to define variables----------------------------*/
   const [stateValue, setStateValue] = useState({
@@ -252,7 +285,7 @@ export default function Home(props) {
     currentUserPicUrl: '',
     currentUserName: '',
     currentUserTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    currentUserId: '100-000071',
+    currentUserId: userID, //'100-000071',
     currentAdvisorCandidateName: '',
     currentAdvisorCandidateId: '',
     // profileName: "",
@@ -614,7 +647,7 @@ export default function Home(props) {
             routine_ids={stateValue.routine_ids}
             routines={stateValue.routines}
             dayRoutineClick={toggleShowRoutine}
-            theCurrentUserId={stateValue.currentUserId}
+            theCurrentUserId={userID}
             originalGoalsAndRoutineArr={stateValue.originalGoalsAndRoutineArr}
             BASE_URL={stateValue.BASE_URL}
           />
@@ -771,11 +804,13 @@ export default function Home(props) {
     let goal_ids = [];
 
     // console.log('base url ', url);
-    // console.log('base url id ', stateValue.currentUserId);
+    // console.log('base url id ', userID);
 
-    useEffect(() => {
+    // useEffect(() => {
+      console.log("Before gar");
+      console.log(userID);
       axios
-        .get(url + stateValue.currentUserId)
+        .get(url + userID)
         .then((response) => {
           if (response.data.result && response.data.result.length !== 0) {
             let x = response.data.result;
@@ -1142,7 +1177,7 @@ export default function Home(props) {
         .catch((error) => {
           console.log('Error in getting goals and routines ' + error);
         });
-    }, []);
+    //}, []);
   }
 
   const updateFBGR = () => {
@@ -1369,10 +1404,10 @@ export default function Home(props) {
               {/* the modal for routine/goal is called Firebasev2 currently */}
               {/* <userContext.Provider value={stateValue}> */}
               <Col>
-                {stateValue.currentUserId != '' && (
+                {userID != '' && (
                   <FirebaseV2
                     BASE_URL={stateValue.BASE_URL}
-                    theCurrentUserID={stateValue.currentUserId}
+                    theCurrentUserID={userID}
                     theCurrentTAID={stateValue.ta_people_id}
                     // itemToEdit={stateValue.itemToEdit}
                     grabFireBaseRoutinesGoalsData={
@@ -1424,7 +1459,7 @@ export default function Home(props) {
                 // fluid={true}
                 // style={onlyCal ? { marginLeft: '22%' } : { marginRight: '35px' }}
                 style={
-                  onlyCal || stateValue.currentUserId === ''
+                  onlyCal || userID === ''
                     ? { marginLeft: '300px' }
                     : { marginRight: '0px' }
                 }

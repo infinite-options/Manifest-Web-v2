@@ -66,7 +66,9 @@ const useStyles = makeStyles({
             if (response.data.result !== false) {
               setLoggedIn(true);
               console.log("response id",response.data.result, loggedIn)
-              history.push("/home");
+              history.push({
+                pathname: "/home",
+                state: email.toString()});
             }else{
               setLoggedIn(false);
               setValidation(response.data.message)
@@ -94,7 +96,10 @@ const useStyles = makeStyles({
               console.log(response.data);
               if (response.data !== false) {
                 console.log("Login successful")
-                history.push("/home");
+                console.log(e);
+                history.push({
+                  pathname: "/home",
+                  state: e});
               } else {
                 console.log("social sign up with", e);
                 this.setState({
