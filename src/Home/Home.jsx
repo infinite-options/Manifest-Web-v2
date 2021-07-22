@@ -806,7 +806,7 @@ export default function Home(props) {
     // console.log('base url ', url);
     // console.log('base url id ', userID);
 
-    // useEffect(() => {
+    useEffect(() => {
       console.log("Before gar");
       console.log(userID);
       axios
@@ -1177,7 +1177,7 @@ export default function Home(props) {
         .catch((error) => {
           console.log('Error in getting goals and routines ' + error);
         });
-    //}, []);
+    }, [userID]);
   }
 
   const updateFBGR = () => {
