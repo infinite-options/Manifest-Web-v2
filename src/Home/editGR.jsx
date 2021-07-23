@@ -451,7 +451,6 @@ export default class editGR extends Component {
   };
 
   /*
-
   startTimePicker = () => {
     let stored_date;
     if (!this.state.itemToEdit.start_day_and_time) {
@@ -483,7 +482,6 @@ export default class editGR extends Component {
       />
     );
   };
-
   endTimePicker = () => {
     if (!this.state.itemToEdit.end_day_and_time) {
       this.state.itemToEdit.end_day_and_time = new Date();
@@ -520,7 +518,6 @@ export default class editGR extends Component {
       />
     );
   };
-
   */
 
   convertTimeToHRMMSS = (e) => {

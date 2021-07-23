@@ -38,13 +38,24 @@ import DayRoutines from './DayRoutines.jsx';
 import WeekRoutines from './WeekRoutines.jsx';
 import userContext from './userContext';
 
+import { Navigation } from "./navigation";
+import EditRTSContext from './EditRTS/EditRTSContext';
+import EditRTS from './EditRTS/EditRTS';
+
+
+import EditATSContext from './EditATS/EditATSContext';
+import EditATS from './EditATS/EditATS';
+
+import EditISContext from './EditIS/EditISContext';
+import EditIS from './EditIS/EditIS';
+
 // const userContext = React.createContext();
 /* Navigation Bar component function */
 
 export default function Home(props) {
 
 
-  const [userID, setUserID] = useState("100-000071");
+  const [userID, setUserID] = useState("");
 
 
   console.log(props.location.state);
@@ -97,6 +108,10 @@ export default function Home(props) {
 
 
   /*----------------------------Use states to define variables----------------------------*/
+  
+
+
+  const [hightlight, setHightlight] = useState('')
   const [stateValue, setStateValue] = useState({
     itemToEdit: {
       title: '',
@@ -308,6 +323,93 @@ export default function Home(props) {
     BASE_URL:
       'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/',
   });
+
+  const initialEditingRTSState = {
+    editing: false,
+    type: '',
+    id: '',
+    user_id: props.location.state,
+    newItem: {
+      audio: '',
+      datetime_completed: '',
+      datetime_started: '',
+      title: '',
+      // When making API call, combine start_day and start_time to start_day_and_time
+      start_day: '',
+      start_time: '',
+      // When making API call, combine end_day and end_time to end_day_and_time
+      end_day: '',
+      end_time: '',
+      // When making API call, convert numMins to expected_completion_time
+      numMins: '',
+      repeat: false,
+      repeat_frequency: 'Day',
+      repeat_every: '',
+      repeat_type: '',
+      repeat_ends_on: '',
+      repeat_occurences: '',
+      repeat_week_days: {
+        "0": "",
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": "",
+        "5": "",
+        "6": ""
+      },
+      location: '',
+      is_available: false,
+      is_persistent: true,
+      is_complete: true,
+      is_displayed_today: true,
+      is_timed: false,
+      is_sublist_available: true,
+      photo: '',
+      photo_url: '',
+      ta_notifications: {
+        before: {
+          is_enabled: false,
+          is_set: false,
+          message: '',
+          time: '',
+        },
+        during: {
+          is_enabled: false,
+          is_set: false,
+          message: '',
+          time: '',
+        },
+        after: {
+          is_enabled: false,
+          is_set: false,
+          message: '',
+          time: '',
+        }
+      },
+      user_notifications: {
+        before: {
+          is_enabled: false,
+          is_set: false,
+          message: '',
+          time: '',
+        },
+        during: {
+          is_enabled: false,
+          is_set: false,
+          message: '',
+          time: '',
+        },
+        after: {
+          is_enabled: false,
+          is_set: false,
+          message: '',
+          time: '',
+        }
+      },
+    },
+  }
+
+  const [editingRTS, setEditingRTS] = useState(initialEditingRTSState)
   // console.log(calendarView);
   /*----------------------------Custom Hook to make styles----------------------------*/
   const useStyles = makeStyles({
@@ -421,6 +523,8 @@ export default function Home(props) {
       // );
     }
   };
+
+
 
   /*-----------------------------handleModalClicked:-----------------------------*/
   /* this will toggle show hide of the firebase modal currently */
@@ -757,12 +861,13 @@ export default function Home(props) {
               BASE_URL={stateValue.BASE_URL}
             />
           </Row> */}
-        <Row style={{ float: 'right', width: '90%' }}>
+        <Row style={{ float: 'right' }}>
           <WeekRoutines
             timeZone={stateValue.currentUserTimeZone}
             routines={stateValue.routines}
             dateContext={stateValue.dateContext}
             BASE_URL={stateValue.BASE_URL}
+            highLight = {hightlight}
           />
         </Row>
         {/* </Container> */}
@@ -1197,6 +1302,13 @@ export default function Home(props) {
     /*----------------------------button
         selection----------------------------*/
     <div>
+      <Navigation userID= {stateValue.currentUserId}/>
+      <EditRTSContext.Provider
+        value={{
+          editingRTS: editingRTS,
+          setEditingRTS: setEditingRTS
+        }}
+      >
       <userContext.Provider
         value={
           (stateValue.itemToEdit,
@@ -1236,6 +1348,75 @@ export default function Home(props) {
               About
             </Button>
 
+            {
+                          editingRTS.editing
+                          ?
+                          <div
+                            style={{
+                              width: '100%',
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: '35%',
+                                height: '80px',
+                                backgroundColor: '#F57045'
+                              }}
+                            >
+                              <div
+                                style={{
+                                  height: '100%',
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center'
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    flex:'4',
+                                  }}
+                                >
+                                  <p
+                                    style={{
+                                      textAlign: 'center',
+                                      fontSize: '2.5rem',
+                                      color: '#ffffff',
+                                      textDecoration: 'underline',
+                                    }}
+                                  >
+                                    Routine
+                                  </p>
+                                </div>
+                                <div
+                                  style={{
+                                    flex:'1',
+                                  }}
+                                >
+                                  <button
+                                    style={{
+                                      padding: '0',
+                                      margin: '0',
+                                      backgroundColor: 'inherit',
+                                      border: 'none',
+                                      width: '100%',
+                                      height: '100%',
+                                      textAlign: 'center',
+                                      fontSize: '2.5rem',
+                                      color: '#ffffff'
+                                    }}
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      console.log('Clicked add RTS')
+                                    }}
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                            :
+        
             <Box
               bgcolor="#889AB5"
               className={classes.dateContainer}
@@ -1349,6 +1530,7 @@ export default function Home(props) {
                 </Col> */}
               {/* </Container> */}
             </Box>
+          } 
           </div>
         </Box>
         {/* {console.log('Home showRoutineModal', stateValue.showRoutineModal)} */}
@@ -1367,8 +1549,6 @@ export default function Home(props) {
           className="normalfancytext"
           style={{
             marginLeft: '0px',
-            height: '100%',
-            width: '80%',
             // width: "100%",
             // display: "flex",
             // flexDirection: "column",
@@ -1377,7 +1557,7 @@ export default function Home(props) {
             // background: "lightblue",
           }}
         >
-          <Container
+          {/* <Container
             fluid
             style={{
               marginTop: '15px',
@@ -1388,13 +1568,13 @@ export default function Home(props) {
               //   // alignItems: "center",
               //   // width: "100%"
             }}
-          >
+          > */}
             <Row
               style={{
                 marginTop: '0',
                 // width: '100%',
                 display: 'flex',
-                flexDirection: 'flex-betewen',
+             //   flexDirection: 'flex-betewen',
                 // justifyContent: 'left',
                 // alignItems: 'center',
               }}
@@ -1403,74 +1583,24 @@ export default function Home(props) {
               {/* {this.grabFireBaseRoutinesGoalsData()} */}
               {/* the modal for routine/goal is called Firebasev2 currently */}
               {/* <userContext.Provider value={stateValue}> */}
-              <Col>
+              <Col  md = {4}>
                 {userID != '' && (
                   <FirebaseV2
-                    BASE_URL={stateValue.BASE_URL}
-                    theCurrentUserID={userID}
-                    theCurrentTAID={stateValue.ta_people_id}
-                    // itemToEdit={stateValue.itemToEdit}
-                    grabFireBaseRoutinesGoalsData={
-                      GrabFireBaseRoutinesGoalsData
-                    }
-                    originalGoalsAndRoutineArr={
-                      stateValue.originalGoalsAndRoutineArr
-                    }
-                    goals={stateValue.goals}
-                    routines={stateValue.routines}
-                    closeRoutineGoalModal={(props) => {
-                      setStateValue((prevState) => {
-                        return {
-                          ...prevState,
-                          showRoutineGoalModal: false,
-                        };
-                      });
-                    }}
-                    showRoutineGoalModal={stateValue.showRoutineGoalModal}
-                    closeGoal={() => {
-                      setStateValue((prevState) => {
-                        return {
-                          ...prevState,
-                          showGoalModal: false,
-                        };
-                      });
-                    }}
-                    closeRoutine={() => {
-                      setStateValue((prevState) => {
-                        return {
-                          ...prevState,
-                          showRoutineModal: false,
-                        };
-                      });
-                    }}
-                    showRoutine={stateValue.showRoutineModal}
-                    showGoal={stateValue.showGoalModal}
-                    todayDateObject={stateValue.todayDateObject}
-                    calendarView={stateValue.calendarView}
-                    dateContext={stateValue.dateContext}
-                    updateFBGR={updateFBGR()}
+                  theCurrentUserID={userID}
+                  sethighLight = {setHightlight}
+                  highLight = {hightlight}
                   />
                 )}
               </Col>
               <Col
-                sm="auto"
-                md="auto"
-                lg="auto"
-                // fluid={true}
-                // style={onlyCal ? { marginLeft: '22%' } : { marginRight: '35px' }}
-                style={
-                  onlyCal || userID === ''
-                    ? { marginLeft: '300px' }
-                    : { marginRight: '0px' }
-                }
-                // style={{ MarginRight: '0px' }}
               >
-                {showCalendarView()}
+               {editingRTS.editing ? <EditRTS /> : showCalendarView()}
               </Col>
             </Row>
-          </Container>
+          {/* </Container> */}
         </div>
       </userContext.Provider>
+      </EditRTSContext.Provider>
     </div>
   );
 }
