@@ -314,10 +314,14 @@ export default function Home(props) {
     buttonSelection: {
       width: '8%',
       height: '70px',
-      borderBottomLeftRadius: '25%',
-      borderBottomRightRadius: '25%',
+      // borderBottomLeftRadius: '25%',
+      // borderBottomRightRadius: '25%',
+      borderRadius: '0%',
+      textTransform: 'capitalize',
       color: '#FFFFFF',
       backgroundColor: '#bbc8d7',
+      marginLeft: '1px',
+      marginRight: '1px'
     },
     buttonContainer: {
       flex: 1,
@@ -1239,6 +1243,14 @@ export default function Home(props) {
             <Button className={classes.buttonSelection} id="one" onClick={ToggleShowAbout}>
               About
             </Button>
+            {stateValue.showRoutineModal ? (
+              <Button className={classes.buttonSelection} id="one">
+                Add Routine +
+              </Button>
+            ) : (
+              <div style = {{width: '8%', marginLeft: "1px", marginRight: '1px'}}/>
+            )}
+            
 
             <Box
               bgcolor="#889AB5"
