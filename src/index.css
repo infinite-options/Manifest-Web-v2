@@ -2,21 +2,23 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    "SFProDisplay", "SFProText-RegualarItalic", sans-serif;
+    "SFProDisplay", "SFProText-RegualarItalic", "SFProDisplayMedium",
+    "SF-Compact-Text-Bold", "SF-Compact-Text-Semibold", "SFProDisplaySemibold",
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* @font-face {
-  font-family: "SFProDisplay-Regular";
-  src: local("SFProDisplay-Regular"),
-    url(@material-ui/core/styles/SFProDisplay-Regular.ttf) format("truetype");
+@font-face {
+  font-family: "SF-Compact-Text-Bold";
+  src: local("SF-Compact-Text-Bold"),
+    url(./font/SF-Compact-Text-Bold.otf) format("truetype");
 }
 @font-face {
-  font-family: "SFProText-RegularItalic";
-  src: local("SFProText-RegularItalic"),
-    url(@material-ui/core/styles/SFProText-RegularItalic.ttf) format("truetype");
-} */
+  font-family: "SF-Compact-Text-Semibold";
+  src: local("SF-Compact-Text-Semibold"),
+    url(./font/SF-Compact-Text-Semibold.otf) format("truetype");
+}
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
