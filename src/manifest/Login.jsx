@@ -14,10 +14,10 @@ import SignUpImage from '../manifest/LoginAssets/SignUp.svg';
 import Cookies from 'js-cookie';
 import { AuthContext } from '../auth/AuthContext';
 
-import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
 import { GoogleLogin } from 'react-google-login';
 import axios from 'axios';
 import { useState, useContext } from 'react';
+import SocialLogin from '../components/LogIn/SocialLogin';
 
 /* Custom Hook to make styles */
 const useStyles = makeStyles({
@@ -41,15 +41,6 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loggedIn, setLoggedIn] = useState();
   const [validation, setValidation] = useState('');
-  const [signUpModalShow, setSignUpModalShow] = useState(false);
-  const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
-  const [newEmail, setNewEmail] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [newPhoneNumber, setNewPhoneNumber] = useState('');
-  const [newFName, setNewFName] = useState('');
-  const [newLName, setNewLName] = useState('');
-  const [newEmployer, setNewEmployer] = useState('');
-  const [newClients, setNewClients] = useState([]);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -87,272 +78,6 @@ export default function Login() {
         console.log(error);
       });
   };
-  const handleSignUp = (event) => {
-    console.log('sign up clicked');
-    setSignUpModalShow(true);
-    setSocialSignUpModalShow(false);
-  };
-  const hideSignUp = () => {
-    setSignUpModalShow(false);
-    setSocialSignUpModalShow(false);
-    setEmail('');
-    setPassword('');
-    setNewPhoneNumber('');
-    setNewFName('');
-    setNewLName('');
-    setNewEmployer('');
-  };
-
-  const handleNewEmailChange = (event) => {
-    setNewEmail(event.target.value);
-  };
-
-  const handleNewPasswordChange = (event) => {
-    setNewPassword(event.target.value);
-  };
-
-  const handleNewPhoneNumberChange = (event) => {
-    setNewPhoneNumber(event.target.value);
-  };
-
-  const handleNewFNameChange = (event) => {
-    setNewFName(event.target.value);
-  };
-
-  const handleNewLNameChange = (event) => {
-    setNewLName(event.target.value);
-  };
-
-  const handleNewEmployerChange = (event) => {
-    setNewEmployer(event.target.value);
-  };
-
-  const handleSignUpDone = () => {
-    axios
-      .post(
-        'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/addNewTA',
-        {
-          email_id: newEmail,
-          password: newPassword,
-          first_name: newFName,
-          last_name: newLName,
-          phone_number: newPhoneNumber,
-          employer: newEmployer,
-        }
-      )
-      .then((response) => {
-        console.log(response.data);
-        hideSignUp();
-      })
-      .catch((error) => {
-        console.log('its in landing page');
-        console.log(error);
-      });
-  };
-  const handleSocialSignUpDone = () => {
-    axios
-      .post('/TASocialSignUp', {
-        email_id: newEmail,
-        first_name: newFName,
-        last_name: newLName,
-        phone_number: newPhoneNumber,
-        employer: newEmployer,
-      })
-      .then((response) => {
-        console.log(response.data);
-        hideSignUp();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const signUpModal = () => {
-    return (
-      <Modal show={signUpModalShow} onHide={hideSignUp}>
-        <Form as={Container}>
-          <h3 className="bigfancytext formEltMargin">Sign Up</h3>
-          <Form.Group as={Row} className="formEltMargin">
-            <Form.Label column sm="4">
-              Email
-            </Form.Label>
-            <Col sm="8">
-              <Form.Control
-                type="text"
-                placeholder="example@gmail.com"
-                value={newEmail}
-                onChange={handleNewEmailChange}
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="formEltMargin">
-            <Form.Label column sm="4">
-              Password
-            </Form.Label>
-            <Col sm="8">
-              <Form.Control
-                type="password"
-                value={newPassword}
-                onChange={handleNewPasswordChange}
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="formEltMargin">
-            <Form.Label column sm="4">
-              Phone Number
-            </Form.Label>
-            <Col sm="8">
-              <Form.Control
-                type="tel"
-                pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                placeholder="123-4567-8901"
-                value={newPhoneNumber}
-                onChange={handleNewPhoneNumberChange}
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="formEltMargin">
-            <Form.Label column sm="2">
-              First Name
-            </Form.Label>
-            <Col sm="4">
-              <Form.Control
-                type="text"
-                placeholder="John"
-                value={newFName}
-                onChange={handleNewFNameChange}
-              />
-            </Col>
-            <Form.Label column sm="2">
-              Last Name
-            </Form.Label>
-            <Col sm="4">
-              <Form.Control
-                type="text"
-                placeholder="Doe"
-                value={newLName}
-                onChange={handleNewLNameChange}
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="formEltMargin">
-            <Form.Label column sm="4">
-              Employer
-            </Form.Label>
-            <Col sm="8">
-              <Form.Control
-                type="text"
-                value={newEmployer}
-                onChange={handleNewEmployerChange}
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="formEltMargin">
-            <Col>
-              <Button
-                variant="primary"
-                type="submit"
-                onClick={handleSignUpDone}
-              >
-                Sign Up
-              </Button>
-            </Col>
-            <Col>
-              <Button variant="primary" type="submit" onClick={hideSignUp}>
-                Cancel
-              </Button>
-            </Col>
-          </Form.Group>
-        </Form>
-      </Modal>
-    );
-  };
-
-  const socialSignUpModal = () => {
-    return (
-      <Modal show={socialSignUpModalShow} onHide={hideSignUp}>
-        <Form as={Container}>
-          <h3 className="bigfancytext formEltMargin">
-            Sign Up with Social Media
-          </h3>
-          <Form.Group as={Row} className="formEltMargin">
-            <Form.Label column sm="4">
-              Email
-            </Form.Label>
-            <Col sm="8">
-              <Form.Control plaintext readOnly value={newEmail} />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="formEltMargin">
-            <Form.Label column sm="4">
-              Phone Number
-            </Form.Label>
-            <Col sm="8">
-              <Form.Control
-                type="tel"
-                pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                placeholder="123-4567-8901"
-                value={newPhoneNumber}
-                onChange={handleNewPhoneNumberChange}
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="formEltMargin">
-            <Form.Label column sm="2">
-              First Name
-            </Form.Label>
-            <Col sm="4">
-              <Form.Control
-                type="text"
-                placeholder="John"
-                value={newFName}
-                onChange={handleNewFNameChange}
-              />
-            </Col>
-            <Form.Label column sm="2">
-              Last Name
-            </Form.Label>
-            <Col sm="4">
-              <Form.Control
-                type="text"
-                placeholder="Doe"
-                value={newLName}
-                onChange={handleNewLNameChange}
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="formEltMargin">
-            <Form.Label column sm="4">
-              Employer
-            </Form.Label>
-            <Col sm="8">
-              <Form.Control
-                type="text"
-                value={newEmployer}
-                onChange={handleNewEmployerChange}
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="formEltMargin">
-            <Col>
-              <Button
-                variant="primary"
-                type="submit"
-                onClick={handleSocialSignUpDone}
-              >
-                Sign Up
-              </Button>
-            </Col>
-            <Col>
-              <Button variant="primary" type="submit" onClick={hideSignUp}>
-                Cancel
-              </Button>
-            </Col>
-          </Form.Group>
-        </Form>
-      </Modal>
-    );
-  };
 
   const responseGoogle = (response) => {
     console.log('response', response);
@@ -381,12 +106,10 @@ export default function Login() {
             });
           } else {
             console.log('social sign up with', e);
-            setSocialSignUpModalShow(true);
-            setNewEmail(e);
-            /*  this.setState({
+            this.setState({
               socialSignUpModal: true,
               newEmail: e,
-            }); */
+            });
             console.log('social sign up modal displayed');
           }
         })
@@ -406,7 +129,6 @@ export default function Login() {
       </Box>
       <Box display="flex" marginTop="35%" marginLeft="30%">
         <Button
-          //onClick={handleSignUp}
           onClick={() => history.push('/signup')}
           style={{
             width: '7.5rem',
@@ -544,8 +266,7 @@ export default function Login() {
       <Box style={{ position: 'fixed', right: '-100px', bottom: '-100px' }}>
         <img src={Ellipse} alt="Ellipse" />
       </Box>
-      {socialSignUpModal()}
-      {signUpModal()}
+
       {/* <Box hidden={loggedIn === true}>
                   <Loading/>
             </Box> */}

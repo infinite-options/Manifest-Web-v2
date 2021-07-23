@@ -92,7 +92,7 @@ export default function Login() {
   const handleSignUp = (event) => {
     console.log('sign up clicked');
     setSignUpModalShow(true);
-    //setSocialSignUpModalShow(false);
+    setSocialSignUpModalShow(false);
   };
   const hideSignUp = () => {
     //setSignUpModalShow(false);
@@ -256,7 +256,7 @@ export default function Login() {
     );
   };
 
-  const responseGoogle = (response) => {
+  /* const responseGoogle = (response) => {
     console.log('response', response);
     if (response.profileObj !== null || response.profileObj !== undefined) {
       let e = response.profileObj.email;
@@ -289,15 +289,46 @@ export default function Login() {
               socialSignUpModal: true,
               newEmail: e,
             }); */
-            console.log('social sign up modal displayed');
+  /* console.log('social sign up modal displayed');
           }
         })
         .catch((error) => {
           console.log('error', error);
         });
+    } */
+  // }; */
+  const responseGoogle = (response) => {
+    console.log('clicked on sign up google');
+    if (response.profileObj !== null || response.profileObj !== undefined) {
+      let e = response.profileObj.email;
+      let at = response.accessToken;
+      let rt = response.googleId;
+      let first_name = response.profileObj.givenName;
+      let last_name = response.profileObj.familyName;
+      console.log(e, at, rt, first_name, last_name);
+      axios
+        .post(
+          'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/TASocialLogIn/',
+          {
+            username: e,
+          }
+        )
+        .then((response) => {
+          console.log(response.data);
+          if (response.data !== false) {
+            setLoggedIn(true);
+          } else {
+            console.log('social sign up with', e);
+            setSocialSignUpModalShow(true);
+            setNewEmail(e);
+            console.log('social sign up modal displayed');
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
-
   return (
     <Box
       display="flex"
@@ -318,7 +349,7 @@ export default function Login() {
       </Box>
 
       <Box
-        marginTop="40px"
+        marginTop="70px"
         display="flex"
         flexDirection="column"
         justifyContent="space-between"
@@ -567,13 +598,13 @@ export default function Login() {
           marginBottom="7.5rem"
           style={{ fontWeight: 'bold' }}
         >
-          Don't have an account?
+          Already have an account?
         </Box>
       </Box>
 
-      <Box marginTop="45%" marginLeft="-70px">
+      <Box marginTop="42%" marginLeft="-70px">
         <Button
-          onClick={handleSubmit}
+          onClick={() => history.push('/')}
           style={{
             width: '7.5rem',
             height: '7.5rem',
