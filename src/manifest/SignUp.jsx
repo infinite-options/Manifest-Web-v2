@@ -18,6 +18,7 @@ import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
 import { GoogleLogin } from 'react-google-login';
 import axios from 'axios';
 import { useState, useContext } from 'react';
+import SocialLogin from '../components/LogIn/SocialLogin';
 
 /* Custom Hook to make styles */
 const useStyles = makeStyles({
@@ -37,6 +38,7 @@ export default function Login() {
   const classes = useStyles();
   const history = useHistory();
 
+  console.log('In Sign Up page');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loggedIn, setLoggedIn] = useState();
@@ -90,11 +92,12 @@ export default function Login() {
   const handleSignUp = (event) => {
     console.log('sign up clicked');
     setSignUpModalShow(true);
-    setSocialSignUpModalShow(false);
+    //setSocialSignUpModalShow(false);
   };
   const hideSignUp = () => {
-    setSignUpModalShow(false);
+    //setSignUpModalShow(false);
     setSocialSignUpModalShow(false);
+    history.push('/');
     setEmail('');
     setPassword('');
     setNewPhoneNumber('');
@@ -165,107 +168,6 @@ export default function Login() {
       .catch((error) => {
         console.log(error);
       });
-  };
-
-  const signUpModal = () => {
-    return (
-      <Modal show={signUpModalShow} onHide={hideSignUp}>
-        <Form as={Container}>
-          <h3 className="bigfancytext formEltMargin">Sign Up</h3>
-          <Form.Group as={Row} className="formEltMargin">
-            <Form.Label column sm="4">
-              Email
-            </Form.Label>
-            <Col sm="8">
-              <Form.Control
-                type="text"
-                placeholder="example@gmail.com"
-                value={newEmail}
-                onChange={handleNewEmailChange}
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="formEltMargin">
-            <Form.Label column sm="4">
-              Password
-            </Form.Label>
-            <Col sm="8">
-              <Form.Control
-                type="password"
-                value={newPassword}
-                onChange={handleNewPasswordChange}
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="formEltMargin">
-            <Form.Label column sm="4">
-              Phone Number
-            </Form.Label>
-            <Col sm="8">
-              <Form.Control
-                type="tel"
-                pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                placeholder="123-4567-8901"
-                value={newPhoneNumber}
-                onChange={handleNewPhoneNumberChange}
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="formEltMargin">
-            <Form.Label column sm="2">
-              First Name
-            </Form.Label>
-            <Col sm="4">
-              <Form.Control
-                type="text"
-                placeholder="John"
-                value={newFName}
-                onChange={handleNewFNameChange}
-              />
-            </Col>
-            <Form.Label column sm="2">
-              Last Name
-            </Form.Label>
-            <Col sm="4">
-              <Form.Control
-                type="text"
-                placeholder="Doe"
-                value={newLName}
-                onChange={handleNewLNameChange}
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="formEltMargin">
-            <Form.Label column sm="4">
-              Employer
-            </Form.Label>
-            <Col sm="8">
-              <Form.Control
-                type="text"
-                value={newEmployer}
-                onChange={handleNewEmployerChange}
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="formEltMargin">
-            <Col>
-              <Button
-                variant="primary"
-                type="submit"
-                onClick={handleSignUpDone}
-              >
-                Sign Up
-              </Button>
-            </Col>
-            <Col>
-              <Button variant="primary" type="submit" onClick={hideSignUp}>
-                Cancel
-              </Button>
-            </Col>
-          </Form.Group>
-        </Form>
-      </Modal>
-    );
   };
 
   const socialSignUpModal = () => {
@@ -405,25 +307,173 @@ export default function Login() {
         <img src={Ellipse} alt="Ellipse" />
       </Box>
       <Box display="flex" marginTop="35%" marginLeft="30%">
-        <Button
-          //onClick={handleSignUp}
-          onClick={() => history.push('/signup')}
+        {/* <Button
+          onClick={handleSignUp}
           style={{
             width: '7.5rem',
             height: '7.5rem',
             backgroundImage: `url(${SignUpImage})`,
           }}
-        ></Button>
+        ></Button> */}
       </Box>
-      <Box></Box>
 
       <Box
-        marginTop="15%"
+        marginTop="40px"
         display="flex"
         flexDirection="column"
-        style={{ width: '15rem' }}
+        justifyContent="space-between"
       >
-        <Box marginBottom="1rem" width="100%">
+        <Form as={Container}>
+          <h3
+            className="bigfancytext formEltMargin"
+            style={{
+              textAlign: 'center',
+              letterSpacing: '0.49px',
+              color: '#000000',
+              opacity: 1,
+            }}
+          >
+            Sign Up
+          </h3>
+          <Form.Group className="formEltMargin">
+            <Form.Group as={Row} className="formEltMargin">
+              <Col>
+                <Form.Control
+                  type="text"
+                  placeholder="First Name"
+                  value={newFName}
+                  onChange={handleNewFNameChange}
+                  style={{
+                    background: '#FFFFFF 0% 0% no-repeat padding-box',
+                    borderRadius: '26px',
+                    opacity: 1,
+                    width: '230px',
+                  }}
+                />
+              </Col>
+              <Col>
+                <Form.Control
+                  type="text"
+                  placeholder="Last Name"
+                  value={newLName}
+                  onChange={handleNewLNameChange}
+                  style={{
+                    background: '#FFFFFF 0% 0% no-repeat padding-box',
+                    borderRadius: '26px',
+                    opacity: 1,
+                    width: '230px',
+                  }}
+                />
+              </Col>
+            </Form.Group>
+            <Col>
+              <Form.Group as={Row} className="formEltMargin">
+                <Form.Control
+                  type="text"
+                  placeholder="Employer"
+                  value={newEmployer}
+                  onChange={handleNewEmployerChange}
+                  style={{
+                    background: '#FFFFFF 0% 0% no-repeat padding-box',
+                    borderRadius: '26px',
+                    opacity: 1,
+                    width: '500px',
+                  }}
+                />
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group as={Row} className="formEltMargin">
+                <Form.Control
+                  type="tel"
+                  placeholder="Phone Number"
+                  pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                  value={newPhoneNumber}
+                  onChange={handleNewPhoneNumberChange}
+                  style={{
+                    background: '#FFFFFF 0% 0% no-repeat padding-box',
+                    borderRadius: '26px',
+                    opacity: 1,
+                    width: '500px',
+                  }}
+                />
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group as={Row} className="formEltMargin">
+                <Form.Control
+                  type="text"
+                  placeholder="Email address"
+                  value={newEmail}
+                  onChange={handleNewEmailChange}
+                  style={{
+                    background: '#FFFFFF 0% 0% no-repeat padding-box',
+                    borderRadius: '26px',
+                    opacity: 1,
+                    width: '500px',
+                  }}
+                />
+              </Form.Group>
+            </Col>
+          </Form.Group>
+          <Col>
+            <Form.Group as={Row} className="formEltMargin">
+              <Form.Control
+                type="password"
+                placeholder="Create Password"
+                value={newPassword}
+                onChange={handleNewPasswordChange}
+                style={{
+                  background: '#FFFFFF 0% 0% no-repeat padding-box',
+                  borderRadius: '26px',
+                  opacity: 1,
+                  width: '500px',
+                }}
+              />
+            </Form.Group>
+          </Col>
+
+          <Form.Group className="formEltMargin">
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Button
+                variant="primary"
+                type="submit"
+                onClick={handleSignUpDone}
+                style={{
+                  background: '#F8BE28 0% 0% no-repeat padding-box',
+                  borderRadius: '20px',
+                  opacity: 1,
+                  width: '300px',
+                }}
+              >
+                Sign Up
+              </Button>
+
+              <Button
+                variant="primary"
+                type="submit"
+                onClick={hideSignUp}
+                style={{
+                  marginTop: '10px',
+                  background: '#FF6B4A 0% 0% no-repeat padding-box',
+                  borderRadius: '20px',
+                  opacity: 1,
+                  width: '300px',
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </Form.Group>
+        </Form>
+        {/*  <Box marginBottom="1rem" width="100%">
           <TextField
             className={classes.textFieldBackgorund}
             variant="outlined"
@@ -446,16 +496,7 @@ export default function Login() {
             fullWidth={true}
             onChange={handlePasswordChange}
           />
-        </Box>
-
-        <Box color="red" style={{ textTransform: 'lowercase' }}>
-          <Typography>{validation}</Typography>
-        </Box>
-        <Box justifyContent="flex-start">
-          <Button style={{ textTransform: 'lowercase', fontWeight: 'bold' }}>
-            Forgot Password?
-          </Button>
-        </Box>
+        </Box> */}
 
         <Box
           marginTop="1rem"
@@ -463,7 +504,7 @@ export default function Login() {
           justifyContent="center"
           style={{ fontWeight: 'bold' }}
         >
-          Or Login With
+          Or continue with
         </Box>
 
         <Box display="flex" justifyContent="center" marginTop="1rem">
@@ -522,7 +563,7 @@ export default function Login() {
         <Box
           display="flex"
           justifyContent="center"
-          marginTop="5rem"
+          marginTop="2rem"
           marginBottom="7.5rem"
           style={{ fontWeight: 'bold' }}
         >
@@ -530,7 +571,7 @@ export default function Login() {
         </Box>
       </Box>
 
-      <Box marginTop="14%" marginLeft="2rem">
+      <Box marginTop="45%" marginLeft="-70px">
         <Button
           onClick={handleSubmit}
           style={{
@@ -545,7 +586,7 @@ export default function Login() {
         <img src={Ellipse} alt="Ellipse" />
       </Box>
       {socialSignUpModal()}
-      {signUpModal()}
+
       {/* <Box hidden={loggedIn === true}>
                   <Loading/>
             </Box> */}
