@@ -1198,9 +1198,12 @@ export default function Home(props) {
     // window.location.reload();
     // }, []);
   };
+  function ToggleShowAbout(){
+    history.push("/about")
+  }
 
   /*----------------------------return()----------------------------*/
-  let startObject = stateValue.dateContext.clone();
+  let startObject = stateValue.dateContext;
   let startWeek = startObject.startOf('week');
 
   return (
@@ -1246,7 +1249,7 @@ export default function Home(props) {
               {pathname: "/main", state: stateValue.currentUserId}) } id="one">
               Goals
             </Button>
-            <Button className={classes.buttonSelection} id="one">
+            <Button className={classes.buttonSelection} id="one" onClick={ToggleShowAbout}>
               About
             </Button>
 
