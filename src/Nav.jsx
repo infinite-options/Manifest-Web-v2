@@ -3,7 +3,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import DisplayProducts from './components/ProductSelectionPage/ProduceProductSelection/displayProduct';
 import Store from './components/Store/Store';
 import Landing from './components/Home/Landing';
-import Login from '../src/manifest/Login'
+import Login from '../src/manifest/Login';
 import Signup from './components/SignUp/Signup';
 import SocialSignUp from './components/SignUp/SocialSignUp';
 import AuthAdminRoute from './auth/AuthAdminRoute';
@@ -16,8 +16,9 @@ import ProfileInfo from './components/Profile-Info/ProfileInfo';
 import TermsAndConditions from './components/TermsAndConditions/TermsAndConditions';
 import MobilePaypalCheckout from './mobile/MobilePaypalCheckout';
 import MainPage from '../src/manifest/OldManifest/Main';
-import Home from '../src/Home/Home'
-import Matts from './Matts/Matts_v6'
+import Home from '../src/Home/Home';
+import Matts from './Matts/Matts_v6';
+import SignUp from '../src/manifest/SignUp';
 // Nav here will take all the adress from children page to this and give
 // it to the switch route
 
@@ -26,8 +27,9 @@ function Nav(authLevel, isAuth) {
     <Switch>
       <Route exact path="/" component={Login} />
       <Route exact path="/main" component={MainPage} />
-      <Route exact path="/home" component={Home}/>  
+      <Route exact path="/home" component={Home} />
       <Route exact path="/matts" component={Matts} />
+      <Route exact path="/signup" component={SignUp} />
       {/* <Route exact path="/signup" component={Signup} />
       <Route exact path="/socialsignup" component={SocialSignUp} />
       <Route exact path="/products" component={DisplayProducts} />
