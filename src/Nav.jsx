@@ -19,6 +19,7 @@ import MainPage from '../src/manifest/OldManifest/Main';
 import Home from '../src/Home/Home';
 import Matts from './Matts/Matts_v6';
 import SignUp from '../src/manifest/SignUp';
+import AboutModal from 'manifest/Home/About';
 // Nav here will take all the adress from children page to this and give
 // it to the switch route
 
@@ -30,6 +31,7 @@ function Nav(authLevel, isAuth) {
       <Route exact path="/home" component={Home} />
       <Route exact path="/matts" component={Matts} />
       <Route exact path="/signup" component={SignUp} />
+      <Route exact path="/about" component={AboutModal} />
       {/* <Route exact path="/signup" component={Signup} />
       <Route exact path="/socialsignup" component={SocialSignUp} />
       <Route exact path="/products" component={DisplayProducts} />

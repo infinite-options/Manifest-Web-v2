@@ -107,7 +107,12 @@ export default function Home() {
 
   function ToggleShowEditRoutine(){
     history.push("/main")
-}
+  }
+
+  function ToggleShowAbout(){
+    history.push("/about")
+  }
+
   return (
 
     <div style={{ width: "100%", height: "100vh", backgroundColor: "#f2f7fc" }}>
@@ -132,7 +137,7 @@ export default function Home() {
           <Button className={classes.buttonSelection} id="one" onClick={ToggleShowEditRoutine}>
             Goals
           </Button>
-          <Button className={classes.buttonSelection} id="one">
+          <Button className={classes.buttonSelection} id="one" onClick={ToggleShowAbout}>
             About
           </Button>      
         </div>
