@@ -55,7 +55,7 @@ import EditIS from './EditIS/EditIS';
 export default function Home(props) {
 
 
-  const [userID, setUserID] = useState("");
+  const [userID, setUserID] = useState(""); //home has user ID, navigation might need to get user id
 
 
   console.log(props.location.state);

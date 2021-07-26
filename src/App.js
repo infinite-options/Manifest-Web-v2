@@ -237,11 +237,11 @@ export default function App() {
 
         {/* <Link to="/">Home</Link> */}
 
-        <Navigation />
+        <Navigation /> {/* Navigation bar */}
 
         {/* <Switch>
           <Route path="/"> */}
-        <Nav />
+        <Nav /> {/* Loads components */}
         {/* </Route> */}
 
         {/* <Route path="/login">
