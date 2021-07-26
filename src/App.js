@@ -201,8 +201,10 @@
 
 // export default App;
 
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import './App.css';
+
+import LoginContext, { LoginInitState } from 'LoginContext';
 
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
@@ -216,22 +218,29 @@ import Nav from '../src/Nav';
 
 // import 'react-week-calendar/dist/style.css';
 
-import {
-  Form,
-  Container,
-  Row,
-  Col,
-  Modal,
-  Dropdown,
-  DropdownButton,
-  Spinner,
-} from 'react-bootstrap';
+// import {
+//   Form,
+//   Container,
+//   Row,
+//   Col,
+//   Modal,
+//   Dropdown,
+//   DropdownButton,
+//   Spinner,
+// } from 'react-bootstrap';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 /* Main function for all the pages and elements */
 export default function App() {
+  const [loginState, setLoginState] = useState(LoginInitState);
   return (
     <Router>
+      <LoginContext.Provider
+        value={{
+          loginState: loginState,
+          setLoginState: setLoginState,
+        }}
+      >
       <div>
         {/* <Link to="/login">Login </Link> */}
 
@@ -249,6 +258,7 @@ export default function App() {
           </Route> */}
         {/* </Switch> */}
       </div>
+      </LoginContext.Provider>
     </Router>
     // <div>
     //   {/* <Home /> */}

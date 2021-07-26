@@ -109,7 +109,7 @@ const EditIcon = ({routine, task, step}) => {
             id: rowId,
             newItem: {
               ...editingRTSContext.editingRTS.newItem,
-             // ...itemToChange,
+              // ...itemToChange,
             }
           })
         }}

@@ -48,15 +48,16 @@ import EditATS from './EditATS/EditATS';
 
 import EditISContext from './EditIS/EditISContext';
 import EditIS from './EditIS/EditIS';
+import LoginContext from '../LoginContext';
 
-// const userContext = React.createContext();
 /* Navigation Bar component function */
 
 export default function Home(props) {
 
 
-  const [userID, setUserID] = useState("");
-
+  // const [userID, setUserID] = useState("");
+  const loginContext = useContext(LoginContext);
+  const userID = loginContext.loginState.curUser;
 
   console.log(props.location.state);
 
@@ -91,10 +92,16 @@ export default function Home(props) {
       .then((response) =>{
           console.log(response);
           if (response.result !== false){
-            const curUserID = response.data.result[0].user_unique_id;
+            const usersOfTA = response.data.result;
+            const curUserID = usersOfTA[0].user_unique_id;
+            loginContext.setLoginState({
+              ...loginContext.loginState,
+              usersOfTA: response.data.result,
+              curUser: curUserID
+            })
             console.log(curUserID);
-            setUserID(curUserID);
-            console.log(userID);
+            // setUserID(curUserID);
+            // console.log(userID);
             GrabFireBaseRoutinesGoalsData();
             // return userID;
           }
@@ -329,6 +336,7 @@ export default function Home(props) {
     type: '',
     id: '',
     user_id: props.location.state,
+    gr_array: [],
     newItem: {
       audio: '',
       datetime_completed: '',
@@ -1267,6 +1275,10 @@ export default function Home(props) {
                 routines: routine,
               };
             });
+            setEditingRTS({
+              ...editingRTS,
+              gr_array: gr_array,
+            })
           } else {
             setStateValue((prevState) => {
               return {

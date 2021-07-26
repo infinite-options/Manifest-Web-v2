@@ -19,6 +19,9 @@ import axios from 'axios';
 import { useState, useContext } from 'react';
 import SocialLogin from '../components/LogIn/SocialLogin';
 
+import LoginContext from "LoginContext";
+
+
 /* Custom Hook to make styles */
 const useStyles = makeStyles({
   textFieldBackgorund: {
@@ -33,6 +36,7 @@ const useStyles = makeStyles({
 /* Navigation Bar component function */
 export default function Login() {
   const Auth = useContext(AuthContext);
+  const loginContext = useContext(LoginContext)
 
   const classes = useStyles();
   const history = useHistory();
@@ -65,6 +69,17 @@ export default function Login() {
         if (response.data.result !== false) {
           setLoggedIn(true);
           console.log('response id', response.data.result, loggedIn);
+          loginContext.setLoginState({
+            ...loginContext.loginState,
+            loggedIn: true,
+            ta: {
+              ...loginContext.loginState.ta,
+              id: response.data.result,
+              email: email.toString(),
+            },
+            usersOfTA: [],
+            curUser: '',
+          })
           history.push({
             pathname: '/home',
             state: email.toString(),
