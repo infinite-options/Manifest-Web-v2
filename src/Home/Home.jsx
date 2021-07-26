@@ -1356,11 +1356,17 @@ export default function Home(props) {
               About
             </Button>
             {stateValue.showRoutineModal ? (
-              <Button className={classes.buttonSelection} id="one">
+              <Button 
+                className={classes.buttonSelection}
+                style={{width: '10%', marginLeft: '12px', marginRight: '12px'}} 
+                id="one"
+              >
                 Add Routine +
               </Button>
             ) : (
-              <div style = {{width: '8%', marginLeft: "1px", marginRight: '1px'}}/>
+              <div style = {{width: '10%', marginLeft: '12px', marginRight: '12px'}}>
+
+              </div>
             )}
             
 
