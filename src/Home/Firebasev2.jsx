@@ -25,6 +25,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 //import DeleteAT from "../manifest/OldManifest";
 import DeleteGR from "../manifest/OldManifest/deleteGR.jsx";
 import EditIcon from "./EditRTS/EditIcon.jsx";
+import EditActionIcon from "./EditATS/EditIcon.jsx";
+import EditStepsIcon from "./EditIS/EditIcon.jsx";
 import CopyIcon from "../manifest/OldManifest/CopyIcon.jsx";
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
@@ -547,7 +549,7 @@ export default function Firebasev2(props)  {
                     </Col>
                 </div>
                 <div style={{marginLeft:'1.5rem'}}>
-                {(a.is_sublist_available === "True") ? (
+                {/* {(a.is_sublist_available === "True") ? ( */}
                             <div>
                             <FontAwesomeIcon
                             icon={faList}
@@ -561,12 +563,12 @@ export default function Firebasev2(props)  {
                             }}
                             />
                         </div>
-                        ) : (
+                        {/* ) : (
                             <div
                             // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShowATModal: false})}}>
                             >
                             </div>
-                        )}
+                        )} */}
                 </div>
                 </div>
                 </div>
@@ -680,6 +682,12 @@ export default function Firebasev2(props)  {
                             size="small"
                             />
                     </div>
+
+                    <EditActionIcon
+                    routine={null}
+                    task={a}
+                    step={null}  
+                  />
                     </div>
                 </div>
                 </div>
@@ -873,6 +881,12 @@ export default function Firebasev2(props)  {
                             size="small"
                             />
                     </div>
+                    <EditStepsIcon
+                    routine={null}
+                    task={null}
+                    step={i}  
+                  />
+
                     </div>
                 </div>
                 </div>

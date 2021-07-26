@@ -38,6 +38,8 @@ import DayRoutines from './DayRoutines.jsx';
 import WeekRoutines from './WeekRoutines.jsx';
 import userContext from './userContext';
 
+import AddNewGR from './addNewGRItem.jsx'
+
 import { Navigation } from "./navigation";
 import EditRTSContext from './EditRTS/EditRTSContext';
 import EditRTS from './EditRTS/EditRTS';
@@ -48,6 +50,7 @@ import EditATS from './EditATS/EditATS';
 
 import EditISContext from './EditIS/EditISContext';
 import EditIS from './EditIS/EditIS';
+import Edit from '@material-ui/icons/Edit';
 
 // const userContext = React.createContext();
 /* Navigation Bar component function */
@@ -110,7 +113,7 @@ export default function Home(props) {
   /*----------------------------Use states to define variables----------------------------*/
   
 
-
+  const [AddNewGRstate, setAddNewGRstate] = useState(false)
   const [hightlight, setHightlight] = useState('')
   const [stateValue, setStateValue] = useState({
     itemToEdit: {
@@ -410,6 +413,9 @@ export default function Home(props) {
   }
 
   const [editingRTS, setEditingRTS] = useState(initialEditingRTSState)
+  const [editingATS, setEditingATS] = useState(initialEditingRTSState)
+  const [editingIS, setEditingIS] = useState(initialEditingRTSState)
+
   // console.log(calendarView);
   /*----------------------------Custom Hook to make styles----------------------------*/
   const useStyles = makeStyles({
@@ -1309,6 +1315,20 @@ export default function Home(props) {
           setEditingRTS: setEditingRTS
         }}
       >
+
+    <EditATSContext.Provider
+        value={{
+          editingATS: editingATS,
+          setEditingATS: setEditingATS
+        }}
+      >
+
+      <EditISContext.Provider
+        value={{
+          editingIS: editingIS,
+          setEditingIS: setEditingIS
+        }}
+      >
       <userContext.Provider
         value={
           (stateValue.itemToEdit,
@@ -1404,9 +1424,8 @@ export default function Home(props) {
                                       fontSize: '2.5rem',
                                       color: '#ffffff'
                                     }}
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      console.log('Clicked add RTS')
+                                    onClick={() => {
+                                      setAddNewGRstate(!AddNewGRstate)
                                     }}
                                   >
                                     +
@@ -1416,6 +1435,26 @@ export default function Home(props) {
                             </div>
                           </div>
                             :
+                            editingATS.editing
+                            ?
+                            <div
+                              style={{
+                                width: '100%',
+                              }}
+                            >
+                             
+                            </div>
+                              :
+                              editingIS.editing
+                              ?
+                              <div
+                                style={{
+                                  width: '100%',
+                                }}
+                              >
+                               
+                              </div>
+                              :
         
             <Box
               bgcolor="#889AB5"
@@ -1594,12 +1633,30 @@ export default function Home(props) {
               </Col>
               <Col
               >
-               {editingRTS.editing ? <EditRTS /> : showCalendarView()}
+               {/* {editingRTS.editing ?  <EditRTS /> : showCalendarView()} */}
+               <Box hidden={editingRTS.editing || editingATS.editing || editingIS.editing || AddNewGRstate }>
+                  {showCalendarView()}
+               </Box>
+               <Box hidden={!editingRTS.editing}>
+               <EditRTS />
+               </Box>
+               <Box  hidden={!editingATS.editing}>
+               <EditATS />
+               </Box>
+               <Box  hidden={!editingIS.editing}>
+               <EditIS />
+               </Box>
+               <Box  hidden={!AddNewGRstate}>
+               {editingRTS.editing= false}  
+               <AddNewGR/>
+               </Box>
               </Col>
             </Row>
           {/* </Container> */}
         </div>
       </userContext.Provider>
+      </EditISContext.Provider>
+      </EditATSContext.Provider>
       </EditRTSContext.Provider>
     </div>
   );
