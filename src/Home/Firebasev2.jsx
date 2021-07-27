@@ -75,18 +75,41 @@ export default function Firebasev2(props)  {
     }
 
     useEffect(() => {
+        setHG([])
+        console.log("in useEffect Firebasev2")
+        console.log(currentUser)
         axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getHistory/" + currentUser)
         .then((response) =>{
             for(var i=0; i <response.data.result.length; i++){
                 historyGot.push(response.data.result[i]);
             }
+            console.log("historyGot")
             console.log(historyGot);
             cleanData(historyGot, currentDate);
         })
         .catch((error) => {
             console.log(error);
         });
-    },[])
+    },[props.theCurrentUserID])
+
+    {/* EXPERIMENTAL */}
+
+    const getCurrentUser = () => {
+        axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getHistory/" + currentUser)
+        .then((response) =>{
+            for(var i=0; i <response.data.result.length; i++){
+                historyGot.push(response.data.result[i]);
+            }
+            console.log("historyGot")
+            console.log(historyGot);
+            cleanData(historyGot, currentDate);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
+
+    {/* EXPERIMENTAL */}
 
     
     //This clean data is from History Page - it creates "rows" of routines actions and instructions
@@ -882,9 +905,13 @@ export default function Firebasev2(props)  {
         )
     }
 
+    console.log("Kyle Test: " + currentUser)
+    
+
     return(
      
         <row>
+                {/* {getCurrentUser()} */}
                 {listOfBlocks}
         </row>
     )
