@@ -19,8 +19,7 @@ import axios from 'axios';
 import { useState, useContext } from 'react';
 import SocialLogin from '../components/LogIn/SocialLogin';
 
-import LoginContext from "LoginContext";
-
+import LoginContext from 'LoginContext';
 
 /* Custom Hook to make styles */
 const useStyles = makeStyles({
@@ -36,7 +35,7 @@ const useStyles = makeStyles({
 /* Navigation Bar component function */
 export default function Login() {
   const Auth = useContext(AuthContext);
-  const loginContext = useContext(LoginContext)
+  const loginContext = useContext(LoginContext);
 
   const classes = useStyles();
   const history = useHistory();
@@ -79,7 +78,7 @@ export default function Login() {
             },
             usersOfTA: [],
             curUser: '',
-          })
+          });
           history.push({
             pathname: '/home',
             state: email.toString(),
@@ -122,7 +121,7 @@ export default function Login() {
           } else {
             console.log('social sign up with', e);
             this.setState({
-              socialSignUpModal: true,
+              socialSignUpModalShow: true,
               newEmail: e,
             });
             console.log('social sign up modal displayed');
