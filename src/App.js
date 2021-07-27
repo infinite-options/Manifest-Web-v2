@@ -233,6 +233,8 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 /* Main function for all the pages and elements */
 export default function App() {
   const [loginState, setLoginState] = useState(LoginInitState);
+  console.log("login State")
+  console.log(loginState)
   return (
     <Router>
       <LoginContext.Provider

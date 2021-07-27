@@ -51,6 +51,7 @@ import EditIS from './EditIS/EditIS';
 import LoginContext from '../LoginContext';
 import AddNewATItem from './addNewATItem';
 
+
 /* Navigation Bar component function */
 
 export default function Home(props) {
@@ -61,6 +62,7 @@ export default function Home(props) {
   const userID = loginContext.loginState.curUser;
 
   console.log(props.location.state);
+  console.log(userID)
 
   // GetUserID(props.location.state);
 
@@ -1421,11 +1423,17 @@ export default function Home(props) {
               About
             </Button>
             {stateValue.showRoutineModal ? (
-              <Button className={classes.buttonSelection} id="one">
+              <Button 
+                className={classes.buttonSelection}
+                style={{width: '10%', marginLeft: '12px', marginRight: '12px'}} 
+                id="one"
+              >
                 Add Routine +
               </Button>
             ) : (
-              <div style = {{width: '8%', marginLeft: "1px", marginRight: '1px'}}/>
+              <div style = {{width: '10%', marginLeft: '12px', marginRight: '12px'}}>
+
+              </div>
             )}
             
 
