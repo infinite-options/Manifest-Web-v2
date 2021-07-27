@@ -18,7 +18,7 @@ import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
 import { GoogleLogin } from 'react-google-login';
 import axios from 'axios';
 import { useState, useContext } from 'react';
-import SocialLogin from '../components/LogIn/SocialLogin';
+import SocialLogin from './SocialLogin';
 
 /* Custom Hook to make styles */
 const useStyles = makeStyles({
@@ -504,30 +504,6 @@ export default function Login() {
             </div>
           </Form.Group>
         </Form>
-        {/*  <Box marginBottom="1rem" width="100%">
-          <TextField
-            className={classes.textFieldBackgorund}
-            variant="outlined"
-            label="Email"
-            size="small"
-            error={validation}
-            fullWidth={true}
-            onChange={handleEmailChange}
-          />
-        </Box>
-
-        <Box>
-          <TextField
-            className={classes.textFieldBackgorund}
-            variant="outlined"
-            label="Password"
-            size="small"
-            type="password"
-            error={validation}
-            fullWidth={true}
-            onChange={handlePasswordChange}
-          />
-        </Box> */}
 
         <Box
           marginTop="1rem"
@@ -539,56 +515,7 @@ export default function Login() {
         </Box>
 
         <Box display="flex" justifyContent="center" marginTop="1rem">
-          <Box>
-            <Button
-              disableRipple={true}
-              disableFocusRipple={true}
-              disableTouchRipple={true}
-              disableElevation={true}
-              style={{
-                borderRadius: '32px',
-                height: '3rem',
-                backgroundImage: `url(${Facebook})`,
-              }}
-            ></Button>
-          </Box>
-          <Box>
-            {/* <SocialLogin/> */}
-
-            <GoogleLogin
-              clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
-              render={(renderProps) => (
-                <Button
-                  style={{
-                    borderRadius: '32px',
-                    height: '3rem',
-                    backgroundImage: `url(${Google})`,
-                  }}
-                  onClick={renderProps.onClick}
-                  disabled={renderProps.disabled}
-                ></Button>
-              )}
-              buttonText="Log In"
-              onSuccess={responseGoogle}
-              onFailure={responseGoogle}
-              isSignedIn={false}
-              disable={false}
-              cookiePolicy={'single_host_origin'}
-            />
-          </Box>
-          <Box>
-            <Button
-              disableRipple={true}
-              disableFocusRipple={true}
-              disableTouchRipple={true}
-              disableElevation={true}
-              style={{
-                borderRadius: '32px',
-                height: '3rem',
-                backgroundImage: `url(${Apple})`,
-              }}
-            ></Button>
-          </Box>
+          <SocialLogin />
         </Box>
 
         <Box
