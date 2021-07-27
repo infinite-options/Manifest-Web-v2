@@ -718,13 +718,14 @@ export default class WeekRoutines extends Component {
             style={{
               // borderTop: '1px solid lavender',
               // borderRight: '2px solid #b1b3b6',
-              textAlign: 'right',
+              textAlign: 'center',
               // height: this.state.pxPerHour,
               height: '55px',
               // fluid: true,
             }}
           >
-            {i}
+
+            {i>11? i-12 + 'pm' : i + 'am' }
           </Col>
         </Row>
       );
@@ -808,7 +809,7 @@ export default class WeekRoutines extends Component {
         <Col key={'day' + i}>
           <Col
             style={{
-              textAlign: 'left',
+              textAlign: 'center',
               height: this.state.pxPerHour,
               color: curDate.format('D') === today.getDate().toString() ? '#FF6B4A' : ''
             }}
@@ -877,10 +878,9 @@ export default class WeekRoutines extends Component {
         >
           <Col className="fancytext"></Col>
           {weekdays}
-        
         </Row>
         
-        <Row style={{ marginLeft:'5rem', fontWeight:'bold'}}>{this.dateDisplay()}</Row>
+        <Row style={{ marginLeft:'5rem', fontWeight:'bold'}}> {this.dateDisplay()}</Row>
         </div>
         <Row
           ref={this.hourDisplay}

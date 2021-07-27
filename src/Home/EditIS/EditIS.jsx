@@ -74,14 +74,14 @@ const EditIS = () => {
           <Col md={4}>
             <div style={{display:'flex'}}>
                 <div>
-                <div style={{marginTop:'1rem',borderRadius:'15px', border:'0px', fontSize:'12px', height:'2rem', width:'2rem', backgroundColor:'#ffffff'}}></div>
+                <div style={{marginTop:'1rem',borderRadius:'15px', border:'0px', fontSize:'18px', height:'2rem', width:'2rem', backgroundColor:'#ffffff', color:'#000000', fontWeight:'bold', paddingLeft:'0.5rem'}}> 1 </div>
                 </div>
                 <div style={{marginLeft:'2rem'}}>
               <div style={{fontWeight:'bold'}}>Step Name </div>
               <input 
                 style={{borderRadius:'10px', border:'0px', fontSize:'12px', height:'2rem', width:'15rem'}}
                 placeholder="Name Step here"
-                value={editingISContext.editingIS.newItem.title}
+                value={editingISContext.editingIS.newItem.name}
                 onChange={(e) => {
                   editingISContext.setEditingIS({
                     ...editingISContext.editingIS,

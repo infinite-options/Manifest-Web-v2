@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
 import axios from 'axios';
 import {
     faUser,
@@ -25,6 +26,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 //import DeleteAT from "../manifest/OldManifest";
 import DeleteGR from "../manifest/OldManifest/deleteGR.jsx";
 import EditIcon from "./EditRTS/EditIcon.jsx";
+import EditActionIcon from "./EditATS/EditIcon.jsx"
+import EditStepsIcon from "./EditIS/EditIcon.jsx"
 import CopyIcon from "../manifest/OldManifest/CopyIcon.jsx";
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
@@ -66,12 +69,13 @@ export default function Firebasev2(props)  {
     const currentUser = props.theCurrentUserID;
     const [listOfBlocks, setlistOfBlocks] = useState([]);
     const [historyGot, setHG] = useState([]);
+    const [iconColor, setIconColor] = useState()
     //NOTE This gives you routines within 7 days of current date. Change currentDate to change that
     const [currentDate, setCurDate] = useState(new Date(Date.now()))
     const classes = useStyles();
     const [rows, setRows] = useState([]);
-    function createData(name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type){    //rows structure
-        return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type}
+    function createData(name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, id){    //rows structure
+        return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, id}
     }
 
     useEffect(() => {
@@ -80,8 +84,9 @@ export default function Firebasev2(props)  {
             for(var i=0; i <response.data.result.length; i++){
                 historyGot.push(response.data.result[i]);
             }
-            console.log(historyGot);
+            console.log("history",historyGot);
             cleanData(historyGot, currentDate);
+            
         })
         .catch((error) => {
             console.log(error);
@@ -123,17 +128,18 @@ export default function Firebasev2(props)  {
         var bigList = [];       
         for (var d = 0; d < inRange.length; d++){
             const obj = JSON.parse(inRange[d].details)
-            console.log(obj);
+            console.log("obj",obj);
             //sort obj by time of day
             obj.sort((a, b) => a.start_day_and_time - b.start_day_and_time);
             for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
-                // console.log(r);
+                if(obj[r].routine !== undefined){
                 if(obj[r].title){
                     // console.log("gere");
                     var isNewR = true;
                     for (var s=0; s<bigList.length; s++){       //check through and see if this is a new routine
                         if (bigList[s].type == "Routine" && bigList[s].title == obj[r].title){
                             bigList[s].days[d] = obj[r].status;   //if already there- just update that day status
+                           // bigList[s].id = obj[r].routine;
                             isNewR = false;
                             break;
                         }
@@ -141,7 +147,7 @@ export default function Firebasev2(props)  {
                     if (isNewR){
                         var currentR = {type: "Routine", title: obj[r].title, under: "", days: [], tBox: {}, 
                         show: true, photo: obj[r].photo, startTime: obj[r].start_day_and_time, 
-                        endTime: obj[r].end_day_and_time, is_sublist_available: obj[r].is_sublist_available}; //if new, make object and put in bigList
+                        endTime: obj[r].end_day_and_time, is_sublist_available: obj[r].is_sublist_available,id: obj[r].routine}; //if new, make object and put in bigList
                         currentR.days[d] = obj[r].status;
                         bigList.push(currentR);
                     }
@@ -159,7 +165,7 @@ export default function Firebasev2(props)  {
                                     }
                                 }
                                 if(isNewA){
-                                    var currentA = {type: "Action", title: actions[a].title, under: obj[r].title, days:[], tBox: {}, show: false};
+                                    var currentA = {type: "Action", title: actions[a].title, under: obj[r].title, days:[], tBox: {}, show: false, id: actions[a].action};
                                     currentA.days[d] = actions[a].status;
                                     bigList.push(currentA);
                                 }
@@ -190,6 +196,7 @@ export default function Firebasev2(props)  {
 
                 }
             }
+            }
         }
         
         setRows([]);
@@ -202,11 +209,11 @@ export default function Firebasev2(props)  {
         for (var i=0; i< bigList.length; i++){
             rows.push(createData(bigList[i].title, bigList[i].days[6], bigList[i].days[5], bigList[i].days[4], bigList[i].days[3],
                  bigList[i].days[2], bigList[i].days[1], bigList[i].days[0], bigList[i].show, bigList[i].under, bigList[i].photo,
-                 bigList[i].startTime, bigList[i].endTime, bigList[i].is_sublist_available, bigList[i].type));
+                 bigList[i].startTime, bigList[i].endTime, bigList[i].is_sublist_available, bigList[i].type, bigList[i].id));
         }
         // console.log(tempRows);
         // setRows(tempRows);
-        console.log(rows);
+        console.log('rows',rows);
         // console.log("GERE");
         makeDisplays(onlyAllowed(rows));
         return(true);
@@ -231,6 +238,7 @@ export default function Firebasev2(props)  {
         var tempRows = [];
         for (var i=0; i <onlyAllowed.length; i++){
             if (onlyAllowed[i].type == "Routine"){
+                console.log("allow", onlyAllowed[i])
                 tempRows.push(displayRoutines(onlyAllowed[i]));
             }
             else if (onlyAllowed[i].type == "Action"){
@@ -290,15 +298,14 @@ export default function Firebasev2(props)  {
         return(
             <ListGroup.Item
             
-                style={{ height:'12%', backgroundColor:'#BBC7D7' , marginBottom:'0px', marginTop: '2px'}}
+                style={{  backgroundColor:'#BBC7D7' , marginTop: '1px'}}
                 onClick={() => {
                     props.sethighLight(r["gr_title"])
                   }}
             >
-                
                 <div style={{ display:'flex', justifyContent:'space-between' }}>
-                <div flex='1' style={{marginLeft:'1rem', marginTop:'1rem', height:'4.5rem', borderRadius:'10px',width:'65%', display:'flex', justifyContent:'space-between', backgroundColor:'#FF6B4A', boxShadow:
-                    "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
+                <div flex='1' style={{marginLeft:'1rem', height:'4.5rem', borderRadius:'10px',width:'65%', display:'flex', justifyContent:'space-between', backgroundColor:'#FF6B4A', boxShadow:
+                    "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.09)",
                 zIndex:'50%'}}>
                 <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
                 <div style={{ marginLeft:'1rem'}} >
@@ -346,7 +353,9 @@ export default function Firebasev2(props)  {
                     </Col>
                 </div>
                 <div style={{marginLeft:'1.5rem'}}>
-                {(r.is_sublist_available === "True") ? (
+               
+                            <div>
+                            {(r.is_sublist_available === "True") ? (
                             <div>
                             <FontAwesomeIcon
                             icon={faList}
@@ -355,7 +364,7 @@ export default function Firebasev2(props)  {
                             size="small"
                             onClick = {()=> {
                                 // sendRoutineToParent(r.name);
-                                clickHandle(r.name)
+                              //  clickHandle(r.name)
                                 // setLoading(!isLoading);
                             }}
                             />
@@ -366,11 +375,13 @@ export default function Firebasev2(props)  {
                             >
                             </div>
                         )}
+                        </div>
+                       
                 </div>
                 </div>
                 </div>
 
-                <div style={{ display:"flex" , marginTop:'1rem'}}>
+                <div style={{ display:"flex" }}>
                 <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
                     <div style={{flex:'1'}}>
 
@@ -440,27 +451,6 @@ export default function Firebasev2(props)  {
                         </div>
                 </div>
                     <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
-                
-                    <div>
-                        <FontAwesomeIcon
-                            icon={faBookmark}
-                            title="Must Do"
-                            style={{ color: "#ffffff" }}
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
-                            // onClick={(e) => {
-                            //     e.stopPropagation();
-                            //     this.toggleFBmustDo(!this.state.iconShow);
-                            // }}
-                            size="small"
-                        />
-                    {/* <MustDoAT
-                        // BASE_URL={this.props.BASE_URL}
-                        //   Index={i}
-                        //    Array={this.props.originalGoalsAndRoutineArr}
-                        //   // SingleAT={this.state.singleATitemArr[i]}
-                        //   // Path={this.state.singleGR.fbPath}
-                        /> */}
-                    </div>
 
                    <div>
                   <EditIcon
@@ -472,16 +462,34 @@ export default function Firebasev2(props)  {
                   </div>
 
                     <div>
-                    <FontAwesomeIcon
+                    {(r.is_sublist_available === "True") ? (
+                            <div>
+                            <FontAwesomeIcon
                             icon={faList}
                             title="SubList Available"
-                            style={{ color: "#ffffff"}}
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
-                            onClick={(e)=>{
-                            //  style.color = "#000000"
-                            }}
+                            style={{ color: "#ffffff" }}
                             size="small"
+                            onClick = {()=> {
+                                // sendRoutineToParent(r.name);
+                                clickHandle(r.name)
+                                // setLoading(!isLoading);
+                            }}
                             />
+                        </div>
+                        ) : (
+                            <div
+                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShowATModal: false})}}>
+                            >
+                            </div>
+                        )}
+                    </div>
+                    <div>
+                    <PlaylistAddIcon
+                    style={{color:"#ffffff"}}
+                    onClick = {(e)=> {
+                          e.target.style.color = "#000000"
+                      
+                    }}/>
                     </div>
                     </div>
                 </div>
@@ -494,14 +502,14 @@ export default function Firebasev2(props)  {
         return(
             <div
             
-                style={{ height:'98px', width:'100%', backgroundColor:'#BBC7D7' , marginBottom:'0px'}}
+                style={{  backgroundColor:'#BBC7D7' , marginBottom:'0px'}}
             >
                 
-                <div style={{ display:'flex', justifyContent:'space-between' }}>
-                <div flex='1' style={{marginLeft:'1.5rem', marginTop:'1rem', height:'4.25rem', borderRadius:'10px',width:'65%', display:'flex', justifyContent:'space-between', backgroundColor:'#F8BE28', boxShadow:
+                <div style={{ display:'flex', justifyContent:'space-evenly' }}>
+                <div flex='1' style={{marginLeft:'1rem',marginTop:'0.5rem',borderRadius:'10px',height:'4.5rem',width:'60%', display:'flex', justifyContent:'space-between', backgroundColor:'#F8BE28', boxShadow:
                     "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
                 zIndex:'50%'}}>
-                <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
+                <div flex='1' style={{ display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
                 <div style={{ marginLeft:'1rem'}} >
                 {true ? (
                     <div
@@ -547,47 +555,22 @@ export default function Firebasev2(props)  {
                     </Col>
                 </div>
                 <div style={{marginLeft:'1.5rem'}}>
-                {(a.is_sublist_available === "True") ? (
-                            <div>
-                            <FontAwesomeIcon
+                <FontAwesomeIcon
                             icon={faList}
                             title="SubList Available"
-                            style={{ color: "#ffffff" }}
-                            size="small"
-                            onClick = {()=> {
-                                // sendRoutineToParent(a.name);
-                                clickHandle(a.name)
-                                // setLoading(!isLoading);
+                            style={{ color: "#ffffff"}}
+                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
+                            onClick={(e)=>{
+                            //  style.color = "#000000"
                             }}
+                            size="small"
                             />
-                        </div>
-                        ) : (
-                            <div
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShowATModal: false})}}>
-                            >
-                            </div>
-                        )}
                 </div>
                 </div>
                 </div>
 
                 <div style={{ display:"flex" , marginTop:'1rem'}}>
                 <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
-                    <div style={{flex:'1'}}>
-
-                <CopyIcon
-                    //   openCopyModal={() => {
-                    //     this.setState({
-                    //     showCopyModal: true,
-                    //     indexEditing: this.findIndexByID(tempID),
-
-                    //     })
-                    //   }}
-                    //   indexEditing={this.state.indexEditing}
-                    //     i={this.findIndexByID(tempID)} //index to edit
-                    //   showModal={this.state.showCopyModal}
-                    />
-                    </div>
 
                     <div style={{flex:'1', marginLeft:'1rem'}}>
 
@@ -641,44 +624,48 @@ export default function Firebasev2(props)  {
                         </div>
                 </div>
                     <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
-                
-                    <div>
-                        <FontAwesomeIcon
-                            icon={faBookmark}
-                            title="Must Do"
-                            style={{ color: "#ffffff" }}
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
-                            // onClick={(e) => {
-                            //     e.stopPropagation();
-                            //     this.toggleFBmustDo(!this.state.iconShow);
-                            // }}
-                            size="small"
-                        />
-                    {/* <MustDoAT
-                        // BASE_URL={this.props.BASE_URL}
-                        //   Index={i}
-                        //    Array={this.props.originalGoalsAndRoutineArr}
-                        //   // SingleAT={this.state.singleATitemArr[i]}
-                        //   // Path={this.state.singleGR.fbPath}
-                        /> */}
-                    </div>
 
                     <div>
-              
+                    <EditActionIcon
+                    routine={a}
+                    task={null}
+                    step={null}  
+                  />
 
                     </div>
 
                     <div>
-                    <FontAwesomeIcon
+             
+
+                               {/* {(a.is_sublist_available === "True") ? ( */}
+                                <div>
+                            <FontAwesomeIcon
                             icon={faList}
                             title="SubList Available"
-                            style={{ color: "#ffffff"}}
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
-                            onClick={(e)=>{
-                            //  style.color = "#000000"
-                            }}
+                            style={{ color: "#ffffff" }}
                             size="small"
+                            onClick = {()=> {
+                                // sendRoutineToParent(a.name);
+                                clickHandle(a.name)
+                                // setLoading(!isLoading);
+                            }}
                             />
+                        </div>
+                        {/* ) : (
+                            <div
+                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShowATModal: false})}}>
+                            >
+                            </div>
+                        )} */}
+                    </div>
+
+                    <div>
+                    <PlaylistAddIcon
+                    style={{color:"#ffffff"}}
+                    onClick = {(e)=> {
+                          e.target.style.color = "#000000"
+                      
+                    }}/>
                     </div>
                     </div>
                 </div>
@@ -692,11 +679,11 @@ export default function Firebasev2(props)  {
         return(
             <div
             
-                style={{ height:'98px', width:'100%', backgroundColor:'#BBC7D7' , marginBottom:'0px'}}
+                style={{ backgroundColor:'#BBC7D7' , marginBottom:'0px'}}
             >
                 
-                <div style={{ display:'flex', justifyContent:'space-between' }}>
-                <div flex='1' style={{marginLeft:'2rem', marginTop:'1rem', height:'4rem', borderRadius:'10px',width:'65%', display:'flex', justifyContent:'space-between', backgroundColor:'#67ABFC', boxShadow:
+                <div style={{ display:'flex', justifyContent:'space-evenly' }}>
+                <div flex='1' style={{marginLeft:'1rem', marginTop:'0.5rem', height:'4.5rem', borderRadius:'10px',width:'60%', display:'flex', justifyContent:'space-between', backgroundColor:'#67ABFC', boxShadow:
                     "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
                 zIndex:'50%'}}>
                 <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
@@ -873,6 +860,11 @@ export default function Firebasev2(props)  {
                             size="small"
                             />
                     </div>
+                    <EditStepsIcon
+                    routine={i}
+                    task={null}
+                    step={null}  
+                  />
                     </div>
                 </div>
                 </div>

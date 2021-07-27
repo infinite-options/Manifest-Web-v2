@@ -6,6 +6,7 @@ import axios from 'axios';
 const EditATS = () => {
   const editingATSContext = useContext(EditATSContext);
 
+  console.log("action", editingATSContext.editingATS.newItem)
   const updateATS = (e) => {
     e.stopPropagation()
     let object = {...editingATSContext.editingATS.newItem}
@@ -22,8 +23,7 @@ const EditATS = () => {
     object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
     object.id = editingATSContext.editingATS.id;
-    object.user_id = editingATSContext.editingATS.user_id;
-    object.ta_people_id = '';
+
     console.log(object);
     let formData = new FormData();
     Object.entries(object).forEach(entry => {
@@ -77,7 +77,7 @@ const EditATS = () => {
               <input 
                 style={{borderRadius:'10px', border:'0px', fontSize:'12px', height:'2rem', width:'15rem'}}
                 placeholder="Name Action here"
-                value={editingATSContext.editingATS.newItem.title}
+                value={editingATSContext.editingATS.newItem.name}
                 onChange={(e) => {
                   editingATSContext.setEditingATS({
                     ...editingATSContext.editingATS,

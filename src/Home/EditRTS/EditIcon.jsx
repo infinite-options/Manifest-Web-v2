@@ -3,6 +3,7 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import EditRTSContext from './EditRTSContext';
+import DayRoutines from 'Home/DayRoutines';
 
 const convertDateToDayString = (dateObject) => {
   // console.log(dateObject)
@@ -62,7 +63,7 @@ const EditIcon = ({routine, task, step}) => {
     rowId = task.at_unique_id;
   } else if (routine) {
     rowType = 'routine';
-    rowId = routine.gr_unique_id;
+    rowId = routine.id;
   }
 
   console.log('editIcon',routine)
@@ -81,27 +82,30 @@ const EditIcon = ({routine, task, step}) => {
         icon={faEdit}
         onClick={(e) => {
           e.stopPropagation();
-          // const itemToChange = editingRTSContext.editingRTS.gr_array.filter((elt) => elt.id === rowId)[0];
-          // // Convert start_day_and_time to day and time
-          // const startDate = new Date(itemToChange.start_day_and_time);
-          // const startDay = convertDateToDayString(startDate);
-          // const startTime = convertDateToTimeString(startDate);
-          // itemToChange.start_day = startDay;
-          // itemToChange.start_time = startTime;
-          // delete itemToChange.start_day_and_time;
-          // // Convert end_day_and_time to day and time
-          // const endDate = new Date(itemToChange.end_day_and_time);
-          // const endDay = convertDateToDayString(endDate);
-          // itemToChange.end_day = endDay;
-          // const endTime = convertDateToTimeString(endDate);
-          // itemToChange.end_time = endTime;
-          // delete itemToChange.end_day_and_time;
-          // // Convert expected_completion_time to number of minutes
-          // const expectedCompletionTime = itemToChange.expected_completion_time ? itemToChange.expected_completion_time : '00:00:00';
-          // const numMins = convertTimeLengthToMins(expectedCompletionTime)
-          // itemToChange.numMins = numMins;
-          // delete itemToChange.expected_completion_time;
-          // console.log(itemToChange);
+          console.log(editingRTSContext.editingRTS.gr_array)
+          const itemToChange = editingRTSContext.editingRTS.gr_array.filter((elt) => elt.id === rowId)[0];
+          console.log(itemToChange)
+          // Convert start_day_and_time to day and time
+          const startDate = new Date(itemToChange.start_day_and_time);
+          const startDay = convertDateToDayString(startDate);
+          const startTime = convertDateToTimeString(startDate);
+          itemToChange.start_day = startDay;
+          itemToChange.start_time = startTime;
+          delete itemToChange.start_day_and_time;
+          // Convert end_day_and_time to day and time
+          const endDate = new Date(itemToChange.end_day_and_time);
+          const endDay = convertDateToDayString(endDate);
+          itemToChange.end_day = endDay;
+          const endTime = convertDateToTimeString(endDate);
+          itemToChange.end_time = endTime;
+          delete itemToChange.end_day_and_time;
+          // Convert expected_completion_time to number of minutes
+          const expectedCompletionTime = itemToChange.expected_completion_time ? itemToChange.expected_completion_time : '00:00:00';
+          const numMins = convertTimeLengthToMins(expectedCompletionTime)
+          itemToChange.numMins = numMins;
+          delete itemToChange.expected_completion_time;
+          console.log(itemToChange);
+
           editingRTSContext.setEditingRTS({
             ...editingRTSContext.editingRTS,
             editing: rowId === editingRTSContext.editingRTS.id ? !editingRTSContext.editingRTS.editing : true,
@@ -109,7 +113,7 @@ const EditIcon = ({routine, task, step}) => {
             id: rowId,
             newItem: {
               ...editingRTSContext.editingRTS.newItem,
-              // ...itemToChange,
+               ...itemToChange,
             }
           })
         }}

@@ -49,6 +49,7 @@ import EditATS from './EditATS/EditATS';
 import EditISContext from './EditIS/EditISContext';
 import EditIS from './EditIS/EditIS';
 import LoginContext from '../LoginContext';
+import AddNewATItem from './addNewATItem';
 
 /* Navigation Bar component function */
 
@@ -417,7 +418,43 @@ export default function Home(props) {
     },
   }
 
+  const initialEditingATSState = {
+    editing: false,
+    type: '',
+    id: '',
+    user_id: props.location.state,
+    gr_array: [],
+    newItem: {
+      audio: '',
+      datetime_completed: '',
+      datetime_started: '',
+      title: '',
+      // When making API call, combine start_day and start_time to start_day_and_time
+      start_day: '',
+      start_time: '',
+      // When making API call, combine end_day and end_time to end_day_and_time
+      end_day: '',
+      end_time: '',
+      // When making API call, convert numMins to expected_completion_time
+      numMins: '',
+      location: '',
+      is_available: false,
+      is_persistent: true,
+      is_complete: true,
+      is_displayed_today: true,
+      is_timed: false,
+      is_sublist_available: true,
+      photo: '',
+      photo_url: '',
+     
+    },
+  }
+
   const [editingRTS, setEditingRTS] = useState(initialEditingRTSState)
+  const [editingATS, setEditingATS] = useState(initialEditingATSState)
+  const [editingIS, setEditingIS] = useState(initialEditingRTSState)
+
+
   // console.log(calendarView);
   /*----------------------------Custom Hook to make styles----------------------------*/
   const useStyles = makeStyles({
@@ -1279,6 +1316,10 @@ export default function Home(props) {
               ...editingRTS,
               gr_array: gr_array,
             })
+            setEditingATS({
+              ...editingATS,
+              gr_array: gr_array,
+            })
           } else {
             setStateValue((prevState) => {
               return {
@@ -1327,6 +1368,18 @@ export default function Home(props) {
         value={{
           editingRTS: editingRTS,
           setEditingRTS: setEditingRTS
+        }}
+      >
+      <EditATSContext.Provider
+        value={{
+          editingATS: editingATS,
+          setEditingATS: setEditingATS
+        }}
+      >
+         <EditISContext.Provider
+        value={{
+          editingIS: editingIS,
+          setEditingIS: setEditingIS
         }}
       >
       <userContext.Provider
@@ -1448,7 +1501,7 @@ export default function Home(props) {
             <Box
               bgcolor="#889AB5"
               className={classes.dateContainer}
-              style={{ width: '100%' }}
+              style={{ width: '100%', marginTop:'1rem' }}
               // flex
             >
               <Container>
@@ -1577,6 +1630,7 @@ export default function Home(props) {
           className="normalfancytext"
           style={{
             marginLeft: '0px',
+            marginTop:'1rem'
             // width: "100%",
             // display: "flex",
             // flexDirection: "column",
@@ -1597,7 +1651,7 @@ export default function Home(props) {
               //   // width: "100%"
             }}
           > */}
-            <Row
+            <div
               style={{
                 marginTop: '0',
                 // width: '100%',
@@ -1611,7 +1665,7 @@ export default function Home(props) {
               {/* {this.grabFireBaseRoutinesGoalsData()} */}
               {/* the modal for routine/goal is called Firebasev2 currently */}
               {/* <userContext.Provider value={stateValue}> */}
-              <Col  md = {4}>
+              <div style={{flex:'1'}}>
                 {userID != '' && (
                   <FirebaseV2
                   theCurrentUserID={userID}
@@ -1619,15 +1673,18 @@ export default function Home(props) {
                   highLight = {hightlight}
                   />
                 )}
-              </Col>
-              <Col
+              </div>
+              <div style={{flex:'2'}}
               >
-               {editingRTS.editing ? <EditRTS /> : showCalendarView()}
-              </Col>
-            </Row>
+               {editingIS.editing ? <EditIS/> : editingATS.editing ? <EditATS/> : editingRTS.editing ? <EditRTS /> : showCalendarView()}
+           
+              </div>
+            </div>
           {/* </Container> */}
         </div>
       </userContext.Provider>
+      </EditISContext.Provider>
+      </EditATSContext.Provider>
       </EditRTSContext.Provider>
     </div>
   );
