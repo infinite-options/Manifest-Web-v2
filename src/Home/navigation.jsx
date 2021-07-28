@@ -96,39 +96,41 @@ export function Navigation() {
   console.log('Cur user', selectedUser)
 
   const userListRendered = () => {
-    console.log("list of users")
-    console.log(listOfUsers)
-    const elements = listOfUsers.map((user) => (
-      <option
-        key={user.user_unique_id}
-        // value={user.user_unique_id}
-        value={JSON.stringify({user_unique_id: user.user_unique_id, user_name: user.user_name})}
-      >
-        {user.user_name}
-      </option>
-    ));
-    return (
-      <div>
-        Patient:&nbsp;
-        <select
-          className={classes.myButton}
-          value={selectedUser.user_unique_id}
-          onChange={(e) => {
-            console.log(JSON.parse(e.target.value))
-            
-            loginContext.setLoginState({
-              ...loginContext.loginState,
-              curUser: JSON.parse(e.target.value).user_unique_id,
-            })
-            toggleGetTAList(false)
-
-            setPatiantName(JSON.parse(e.target.value).user_name)
-          }}
+      if (loginContext.loginState.loggedIn) {
+      console.log("list of users")
+      console.log(listOfUsers)
+      const elements = listOfUsers.map((user) => (
+        <option
+          key={user.user_unique_id}
+          // value={user.user_unique_id}
+          value={JSON.stringify({user_unique_id: user.user_unique_id, user_name: user.user_name})}
         >
-          {elements}
-        </select>
-      </div>
-    );
+          {user.user_name}
+        </option>
+      ));
+      return (
+        <div>
+          Patient:&nbsp;
+          <select
+            className={classes.myButton}
+            value={selectedUser.user_unique_id}
+            onChange={(e) => {
+              console.log(JSON.parse(e.target.value))
+              
+              loginContext.setLoginState({
+                ...loginContext.loginState,
+                curUser: JSON.parse(e.target.value).user_unique_id,
+              })
+              toggleGetTAList(false)
+
+              setPatiantName(JSON.parse(e.target.value).user_name)
+            }}
+          >
+            {elements}
+          </select>
+        </div>
+      );
+    }
   }
 
   const taListRendered = () => {
@@ -415,7 +417,8 @@ export function Navigation() {
     }
   }
 
-  //console.log(loginContext)
+  console.log('from nav')
+  console.log(loginContext)
   getTAList()
   console.log(taList)
   return (
@@ -434,7 +437,9 @@ export function Navigation() {
 
             <div style={{width: '33%', textAlign: 'center'}}>
             <Box className={classes.titleElement}>
-              <Typography style={{fontSize: '30px', fontWeight: 'bold'}}>MANIFEST</Typography>
+              <Typography style={{fontSize: '30px', fontWeight: 'bold'}}
+                onClick={()=>{history.push('/home')}}
+              >MANIFEST</Typography>
             </Box>
             </div>
 
@@ -470,70 +475,82 @@ export function Navigation() {
               >
                 Sign In
               </Button> */}
+              {loginContext.loginState.loggedIn ? (
+                <>
+                  <Button
+                  //className={classes.buttonColor}
+                  //variant="text"
+                  //onClick={homeNavigation}
+                  // style={{
+                  //   color: 'white',
+                  //   border:'solid',
+                  //   borderwidth: '1px',
+                  //   borderRadius: '22px',
+                  // }}
+                  className = {classes.myButton}
+                  onClick={(e) => {
+                    // googleLogIn();
+                    toggleNewUser(!showNewUser)
 
-              <Button
-                //className={classes.buttonColor}
-                //variant="text"
-                //onClick={homeNavigation}
-                // style={{
-                //   color: 'white',
-                //   border:'solid',
-                //   borderwidth: '1px',
-                //   borderRadius: '22px',
-                // }}
-                className = {classes.myButton}
-                onClick={(e) => {
-                  // googleLogIn();
-                  toggleNewUser(!showNewUser)
-
-                }}
-              >
-                Create New User
-              </Button>
-              {/* {taListRendered()} */}
+                  }}
+                  >
+                    Create New User
+                  </Button>
+                  
+                  <select
+                    //className={classes.buttonColor}
+                    //variant="text"
+                    //onClick={homeNavigation}
+                    className = {classes.myButton}
+                    onChange = {e => {
+                      if (e.target.value != null){
+                        console.log(JSON.parse(e.target.value))
+                        setTAName(JSON.parse(e.target.value).ta_first_name + ' ' + JSON.parse(e.target.value).ta_last_name)
+                        setTAID(JSON.parse(e.target.value).ta_unique_id)
+                        toggleGiveAccess(true)
+                      }
+                    }}
+                  >
+                    {/* Give another Advisor Access */}
+                    <option value={null}>
+                      Give another Advisor Access
+                    </option>
+                    {/* <option>
+                      test name
+                    </option> */}
+                    {taListRendered()}
+                  </select>
+                  <Button
+                    //className={classes.buttonColor}
+                    //variant="text"
+                    //onClick={homeNavigation}
+                    // style={{
+                    //   color: 'white',
+                    //   border:'solid',
+                    //   borderwidth: '1px',
+                    //   borderRadius: '22px',
+                    // }}
+                    className = {classes.myButton}
+                    onClick={(e) => {
+                      loginContext.setLoginState({
+                        ...loginContext.loginState,
+                        loggedIn: false,
+                        ta: {
+                          ...loginContext.loginState.ta,
+                          id: "",
+                          email: "",
+                        },
+                        usersOfTA: [],
+                        curUser: '',
+                      });
+                      history.push('/')
+                    }}
+                  >
+                    Logout
+                  </Button>
+                </>
+              ) : (null)}
               
-              <select
-                //className={classes.buttonColor}
-                //variant="text"
-                //onClick={homeNavigation}
-                className = {classes.myButton}
-                onChange = {e => {
-                  if (e.target.value != null){
-                    console.log(JSON.parse(e.target.value))
-                    setTAName(JSON.parse(e.target.value).ta_first_name + ' ' + JSON.parse(e.target.value).ta_last_name)
-                    setTAID(JSON.parse(e.target.value).ta_unique_id)
-                    toggleGiveAccess(true)
-                  }
-                }}
-              >
-                {/* Give another Advisor Access */}
-                <option value={null}>
-                  Give another Advisor Access
-                </option>
-                {/* <option>
-                  test name
-                </option> */}
-                {taListRendered()}
-              </select>
-              <Button
-                //className={classes.buttonColor}
-                //variant="text"
-                //onClick={homeNavigation}
-                // style={{
-                //   color: 'white',
-                //   border:'solid',
-                //   borderwidth: '1px',
-                //   borderRadius: '22px',
-                // }}
-                className = {classes.myButton}
-                onClick={(e) => {
-                  // googleLogIn();
-                  //toggleNewUser(!showNewUser)
-
-                }}
-              >
-                Logout
-              </Button>
             </div>
           </div>
         </Toolbar>

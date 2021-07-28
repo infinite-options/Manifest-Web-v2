@@ -420,6 +420,92 @@ export default function Home(props) {
     },
   }
 
+  const newRTSState = {
+    editing: true,
+    type: '',
+    id: '',
+    user_id: props.location.state,
+    gr_array: [],
+    newItem: {
+      audio: '',
+      datetime_completed: '',
+      datetime_started: '',
+      title: '',
+      // When making API call, combine start_day and start_time to start_day_and_time
+      start_day: '',
+      start_time: '',
+      // When making API call, combine end_day and end_time to end_day_and_time
+      end_day: '',
+      end_time: '',
+      // When making API call, convert numMins to expected_completion_time
+      numMins: '',
+      repeat: false,
+      repeat_frequency: 'Day',
+      repeat_every: '',
+      repeat_type: '',
+      repeat_ends_on: '',
+      repeat_occurences: '',
+      repeat_week_days: {
+        "0": "",
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": "",
+        "5": "",
+        "6": ""
+      },
+      location: '',
+      is_available: false,
+      is_persistent: true,
+      is_complete: true,
+      is_displayed_today: true,
+      is_timed: false,
+      is_sublist_available: true,
+      photo: '',
+      photo_url: '',
+      ta_notifications: {
+        before: {
+          is_enabled: false,
+          is_set: false,
+          message: '',
+          time: '',
+        },
+        during: {
+          is_enabled: false,
+          is_set: false,
+          message: '',
+          time: '',
+        },
+        after: {
+          is_enabled: false,
+          is_set: false,
+          message: '',
+          time: '',
+        }
+      },
+      user_notifications: {
+        before: {
+          is_enabled: false,
+          is_set: false,
+          message: '',
+          time: '',
+        },
+        during: {
+          is_enabled: false,
+          is_set: false,
+          message: '',
+          time: '',
+        },
+        after: {
+          is_enabled: false,
+          is_set: false,
+          message: '',
+          time: '',
+        }
+      },
+    },
+  }
+
   const initialEditingATSState = {
     editing: false,
     type: '',
@@ -459,7 +545,7 @@ export default function Home(props) {
   /*----------------------------Custom Hook to make styles----------------------------*/
   const useStyles = makeStyles({
     buttonSelection: {
-      width: '8%',
+      width: '14%',
       height: '70px',
       // borderBottomLeftRadius: '25%',
       // borderBottomRightRadius: '25%',
@@ -837,6 +923,7 @@ export default function Home(props) {
       <div
         style={
           {
+            width: '100%'
             // display: 'auto',
             // borderRadius: '20px',
             // backgroundColor: 'white',
@@ -910,7 +997,7 @@ export default function Home(props) {
               BASE_URL={stateValue.BASE_URL}
             />
           </Row> */}
-        <Row style={{ float: 'right' }}>
+        <Row style={{ float: 'right', width: '100%' }}>
           <WeekRoutines
             timeZone={stateValue.currentUserTimeZone}
             routines={stateValue.routines}
@@ -972,8 +1059,8 @@ export default function Home(props) {
             x.sort((a, b) => {
               // console.log(a);
               // console.log(b);
-              let datetimeA = new Date(a['start_day_and_time']);
-              let datetimeB = new Date(b['start_day_and_time']);
+              let datetimeA = new Date(a['gr_start_day_and_time']);
+              let datetimeB = new Date(b['gr_start_day_and_time']);
               let timeA =
                 new Date(datetimeA).getHours() * 60 +
                 new Date(datetimeA).getMinutes();
@@ -1066,7 +1153,7 @@ export default function Home(props) {
                 };
               }
 
-              gr.start_day_and_time = x[i].start_day_and_time;
+              gr.start_day_and_time = x[i].gr_start_day_and_time;
 
               // const first_notifications = x[i].notifications[0];
               // const second_notifications = x[i].notifications[1];
@@ -1353,10 +1440,16 @@ export default function Home(props) {
   function ToggleShowAbout(){
     history.push("/about")
   }
+  if (loginContext.loginState.loggedIn == false) {
+    history.push('/')
+  }
 
   /*----------------------------return()----------------------------*/
   let startObject = stateValue.dateContext;
   let startWeek = startObject.startOf('week');
+
+  console.log('stateValue')
+  console.log(stateValue)
 
   return (
     // console.log('home routines', stateValue.routines),
@@ -1399,7 +1492,7 @@ export default function Home(props) {
       >
         HOME
         <Box paddingTop={3} backgroundColor="#bbc8d7">
-          <div className={classes.buttonContainer}>
+          <div style={{width: '30%', float: 'left', border: 'solid'}}>
             <Button className={classes.buttonSelection} id="one">
               History
             </Button>
@@ -1423,91 +1516,112 @@ export default function Home(props) {
             {stateValue.showRoutineModal ? (
               <Button 
                 className={classes.buttonSelection}
-                style={{width: '10%', marginLeft: '12px', marginRight: '12px'}} 
+                style={{width: '20%', marginLeft: '12px', marginRight: '12px'}} 
                 id="one"
+                onClick={() => {
+                  // e.stopPropagation()
+                  console.log('Clicked add RTS')
+                  //console.log(editingRTS)
+                  setEditingRTS(newRTSState)
+                  //console.log(editingRTS)
+                }}
               >
                 Add Routine +
               </Button>
             ) : (
-              <div style = {{width: '10%', marginLeft: '12px', marginRight: '12px'}}>
+              <div style = {{width: '20%', marginLeft: '12px', marginRight: '12px'}}>
 
               </div>
             )}
-            
 
-            {
-                          editingRTS.editing
-                          ?
-                          <div
-                            style={{
-                              width: '100%',
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: '35%',
-                                height: '80px',
-                                backgroundColor: '#F57045'
-                              }}
-                            >
-                              <div
-                                style={{
-                                  height: '100%',
-                                  display: 'flex',
-                                  justifyContent: 'center',
-                                  alignItems: 'center'
-                                }}
-                              >
-                                <div
-                                  style={{
-                                    flex:'4',
-                                  }}
-                                >
-                                  <p
-                                    style={{
-                                      textAlign: 'center',
-                                      fontSize: '2.5rem',
-                                      color: '#ffffff',
-                                      textDecoration: 'underline',
-                                    }}
-                                  >
-                                    Routine
-                                  </p>
-                                </div>
-                                <div
-                                  style={{
-                                    flex:'1',
-                                  }}
-                                >
-                                  <button
-                                    style={{
-                                      padding: '0',
-                                      margin: '0',
-                                      backgroundColor: 'inherit',
-                                      border: 'none',
-                                      width: '100%',
-                                      height: '100%',
-                                      textAlign: 'center',
-                                      fontSize: '2.5rem',
-                                      color: '#ffffff'
-                                    }}
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      console.log('Clicked add RTS')
-                                    }}
-                                  >
-                                    +
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                            :
-        
-            <Box
+            <div style={{flex:'1'}}>
+                {userID != '' && (
+                  <FirebaseV2
+                  theCurrentUserID={userID}
+                  sethighLight = {setHightlight}
+                  highLight = {hightlight}
+                  />
+                )}
+              </div>
+              {/* <div style={{flex:'2'}}
+              >
+               {editingIS.editing ? <EditIS/> : editingATS.editing ? <EditATS/> : editingRTS.editing ? <EditRTS /> : showCalendarView()}
+           
+              </div> */}
+          </div>
+          <div style={{width: '70%', float: 'left', border: 'solid', }}>
+          {editingRTS.editing
+          ?
+          (<div
+            style={{
+              width: '100%',
+            }}
+          >
+            <div
+              style={{
+                width: '35%',
+                height: '80px',
+                backgroundColor: '#F57045'
+              }}
+            >
+              <div
+                style={{
+                  height: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <div
+                  style={{
+                    flex:'4',
+                  }}
+                >
+                  <p
+                    style={{
+                      textAlign: 'center',
+                      fontSize: '2.5rem',
+                      color: '#ffffff',
+                      textDecoration: 'underline',
+                    }}
+                  >
+                    Routine
+                  </p>
+                </div>
+                <div
+                  style={{
+                    flex:'1',
+                  }}
+                >
+                  <button
+                    style={{
+                      padding: '0',
+                      margin: '0',
+                      backgroundColor: 'inherit',
+                      border: 'none',
+                      width: '100%',
+                      height: '100%',
+                      textAlign: 'center',
+                      fontSize: '2.5rem',
+                      color: '#ffffff'
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      console.log('Clicked add RTS')
+                    }}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>)
+          :
+
+          (<Box
               bgcolor="#889AB5"
               className={classes.dateContainer}
-              style={{ width: '100%', marginTop:'1rem' }}
+              //style={{ width: '100%', marginTop:'1rem' }}
               // flex
             >
               <Container>
@@ -1552,73 +1666,16 @@ export default function Home(props) {
                   </Col>
                 </Row>
               </Container>
-              {/* <Container
-                sm="auto"
-                md="auto"
-                lg="auto"
-                // // flex
-                // className={classes.dateContainer}
-                // style={{
-                //   backgroundColor: '#889AB5',
-                //   // width: '90%',
-                // }}
+              
+            </Box>)}
+
+            <div style={{width: '100%'}}
               >
-                <Col>
-                  <div>
-                    <FontAwesomeIcon
-                      style={{ float: 'left', marginLeft: '30px' }}
-                      icon={faChevronLeft}
-                      size="2x"
-                      className="X"
-                      onClick={(e) => {
-                        prevDay();
-                        {
-                          console.log('prevDay');
-                        }
-                      }}
-                    />
-
-                    <FontAwesomeIcon
-                      // style={{ marginLeft: "50%" }}
-
-                      style={{ float: 'right', marginRight: '20px' }}
-                      icon={faChevronRight}
-                      size="2x"
-                      className="X"
-                      onClick={(e) => {
-                        nextDay();
-                        {
-                          console.log('nextDay');
-                        }
-                      }}
-                    />
-
-                    <p
-                      md="auto"
-                      className="bigfancytext"
-                      style={{ textAlign: 'center' }}
-                    >
-                      {/* {stateValue.dateContext.format} {getDate()} */}
-              {/* {stateValue.dateContext.format('dddd')}
-                      {getDay()}
-                      {getMonth()}
-                      {getYear()}
-                    </p> */}
-              {/* <p
-                      md="auto"
-                      className="bigfancytext"
-                      style={{ textAlign: 'center' }}
-                      // style={{ marginBottom: "0", height: "19.5px" }}
-                      // className="normalfancytext"
-                    > */}
-              {/* {stateValue.currentUserTimeZone}
-                    </p>
-                  </div>
-                </Col> */}
-              {/* </Container> */}
-            </Box>
-          } 
+               {editingIS.editing ? <EditIS/> : editingATS.editing ? <EditATS/> : editingRTS.editing ? <EditRTS /> : showCalendarView()}
+           
+              </div>
           </div>
+          
         </Box>
         {/* {console.log('Home showRoutineModal', stateValue.showRoutineModal)} */}
         {/* ----------------------------... Navigation--------------------------- */}
@@ -1632,62 +1689,7 @@ export default function Home(props) {
     //   </userContext.Provider>
     // </div> */}
         {/* ---------------------------- Navigation--------------------------- */}
-        <div
-          className="normalfancytext"
-          style={{
-            marginLeft: '0px',
-            marginTop:'1rem'
-            // width: "100%",
-            // display: "flex",
-            // flexDirection: "column",
-            // justifyContent: "center",
-            // alignItems: "center",
-            // background: "lightblue",
-          }}
-        >
-          {/* <Container
-            fluid
-            style={{
-              marginTop: '15px',
-              marginLeft: '0px',
-              //   // display: "flex",
-              //   // flexDirection: "column",
-              //   // justifyContent: "center",
-              //   // alignItems: "center",
-              //   // width: "100%"
-            }}
-          > */}
-            <div
-              style={{
-                marginTop: '0',
-                // width: '100%',
-                display: 'flex',
-             //   flexDirection: 'flex-betewen',
-                // justifyContent: 'left',
-                // alignItems: 'center',
-              }}
-            >
-              {/* <Box bgcolor="#889AB5" className={classes.dateContainer}></Box> */}
-              {/* {this.grabFireBaseRoutinesGoalsData()} */}
-              {/* the modal for routine/goal is called Firebasev2 currently */}
-              {/* <userContext.Provider value={stateValue}> */}
-              <div style={{flex:'1'}}>
-                {userID != '' && (
-                  <FirebaseV2
-                  theCurrentUserID={userID}
-                  sethighLight = {setHightlight}
-                  highLight = {hightlight}
-                  />
-                )}
-              </div>
-              <div style={{flex:'2'}}
-              >
-               {editingIS.editing ? <EditIS/> : editingATS.editing ? <EditATS/> : editingRTS.editing ? <EditRTS /> : showCalendarView()}
-           
-              </div>
-            </div>
-          {/* </Container> */}
-        </div>
+        
       </userContext.Provider>
       </EditISContext.Provider>
       </EditATSContext.Provider>
