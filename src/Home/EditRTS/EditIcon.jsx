@@ -82,28 +82,30 @@ const EditIcon = ({routine, task, step}) => {
         icon={faEdit}
         onClick={(e) => {
           e.stopPropagation();
+          console.log(editingRTSContext)
           console.log(editingRTSContext.editingRTS.gr_array)
           const itemToChange = editingRTSContext.editingRTS.gr_array.filter((elt) => elt.id === rowId)[0];
           console.log(itemToChange)
           // Convert start_day_and_time to day and time
-          const startDate = new Date(itemToChange.start_day_and_time);
+          const startDate = new Date(itemToChange.gr_start_day_and_time);
           const startDay = convertDateToDayString(startDate);
           const startTime = convertDateToTimeString(startDate);
+          console.log(startTime)
           itemToChange.start_day = startDay;
           itemToChange.start_time = startTime;
-          delete itemToChange.start_day_and_time;
+          delete itemToChange.gr_start_day_and_time;
           // Convert end_day_and_time to day and time
-          const endDate = new Date(itemToChange.end_day_and_time);
+          const endDate = new Date(itemToChange.gr_end_day_and_time);
           const endDay = convertDateToDayString(endDate);
           itemToChange.end_day = endDay;
           const endTime = convertDateToTimeString(endDate);
           itemToChange.end_time = endTime;
-          delete itemToChange.end_day_and_time;
+          delete itemToChange.gr_end_day_and_time;
           // Convert expected_completion_time to number of minutes
-          const expectedCompletionTime = itemToChange.expected_completion_time ? itemToChange.expected_completion_time : '00:00:00';
+          const expectedCompletionTime = itemToChange.gr_expected_completion_time ? itemToChange.gr_expected_completion_time : '00:00:00';
           const numMins = convertTimeLengthToMins(expectedCompletionTime)
           itemToChange.numMins = numMins;
-          delete itemToChange.expected_completion_time;
+          delete itemToChange.gr_expected_completion_time;
           console.log(itemToChange);
 
           editingRTSContext.setEditingRTS({

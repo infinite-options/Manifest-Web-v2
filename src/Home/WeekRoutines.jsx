@@ -855,7 +855,8 @@ export default class WeekRoutines extends Component {
           style={{
             color: day === today.toString() ? '#FF6B4A' : '',
             textAlign: 'left',
-            fontWeight:'bold'
+            fontWeight:'bold',
+            width: '100%'
           //  paddingBottom: '2%',
            
           }}
@@ -874,6 +875,7 @@ export default class WeekRoutines extends Component {
            overflowY: 'visible',
          //  width:'100vh',
          //  backgroundColor:'#000000'
+            width: '100%'
           }}
         >
           <Col className="fancytext"></Col>
@@ -885,7 +887,7 @@ export default class WeekRoutines extends Component {
         <Row
           ref={this.hourDisplay}
           noGutters={true}
-          style={{ overflowY: 'scroll', maxHeight: '550px' }}
+          // style={{ overflowY: 'scroll', maxHeight: '1350px' }}
           className="d-flex justify-content-end"
         >
           <Col>

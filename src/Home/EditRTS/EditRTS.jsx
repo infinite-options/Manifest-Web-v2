@@ -35,8 +35,8 @@ const EditRTS = () => {
     console.log("obj",object);
     let formData = new FormData();
     Object.entries(object).forEach(entry => {
-      if (typeof entry[1].name == 'string'){
-      
+      // if (typeof entry[1].name == 'string'){
+      if (typeof entry[1] == 'string'){
           formData.append(entry[0], entry[1]);
       }
       else if (entry[1] instanceof Object) {
@@ -50,7 +50,11 @@ const EditRTS = () => {
   });
   for(var pair of formData.entries()) {
     console.log(pair[0]+ ', '+ pair[1]);
- }
+  }
+  console.log('object.id') 
+  console.log(object.id)
+  if (object.id != '') {
+    console.log('updateGR')
     axios
     .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateGR', formData)
     .then((_) => {
@@ -60,7 +64,7 @@ const EditRTS = () => {
       editingRTSContext.setEditingRTS({
         ...editingRTSContext.editingRTS,
         gr_array: new_gr_array,
-
+        editing: false
       })
     })
     .catch((err) => {
@@ -69,6 +73,32 @@ const EditRTS = () => {
       }
       console.log(err)
     })
+  } else {
+    console.log('addGR')
+    axios
+    .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/addGR', formData)
+    .then((_) => {
+      console.log(_)
+      const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
+      const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
+      new_gr_array[gr_array_index] = object;
+      editingRTSContext.setEditingRTS({
+        ...editingRTSContext.editingRTS,
+        gr_array: new_gr_array,
+        editing: false
+      })
+    })
+    .catch((err) => {
+      if(err.response) {
+        console.log(err.response);
+      }
+      console.log(err)
+    })
+  }
+  // editingRTSContext.setEditingRTS({
+  //   ...editingRTSContext.editingRTS,
+  //   editing: false
+  // })
   }
 
   return (
