@@ -112,6 +112,17 @@ export default function Login() {
         .then((response) => {
           console.log(response.data);
           if (response.data !== false) {
+            loginContext.setLoginState({
+              ...loginContext.loginState,
+              loggedIn: true,
+              ta: {
+                ...loginContext.loginState.ta,
+                id: response.data.result,
+                email: email.toString(),
+              },
+              usersOfTA: [],
+              curUser: '',
+            });
             console.log('Login successful');
             console.log(e);
             history.push({
