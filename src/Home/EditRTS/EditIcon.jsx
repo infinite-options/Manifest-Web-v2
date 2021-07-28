@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+import axios from 'axios';
 import EditRTSContext from './EditRTSContext';
 import DayRoutines from 'Home/DayRoutines';
 
@@ -50,9 +50,10 @@ const convertTimeLengthToMins = (timeString) => {
   return ('' + numMins);
 }
 
-const EditIcon = ({routine, task, step}) => {
+const EditIcon = ({routine, task, step, id}) => {
   const editingRTSContext = useContext(EditRTSContext);
-  
+  const [arrRoutine, setarrRoutine] = useState([])
+
   let rowType = '';
   let rowId = '';
   if (step) {
@@ -66,7 +67,25 @@ const EditIcon = ({routine, task, step}) => {
     rowId = routine.id;
   }
 
-  console.log('editIcon',routine)
+  useEffect(() => {
+
+    axios
+  .get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/" + id)
+    .then((response) => {
+      console.log("routineGet", response)
+      for(var i=0; i <response.data.result.length; i++){
+        arrRoutine.push(response.data.result[i])
+      }
+    })
+    .catch((err) => {
+      if(err.response) {
+        console.log(err.response);
+      }
+      console.log(err)
+    })
+  },[]);
+ 
+  console.log("item", arrRoutine)
 
   return (
     <div>
@@ -82,18 +101,29 @@ const EditIcon = ({routine, task, step}) => {
         icon={faEdit}
         onClick={(e) => {
           e.stopPropagation();
-          console.log(editingRTSContext.editingRTS.gr_array)
-          const itemToChange = editingRTSContext.editingRTS.gr_array.filter((elt) => elt.id === rowId)[0];
-          console.log(itemToChange)
-          // Convert start_day_and_time to day and time
-          const startDate = new Date(itemToChange.start_day_and_time);
+          console.log("item",arrRoutine[0].gr_unique_id, routine.id)
+          var itemToChange;
+          for (var k=0; k<arrRoutine.length; k++){
+            if( arrRoutine[k].gr_unique_id){
+              itemToChange = arrRoutine[k] 
+              console.log("item",arrRoutine[k])
+            }
+          }
+       //   const itemToChange = editingRTSContext.editingRTS.gr_array.filter((elt) => elt.id === rowId)[0];
+           console.log("item",itemToChange.gr_start_day_and_time)
+          //Convert start_day_and_time to day and time
+          var startDate;
+          if(itemToChange.gr_start_day_and_time!=undefined){
+           startDate = new Date(itemToChange.gr_start_day_and_time);
+          }
+          console.log("start", startDate)
           const startDay = convertDateToDayString(startDate);
           const startTime = convertDateToTimeString(startDate);
           itemToChange.start_day = startDay;
           itemToChange.start_time = startTime;
           delete itemToChange.start_day_and_time;
           // Convert end_day_and_time to day and time
-          const endDate = new Date(itemToChange.end_day_and_time);
+          const endDate = new Date(itemToChange.gr_end_day_and_time);
           const endDay = convertDateToDayString(endDate);
           itemToChange.end_day = endDay;
           const endTime = convertDateToTimeString(endDate);

@@ -81,7 +81,7 @@ const EditIS = () => {
               <input 
                 style={{borderRadius:'10px', border:'0px', fontSize:'12px', height:'2rem', width:'15rem'}}
                 placeholder="Name Step here"
-                value={editingISContext.editingIS.newItem.name}
+                value={editingISContext.editingIS.newItem.title}
                 onChange={(e) => {
                   editingISContext.setEditingIS({
                     ...editingISContext.editingIS,
@@ -108,7 +108,7 @@ const EditIS = () => {
                 <div>User's library</div>
               </Col>
               <Col>
-                <img alt='icon' src='ac'/>
+                <img alt='icon'src={editingISContext.editingIS.newItem.photo}/>
               </Col>
             </Row>
             </Container>

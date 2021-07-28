@@ -259,15 +259,19 @@ export default function Firebasev2(props)  {
     //makes listOfBlocks with list of displays routiens and such
     function makeDisplays(onlyAllowed){     //add displays to tempRows
         var tempRows = [];
+        var routine;
+        var action;
         for (var i=0; i <onlyAllowed.length; i++){
             if (onlyAllowed[i].type == "Routine"){
                 console.log("allow", onlyAllowed[i])
                 tempRows.push(displayRoutines(onlyAllowed[i]));
+                routine = onlyAllowed[i];
             }
             else if (onlyAllowed[i].type == "Action"){
-                tempRows.push(displayActions(onlyAllowed[i]));
+                tempRows.push(displayActions(onlyAllowed[i], routine));
+                action = onlyAllowed[i];
             }
-            else {tempRows.push(displayInstructions(onlyAllowed[i]))}
+            else {tempRows.push(displayInstructions(onlyAllowed[i], action))}
         }
         console.log(tempRows);
         setlistOfBlocks(tempRows);
@@ -479,7 +483,8 @@ export default function Firebasev2(props)  {
                   <EditIcon
                     routine={r}
                     task={null}
-                    step={null}  
+                    step={null} 
+                    id={currentUser} 
                   />
 
                   </div>
@@ -521,7 +526,7 @@ export default function Firebasev2(props)  {
         )
     }
 
-    function displayActions(a){
+    function displayActions(a, r){
         return(
             <div
             
@@ -559,6 +564,7 @@ export default function Firebasev2(props)  {
 
                 <div style={{color:'#ffffff', size:'24px', textDecoration:'underline', fontWeight:'bold', marginLeft: "10px",}}>
                 {a["name"]}
+
                 </div>
                     
                     {/* ({date}) */}
@@ -651,7 +657,7 @@ export default function Firebasev2(props)  {
                     <div>
                     <EditActionIcon
                     routine={a}
-                    task={null}
+                    task={r.id}
                     step={null}  
                   />
 
@@ -698,7 +704,7 @@ export default function Firebasev2(props)  {
         )
     }
 
-    function displayInstructions(i){
+    function displayInstructions(i, a){
         return(
             <div
             
@@ -886,7 +892,7 @@ export default function Firebasev2(props)  {
                     <EditStepsIcon
                     routine={i}
                     task={null}
-                    step={null}  
+                    step={a.id}  
                   />
                     </div>
                 </div>

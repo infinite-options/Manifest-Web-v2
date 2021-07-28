@@ -96,7 +96,7 @@ const EditRTS = () => {
                 style={{
                   borderRadius: '10px',
                 }}
-                value={editingRTSContext.editingRTS.newItem.title}
+                value={editingRTSContext.editingRTS.newItem.gr_title}
                 onChange={(e) => {
                   editingRTSContext.setEditingRTS({
                     ...editingRTSContext.editingRTS,
@@ -234,7 +234,7 @@ const EditRTS = () => {
                 <div>User's library</div>
               </Col>
               <Col>
-                <img alt='icon' src='ac'/>
+                <img alt='icon' src={editingRTSContext.editingRTS.newItem.gr_photo}/>
               </Col>
             </Row>
             </Container>

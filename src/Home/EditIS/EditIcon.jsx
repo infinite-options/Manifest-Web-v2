@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+import axios from 'axios';
 import EditISContext from './EditISContext';
 
 const convertDateToDayString = (dateObject) => {
@@ -51,7 +51,8 @@ const convertTimeLengthToMins = (timeString) => {
 
 const EditIcon = ({routine, task, step}) => {
   const editingISContext = useContext(EditISContext);
-  
+  const [arrSteps, setarrSteps] = useState([])
+
   let rowType = '';
   let rowId = '';
   if (step) {
@@ -64,6 +65,23 @@ const EditIcon = ({routine, task, step}) => {
     rowType = 'routine';
     rowId = routine.gr_unique_id;
   }
+
+  useEffect(() => {
+
+    axios.get('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/instructionsSteps/' + step.toString())
+    .then((response) => {
+      console.log("steps", response)
+      for(var i=0; i <response.data.result.length; i++){
+        arrSteps.push(response.data.result[i])
+      }
+    })
+    .catch((err) => {
+      if(err.response) {
+        console.log(err.response);
+      }
+      console.log(err)
+    })
+  },[]);
 
   return (
     <div>
@@ -82,8 +100,13 @@ const EditIcon = ({routine, task, step}) => {
           e.stopPropagation();
           console.log(routine[0])
 
-          const itemToChange = routine;
-         
+        //  const itemToChange = routine;
+          var itemToChange;
+          for(var j=0;j<arrSteps.length;j++){
+          if (routine.id === arrSteps[j].at_unique_id){
+            itemToChange = arrSteps[j];
+          }
+          }
 
           editingISContext.setEditingIS({
             ...editingISContext.editingIS,

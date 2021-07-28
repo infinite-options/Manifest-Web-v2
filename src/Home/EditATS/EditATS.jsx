@@ -6,7 +6,10 @@ import axios from 'axios';
 const EditATS = () => {
   const editingATSContext = useContext(EditATSContext);
 
-  console.log("action", editingATSContext.editingATS.newItem)
+  console.log("action", editingATSContext.editingATS.routineId)
+
+
+
   const updateATS = (e) => {
     e.stopPropagation()
     let object = {...editingATSContext.editingATS.newItem}
@@ -16,14 +19,23 @@ const EditATS = () => {
     object.end_day_and_time = `${object.end_day} ${object.end_time}:00`;
     delete object.end_day;
     delete object.end_time;
+    delete object.at_sequence
+    delete object.at_unique_id
+    delete object.end_day_and_time
+    delete object.goal_routine_id
+    delete object.is_displayed_today
+    delete object.is_persistent
+    delete object.location
+    delete object.start_day_and_time
+    object.title = object.at_title
+    delete object.at_title
     const numHours = object.numMins / 60;
     let numMins = object.numMins % 60;
     if(numMins < 10)
       numMins = '0' + numMins
     object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
-    object.id = editingATSContext.editingATS.id;
-
+    object.id = editingATSContext.editingATS.routineId;
     console.log(object);
     let formData = new FormData();
     Object.entries(object).forEach(entry => {
@@ -77,13 +89,13 @@ const EditATS = () => {
               <input 
                 style={{borderRadius:'10px', border:'0px', fontSize:'12px', height:'2rem', width:'15rem'}}
                 placeholder="Name Action here"
-                value={editingATSContext.editingATS.newItem.name}
+                value={editingATSContext.editingATS.newItem.at_title}
                 onChange={(e) => {
                   editingATSContext.setEditingATS({
                     ...editingATSContext.editingATS,
                     newItem: {
                       ...editingATSContext.editingATS.newItem,
-                      title: e.target.value
+                      at_title: e.target.value
                     }
                   })
                 }}
@@ -132,7 +144,7 @@ const EditATS = () => {
                     height:'2rem',
                   }}
                   type='time'
-                  value={editingATSContext.editingATS.newItem.start_time}
+                  value={editingATSContext.editingATS.newItem.available_start_time}
                   onChange={(e) => {
                     editingATSContext.setEditingATS({
                       ...editingATSContext.editingATS,
@@ -189,7 +201,7 @@ const EditATS = () => {
                     height:'2rem',
                   }}
                   type='time'
-                  value={editingATSContext.editingATS.newItem.end_time}
+                  value={editingATSContext.editingATS.newItem.available_end_time}
                   onChange={(e) => {
                     editingATSContext.setEditingATS({
                       ...editingATSContext.editingATS,
@@ -216,7 +228,7 @@ const EditATS = () => {
                 <div>User's library</div>
               </Col>
               <Col>
-                <img alt='icon' src='ac'/>
+                <img alt='icon' src={editingATSContext.editingATS.newItem.photo}/>
               </Col>
             </Row>
             </Container>

@@ -1,6 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from 'axios';
 
 import EditATSContext from './EditATSContext';
 const convertDateToDayString = (dateObject) => {
@@ -50,6 +51,8 @@ const convertTimeLengthToMins = (timeString) => {
 
 const EditIcon = ({routine, task, step}) => {
   const editingATSContext = useContext(EditATSContext);
+  const [arrAction, setarrAction] = useState([])
+
   
   let rowType = '';
   let rowId = '';
@@ -57,14 +60,32 @@ const EditIcon = ({routine, task, step}) => {
     rowType = 'step';
     rowId = step.unique_id;
   } else if(task) {
-    rowType = 'task';
-    rowId = task.at_unique_id;
+    // rowType = 'task';
+    // rowId = task.at_unique_id;
   } else if (routine) {
     rowType = 'routine';
     rowId = routine.id;
   }
 
-  console.log("ATS", routine)
+
+  useEffect(() => {
+
+    axios.get('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/actionsTasks/' + task.toString())
+    .then((response) => {
+      for(var i=0; i <response.data.result.length; i++){
+        arrAction.push(response.data.result[i])
+      }
+    })
+    .catch((err) => {
+      if(err.response) {
+        console.log(err.response);
+      }
+      console.log(err)
+    })
+  },[]);
+
+ 
+  
   return (
     <div>
       <FontAwesomeIcon
@@ -80,9 +101,13 @@ const EditIcon = ({routine, task, step}) => {
         onClick={(e) => {
           e.stopPropagation();
           console.log(routine[0])
-
-          const itemToChange = routine;
-          console.log(itemToChange)
+          var itemToChange;
+          for(var j=0;j<arrAction.length;j++){
+          if (routine.id === arrAction[j].at_unique_id){
+            itemToChange = arrAction[j];
+          }
+          }
+          console.log("item",itemToChange)
           // Convert start_day_and_time to day and time
           const startDate = new Date(itemToChange.start_day_and_time);
           const startDay = convertDateToDayString(startDate);
@@ -109,6 +134,7 @@ const EditIcon = ({routine, task, step}) => {
             editing: rowId === editingATSContext.editingATS.id ? !editingATSContext.editingATS.editing : true,
             type: rowType,
             id: rowId,
+            routineId: task,
             newItem: {
               ...editingATSContext.editingATS.newItem,
                ...itemToChange,

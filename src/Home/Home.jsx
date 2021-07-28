@@ -430,7 +430,7 @@ export default function Home(props) {
       audio: '',
       datetime_completed: '',
       datetime_started: '',
-      title: '',
+      at_title: '',
       // When making API call, combine start_day and start_time to start_day_and_time
       start_day: '',
       start_time: '',
@@ -446,9 +446,7 @@ export default function Home(props) {
       is_displayed_today: true,
       is_timed: false,
       is_sublist_available: true,
-      photo: '',
-      photo_url: '',
-     
+      photo: '',     
     },
   }
 
