@@ -104,13 +104,13 @@ const EditIcon = ({routine, task, step, id}) => {
           console.log("item",arrRoutine[0].gr_unique_id, routine.id)
           var itemToChange;
           for (var k=0; k<arrRoutine.length; k++){
-            if( arrRoutine[k].gr_unique_id){
+            if(routine.id === arrRoutine[k].gr_unique_id){
               itemToChange = arrRoutine[k] 
               console.log("item",arrRoutine[k])
             }
           }
        //   const itemToChange = editingRTSContext.editingRTS.gr_array.filter((elt) => elt.id === rowId)[0];
-           console.log("item",itemToChange.gr_start_day_and_time)
+          // console.log("item",itemToChange.gr_start_day_and_time)
           //Convert start_day_and_time to day and time
           var startDate;
           if(itemToChange.gr_start_day_and_time!=undefined){
