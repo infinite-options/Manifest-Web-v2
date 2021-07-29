@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from 'axios';
 
 import EditATSContext from './EditATSContext';
+import { containerSizesSelector } from '@material-ui/data-grid';
 const convertDateToDayString = (dateObject) => {
   // console.log(dateObject)
   const year = dateObject.getFullYear();
@@ -67,11 +68,13 @@ const EditIcon = ({routine, task, step}) => {
     rowId = routine.id;
   }
 
+  console.log('task', task)
 
   useEffect(() => {
 
     axios.get('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/actionsTasks/' + task.toString())
     .then((response) => {
+      console.log("actionAT",response )
       for(var i=0; i <response.data.result.length; i++){
         arrAction.push(response.data.result[i])
       }
@@ -108,26 +111,26 @@ const EditIcon = ({routine, task, step}) => {
           }
           }
           console.log("item",itemToChange)
-          // Convert start_day_and_time to day and time
-          const startDate = new Date(itemToChange.start_day_and_time);
-          const startDay = convertDateToDayString(startDate);
-          const startTime = convertDateToTimeString(startDate);
-          itemToChange.start_day = startDay;
-          itemToChange.start_time = startTime;
-          delete itemToChange.start_day_and_time;
-          // Convert end_day_and_time to day and time
-          const endDate = new Date(itemToChange.end_day_and_time);
-          const endDay = convertDateToDayString(endDate);
-          itemToChange.end_day = endDay;
-          const endTime = convertDateToTimeString(endDate);
-          itemToChange.end_time = endTime;
-          delete itemToChange.end_day_and_time;
-          // Convert expected_completion_time to number of minutes
-          const expectedCompletionTime = itemToChange.expected_completion_time ? itemToChange.expected_completion_time : '00:00:00';
-          const numMins = convertTimeLengthToMins(expectedCompletionTime)
-          itemToChange.numMins = numMins;
-          delete itemToChange.expected_completion_time;
-          console.log(itemToChange);
+          // // Convert start_day_and_time to day and time
+          // const startDate = new Date(itemToChange.at_start_day_and_time);
+          // const startDay = convertDateToDayString(startDate);
+          // const startTime = convertDateToTimeString(startDate);
+          // itemToChange.start_day = startDay;
+          // itemToChange.start_time = startTime;
+          // delete itemToChange.start_day_and_time;
+          // // Convert end_day_and_time to day and time
+          // const endDate = new Date(itemToChange.end_day_and_time);
+          // const endDay = convertDateToDayString(endDate);
+          // itemToChange.end_day = endDay;
+          // const endTime = convertDateToTimeString(endDate);
+          // itemToChange.end_time = endTime;
+          // delete itemToChange.end_day_and_time;
+          // // Convert expected_completion_time to number of minutes
+          // const expectedCompletionTime = itemToChange.expected_completion_time ? itemToChange.expected_completion_time : '00:00:00';
+          // const numMins = convertTimeLengthToMins(expectedCompletionTime)
+          // itemToChange.numMins = numMins;
+          // delete itemToChange.expected_completion_time;
+          // console.log(itemToChange);
 
           editingATSContext.setEditingATS({
             ...editingATSContext.editingATS,

@@ -17,6 +17,18 @@ const EditATS = () => {
     delete object.start_day;
     delete object.start_time;
     object.end_day_and_time = `${object.end_day} ${object.end_time}:00`;
+    object.available_start_time = object.at_available_start_time;
+    delete object.at_available_start_time;
+    object.available_end_time = object.at_available_end_time;
+    delete object.at_available_end_time;
+    object.datetime_completed = object.at_datetime_completed;
+    delete object.at_datetime_completed;
+    object.datetime_started = object.at_datetime_started;
+    delete object.at_datetime_started;
+    object.expected_completion_time = object.at_expected_completion_time;
+    delete object.at_expected_completion_time;
+    object.photo = object.at_photo;
+    delete object.at_photo;
     delete object.end_day;
     delete object.end_time;
     delete object.at_sequence

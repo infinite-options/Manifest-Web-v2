@@ -536,9 +536,25 @@ export default function Home(props) {
     },
   }
 
+  const initialEditingISState = {
+    editing: false,
+    type: '',
+    id: '',
+    user_id: props.location.state,
+    gr_array: [],
+    newItem: {
+      audio: '',
+      // When making API call, convert numMins to expected_completion_time
+      numMins: '',
+      is_available: false,
+      is_complete: true,
+      is_timed: false,
+      photo: '',     
+    },
+  }
   const [editingRTS, setEditingRTS] = useState(initialEditingRTSState)
   const [editingATS, setEditingATS] = useState(initialEditingATSState)
-  const [editingIS, setEditingIS] = useState(initialEditingRTSState)
+  const [editingIS, setEditingIS] = useState(initialEditingISState)
 
 
   // console.log(calendarView);
@@ -1059,8 +1075,8 @@ export default function Home(props) {
             x.sort((a, b) => {
               // console.log(a);
               // console.log(b);
-              let datetimeA = new Date(a['gr_start_day_and_time']);
-              let datetimeB = new Date(b['gr_start_day_and_time']);
+              let datetimeA = new Date(a['start_day_and_time']);
+              let datetimeB = new Date(b['start_day_and_time']);
               let timeA =
                 new Date(datetimeA).getHours() * 60 +
                 new Date(datetimeA).getMinutes();
@@ -1153,7 +1169,7 @@ export default function Home(props) {
                 };
               }
 
-              gr.start_day_and_time = x[i].gr_start_day_and_time;
+              gr.start_day_and_time = x[i].start_day_and_time;
 
               // const first_notifications = x[i].notifications[0];
               // const second_notifications = x[i].notifications[1];

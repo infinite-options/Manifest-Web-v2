@@ -15,15 +15,25 @@ const EditIS = () => {
     object.end_day_and_time = `${object.end_day} ${object.end_time}:00`;
     delete object.end_day;
     delete object.end_time;
+    object.title = object.is_title;
+    delete object.is_title;
+    delete object.at_title;
+    delete object.at_title;
+    object.photo = object.is_photo;
+    delete object.is_photo;
+    delete object.at_id;
+    delete object.audio;
+    delete object.end_day_and_time;
+    delete object.start_day_and_time;
+
     const numHours = object.numMins / 60;
     let numMins = object.numMins % 60;
     if(numMins < 10)
       numMins = '0' + numMins
     object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
-    object.id = editingISContext.editingIS.id;
-    object.user_id = editingISContext.editingIS.user_id;
-    object.ta_people_id = '';
+    object.id = object.is_unique_id;
+    delete object.is_unique_id;
     console.log(object);
     let formData = new FormData();
     Object.entries(object).forEach(entry => {
@@ -81,13 +91,13 @@ const EditIS = () => {
               <input 
                 style={{borderRadius:'10px', border:'0px', fontSize:'12px', height:'2rem', width:'15rem'}}
                 placeholder="Name Step here"
-                value={editingISContext.editingIS.newItem.title}
+                value={editingISContext.editingIS.newItem.is_title}
                 onChange={(e) => {
                   editingISContext.setEditingIS({
                     ...editingISContext.editingIS,
                     newItem: {
                       ...editingISContext.editingIS.newItem,
-                      title: e.target.value
+                      is_title: e.target.value
                     }
                   })
                 }}
@@ -108,7 +118,7 @@ const EditIS = () => {
                 <div>User's library</div>
               </Col>
               <Col>
-                <img alt='icon'src={editingISContext.editingIS.newItem.photo}/>
+                <img alt='icon'src={editingISContext.editingIS.newItem.is_photo}/>
               </Col>
             </Row>
             </Container>
