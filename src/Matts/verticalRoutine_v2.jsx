@@ -37,6 +37,7 @@ import { Container } from 'react-grid-system';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
+import MiniNavigation from '../manifest/miniNavigation'
 
 
 const useStyles = makeStyles({
@@ -754,7 +755,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
     // }
     return(
         <Box width = "350px">
-            <Button className={classes.buttonSelection} onClick={() => history.push(
+            {/* <Button className={classes.buttonSelection} onClick={() => history.push(
                 {pathname: "/matts", state: currentUser})} id="one">
                 History
         </Button>
@@ -774,7 +775,8 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
         </Button>
             <Button className={classes.buttonSelection} id="one">
                 About
-        </Button>
+        </Button> */}
+        <MiniNavigation/>
         <p style={{height:"54.5px", margin:"0px"}}></p>
         <row>
                 {rows}

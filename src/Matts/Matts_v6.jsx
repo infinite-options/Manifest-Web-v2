@@ -428,7 +428,7 @@ export default function MainPage(props) {
     }
     return (
         <Container fluid padding = "0px">
-            <Navigation userID={currentUser} />
+            {/* <Navigation userID={currentUser} /> */}
             <Row fluid padding = {0}>
                 <Col  width="10rem"  style={{padding:"0px"}}>
                     <div display= "flex" flex-direction="row">
