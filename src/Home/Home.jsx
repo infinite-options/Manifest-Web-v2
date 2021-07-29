@@ -1493,7 +1493,8 @@ export default function Home(props) {
         HOME
         <Box paddingTop={3} backgroundColor="#bbc8d7">
           <div style={{width: '30%', float: 'left', border: 'solid'}}>
-            <Button className={classes.buttonSelection} id="one">
+            <Button className={classes.buttonSelection} id="one"
+            onClick={()=> history.push("/history") }>
               History
             </Button>
             <Button className={classes.buttonSelection} id="one">

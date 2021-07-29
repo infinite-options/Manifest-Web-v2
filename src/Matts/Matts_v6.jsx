@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 //import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import DayRoutines from '../Home/DayRoutines';
@@ -24,6 +24,8 @@ import { Navigation } from '../Home/navigation';
 import Firebasev2 from "../manifest/OldManifest/Firebasev2";
 import {faList} from "@fortawesome/free-solid-svg-icons";
 import VerticalRoutine from './verticalRoutine_v2';
+import LoginContext from '../LoginContext';
+
 
 
 import {
@@ -76,8 +78,9 @@ export default function MainPage(props) {
 
     //----Change these commented lines to get userID from state being passed in/
     //const currentUser = props.location.state; //matts testing 72
-    const currentUser = "100-000072";
-    console.log(props.location.state);
+    // const currentUser = "100-000072";
+    const loginContext = useContext(LoginContext);
+    const currentUser = loginContext.loginState.curUser;   
     const [historyGot, setHG] = useState([]);
     const inRange = [];
     const [currentDate, setCurDate] = useState(new Date(Date.now()))
@@ -151,6 +154,10 @@ export default function MainPage(props) {
         }
         inRange.reverse();//put latest day at end
 
+        function custom_sort(a, b) {
+            return (new Date(a.start_day_and_time).getHours() + (new Date(a.start_day_and_time).getMinutes() / 60))
+             - (new Date(b.start_day_and_time).getHours() + (new Date(b.start_day_and_time).getMinutes() / 60));
+        }
 
         //bigList will hold new data format sidewase
         var bigList = [];       
@@ -159,7 +166,7 @@ export default function MainPage(props) {
             console.log(obj);
 
             //sort obj by time of day
-            //obj.sort((a, b) => formatTime(a.start_day_and_time) - formatTime(b.start_day_and_time));
+            obj.sort(custom_sort);
 
             for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
                 // console.log(r);
@@ -175,7 +182,7 @@ export default function MainPage(props) {
                     }
                     if (isNewR){
                         var currentR = {type: "Routine", title: obj[r].title, under: "", days: [], tBox: {}, 
-                        show: true, photo: obj[r].photo, startTime: obj[r].start_day_and_time, 
+                        show: true, photo: obj[r].gr_photo, startTime: obj[r].start_day_and_time, 
                         endTime: obj[r].end_day_and_time, is_sublist_available: obj[r].is_sublist_available}; //if new, make object and put in bigList
                         currentR.days[d] = obj[r].status;
                         bigList.push(currentR);
@@ -237,7 +244,7 @@ export default function MainPage(props) {
         var tempRows = [];
         for (var i=0; i< bigList.length; i++){
             tempRows.push(createData(bigList[i].title, bigList[i].days[6], bigList[i].days[5], bigList[i].days[4], bigList[i].days[3],
-                 bigList[i].days[2], bigList[i].days[1], bigList[i].days[0], bigList[i].show, bigList[i].under, bigList[i].photo,
+                 bigList[i].days[2], bigList[i].days[1], bigList[i].days[0], bigList[i].show, bigList[i].under, bigList[i].at_photo,
                  bigList[i].startTime, bigList[i].endTime, bigList[i].is_sublist_available, bigList[i].type));
         }
         console.log(tempRows);
@@ -391,6 +398,8 @@ export default function MainPage(props) {
         console.log("clocked pre");
         cleanData(historyGot, new Date(currentDate.getTime() - 604800000));
         setCurDate(new Date(currentDate.getTime() - 604800000));
+        // console.log((new Date(Date.now())).getTime());
+        // console.log(currentDate.getDate());
         setLoading(true);
         setLoading(false);
         
@@ -399,6 +408,8 @@ export default function MainPage(props) {
         console.log("clocked nex");
         cleanData(historyGot, new Date(currentDate.getTime() + 604800000));
         setCurDate(new Date(currentDate.getTime() + 604800000));
+        // console.log(Date(Date.now()));
+        // console.log(currentDate);
     }
 
     
@@ -471,6 +482,7 @@ export default function MainPage(props) {
                                                     </p>
                                                 </Col>
                                                 <Col>
+                                                    {(new Date(Date.now()).getDate() != currentDate.getDate()) ?  (       
                                                     <FontAwesomeIcon
                                                         // style={{ marginLeft: "50%" }}
                                                         style={{ float: 'right' }}
@@ -480,7 +492,8 @@ export default function MainPage(props) {
                                                         onClick={(e) => {
                                                             nextWeek();
                                                         }}
-                                                    />
+                                                    />) : (<div></div>)
+                                                    }
                                                 </Col>
                                             </Row>
                                         </Container>

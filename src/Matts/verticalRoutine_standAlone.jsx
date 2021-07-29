@@ -119,14 +119,20 @@ const VerticalRoutine = ({userID}) => {
         }
         inRange.reverse();//put latest day at end
 
+        function custom_sort(a, b) {
+            return (new Date(a.start_day_and_time).getHours() + (new Date(a.start_day_and_time).getMinutes() / 60))
+             - (new Date(b.start_day_and_time).getHours() + (new Date(b.start_day_and_time).getMinutes() / 60));
+        }
 
         //bigList will hold new data format sidewase
         var bigList = [];       
         for (var d = 0; d < inRange.length; d++){
             const obj = JSON.parse(inRange[d].details)
             console.log(obj);
+
             //sort obj by time of day
-            obj.sort((a, b) => a.start_day_and_time - b.start_day_and_time);
+            obj.sort(custom_sort);
+
             for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
                 // console.log(r);
                 if(obj[r].title){

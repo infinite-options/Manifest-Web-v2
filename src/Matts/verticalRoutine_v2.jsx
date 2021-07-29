@@ -154,7 +154,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
 
                 <Col xs={7} style={{ paddingRight: "1rem"  ,marginTop:'0.5rem'}}>
                         <img
-                        src={r["photo"]}
+                        src={r["gr_photo"]}
                         alt="Routines"
                         className="center"
                         height="28px"
@@ -367,7 +367,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
 
                 <Col xs={7} style={{ paddingRight: "1rem"  ,marginTop:'0.5rem'}}>
                         <img
-                        src={a["photo"]}
+                        src={a["at_photo"]}
                         alt="Routines"
                         className="center"
                         height="28px"
@@ -580,7 +580,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
 
                 <Col xs={7} style={{ paddingRight: "1rem"  ,marginTop:'0.5rem'}}>
                         <img
-                        src={i["photo"]}
+                        src={i["is_photo"]}
                         alt="Routines"
                         className="center"
                         height="28px"
@@ -755,7 +755,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
     return(
         <Box width = "350px">
             <Button className={classes.buttonSelection} onClick={() => history.push(
-                {pathname: "/matts", state: currentUser})} id="one">
+                {pathname: "/matts"})} id="one">
                 History
         </Button>
             <Button className={classes.buttonSelection} id="one">
@@ -763,7 +763,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
         </Button>
             <Button
                 className={classes.buttonSelection}
-                // onClick={toggleShowRoutine}
+                onClick={() => history.push({pathname: "/home"})}
                 id="one">
                 Routines
         </Button>
