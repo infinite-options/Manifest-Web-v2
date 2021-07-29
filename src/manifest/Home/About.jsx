@@ -26,6 +26,7 @@ import DatePicker from 'react-datepicker'
 import PhoneInput from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import { Input, TextField } from "@material-ui/core";
+import MiniNavigation from '../miniNavigation'
 
 const useStyles = makeStyles({
   table: {
@@ -276,8 +277,10 @@ class AboutModal extends React.Component {
   render() {
     return (
       <div >
-
-          <ModalBody style={{backgroundColor:'#889AB5',width:'100%',float:'left',marginRight:'20px'}}>
+        <div style={{height: '3px'}}></div>
+        <MiniNavigation/>
+          <ModalBody style={{backgroundColor:'#889AB5',width:'100%',float:'left',marginRight:'20px', marginTop:'10px'}}>
+          
             <div style={{width:"29%",float:'left',margin:'25px'}}>
             <Form.Group>
 

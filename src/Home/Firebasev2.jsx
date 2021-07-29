@@ -409,7 +409,7 @@ export default function Firebasev2(props)  {
                 </div>
 
                 <div style={{ display:"flex" }}>
-                <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
+                <div style={{marginRight:'1rem',display:'flex', flexDirection:'column', textAlign: 'center'}}>
                     <div style={{flex:'1'}}>
 
                 <CopyIcon
@@ -477,7 +477,7 @@ export default function Firebasev2(props)  {
                         />
                         </div>
                 </div>
-                    <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
+                    <div style={{marginRight:'1rem',display:'flex',  flexDirection:'column'}}>
 
                    <div>
                   <EditIcon

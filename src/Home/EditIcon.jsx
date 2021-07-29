@@ -42,7 +42,7 @@ const EditIcon = () => {
     >
       {/* {console.log("what is the showModal ", )} */}
       {this.props.showModal && this.props.i === this.props.indexEditing ? (
-        <div></div>
+        <div style={{ marginLeft: "5px" }}></div>
       ) : (
         this.showIcon()
       )}
