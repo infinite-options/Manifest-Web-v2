@@ -977,6 +977,12 @@ const EditRTS = () => {
                   color: '#ffffff',
                   textAlign: 'center',
                 }}
+                onClick={()=>{
+                  editingRTSContext.setEditingRTS({
+                    ...editingRTSContext.editingRTS,
+                    editing: false
+                  })
+                }}
               >
                 Cancel
               </button>

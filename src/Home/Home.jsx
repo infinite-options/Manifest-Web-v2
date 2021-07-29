@@ -569,8 +569,8 @@ export default function Home(props) {
       textTransform: 'capitalize',
       color: '#FFFFFF',
       backgroundColor: '#bbc8d7',
-      marginLeft: '1px',
-      marginRight: '1px'
+      marginLeft: '.5%',
+      marginRight: '.5%'
     },
     buttonContainer: {
       flex: 1,
@@ -581,7 +581,7 @@ export default function Home(props) {
 
     dateContainer: {
       height: '70px',
-      width: 'relative',
+      //width: 'relative',
       color: '#FFFFFF',
       // flex: 1,
       // display: 'flex',
@@ -1472,7 +1472,8 @@ export default function Home(props) {
     /*----------------------------button
         selection----------------------------*/
     <div>
-      <Navigation userID= {stateValue.currentUserId}/>
+      {/* <Navigation userID= {stateValue.currentUserId}/> */}
+      <div style={{height: '3px'}}></div>
       <EditRTSContext.Provider
         value={{
           editingRTS: editingRTS,
@@ -1506,14 +1507,20 @@ export default function Home(props) {
           stateValue.BASE_URL)
         }
       >
-        HOME
-        <Box paddingTop={3} backgroundColor="#bbc8d7">
-          <div style={{width: '30%', float: 'left', border: 'solid'}}>
-            <Button className={classes.buttonSelection} id="one">
+        
+        <Box backgroundColor="#bbc8d7">
+          <div style={{width: '35%', float: 'left'}}>
+            <Button className={classes.buttonSelection} id="one" onClick={()=> history.push("/matts") }>
               History
+            </Button>
+            <Button className={classes.buttonSelection} id="one" onClick={ToggleShowAbout}>
+              About
             </Button>
             <Button className={classes.buttonSelection} id="one">
               Events
+            </Button>
+            <Button className={classes.buttonSelection} onClick={()=> history.push("/main") } id="one">
+              Goals
             </Button>
             <Button
               className={classes.buttonSelection}
@@ -1523,16 +1530,12 @@ export default function Home(props) {
               Routines
             </Button>
 
-            <Button className={classes.buttonSelection} onClick={()=> history.push("/main") } id="one">
-              Goals
-            </Button>
-            <Button className={classes.buttonSelection} id="one" onClick={ToggleShowAbout}>
-              About
-            </Button>
+            
+            
             {stateValue.showRoutineModal ? (
               <Button 
                 className={classes.buttonSelection}
-                style={{width: '20%', marginLeft: '12px', marginRight: '12px'}} 
+                style={{width: '20%', marginLeft: '2.5%', marginRight: '2.5%'}} 
                 id="one"
                 onClick={() => {
                   // e.stopPropagation()
@@ -1545,7 +1548,7 @@ export default function Home(props) {
                 Add Routine +
               </Button>
             ) : (
-              <div style = {{width: '20%', marginLeft: '12px', marginRight: '12px'}}>
+              <div style = {{width: '20%', marginLeft: '2.5%', marginRight: '2.5%'}}>
 
               </div>
             )}
@@ -1565,84 +1568,24 @@ export default function Home(props) {
            
               </div> */}
           </div>
-          <div style={{width: '70%', float: 'left', border: 'solid', }}>
+          <div style={{width: '65%', float: 'left'}}>
           {editingRTS.editing
           ?
-          (<div
-            style={{
-              width: '100%',
-            }}
-          >
-            <div
-              style={{
-                width: '35%',
-                height: '80px',
-                backgroundColor: '#F57045'
-              }}
-            >
-              <div
-                style={{
-                  height: '100%',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
-                <div
-                  style={{
-                    flex:'4',
-                  }}
-                >
-                  <p
-                    style={{
-                      textAlign: 'center',
-                      fontSize: '2.5rem',
-                      color: '#ffffff',
-                      textDecoration: 'underline',
-                    }}
-                  >
-                    Routine
-                  </p>
-                </div>
-                <div
-                  style={{
-                    flex:'1',
-                  }}
-                >
-                  <button
-                    style={{
-                      padding: '0',
-                      margin: '0',
-                      backgroundColor: 'inherit',
-                      border: 'none',
-                      width: '100%',
-                      height: '100%',
-                      textAlign: 'center',
-                      fontSize: '2.5rem',
-                      color: '#ffffff'
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      console.log('Clicked add RTS')
-                    }}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>)
+          (
+          null
+          )
           :
 
           (<Box
               bgcolor="#889AB5"
               className={classes.dateContainer}
+              style={{width: '100%'}}
               //style={{ width: '100%', marginTop:'1rem' }}
               // flex
             >
-              <Container>
-                <Row style={{ marginTop: '0px' }}>
-                  <Col>
+              <Container style={{width: '100%'}}>
+                <Row style={{ marginTop: '0px', width: '100%' }}>
+                  <Col style={{width: '10%'}}>
                     <div>
                       <FontAwesomeIcon
                         // style={{ marginLeft: "50%" }}
@@ -1657,7 +1600,7 @@ export default function Home(props) {
                   </Col>
                   <Col
                     md="auto"
-                    style={{ textAlign: 'center' }}
+                    style={{ textAlign: 'center', width: '80%' }}
                     className="bigfancytext"
                   >
                     <p> Week of {startWeek.format('D MMMM YYYY')} </p>
@@ -1668,7 +1611,7 @@ export default function Home(props) {
                       {stateValue.currentUserTimeZone}
                     </p>
                   </Col>
-                  <Col>
+                  <Col style={{width: '10%', textAlign: 'right'}}>
                     <FontAwesomeIcon
                       // style={{ marginLeft: "50%" }}
                       style={{ float: 'right' }}

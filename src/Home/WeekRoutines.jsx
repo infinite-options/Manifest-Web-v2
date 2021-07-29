@@ -847,8 +847,13 @@ export default class WeekRoutines extends Component {
       case 6:
         today = "Saturday";
     }
+    var dayIndex = 0
     let weekdays = moment.weekdays().map((day) => {
+
+      
+
       return (
+        <>
         <Col
           key={'routine' + day}
          // className="fancytext"
@@ -863,6 +868,9 @@ export default class WeekRoutines extends Component {
         >
           {day}
         </Col>
+
+        
+        </>
       );
     });
     return (
@@ -882,7 +890,9 @@ export default class WeekRoutines extends Component {
           {weekdays}
         </Row>
         
-        <Row style={{ marginLeft:'5rem', fontWeight:'bold'}}> {this.dateDisplay()}</Row>
+        <Row 
+          style={{ marginLeft:'5rem', fontWeight:'bold'}}
+        > {this.dateDisplay()}</Row>
         </div>
         <Row
           ref={this.hourDisplay}
