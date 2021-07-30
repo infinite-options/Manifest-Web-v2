@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import SettingPage from '../OldManifest/SettingPage';
 import {
@@ -22,6 +22,7 @@ import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { Input, TextField } from '@material-ui/core';
 import MiniNavigation from '../miniNavigation'
+import LoginContext from '../../LoginContext'
 
 const useStyles = makeStyles({
   table: {
@@ -39,6 +40,8 @@ const useStyles = makeStyles({
     margin: '5px 0',
   },
 });
+
+
 
 export default function AboutModal(props) {
   const classes = useStyles();
@@ -72,18 +75,40 @@ export default function AboutModal(props) {
     },
   });
 
+  const [motivation0 , setMotivation0] = useState('')
+  const [motivation1 , setMotivation1] = useState('')
+  const [motivation2 , setMotivation2] = useState('')
+  const [motivation3 , setMotivation3] = useState('')
+  const [motivation4 , setMotivation4] = useState('')
+
+  const [feelings0 , setFeelings0] = useState('')
+  const [feelings1 , setFeelings1] = useState('')
+  const [feelings2 , setFeelings2] = useState('')
+  const [feelings3 , setFeelings3] = useState('')
+  const [feelings4 , setFeelings4] = useState('')
+
+  const [happy0 , setHappy0] = useState('')
+  const [happy1 , setHappy1] = useState('')
+  const [happy2 , setHappy2] = useState('')
+  const [happy3 , setHappy3] = useState('')
+  const [happy4 , setHappy4] = useState('')
+
+  const loginContext = useContext(LoginContext);
+  const userID = loginContext.loginState.curUser;
+
   function grabFireBaseAboutMeData() {
     let url =
       'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/aboutme/';
-
+    console.log(userID)
     axios
-      .get(url + '100-000075') //this.props.theCurrentUserId)
+      .get(url + userID) //this.props.theCurrentUserId)
       .then((response) => {
         if (response.data.result.length !== 0) {
+          console.log(response)
           let details = response.data.result[0];
 
           let x = {
-            birth_date: Date.parse(details.user_birth_date),
+            birth_date: details.user_birth_date,
             phone_number: details.user_phone_number,
             have_pic: details.user_have_pic
               ? details.user_have_pic.toLowerCase() === 'true'
@@ -113,6 +138,93 @@ export default function AboutModal(props) {
       .catch((err) => {
         console.log('Error getting user details', err);
       });
+    axios
+      .get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/motivation/" + userID)
+      .then((response) => {
+        console.log('motivation')
+        console.log(JSON.parse(response.data.result[0].options))
+        //var temp = ["", "", "", "", ""]
+        if (JSON.parse(response.data.result[0].options) != null) {
+          for (let i = 0; i < JSON.parse(response.data.result[0].options).length; i++) {
+            switch(i){
+              case 0:
+                setMotivation0(JSON.parse(response.data.result[0].options)[i])
+                break;
+              case 1:
+                setMotivation1(JSON.parse(response.data.result[0].options)[i])
+                break;
+              case 2:
+                setMotivation2(JSON.parse(response.data.result[0].options)[i])
+                break;
+              case 3:
+                setMotivation3(JSON.parse(response.data.result[0].options)[i])
+                break;
+              case 4:
+                setMotivation4(JSON.parse(response.data.result[0].options)[i])
+                break;
+                                  
+            }
+          }
+        }
+        
+      })
+    axios
+      .get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/important/" + userID)
+      .then((response) => {
+        console.log('feelings')
+        //console.log(JSON.parse(response.data.result[0].options))
+        //var temp = ["", "", "", "", ""]
+        if (JSON.parse(response.data.result[0].options) != null) {
+          for (let i = 0; i < JSON.parse(response.data.result[0].options).length; i++) {
+            switch(i){
+              case 0:
+                setFeelings0(JSON.parse(response.data.result[0].options)[i])
+                break;
+              case 1:
+                setFeelings1(JSON.parse(response.data.result[0].options)[i])
+                break;
+              case 2:
+                setFeelings2(JSON.parse(response.data.result[0].options)[i])
+                break;
+              case 3:
+                setFeelings3(JSON.parse(response.data.result[0].options)[i])
+                break;
+              case 4:
+                setFeelings4(JSON.parse(response.data.result[0].options)[i])
+                break;            
+            }
+          }
+        }
+      })
+    axios
+      .get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/happy/" + userID)
+      .then((response) => {
+        console.log('motivation')
+        console.log(JSON.parse(response.data.result[0].options))
+        //var temp = ["", "", "", "", ""]
+        if (JSON.parse(response.data.result[0].options) != null) {
+          for (let i = 0; i < JSON.parse(response.data.result[0].options).length; i++) {
+            switch(i){
+              case 0:
+                setHappy0(JSON.parse(response.data.result[0].options)[i])
+                break;
+              case 1:
+                setHappy1(JSON.parse(response.data.result[0].options)[i])
+                break;
+              case 2:
+                setHappy2(JSON.parse(response.data.result[0].options)[i])
+                break;
+              case 3:
+                setHappy3(JSON.parse(response.data.result[0].options)[i])
+                break;
+              case 4:
+                setHappy4(JSON.parse(response.data.result[0].options)[i])
+                break; 
+                                  
+            }
+          }
+        }
+      })
   }
 
   function handleFileSelected(event) {
@@ -147,6 +259,28 @@ export default function AboutModal(props) {
     grabFireBaseAboutMeData();
   }
 
+  useEffect(() => {
+    setMotivation0('')
+    setMotivation1('')
+    setMotivation2('')
+    setMotivation3('')
+    setMotivation4('')
+
+    setFeelings0('')
+    setFeelings1('')
+    setFeelings2('')
+    setFeelings3('')
+    setFeelings4('')
+
+    setHappy0('')
+    setHappy1('')
+    setHappy2('')
+    setHappy3('')
+    setHappy4('')
+
+    grabFireBaseAboutMeData()
+  }, [userID])
+
   function hideAboutForm(e) {
     props.CameBackFalse();
   }
@@ -165,7 +299,7 @@ export default function AboutModal(props) {
 
   function newInputSubmit() {
     const body = {
-      user_id: '100-000075',
+      user_id: userID,
       first_name: firstName,
       last_name: lastName,
       have_pic: aboutMeObject.have_pic,
@@ -176,6 +310,7 @@ export default function AboutModal(props) {
       history: aboutMeObject.history,
       major_events: aboutMeObject.major_events,
       phone_number: aboutMeObject.phone_number,
+      birth_date: aboutMeObject.birth_date
     };
     console.log('body', body);
     if (aboutMeObject.phone_number === 'undefined') {
@@ -184,12 +319,16 @@ export default function AboutModal(props) {
       body.phone_number = aboutMeObject.phone_number;
     }
     if (aboutMeObject.birth_date_change) {
-      body.birth_date = aboutMeObject.birth_date.toISOString();
+      console.log('hi')
+      // console.log(typeof aboutMeObject.birth_date)
+      // console.log(body.birth_date)
+      body.birth_date = aboutMeObject.birth_date;
     } else {
-      var date = new Date(aboutMeObject.birth_date);
-      body.birth_date = date;
-      var br = JSON.stringify(body.birth_date);
-      body.birth_date = br.substring(1, br.length - 1);
+      // var date = new Date(aboutMeObject.birth_date);
+      // body.birth_date = date;
+      // var br = JSON.stringify(body.birth_date);
+      // body.birth_date = br.substring(1, br.length - 1);
+      body.birth_date = aboutMeObject.birth_date;
     }
 
     if (typeof body.picture === 'string') {
@@ -239,7 +378,51 @@ export default function AboutModal(props) {
       .catch((err) => {
         console.log('Error updating Details', err);
       });
+
+    let motivationJSON = {
+      user_id: userID,
+      motivation: [motivation0, motivation1, motivation2, motivation3, motivation4]
+    }
+    
+    console.log(motivationJSON)
+
+    axios
+      .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateMotivation', motivationJSON)
+      .then(response => {
+        console.log(response)
+      })
+
+    let importantJSON = {
+      user_id: userID,
+      important: [feelings0, feelings1, feelings2, feelings3, feelings4]
+    }
+
+    console.log(importantJSON)
+  
+    axios
+      .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateImportant', importantJSON)
+      .then(response => {
+        console.log(response)
+      })
+
+    let happyJSON = {
+      user_id: userID,
+      happy: [happy0, happy1, happy2, happy3, happy4]
+    }
+  
+    console.log(happyJSON)
+  
+    axios
+      .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateHappy', happyJSON)
+      .then(response => {
+        console.log(response)
+      })
+
   }
+
+
+
+
 
   function startTimePicker() {
     return (
@@ -249,15 +432,11 @@ export default function AboutModal(props) {
         placeholder="Enter Birth Date"
         selected={aboutMeObject.birth_date}
         onChange={(date) => {
-          setAboutMeObject((prevState) => ({
-            ...prevState,
-            birth_date: date,
-            birth_date_change: true,
-            timeSettings: {
-              ...prevState.timeSettings,
-            },
-          }));
-          console.log(date);
+          console.log(date)
+          setAboutMeObject({
+            ...aboutMeObject,
+            birth_date: date
+          })
         }}
         dateFormat="MMMM d, yyyy"
       />
@@ -271,6 +450,9 @@ export default function AboutModal(props) {
   function ToggleShowAbout() {
     // history.push('/about');
   }
+
+  // grabFireBaseAboutMeData()
+  console.log(aboutMeObject)
 
   return (
     <div>
@@ -374,7 +556,7 @@ export default function AboutModal(props) {
               <Col>
                 {aboutMeObject.have_pic === false ? (
                   <FontAwesomeIcon icon={faImage} size="6x" />
-                ) : url === '' ? (
+                ) : aboutMeObject.pic === '' ? (
                   // <img
                   //   style={{
                   //     display: 'block',
@@ -411,7 +593,7 @@ export default function AboutModal(props) {
                       height: '70px',
                       marginBottom: '15px',
                     }}
-                    src={url}
+                    src={aboutMeObject.pic}
                     alt="Profile"
                   />
                 )}
@@ -450,17 +632,15 @@ export default function AboutModal(props) {
                 </label>
                 <Form.Control
                   type="date"
-                  selected={aboutMeObject.birth_date}
+                  value={aboutMeObject.birth_date}
+                  // selected={aboutMeObject.birth_date}
                   onChange={(date) => {
-                    setAboutMeObject((prevState) => ({
-                      ...prevState,
-                      birth_date: date,
+                    console.log(date.target.value)
+                    setAboutMeObject({
+                      ...aboutMeObject,
+                      birth_date: date.target.value,
                       birth_date_change: true,
-                      timeSettings: {
-                        ...prevState.timeSettings,
-                      },
-                    }));
-                    console.log(date);
+                    })
                   }}
                   dateFormat="MMMM d, yyyy"
                 />
@@ -549,16 +729,16 @@ export default function AboutModal(props) {
               as="textarea"
               rows="4"
               type="text"
-              // value={this.state.aboutMeObject.message_day || ""}
+              value={aboutMeObject.message_day || ""}
               onChange={(e) => {
+                console.log(e.target.value)
                 e.stopPropagation();
-                setAboutMeObject((prevState) => ({
-                  ...prevState,
-                  message_day: e.target.value,
-                  timeSettings: {
-                    ...prevState.timeSettings,
-                  },
-                }));
+                setAboutMeObject({
+                  ...aboutMeObject,
+                  message_day: e.target.value
+                }
+                  
+                );
               }}
             />
           </Form.Group>
@@ -579,14 +759,14 @@ export default function AboutModal(props) {
               type="text"
               value={aboutMeObject.message_card || ''}
               onChange={(e) => {
+                console.log(e.target.value)
                 e.stopPropagation();
-                setAboutMeObject((prevState) => ({
-                  ...prevState,
-                  message_card: e.target.value,
-                  timeSettings: {
-                    ...prevState.timeSettings,
-                  },
-                }));
+                setAboutMeObject({
+                  ...aboutMeObject,
+                  message_card: e.target.value
+                }
+                  
+                );
               }}
             />
           </Form.Group>
@@ -693,8 +873,8 @@ export default function AboutModal(props) {
               type="text"
               rows="4"
               type="text"
-              placeholder="(GMT-08:00) Pacific Time"
-              value={aboutMeObject.message_card || ''}
+              //placeholder="(GMT-08:00) Pacific Time"
+              value={aboutMeObject.timeSettings.timeZone || ''}
               onChange={(e) => {
                 e.stopPropagation();
                 setAboutMeObject((prevState) => ({
@@ -729,6 +909,14 @@ export default function AboutModal(props) {
                     borderRadius: '10px',
                     border: '1px solid #889AB5',
                   }}
+                  value={aboutMeObject.timeSettings.morning || ''}
+                  onChange = {(e) => setAboutMeObject({
+                    ...aboutMeObject,
+                    timeSettings: {
+                      ...aboutMeObject.timeSettings,
+                      morning: e.target.value
+                    }
+                  })}
                 ></input>
               </td>
               <td>
@@ -752,6 +940,14 @@ export default function AboutModal(props) {
                     borderRadius: '10px',
                     border: '1px solid #889AB5',
                   }}
+                  value={aboutMeObject.timeSettings.afternoon || ''}
+                  onChange = {(e) => setAboutMeObject({
+                    ...aboutMeObject,
+                    timeSettings: {
+                      ...aboutMeObject.timeSettings,
+                      afternoon: e.target.value
+                    }
+                  })}
                 ></input>
               </td>
             </tr>
@@ -776,6 +972,14 @@ export default function AboutModal(props) {
                     borderRadius: '10px',
                     border: '1px solid #889AB5',
                   }}
+                  value={aboutMeObject.timeSettings.evening || ''}
+                  onChange = {(e) => setAboutMeObject({
+                    ...aboutMeObject,
+                    timeSettings: {
+                      ...aboutMeObject.timeSettings,
+                      evening: e.target.value
+                    }
+                  })}
                 ></input>
               </td>
               <td>
@@ -799,6 +1003,14 @@ export default function AboutModal(props) {
                     borderRadius: '10px',
                     border: '1px solid #889AB5',
                   }}
+                  value={aboutMeObject.timeSettings.night || ''}
+                  onChange = {(e) => setAboutMeObject({
+                    ...aboutMeObject,
+                    timeSettings: {
+                      ...aboutMeObject.timeSettings,
+                      night: e.target.value
+                    }
+                  })}
                 ></input>
               </td>
             </tr>
@@ -823,6 +1035,14 @@ export default function AboutModal(props) {
                     borderRadius: '10px',
                     border: '1px solid #889AB5',
                   }}
+                  value={aboutMeObject.timeSettings.dayStart || ''}
+                  onChange = {(e) => setAboutMeObject({
+                    ...aboutMeObject,
+                    timeSettings: {
+                      ...aboutMeObject.timeSettings,
+                      dayStart: e.target.value
+                    }
+                  })}
                 ></input>
               </td>
               <td>
@@ -846,6 +1066,14 @@ export default function AboutModal(props) {
                     borderRadius: '10px',
                     border: '1px solid #889AB5',
                   }}
+                  value={aboutMeObject.timeSettings.dayEnd || ''}
+                  onChange = {(e) => setAboutMeObject({
+                    ...aboutMeObject,
+                    timeSettings: {
+                      ...aboutMeObject.timeSettings,
+                      dayEnd: e.target.value
+                    }
+                  })}
                 ></input>
               </td>
             </tr>
@@ -864,57 +1092,144 @@ export default function AboutModal(props) {
             </tr>
             <tr style={{ margin: '20px' }}>
               <td>
-                <input className={classes.formGroupItem}></input>
+                <input className={classes.formGroupItem}
+                  value={motivation0 || ''}
+                  onChange={(e) => {
+                    //motivationArrayTemp = motivationArray
+                    // motivationArrayTemp[0] = e.target.value
+                    // console.log(motivationArrayTemp)
+                    // setMotivationArray(motivationArrayTemp)
+                    setMotivation0(e.target.value)
+                  }}
+                ></input>
               </td>
               <td>
-                <input className={classes.formGroupItem}></input>
+                <input className={classes.formGroupItem}
+                  value={feelings0 || ''}
+                  onChange={(e) => {
+                    //motivationArrayTemp = motivationArray
+                    // motivationArrayTemp[0] = e.target.value
+                    // console.log(motivationArrayTemp)
+                    // setMotivationArray(motivationArrayTemp)
+                    setFeelings0(e.target.value)
+                  }}
+                ></input>
               </td>
               <td>
-                <input className={classes.formGroupItem}></input>
-              </td>
-            </tr>
-            <tr style={{ margin: '20px' }}>
-              <td>
-                <input className={classes.formGroupItem}></input>
-              </td>
-              <td>
-                <input className={classes.formGroupItem}></input>
-              </td>
-              <td>
-                <input className={classes.formGroupItem}></input>
-              </td>
-            </tr>
-            <tr style={{ margin: '20px' }}>
-              <td>
-                <input className={classes.formGroupItem}></input>
-              </td>
-              <td>
-                <input className={classes.formGroupItem}></input>
-              </td>
-              <td>
-                <input className={classes.formGroupItem}></input>
-              </td>
-            </tr>
-            <tr style={{ margin: '20px' }}>
-              <td>
-                <input className={classes.formGroupItem}></input>
-              </td>
-              <td>
-                <input className={classes.formGroupItem}></input>
-              </td>
-              <td>
-                <input className={classes.formGroupItem}></input>
+                <input className={classes.formGroupItem}
+                  value={happy0 || ''}
+                  onChange={(e) => {
+                    //motivationArrayTemp = motivationArray
+                    // motivationArrayTemp[0] = e.target.value
+                    // console.log(motivationArrayTemp)
+                    // setMotivationArray(motivationArrayTemp)
+                    setHappy0(e.target.value)
+                  }}
+                ></input>
               </td>
             </tr>
             <tr style={{ margin: '20px' }}>
               <td>
-                <input className={classes.formGroupItem}></input>
+                <input className={classes.formGroupItem}
+                  value={motivation1 || ''}
+                  onChange={(e) => {
+                    setMotivation1(e.target.value)
+                  }}
+                ></input>
               </td>
               <td>
-                <input className={classes.formGroupItem}></input>
+                <input className={classes.formGroupItem}
+                  value={feelings1 || ''}
+                  onChange={(e) => {
+                    setFeelings1(e.target.value)
+                  }}
+                ></input>
               </td>
               <td>
-                <input className={classes.formGroupItem}></input>
+                <input className={classes.formGroupItem}
+                  value={happy1 || ''}
+                  onChange={(e) => {
+                    setHappy1(e.target.value)
+                  }}
+                ></input>
+              </td>
+            </tr>
+            <tr style={{ margin: '20px' }}>
+              <td>
+                <input className={classes.formGroupItem}
+                  value={motivation2 || ''}
+                  onChange={(e) => {
+                    setMotivation2(e.target.value)
+                  }}
+                ></input>
+              </td>
+              <td>
+                <input className={classes.formGroupItem}
+                  value={feelings2 || ''}
+                  onChange={(e) => {
+                    setFeelings2(e.target.value)
+                  }}
+                ></input>
+              </td>
+              <td>
+                <input className={classes.formGroupItem}
+                  value={happy2 || ''}
+                  onChange={(e) => {
+                    setHappy2(e.target.value)
+                  }}
+                ></input>
+              </td>
+            </tr>
+            <tr style={{ margin: '20px' }}>
+              <td>
+                <input className={classes.formGroupItem}
+                  value={motivation3 || ''}
+                  onChange={(e) => {
+                    setMotivation3(e.target.value)
+                  }}
+                ></input>
+              </td>
+              <td>
+                <input className={classes.formGroupItem}
+                  value={feelings3 || ''}
+                  onChange={(e) => {
+                    setFeelings3(e.target.value)
+                  }}
+                ></input>
+              </td>
+              <td>
+                <input className={classes.formGroupItem}
+                  value={happy3 || ''}
+                  onChange={(e) => {
+                    setHappy3(e.target.value)
+                  }}
+                ></input>
+              </td>
+            </tr>
+            <tr style={{ margin: '20px' }}>
+              <td>
+                <input className={classes.formGroupItem}
+                  value={motivation4 || ''}
+                  onChange={(e) => {
+                    setMotivation4(e.target.value)
+                  }}
+                ></input>
+              </td>
+              <td>
+                <input className={classes.formGroupItem}
+                  value={feelings4 || ''}
+                  onChange={(e) => {
+                    setFeelings4(e.target.value)
+                  }}
+                ></input>
+              </td>
+              <td>
+                <input className={classes.formGroupItem}
+                  value={happy4 || ''}
+                  onChange={(e) => {
+                    setHappy4(e.target.value)
+                  }}
+                ></input>
               </td>
             </tr>
           </table>

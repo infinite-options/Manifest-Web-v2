@@ -488,7 +488,7 @@ export default function Firebasev2(props)  {
                   />
 
                   </div>
-
+                    {/* working on this thing */}
                     <div>
                     {(r.is_sublist_available === "True") ? (
                             <div>
@@ -508,6 +508,17 @@ export default function Firebasev2(props)  {
                             <div
                             // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShowATModal: false})}}>
                             >
+                                <FontAwesomeIcon
+                                    icon={faList}
+                                    //title="SubList Available"
+                                    style={{ color: "#ffffff", opacity: '0' }}
+                                    size="small"
+                                    // onClick = {()=> {
+                                    //     // sendRoutineToParent(r.name);
+                                    //     clickHandle(r.name)
+                                    //     // setLoading(!isLoading);
+                                    // }}
+                                />
                             </div>
                         )}
                     </div>

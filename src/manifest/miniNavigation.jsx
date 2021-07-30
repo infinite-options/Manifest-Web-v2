@@ -66,10 +66,14 @@ export default function MiniNavigation(){
         history.push('/login')
     }
 
+    function historyNavigation() {
+      history.push('/matts')
+    }
+
     return(
 
         <div className={classes.buttonContainer} style={{width:'35%',}}>            
-          <Button className={classes.buttonSelection} id="one">
+          <Button className={classes.buttonSelection} id="one" onClick={historyNavigation}>
             History
           </Button>
           <Button className={classes.buttonSelection} id="one" onClick={aboutNavigation}>
