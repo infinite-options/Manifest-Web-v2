@@ -19,20 +19,18 @@ const EditIS = () => {
     delete object.is_title;
     delete object.at_title;
     delete object.at_title;
-    object.photo = object.is_photo;
+    object.photo_url = object.is_photo;
     delete object.is_photo;
-    delete object.at_id;
-    delete object.audio;
+    delete object.photo;
     delete object.end_day_and_time;
     delete object.start_day_and_time;
-
     const numHours = object.numMins / 60;
     let numMins = object.numMins % 60;
     if(numMins < 10)
       numMins = '0' + numMins
     object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
-    object.id = object.is_unique_id;
+    object.is_id = object.is_unique_id;
     delete object.is_unique_id;
     console.log(object);
     let formData = new FormData();
@@ -52,7 +50,7 @@ const EditIS = () => {
   });
    
     axios
-    .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateAT', formData)
+    .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateIS', formData)
     .then((response) => {
       console.log(response);
     })

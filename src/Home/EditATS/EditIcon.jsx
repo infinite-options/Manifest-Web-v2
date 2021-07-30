@@ -111,26 +111,26 @@ const EditIcon = ({routine, task, step}) => {
           }
           }
           console.log("item",itemToChange)
-          // // Convert start_day_and_time to day and time
-          // const startDate = new Date(itemToChange.at_start_day_and_time);
-          // const startDay = convertDateToDayString(startDate);
-          // const startTime = convertDateToTimeString(startDate);
-          // itemToChange.start_day = startDay;
-          // itemToChange.start_time = startTime;
-          // delete itemToChange.start_day_and_time;
-          // // Convert end_day_and_time to day and time
-          // const endDate = new Date(itemToChange.end_day_and_time);
-          // const endDay = convertDateToDayString(endDate);
-          // itemToChange.end_day = endDay;
-          // const endTime = convertDateToTimeString(endDate);
-          // itemToChange.end_time = endTime;
-          // delete itemToChange.end_day_and_time;
-          // // Convert expected_completion_time to number of minutes
-          // const expectedCompletionTime = itemToChange.expected_completion_time ? itemToChange.expected_completion_time : '00:00:00';
-          // const numMins = convertTimeLengthToMins(expectedCompletionTime)
-          // itemToChange.numMins = numMins;
-          // delete itemToChange.expected_completion_time;
-          // console.log(itemToChange);
+          // Convert start_day_and_time to day and time
+          const startDate = new Date(itemToChange.at_datetime_started);
+          const startDay = convertDateToDayString(startDate);
+          const startTime = convertDateToTimeString(startDate);
+          itemToChange.start_day = startDay;
+          itemToChange.start_time = startTime;
+          delete itemToChange.start_day_and_time;
+          // Convert end_day_and_time to day and time
+          const endDate = new Date(itemToChange.at_datetime_completed);
+          const endDay = convertDateToDayString(endDate);
+          itemToChange.end_day = endDay;
+          const endTime = convertDateToTimeString(endDate);
+          itemToChange.end_time = endTime;
+          delete itemToChange.end_day_and_time;
+          // Convert expected_completion_time to number of minutes
+          const expectedCompletionTime = itemToChange.at_expected_completion_time ? itemToChange.at_expected_completion_time : '00:00:00';
+          const numMin = convertTimeLengthToMins(expectedCompletionTime)
+          itemToChange.numMins = numMin;
+          delete itemToChange.expected_completion_time;
+          console.log(itemToChange);
 
           editingATSContext.setEditingATS({
             ...editingATSContext.editingATS,

@@ -117,7 +117,7 @@ const EditIcon = ({routine, task, step}) => {
             ...editingISContext.editingIS,
             editing: rowId === editingISContext.editingIS.id ? !editingISContext.editingIS.editing : true,
             type: rowType,
-            id: rowId,
+            id: step,
             newItem: {
               ...editingISContext.editingIS.newItem,
                ...itemToChange,
