@@ -426,24 +426,24 @@ export function Navigation() {
       {newUserModal()}
       {giveAccessModal()}
       {confirmedModal()}
-      <AppBar className={classes.navigationBar}>
+      <AppBar className={classes.navigationBar} style={{position: 'static'}}>
         <Toolbar>
           <div className={classes.displayNav}>
-            <div style={{width: '33%'}}>
+            <div style={{width: '40%'}}>
               {userListRendered()}
             </div>
             
             {/* {userListRendered()} */}
 
-            <div style={{width: '33%', textAlign: 'center'}}>
-            <Box className={classes.titleElement}>
+            <div style={{width: '20%', textAlign: 'center'}}>
+            <Box className={classes.titleElement} style={{textAlign: 'center'}}>
               <Typography style={{fontSize: '30px', fontWeight: 'bold'}}
                 onClick={()=>{history.push('/home')}}
               >MANIFEST</Typography>
             </Box>
             </div>
 
-            <div className={classes.buttonContainer} style = {{width: '33%'}}>
+            <div className={classes.buttonContainer} style = {{width: '40%', textAlign: 'justify'}}>
               {/* <Button
                 className={classes.buttonColor}
                 variant="text"
@@ -476,25 +476,35 @@ export function Navigation() {
                 Sign In
               </Button> */}
               {loginContext.loginState.loggedIn ? (
-                <>
+                <div style = {{width: '100%', textAlign: 'justify'}}>
                   <Button
-                  //className={classes.buttonColor}
-                  //variant="text"
-                  //onClick={homeNavigation}
-                  // style={{
-                  //   color: 'white',
-                  //   border:'solid',
-                  //   borderwidth: '1px',
-                  //   borderRadius: '22px',
-                  // }}
-                  className = {classes.myButton}
-                  onClick={(e) => {
-                    // googleLogIn();
-                    toggleNewUser(!showNewUser)
-
-                  }}
+                    //className={classes.buttonColor}
+                    //variant="text"
+                    //onClick={homeNavigation}
+                    // style={{
+                    //   color: 'white',
+                    //   border:'solid',
+                    //   borderwidth: '1px',
+                    //   borderRadius: '22px',
+                    // }}
+                    className = {classes.myButton}
+                    style={{float: 'right'}}
+                    onClick={(e) => {
+                      loginContext.setLoginState({
+                        ...loginContext.loginState,
+                        loggedIn: false,
+                        ta: {
+                          ...loginContext.loginState.ta,
+                          id: "",
+                          email: "",
+                        },
+                        usersOfTA: [],
+                        curUser: '',
+                      });
+                      history.push('/')
+                    }}
                   >
-                    Create New User
+                    Logout
                   </Button>
                   
                   <select
@@ -502,6 +512,7 @@ export function Navigation() {
                     //variant="text"
                     //onClick={homeNavigation}
                     className = {classes.myButton}
+                    style={{float: 'right'}}
                     onChange = {e => {
                       if (e.target.value != null){
                         console.log(JSON.parse(e.target.value))
@@ -520,35 +531,29 @@ export function Navigation() {
                     </option> */}
                     {taListRendered()}
                   </select>
+
                   <Button
-                    //className={classes.buttonColor}
-                    //variant="text"
-                    //onClick={homeNavigation}
-                    // style={{
-                    //   color: 'white',
-                    //   border:'solid',
-                    //   borderwidth: '1px',
-                    //   borderRadius: '22px',
-                    // }}
-                    className = {classes.myButton}
-                    onClick={(e) => {
-                      loginContext.setLoginState({
-                        ...loginContext.loginState,
-                        loggedIn: false,
-                        ta: {
-                          ...loginContext.loginState.ta,
-                          id: "",
-                          email: "",
-                        },
-                        usersOfTA: [],
-                        curUser: '',
-                      });
-                      history.push('/')
-                    }}
+                  //className={classes.buttonColor}
+                  //variant="text"
+                  //onClick={homeNavigation}
+                  // style={{
+                  //   color: 'white',
+                  //   border:'solid',
+                  //   borderwidth: '1px',
+                  //   borderRadius: '22px',
+                  // }}
+                  className = {classes.myButton}
+                  style={{float: 'right'}}
+                  onClick={(e) => {
+                    // googleLogIn();
+                    toggleNewUser(!showNewUser)
+
+                  }}
                   >
-                    Logout
+                    Create New User
                   </Button>
-                </>
+                  
+                </div>
               ) : (null)}
               
             </div>

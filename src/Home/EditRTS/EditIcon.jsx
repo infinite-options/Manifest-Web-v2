@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from 'axios';
 import EditRTSContext from './EditRTSContext';
 import DayRoutines from 'Home/DayRoutines';
+import { Step } from '@material-ui/core';
 
 const convertDateToDayString = (dateObject) => {
   // console.log(dateObject)
@@ -50,9 +51,11 @@ const convertTimeLengthToMins = (timeString) => {
   return ('' + numMins);
 }
 
-const EditIcon = ({routine, task, step, id}) => {
+const EditIcon = ({routine, task, step}) => {
   const editingRTSContext = useContext(EditRTSContext);
   const [arrRoutine, setarrRoutine] = useState([])
+  const [routineCall, setroutineCall] = useState(false)
+
 
   let rowType = '';
   let rowId = '';
@@ -64,13 +67,13 @@ const EditIcon = ({routine, task, step, id}) => {
     rowId = task.at_unique_id;
   } else if (routine) {
     rowType = 'routine';
-    rowId = routine.id;
+   // rowId = routine.id;
   }
 
   useEffect(() => {
 
     axios
-  .get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/" + id)
+  .get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/" + step)
     .then((response) => {
       console.log("routineGet", response)
       for(var i=0; i <response.data.result.length; i++){
@@ -83,9 +86,9 @@ const EditIcon = ({routine, task, step, id}) => {
       }
       console.log(err)
     })
-  },[]);
+  },[routineCall]);
  
-  console.log("item", arrRoutine)
+  console.log("item", step, routine.id)
 
   return (
     <div>
@@ -101,11 +104,13 @@ const EditIcon = ({routine, task, step, id}) => {
         icon={faEdit}
         onClick={(e) => {
           e.stopPropagation();
-          console.log("item",arrRoutine[0].gr_unique_id, routine.id)
+          setroutineCall(!routineCall)
+          console.log("item",arrRoutine[0].gr_start_day_and_time, routine.id)
           var itemToChange;
           for (var k=0; k<arrRoutine.length; k++){
             if(routine.id === arrRoutine[k].gr_unique_id){
               itemToChange = arrRoutine[k] 
+              rowId =  arrRoutine[k].gr_unique_id
               console.log("item",arrRoutine[k])
             }
           }
@@ -142,6 +147,7 @@ const EditIcon = ({routine, task, step, id}) => {
             editing: rowId === editingRTSContext.editingRTS.id ? !editingRTSContext.editingRTS.editing : true,
             type: rowType,
             id: rowId,
+            currentUserId: step,
             newItem: {
               ...editingRTSContext.editingRTS.newItem,
                ...itemToChange,

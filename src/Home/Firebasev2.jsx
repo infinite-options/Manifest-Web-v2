@@ -80,15 +80,14 @@ export default function Firebasev2(props)  {
 
     useEffect(() => {
         setHG([])
-        console.log("in useEffect Firebasev2")
-        console.log(currentUser)
+        console.log("in useEffect Firebasev2", currentUser)
+     //   console.log(currentUser)
         axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getHistory/" + currentUser)
         .then((response) =>{
             for(var i=0; i <response.data.result.length; i++){
                 historyGot.push(response.data.result[i]);
             }
-            console.log("historyGot")
-            console.log(historyGot);
+            console.log("historyGot",historyGot);
             cleanData(historyGot, currentDate);
             
         })
@@ -132,6 +131,7 @@ export default function Firebasev2(props)  {
                 temp.push(historyGot[i]);
             }
         }
+        console.log('temp',temp)
         //now temp has data we want
     // move temp to inRange with no repeats
         const map = new Map();
@@ -146,7 +146,7 @@ export default function Firebasev2(props)  {
         }
         inRange.reverse();//put latest day at end
 
-
+        console.log('inRange', inRange)
         //bigList will hold new data format sidewase
         var bigList = [];       
         for (var d = 0; d < inRange.length; d++){
@@ -155,7 +155,7 @@ export default function Firebasev2(props)  {
             //sort obj by time of day
             obj.sort((a, b) => a.start_day_and_time - b.start_day_and_time);
             for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
-                if(obj[r].routine !== undefined){
+             //   if(obj[r].routine !== undefined){
                 if(obj[r].title){
                     // console.log("gere");
                     var isNewR = true;
@@ -170,7 +170,7 @@ export default function Firebasev2(props)  {
                     if (isNewR){
                         var currentR = {type: "Routine", title: obj[r].title, under: "", days: [], tBox: {}, 
                         show: true, photo: obj[r].photo, startTime: obj[r].start_day_and_time, 
-                        endTime: obj[r].end_day_and_time, is_sublist_available: obj[r].is_sublist_available,id: obj[r].routine}; //if new, make object and put in bigList
+                        endTime: obj[r].end_day_and_time, is_sublist_available: obj[r].is_sublist_available,id: obj[r].routine || obj[r].goal}; //if new, make object and put in bigList
                         currentR.days[d] = obj[r].status;
                         bigList.push(currentR);
                     }
@@ -215,9 +215,7 @@ export default function Firebasev2(props)  {
                             }
                         }
                     }
-                    
-
-                }
+              //  }
             }
             }
         }
@@ -266,6 +264,7 @@ export default function Firebasev2(props)  {
                 console.log("allow", onlyAllowed[i])
                 tempRows.push(displayRoutines(onlyAllowed[i]));
                 routine = onlyAllowed[i];
+                console.log("only", onlyAllowed[i]);
             }
             else if (onlyAllowed[i].type == "Action"){
                 tempRows.push(displayActions(onlyAllowed[i], routine));
@@ -409,7 +408,7 @@ export default function Firebasev2(props)  {
                 </div>
 
                 <div style={{ display:"flex" }}>
-                <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
+                <div style={{marginRight:'1rem',display:'flex', flexDirection:'column', textAlign: 'center'}}>
                     <div style={{flex:'1'}}>
 
                 <CopyIcon
@@ -477,18 +476,18 @@ export default function Firebasev2(props)  {
                         />
                         </div>
                 </div>
-                    <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
+                    <div style={{marginRight:'1rem',display:'flex',  flexDirection:'column'}}>
 
                    <div>
                   <EditIcon
                     routine={r}
                     task={null}
-                    step={null} 
-                    id={currentUser} 
+                    step={currentUser} 
+                  //  id={currentUser} 
                   />
 
                   </div>
-
+                    {/* working on this thing */}
                     <div>
                     {(r.is_sublist_available === "True") ? (
                             <div>
@@ -508,6 +507,17 @@ export default function Firebasev2(props)  {
                             <div
                             // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShowATModal: false})}}>
                             >
+                                <FontAwesomeIcon
+                                    icon={faList}
+                                    //title="SubList Available"
+                                    style={{ color: "#ffffff", opacity: '0' }}
+                                    size="small"
+                                    // onClick = {()=> {
+                                    //     // sendRoutineToParent(r.name);
+                                    //     clickHandle(r.name)
+                                    //     // setLoading(!isLoading);
+                                    // }}
+                                />
                             </div>
                         )}
                     </div>

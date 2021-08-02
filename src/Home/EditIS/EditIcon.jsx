@@ -66,6 +66,7 @@ const EditIcon = ({routine, task, step}) => {
     rowId = routine.gr_unique_id;
   }
 
+  console.log('stepIs',step)
   useEffect(() => {
 
     axios.get('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/instructionsSteps/' + step.toString())
@@ -107,12 +108,16 @@ const EditIcon = ({routine, task, step}) => {
             itemToChange = arrSteps[j];
           }
           }
+          const expectedCompletionTime = itemToChange.is_expected_completion_time ? itemToChange.is_expected_completion_time : '00:00:00';
+          const numMins = convertTimeLengthToMins(expectedCompletionTime)
+          itemToChange.numMins = numMins;
+          delete itemToChange.is_expected_completion_time;
 
           editingISContext.setEditingIS({
             ...editingISContext.editingIS,
             editing: rowId === editingISContext.editingIS.id ? !editingISContext.editingIS.editing : true,
             type: rowType,
-            id: rowId,
+            id: step,
             newItem: {
               ...editingISContext.editingIS.newItem,
                ...itemToChange,

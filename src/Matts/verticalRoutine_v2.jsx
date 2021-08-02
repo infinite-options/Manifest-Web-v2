@@ -37,6 +37,7 @@ import { Container } from 'react-grid-system';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
+import MiniNavigation from '../manifest/miniNavigation'
 
 
 const useStyles = makeStyles({
@@ -154,7 +155,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
 
                 <Col xs={7} style={{ paddingRight: "1rem"  ,marginTop:'0.5rem'}}>
                         <img
-                        src={r["gr_photo"]}
+                        src={r["photo"]}
                         alt="Routines"
                         className="center"
                         height="28px"
@@ -367,7 +368,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
 
                 <Col xs={7} style={{ paddingRight: "1rem"  ,marginTop:'0.5rem'}}>
                         <img
-                        src={a["at_photo"]}
+                        src={a["photo"]}
                         alt="Routines"
                         className="center"
                         height="28px"
@@ -580,7 +581,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
 
                 <Col xs={7} style={{ paddingRight: "1rem"  ,marginTop:'0.5rem'}}>
                         <img
-                        src={i["is_photo"]}
+                        src={i["photo"]}
                         alt="Routines"
                         className="center"
                         height="28px"
@@ -754,8 +755,8 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
     // }
     return(
         <Box width = "350px">
-            <Button className={classes.buttonSelection} onClick={() => history.push(
-                {pathname: "/matts"})} id="one">
+            {/* <Button className={classes.buttonSelection} onClick={() => history.push(
+                {pathname: "/matts", state: currentUser})} id="one">
                 History
         </Button>
             <Button className={classes.buttonSelection} id="one">
@@ -774,7 +775,8 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
         </Button>
             <Button className={classes.buttonSelection} id="one">
                 About
-        </Button>
+        </Button> */}
+        <MiniNavigation/>
         <p style={{height:"54.5px", margin:"0px"}}></p>
         <row>
                 {rows}

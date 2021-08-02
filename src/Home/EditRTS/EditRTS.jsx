@@ -16,6 +16,17 @@ const EditRTS = () => {
     object.start_day_and_time = start_day_and_time_string;
     delete object.start_day;
     delete object.start_time;
+    object.title = object.gr_title;
+    delete object.gr_title;
+    delete object.gr_completed;
+    delete object.gr_datetime_completed;
+    delete object.gr_datetime_started;
+    object.photo_url = object.gr_photo;
+    delete object.gr_photo;
+    delete object.gr_unique_id;
+    //object.id = Number(object.id);
+    delete object.location;
+    delete object.notification;
     // Get end_day_and_time
     const end_day_and_time_simple_string = `${object.end_day} ${object.end_time}:00`;
     const end_day_and_time_string = new Date(end_day_and_time_simple_string).toString();
@@ -30,7 +41,7 @@ const EditRTS = () => {
     object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
     object.id = editingRTSContext.editingRTS.id;
-    object.user_id = editingRTSContext.editingRTS.user_id;
+    object.user_id = editingRTSContext.editingRTS.currentUserId;
     object.ta_people_id = '';
     console.log("obj",object);
     let formData = new FormData();
@@ -132,7 +143,7 @@ const EditRTS = () => {
                     ...editingRTSContext.editingRTS,
                     newItem: {
                       ...editingRTSContext.editingRTS.newItem,
-                      title: e.target.value
+                      gr_title: e.target.value
                     }
                   })
                 }}
@@ -965,6 +976,12 @@ const EditRTS = () => {
                   borderRadius: '30px',
                   color: '#ffffff',
                   textAlign: 'center',
+                }}
+                onClick={()=>{
+                  editingRTSContext.setEditingRTS({
+                    ...editingRTSContext.editingRTS,
+                    editing: false
+                  })
                 }}
               >
                 Cancel

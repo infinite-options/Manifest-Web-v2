@@ -17,6 +17,20 @@ const EditATS = () => {
     delete object.start_day;
     delete object.start_time;
     object.end_day_and_time = `${object.end_day} ${object.end_time}:00`;
+    object.available_start_time = object.at_available_start_time;
+    delete object.at_available_start_time;
+    object.available_end_time = object.at_available_end_time;
+    delete object.at_available_end_time;
+    object.datetime_completed = object.at_datetime_completed;
+    delete object.at_datetime_completed;
+    object.datetime_started = object.at_datetime_started;
+    delete object.at_datetime_started;
+    object.expected_completion_time = object.at_expected_completion_time;
+    delete object.at_expected_completion_time;
+    object.photo = object.at_photo;
+    object.photo_url = ""
+    object.type = ""
+    delete object.at_photo;
     delete object.end_day;
     delete object.end_time;
     delete object.at_sequence
@@ -35,7 +49,7 @@ const EditATS = () => {
       numMins = '0' + numMins
     object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
-    object.id = editingATSContext.editingATS.routineId;
+    object.id = editingATSContext.editingATS.newItem.at_unique_id;
     console.log(object);
     let formData = new FormData();
     Object.entries(object).forEach(entry => {
@@ -136,21 +150,20 @@ const EditATS = () => {
               >
                 <input
                   style={{
-                    width: '100%',
+                    width: '6rem',
                     borderRadius:'10px',
                     border:'0px',
-                    width: '100%',
                     fontSize:'12px', 
                     height:'2rem',
                   }}
                   type='time'
-                  value={editingATSContext.editingATS.newItem.available_start_time}
+                  value={editingATSContext.editingATS.newItem.at_available_start_time}
                   onChange={(e) => {
                     editingATSContext.setEditingATS({
                       ...editingATSContext.editingATS,
                       newItem: {
                         ...editingATSContext.editingATS.newItem,
-                        start_time: e.target.value
+                        at_available_start_time: e.target.value
                       }
                     })
                   }}
@@ -168,10 +181,9 @@ const EditATS = () => {
               >
                 <input
                   style={{
-                    width: '100%',
+                    width: '6rem',
                     borderRadius:'10px',
                     border:'0px',
-                    width: '100%',
                     fontSize:'12px', 
                     height:'2rem',
                   }}
@@ -201,13 +213,13 @@ const EditATS = () => {
                     height:'2rem',
                   }}
                   type='time'
-                  value={editingATSContext.editingATS.newItem.available_end_time}
+                  value={editingATSContext.editingATS.newItem.at_available_end_time}
                   onChange={(e) => {
                     editingATSContext.setEditingATS({
                       ...editingATSContext.editingATS,
                       newItem: {
                         ...editingATSContext.editingATS.newItem,
-                        end_time: e.target.value
+                        at_available_end_time: e.target.value
                       }
                     })
                   }}
@@ -228,7 +240,7 @@ const EditATS = () => {
                 <div>User's library</div>
               </Col>
               <Col>
-                <img alt='icon' src={editingATSContext.editingATS.newItem.photo}/>
+                <img alt='icon' src={editingATSContext.editingATS.newItem.at_photo}/>
               </Col>
             </Row>
             </Container>
