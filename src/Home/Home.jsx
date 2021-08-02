@@ -1510,7 +1510,7 @@ export default function Home(props) {
         
         <Box backgroundColor="#bbc8d7">
           <div style={{width: '35%', float: 'left'}}>
-            <Button className={classes.buttonSelection} id="one" onClick={()=> history.push("/matts") }>
+            <Button className={classes.buttonSelection} id="one" onClick={()=> history.push("/history") }>
               History
             </Button>
             <Button className={classes.buttonSelection} id="one" onClick={ToggleShowAbout}>

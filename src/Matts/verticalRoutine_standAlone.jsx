@@ -119,21 +119,27 @@ const VerticalRoutine = ({userID}) => {
         }
         inRange.reverse();//put latest day at end
 
+        function custom_sort(a, b) {
+            return (new Date(a.start_day_and_time).getHours() + (new Date(a.start_day_and_time).getMinutes() / 60))
+             - (new Date(b.start_day_and_time).getHours() + (new Date(b.start_day_and_time).getMinutes() / 60));
+        }
 
         //bigList will hold new data format sidewase
         var bigList = [];       
         for (var d = 0; d < inRange.length; d++){
             const obj = JSON.parse(inRange[d].details)
             console.log(obj);
+
             //sort obj by time of day
-            obj.sort((a, b) => a.start_day_and_time - b.start_day_and_time);
+            obj.sort(custom_sort);
+
             for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
                 // console.log(r);
                 if(obj[r].title){
                     // console.log("gere");
                     var isNewR = true;
                     for (var s=0; s<bigList.length; s++){       //check through and see if this is a new routine
-                        if (bigList[s].type == "Routine" && bigList[s].title == obj[r].title){
+                        if (bigList[s].type == "Routine" && bigList[s].number == obj[r].routine){
                             bigList[s].days[d] = obj[r].status;   //if already there- just update that day status
                             isNewR = false;
                             break;
@@ -141,26 +147,30 @@ const VerticalRoutine = ({userID}) => {
                     }
                     if (isNewR){
                         var currentR = {type: "Routine", title: obj[r].title, under: "", days: [], tBox: {}, 
-                        show: true, photo: obj[r].photo, startTime: obj[r].start_day_and_time, 
-                        endTime: obj[r].end_day_and_time, is_sublist_available: obj[r].is_sublist_available}; //if new, make object and put in bigList
+                        show: true, photo: obj[r].photo, startTime: obj[r].start_day_and_time, is_available: obj[r].is_available,
+                        endTime: obj[r].end_day_and_time, is_sublist_available: obj[r].is_sublist_available, number: obj[r].routine}; //if new, make object and put in bigList
                         currentR.days[d] = obj[r].status;
                         bigList.push(currentR);
                     }
 
                     if(obj[r].actions!= undefined){
                         var actions = obj[r].actions;
+                        console.log("ACTIONS:" + d);
+                        console.log(actions);
                         for (var a=0; a < actions.length; a++){         //FOR ACTIONS
                             if(actions[a].title){
                                 var isNewA = true;
                                 for (var s=0; s<bigList.length; s++){
-                                    if(bigList[s].type == "Action" && bigList[s].title == actions[a].title){
+                                    if(bigList[s].type == "Action" && bigList[s].number == actions[a].action){
                                         bigList[s].days[d] = actions[a].status;
                                         isNewA = false;
                                         break;
                                     }
                                 }
                                 if(isNewA){
-                                    var currentA = {type: "Action", title: actions[a].title, under: obj[r].title, days:[], tBox: {}, show: false};
+                                    var currentA = {type: "Action", title: actions[a].title, under: obj[r].title, days:[], tBox: {}, show: false,
+                                     photo: actions[a].photo, is_sublist_available: actions[a].is_sublist_available, 
+                                     is_available: actions[a].is_available, number: actions[a].action};
                                     currentA.days[d] = actions[a].status;
                                     bigList.push(currentA);
                                 }
@@ -170,14 +180,15 @@ const VerticalRoutine = ({userID}) => {
                                         if (insts[i].title){
                                             var isNewI = true;
                                             for(var s=0; s<bigList.length; s++){
-                                                if (bigList[s].type == "Instruction" && bigList[s].title == insts[i].title){
+                                                if (bigList[s].type == "Instruction" && bigList[s].number == insts[i].instruction){
                                                     bigList[s].days[d] = insts[i].status;
                                                     isNewI = false;
                                                     break;
                                                 }
                                             }
                                             if(isNewI){
-                                                var currentI = {type: "Instruction", title: insts[i].title, under: actions[a].title, days:[], tBox: {}, show: false};
+                                                var currentI = {type: "Instruction", title: insts[i].title, under: actions[a].title, days:[], tBox: {}, 
+                                                show: false, photo: insts[i].photo, is_available: insts[i].is_available, number: insts[i].instruction};
                                                 currentI.days[d] = insts[i].status;
                                                 bigList.push(currentI);
                                             }
@@ -941,7 +952,7 @@ const VerticalRoutine = ({userID}) => {
     return(
         <Box width = "350px">
             <Button className={classes.buttonSelection} onClick={() => history.push(
-                {pathname: "/matts", state: currentUser})} id="one">
+                {pathname: "/history", state: currentUser})} id="one">
                 History
         </Button>
             <Button className={classes.buttonSelection} id="one">

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 //import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import DayRoutines from '../Home/DayRoutines';
@@ -24,6 +24,8 @@ import { Navigation } from '../Home/navigation';
 import Firebasev2 from "../manifest/OldManifest/Firebasev2";
 import {faList} from "@fortawesome/free-solid-svg-icons";
 import VerticalRoutine from './verticalRoutine_v2';
+import LoginContext from '../LoginContext';
+
 
 
 import {
@@ -76,8 +78,9 @@ export default function MainPage(props) {
 
     //----Change these commented lines to get userID from state being passed in/
     //const currentUser = props.location.state; //matts testing 72
-    const currentUser = "100-000072";
-    console.log(props.location.state);
+    // const currentUser = "100-000072";
+    const loginContext = useContext(LoginContext);
+    const currentUser = loginContext.loginState.curUser;   
     const [historyGot, setHG] = useState([]);
     const inRange = [];
     const [currentDate, setCurDate] = useState(new Date(Date.now()))
@@ -87,8 +90,8 @@ export default function MainPage(props) {
     //table things:
     const classes = useStyles();
     
-    function createData(name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type){    //rows structure
-        return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type}
+    function createData(name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, is_available){    //rows structure
+        return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, is_available}
     }
     const [rows, setRows] = useState([]);
     const [isLoading, setLoading] = useState(true);
@@ -151,15 +154,20 @@ export default function MainPage(props) {
         }
         inRange.reverse();//put latest day at end
 
+        function custom_sort(a, b) {
+            return (new Date(a.start_day_and_time).getHours() + (new Date(a.start_day_and_time).getMinutes() / 60))
+             - (new Date(b.start_day_and_time).getHours() + (new Date(b.start_day_and_time).getMinutes() / 60));
+        }
 
         //bigList will hold new data format sidewase
         var bigList = [];       
-        for (var d = 0; d < inRange.length; d++){
-            const obj = JSON.parse(inRange[d].details)
+        // for (var d = (inRange.length - 1); d >= 0; d--){
+        for (var d = 0; d < inRange.length-1; d++){   
+        const obj = JSON.parse(inRange[d+1].details)
             console.log(obj);
 
             //sort obj by time of day
-            //obj.sort((a, b) => formatTime(a.start_day_and_time) - formatTime(b.start_day_and_time));
+            obj.sort(custom_sort);
 
             for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
                 // console.log(r);
@@ -167,7 +175,7 @@ export default function MainPage(props) {
                     // console.log("gere");
                     var isNewR = true;
                     for (var s=0; s<bigList.length; s++){       //check through and see if this is a new routine
-                        if (bigList[s].type == "Routine" && bigList[s].title == obj[r].title){
+                        if (bigList[s].type == "Routine" && bigList[s].number == obj[r].routine){
                             bigList[s].days[d] = obj[r].status;   //if already there- just update that day status
                             isNewR = false;
                             break;
@@ -175,26 +183,30 @@ export default function MainPage(props) {
                     }
                     if (isNewR){
                         var currentR = {type: "Routine", title: obj[r].title, under: "", days: [], tBox: {}, 
-                        show: true, photo: obj[r].photo, startTime: obj[r].start_day_and_time, 
-                        endTime: obj[r].end_day_and_time, is_sublist_available: obj[r].is_sublist_available}; //if new, make object and put in bigList
+                        show: true, photo: obj[r].photo, startTime: obj[r].start_day_and_time, is_available: obj[r].is_available,
+                        endTime: obj[r].end_day_and_time, is_sublist_available: obj[r].is_sublist_available, number: obj[r].routine}; //if new, make object and put in bigList
                         currentR.days[d] = obj[r].status;
                         bigList.push(currentR);
                     }
 
                     if(obj[r].actions!= undefined){
                         var actions = obj[r].actions;
+                        console.log("ACTIONS:" + d);
+                        console.log(actions);
                         for (var a=0; a < actions.length; a++){         //FOR ACTIONS
                             if(actions[a].title){
                                 var isNewA = true;
                                 for (var s=0; s<bigList.length; s++){
-                                    if(bigList[s].type == "Action" && bigList[s].title == actions[a].title){
+                                    if(bigList[s].type == "Action" && bigList[s].number == actions[a].action){
                                         bigList[s].days[d] = actions[a].status;
                                         isNewA = false;
                                         break;
                                     }
                                 }
                                 if(isNewA){
-                                    var currentA = {type: "Action", title: actions[a].title, under: obj[r].title, days:[], tBox: {}, show: false};
+                                    var currentA = {type: "Action", title: actions[a].title, under: obj[r].title, days:[], tBox: {}, show: false,
+                                     photo: actions[a].photo, is_sublist_available: actions[a].is_sublist_available, 
+                                     is_available: actions[a].is_available, number: actions[a].action};
                                     currentA.days[d] = actions[a].status;
                                     bigList.push(currentA);
                                 }
@@ -204,14 +216,15 @@ export default function MainPage(props) {
                                         if (insts[i].title){
                                             var isNewI = true;
                                             for(var s=0; s<bigList.length; s++){
-                                                if (bigList[s].type == "Instruction" && bigList[s].title == insts[i].title){
+                                                if (bigList[s].type == "Instruction" && bigList[s].number == insts[i].instruction){
                                                     bigList[s].days[d] = insts[i].status;
                                                     isNewI = false;
                                                     break;
                                                 }
                                             }
                                             if(isNewI){
-                                                var currentI = {type: "Instruction", title: insts[i].title, under: actions[a].title, days:[], tBox: {}, show: false};
+                                                var currentI = {type: "Instruction", title: insts[i].title, under: actions[a].title, days:[], tBox: {}, 
+                                                show: false, photo: insts[i].photo, is_available: insts[i].is_available, number: insts[i].instruction};
                                                 currentI.days[d] = insts[i].status;
                                                 bigList.push(currentI);
                                             }
@@ -238,7 +251,7 @@ export default function MainPage(props) {
         for (var i=0; i< bigList.length; i++){
             tempRows.push(createData(bigList[i].title, bigList[i].days[6], bigList[i].days[5], bigList[i].days[4], bigList[i].days[3],
                  bigList[i].days[2], bigList[i].days[1], bigList[i].days[0], bigList[i].show, bigList[i].under, bigList[i].photo,
-                 bigList[i].startTime, bigList[i].endTime, bigList[i].is_sublist_available, bigList[i].type));
+                 bigList[i].startTime, bigList[i].endTime, bigList[i].is_sublist_available, bigList[i].type, bigList[i].is_available));
         }
         console.log(tempRows);
         setLoading(false);
@@ -368,6 +381,8 @@ export default function MainPage(props) {
                 newRows.push(rows[r]);
             }
         }
+        console.log("ONLY ALLOWED HERE:")
+        console.log(newRows);
         return(newRows);
     }
 
@@ -391,6 +406,8 @@ export default function MainPage(props) {
         console.log("clocked pre");
         cleanData(historyGot, new Date(currentDate.getTime() - 604800000));
         setCurDate(new Date(currentDate.getTime() - 604800000));
+        // console.log((new Date(Date.now())).getTime());
+        // console.log(currentDate.getDate());
         setLoading(true);
         setLoading(false);
         
@@ -399,6 +416,8 @@ export default function MainPage(props) {
         console.log("clocked nex");
         cleanData(historyGot, new Date(currentDate.getTime() + 604800000));
         setCurDate(new Date(currentDate.getTime() + 604800000));
+        // console.log(Date(Date.now()));
+        // console.log(currentDate);
     }
 
     
@@ -471,6 +490,7 @@ export default function MainPage(props) {
                                                     </p>
                                                 </Col>
                                                 <Col>
+                                                    {(new Date(Date.now()).getDate() != currentDate.getDate()) ?  (       
                                                     <FontAwesomeIcon
                                                         // style={{ marginLeft: "50%" }}
                                                         style={{ float: 'right' }}
@@ -480,7 +500,8 @@ export default function MainPage(props) {
                                                         onClick={(e) => {
                                                             nextWeek();
                                                         }}
-                                                    />
+                                                    />) : (<div></div>)
+                                                    }
                                                 </Col>
                                             </Row>
                                         </Container>

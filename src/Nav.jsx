@@ -17,7 +17,7 @@ import TermsAndConditions from './components/TermsAndConditions/TermsAndConditio
 import MobilePaypalCheckout from './mobile/MobilePaypalCheckout';
 import MainPage from '../src/manifest/OldManifest/Main';
 import Home from '../src/Home/Home';
-import Matts from './Matts/Matts_v6';
+import History from './Matts/Matts_v6';
 import SignUp from '../src/manifest/SignUp';
 import AboutModal from 'manifest/Home/About';
 // Nav here will take all the adress from children page to this and give
@@ -29,7 +29,7 @@ function Nav(authLevel, isAuth) {
       <Route exact path="/" component={Login} />
       <Route exact path="/main" component={MainPage} />
       <Route exact path="/home" component={Home} />
-      <Route exact path="/matts" component={Matts} />
+      <Route exact path="/history" component={History} />
       <Route exact path="/signup" component={SignUp} />
       <Route exact path="/about" component={AboutModal} />
       {/* <Route exact path="/signup" component={Signup} />

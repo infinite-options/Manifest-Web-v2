@@ -67,7 +67,7 @@ export default function MiniNavigation(){
     }
 
     function historyNavigation() {
-      history.push('/matts')
+      history.push('/history')
     }
 
     return(
