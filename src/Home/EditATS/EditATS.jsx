@@ -84,9 +84,406 @@ const EditATS = () => {
     <div
       style={{
         marginTop: '1rem',
-        marginLeft: '5rem',
+        marginLeft: '2rem',
         marginRight: '3rem',
+        width: '100%',
+        backgroundColor: '#E4C33A',
+        color: '#ffffff'
+      }}
+    >
+      <Container
+        style={{
+          padding: '2rem',
+        }}
+      >
+        <Col style={{float: 'left', width: '40%'}}>
+          <div>
+            <div style={{fontWeight:'bold'}}>Action Name </div>
+            <input 
+              style={{borderRadius:'10px', border:'0px', fontSize:'12px', height:'2rem', width:'15rem'}}
+              placeholder="Name Action here"
+              value={editingATSContext.editingATS.newItem.at_title}
+              onChange={(e) => {
+                editingATSContext.setEditingATS({
+                  ...editingATSContext.editingATS,
+                  newItem: {
+                    ...editingATSContext.editingATS.newItem,
+                    at_title: e.target.value
+                  }
+                })
+              }}
+            />
+          </div>
+          <div style={{fontWeight:'bold', marginTop: '10px'}} >Change Icon</div>
+            <Container>
+              <Row>
+                <Col style={{fontSize:'10px', textDecoration:'underline'}}>
+                  <div>Add icon to library</div>
+                  <div>Use icon from library</div>
+                  <div>User's library</div>
+                </Col>
+                <Col>
+                  <img alt='icon' src={editingATSContext.editingATS.newItem.at_photo}/>
+                </Col>
+              </Row>
+            </Container>
 
+            <div style={{fontWeight:'bold'}}>Start Time</div>
+            
+            <Row>
+              <Col
+                sm={6}
+              >
+                <input
+                  style={{
+                    borderRadius:'10px',
+                    border:'0px',
+                    width: '100%',
+                    fontSize:'12px', 
+                    height:'2rem',
+                    width:'5rem'
+                  }}
+                  type='date'
+                  value={editingATSContext.editingATS.newItem.start_day}
+                  onChange={(e) => {
+                    editingATSContext.setEditingATS({
+                      ...editingATSContext.editingATS,
+                      newItem: {
+                        ...editingATSContext.editingATS.newItem,
+                        start_day: e.target.value
+                      }
+                    })
+                  }}
+                />
+              </Col>
+              <Col
+                sm={6}
+              >
+                <input
+                  style={{
+                    width: '6rem',
+                    borderRadius:'10px',
+                    border:'0px',
+                    fontSize:'12px', 
+                    height:'2rem',
+                  }}
+                  type='time'
+                  value={editingATSContext.editingATS.newItem.at_available_start_time}
+                  onChange={(e) => {
+                    editingATSContext.setEditingATS({
+                      ...editingATSContext.editingATS,
+                      newItem: {
+                        ...editingATSContext.editingATS.newItem,
+                        at_available_start_time: e.target.value
+                      }
+                    })
+                  }}
+                />
+              </Col>
+            </Row>
+            
+            
+            
+
+            <div style={{ display:'flex'}}>
+            <div>
+            <div  style={{fontWeight:'bold'}}>This Takes Me</div>
+              <input
+                style={{borderRadius:'10px', border:'0px', fontSize:'12px', height:'2rem', width:'10rem'}}
+                type='number'
+                value={editingATSContext.editingATS.newItem.numMins}
+                onChange={(e) => {
+                  editingATSContext.setEditingATS({
+                    ...editingATSContext.editingATS,
+                    newItem: {
+                      ...editingATSContext.editingATS.newItem,
+                      numMins: e.target.value
+                    }
+                  })
+                }}
+              />
+            </div>
+            <div style={{marginTop:'1.5rem', marginLeft:'1rem'}}> Minutes </div>
+            </div>
+
+            <div style={{fontWeight:'bold', }}>End Time</div>
+            
+            <Row>
+              <Col
+                sm={6}
+              >
+                <input
+                  style={{
+                    width: '6rem',
+                    borderRadius:'10px',
+                    border:'0px',
+                    fontSize:'12px', 
+                    height:'2rem',
+                  }}
+                  type='date'
+                  value={editingATSContext.editingATS.newItem.end_day}
+                  onChange={(e) => {
+                    editingATSContext.setEditingATS({
+                      ...editingATSContext.editingATS,
+                      newItem: {
+                        ...editingATSContext.editingATS.newItem,
+                        end_day: e.target.value
+                      }
+                    })
+                  }}
+                />
+              </Col>
+              <Col
+                sm={6}
+              >
+                <input
+                  style={{
+                    width: '100%',
+                    borderRadius:'10px',
+                    border:'0px',
+                    width: '100%',
+                    fontSize:'12px', 
+                    height:'2rem',
+                  }}
+                  type='time'
+                  value={editingATSContext.editingATS.newItem.at_available_end_time}
+                  onChange={(e) => {
+                    editingATSContext.setEditingATS({
+                      ...editingATSContext.editingATS,
+                      newItem: {
+                        ...editingATSContext.editingATS.newItem,
+                        at_available_end_time: e.target.value
+                      }
+                    })
+                  }}
+                />
+              </Col>
+            </Row>
+            
+
+            
+        </Col>
+        <div style={{backgroundColor: 'white', width: '2px', height: '100px', float: 'left', marginLeft:'4%', marginRight:'4%'}}/>
+        <Col style={{float: 'left', width: '40%'}}>
+          
+        <div style={{fontWeight:'bold'}}>Repeating Options</div>
+            
+            <Col>
+              <Row >
+                <div style={{fontSize:'14px', width: '100%'}}>
+                  Repeat Every
+                  <input
+                    type='number'
+                    style={{width: '4rem', marginLeft:'1rem', marginRight:'0.5rem'}}
+                    value={editingATSContext.editingATS.newItem.repeat_every}
+                    onChange={(e) => {
+                      editingATSContext.setEditingATS({
+                        ...editingATSContext.editingATS,
+                        newItem: {
+                          ...editingATSContext.editingATS.newItem,
+                          repeat_every: e.target.value
+                        }
+                      })
+                    }}
+                  />
+                  Days
+                </div>
+                <div style={{fontSize:'14px'}}>
+                  Does not repeat 
+                  <input
+                   style={{ marginLeft:'1rem', marginTop:'1rem'}}
+                    name='repeating'
+                    type='checkbox'
+                    checked={editingATSContext.editingATS.newItem.repeat}
+                    onChange={(e) => {
+                      editingATSContext.setEditingATS({
+                        ...editingATSContext.editingATS,
+                        newItem: {
+                          ...editingATSContext.editingATS.newItem,
+                          repeat: e.target.checked
+                        }
+                      })
+                    }}
+                  />
+                </div>
+              </Row>
+              <Row>
+                
+                <Row>
+                  
+                    <div> Ends </div>
+                  
+                  
+                    <div style={{ fontSize:'12px'}}>
+                      <input
+                        name='repeatingEnd'
+                        type='radio'
+                        value='On'
+                        onChange={(e) => {
+                          editingATSContext.setEditingATS({
+                            ...editingATSContext.editingATS,
+                            newItem: {
+                              ...editingATSContext.editingATS.newItem,
+                              repeat_type: e.target.value
+                            }
+                          })
+                        }}
+                      />
+                      On
+                      <input
+                        type='date'
+                        style={{borderRadius:'8px', border:'0px', fontSize:'12px', height:'1.5rem'}}
+                        value={editingATSContext.editingATS.newItem.repeat_ends_on}
+                        onChange={(e) => {
+                          editingATSContext.setEditingATS({
+                            ...editingATSContext.editingATS,
+                            newItem: {
+                              ...editingATSContext.editingATS.newItem,
+                              repeat_ends_on: e.target.value
+                            }
+                          })
+                        }}
+                      />
+                      </div>
+                    <div>
+                      <input
+                        name='repeatingEnd'
+                        type='radio'
+                        value='occurences'
+                        onChange={(e) => {
+                          editingATSContext.setEditingATS({
+                            ...editingATSContext.editingATS,
+                            newItem: {
+                              ...editingATSContext.editingATS.newItem,
+                              repeat_type: e.target.value
+                            }
+                          })
+                        }}
+                      />
+                      After
+                      <input
+                        type='number'
+                        style={{borderRadius:'8px', border:'0px', fontSize:'12px', height:'1.5rem', width:'60px'}}
+                        value={editingATSContext.editingATS.newItem.repeat_occurences}
+                        onChange={(e) => {
+                          editingATSContext.setEditingATS({
+                            ...editingATSContext.editingATS,
+                            newItem: {
+                              ...editingATSContext.editingATS.newItem,
+                              repeat_occurences: e.target.value
+                            }
+                          })
+                        }}
+                      />
+                      Occurences
+                    </div>
+                    <div>
+                      <input
+                        name='repeatingEnd'
+                        type='radio'
+                        value='Never'
+                        onChange={(e) => {
+                          editingATSContext.setEditingATS({
+                            ...editingATSContext.editingATS,
+                            newItem: {
+                              ...editingATSContext.editingATS.newItem,
+                              repeat_type: e.target.value
+                            }
+                          })
+                        }}
+                      />
+                      Never Ends / TBD
+                    </div>
+                  
+                </Row>
+                
+              </Row>
+            </Col>
+            
+          
+            <div style= {{ fontWeight:'bold'}}>Location</div>
+            <div>
+              <input
+                style={{borderRadius:'8px', border:'0px', fontSize:'12px', height:'1.5rem', }}
+                value={editingATSContext.editingATS.newItem.location}
+                onChange={(e) => {
+                  editingATSContext.setEditingATS({
+                    ...editingATSContext.editingATS,
+                    newItem: {
+                      ...editingATSContext.editingATS.newItem,
+                      location: e.target.value
+                    }
+                  })
+                }}
+              />
+            </div>
+            <div style={{display:'flex', marginTop:'1rem'}}>
+            <div style={{fontSize:'12px'}}> Available to User </div>
+            <input
+              style={{ marginLeft:'1rem'}}
+              type='checkbox'
+              checked={editingATSContext.editingATS.newItem.is_available}
+              onChange={(e) => {
+                editingATSContext.setEditingATS({
+                  ...editingATSContext.editingATS,
+                  newItem: {
+                    ...editingATSContext.editingATS.newItem,
+                    is_available: e.target.checked
+                  }
+                })
+              }}
+            />
+            </div>
+        </Col>
+        
+      </Container>
+      <Row style={{textAlign: 'center', width: '100%', paddingBottom: '20px'}}>
+            <div
+              style={{
+                textAlign: 'center',
+                marginTop:'3rem',
+                width: '100%'
+              }}
+            >
+              <button
+                style={{
+                  width: '100px',
+                  padding: '0',
+                  margin: '0 20px',
+                  backgroundColor: 'inherit',
+                  border: '3px white solid',
+                  color: '#ffffff',
+                  textAlign: 'center',
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                style={{
+                  width: '100px',
+                  padding: '0',
+                  margin: '0 20px',
+                  backgroundColor: 'inherit',
+                  border: '3px white solid',
+                  color: '#ffffff',
+                  textAlign: 'center',
+                }}
+                onClick={updateATS}
+              >
+                Save
+              </button>
+            </div>
+          </Row>
+    </div>
+  )
+
+  return (
+    <div
+      style={{
+        marginTop: '1rem',
+        marginLeft: '2rem',
+        marginRight: '3rem',
+        width: '100%',
         backgroundColor: '#E4C33A',
         color: '#ffffff'
       }}

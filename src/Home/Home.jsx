@@ -1510,7 +1510,7 @@ export default function Home(props) {
       >
         
         <Box backgroundColor="#bbc8d7">
-          <div style={{width: '35%', float: 'left'}}>
+          <div style={{width: '30%', float: 'left'}}>
             <Button className={classes.buttonSelection} id="one" onClick={()=> history.push("/history") }>
               History
             </Button>
@@ -1569,7 +1569,7 @@ export default function Home(props) {
            
               </div> */}
           </div>
-          <div style={{width: '65%', float: 'left'}}>
+          <div style={{width: '70%', float: 'left'}}>
           {editingRTS.editing
           ?
           (
