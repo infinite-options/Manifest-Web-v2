@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import EditRTSContext from './EditRTSContext';
+import moment from 'moment';
 import axios from 'axios';
 
 const EditRTS = () => {
@@ -12,8 +13,8 @@ const EditRTS = () => {
     let object = {...editingRTSContext.editingRTS.newItem};
     // Get start_day_and_time
     const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
-    const start_day_and_time_string = new Date(start_day_and_time_simple_string).toString();
-    object.start_day_and_time = start_day_and_time_string;
+  //  const start_day_and_time_string = new Date(start_day_and_time_simple_string).toString();
+    object.start_day_and_time = `${object.start_day}` + ' ' + `${object.start_time}:00`; //start_day_and_time_string;
     delete object.start_day;
     delete object.start_time;
     object.title = object.gr_title;
@@ -30,7 +31,7 @@ const EditRTS = () => {
     // Get end_day_and_time
     const end_day_and_time_simple_string = `${object.end_day} ${object.end_time}:00`;
     const end_day_and_time_string = new Date(end_day_and_time_simple_string).toString();
-    object.end_day_and_time = end_day_and_time_string;
+    object.end_day_and_time = `${object.end_day}`+' '+`${object.end_time}:00`;
     delete object.end_day;
     delete object.end_time;
     // Get expected_completion_time
