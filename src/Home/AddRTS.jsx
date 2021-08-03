@@ -1,19 +1,16 @@
 import React, { useContext } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import EditRTSContext from './EditRTSContext';
 import axios from 'axios';
+import moment from "moment";
 
-const EditRTS = () => {
-  const editingRTSContext = useContext(EditRTSContext);
+const AddRTS = () => {
 
-  console.log(editingRTSContext.editingRTS.gr_array)
   const updateRTS = (e) => {
     e.stopPropagation()
-    let object = {...editingRTSContext.editingRTS.newItem};
     // Get start_day_and_time
-    const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
+    const start_day_and_time_simple_string = `${object.start_day}, ${object.start_time}:00`;
     const start_day_and_time_string = new Date(start_day_and_time_simple_string).toString();
-    object.start_day_and_time = start_day_and_time_string;
+    object.start_day_and_time = moment(start_day_and_time_string).format('L') + ',' + moment(start_day_and_time_string ).format('LTS');
     delete object.start_day;
     delete object.start_time;
     object.title = object.gr_title;
@@ -30,7 +27,7 @@ const EditRTS = () => {
     // Get end_day_and_time
     const end_day_and_time_simple_string = `${object.end_day} ${object.end_time}:00`;
     const end_day_and_time_string = new Date(end_day_and_time_simple_string).toString();
-    object.end_day_and_time = end_day_and_time_string;
+    object.end_day_and_time = moment(end_day_and_time_string).format('L') + ',' + moment(end_day_and_time_string ).format('LTS'); 
     delete object.end_day;
     delete object.end_time;
     // Get expected_completion_time
@@ -40,8 +37,8 @@ const EditRTS = () => {
       numMins = '0' + numMins
     object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
-    object.id = editingRTSContext.editingRTS.id;
-    object.user_id = editingRTSContext.editingRTS.user_id;
+    //object.id = editingRTSContext.editingRTS.id;
+    //object.user_id = editingRTSContext.editingRTS.currentUserId;
     object.ta_people_id = '';
     console.log("obj",object);
     let formData = new FormData();

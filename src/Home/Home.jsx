@@ -338,7 +338,7 @@ export default function Home(props) {
     editing: false,
     type: '',
     id: '',
-    user_id: props.location.state,
+    user_id:userID,
     gr_array: [],
     newItem: {
       audio: '',
@@ -424,7 +424,7 @@ export default function Home(props) {
     editing: true,
     type: '',
     id: '',
-    user_id: props.location.state,
+    user_id: userID,
     gr_array: [],
     newItem: {
       audio: '',
@@ -457,7 +457,8 @@ export default function Home(props) {
       location: '',
       is_available: false,
       is_persistent: true,
-      is_complete: true,
+      is_complete: false,
+      is_in_progress:false,
       is_displayed_today: true,
       is_timed: false,
       is_sublist_available: true,
@@ -1075,8 +1076,8 @@ export default function Home(props) {
             x.sort((a, b) => {
               // console.log(a);
               // console.log(b);
-              let datetimeA = new Date(a['start_day_and_time']);
-              let datetimeB = new Date(b['start_day_and_time']);
+              let datetimeA = new Date(a['gr_start_day_and_time']);
+              let datetimeB = new Date(b['gr_start_day_and_time']);
               let timeA =
                 new Date(datetimeA).getHours() * 60 +
                 new Date(datetimeA).getMinutes();
@@ -1093,9 +1094,9 @@ export default function Home(props) {
               gr.audio = '';
               // gr.available_end_time = "23:59:59";
               // gr.available_start_time = "00:00:00";
-              gr.datetime_completed = x[i].datetime_completed;
-              gr.datetime_started = x[i].datetime_started;
-              gr.end_day_and_time = x[i].end_day_and_time;
+              gr.datetime_completed = x[i].gr_datetime_completed;
+              gr.datetime_started = x[i].gr_datetime_started;
+              gr.end_day_and_time = x[i].gr_end_day_and_time;
               gr.expected_completion_time = x[i].expected_completion_time;
               gr.id = x[i].gr_unique_id;
 
@@ -1169,7 +1170,7 @@ export default function Home(props) {
                 };
               }
 
-              gr.start_day_and_time = x[i].start_day_and_time;
+              gr.start_day_and_time = x[i].gr_start_day_and_time;
 
               // const first_notifications = x[i].notifications[0];
               // const second_notifications = x[i].notifications[1];
