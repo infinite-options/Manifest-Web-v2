@@ -162,8 +162,8 @@ export default function MainPage(props) {
         //bigList will hold new data format sidewase
         var bigList = [];       
         // for (var d = (inRange.length - 1); d >= 0; d--){
-        for (var d = 0; d < inRange.length-1; d++){   
-        const obj = JSON.parse(inRange[d+1].details)
+        for (var d = 0; d < inRange.length; d++){   
+        const obj = JSON.parse(inRange[d].details)
             console.log(obj);
 
             //sort obj by time of day
@@ -449,11 +449,11 @@ export default function MainPage(props) {
         <Container fluid padding = "0px">
             {/* <Navigation userID={currentUser} /> */}
             <Row fluid padding = {0}>
-                <Col  width="10rem"  style={{padding:"0px"}}>
+                <Col width="10rem"  style={{padding:"0px", overflow: "hidden"}}>
                     <div display= "flex" flex-direction="row">
                         <div>
-                            <br></br>
-                            <Box paddingTop={3} backgroundColor="#bbc8d7">
+                            {/* <br></br> */}
+                            <Box paddingTop={0.5} backgroundColor="#bbc8d7">
                                 <div className={classes.buttonContainer}>
                                     <Box
                                         bgcolor="#889AB5"
@@ -547,9 +547,9 @@ export default function MainPage(props) {
                         </div>
                     </div>
                 </Col>
-                <Col marginLeft = "0px" xs="auto" style={{padding:"0px"}}>
-                    <br></br>
-                    <br></br>
+                <Col overflow= "hidden" marginLeft = "0px" xs="auto" style={{paddingLeft:"0px", overflow: "hidden", paddingRight: "0px", paddingTop:"4px"}}>
+                    {/* <br></br> */}
+                    {/* <br></br> */}
                     <VerticalRoutine onlyAllowed = {onlyAllowed()} userID = {currentUser} sendRoutineToParent={sendRoutineToParent}/>
                     {/* <Container style={{padding:"0px"}}>{vertRou}</Container> */}
                 </Col>
