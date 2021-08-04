@@ -86,7 +86,7 @@ const EditATS = () => {
         marginTop: '1rem',
         marginLeft: '2rem',
         marginRight: '3rem',
-        width: '100%',
+        width: '90%',
         backgroundColor: '#E4C33A',
         color: '#ffffff'
       }}
@@ -96,7 +96,7 @@ const EditATS = () => {
           padding: '2rem',
         }}
       >
-        <Col style={{float: 'left', width: '40%'}}>
+        <Col style={{float: 'left', width: '47%'}}>
           <div>
             <div style={{fontWeight:'bold'}}>Action Name </div>
             <input 
@@ -141,7 +141,7 @@ const EditATS = () => {
                     width: '100%',
                     fontSize:'12px', 
                     height:'2rem',
-                    width:'5rem'
+                    //width:'5rem'
                   }}
                   type='date'
                   value={editingATSContext.editingATS.newItem.start_day}
@@ -161,7 +161,8 @@ const EditATS = () => {
               >
                 <input
                   style={{
-                    width: '6rem',
+                    //width: '6rem',
+                    width: '100%',
                     borderRadius:'10px',
                     border:'0px',
                     fontSize:'12px', 
@@ -189,7 +190,7 @@ const EditATS = () => {
             <div>
             <div  style={{fontWeight:'bold'}}>This Takes Me</div>
               <input
-                style={{borderRadius:'10px', border:'0px', fontSize:'12px', height:'2rem', width:'10rem'}}
+                style={{borderRadius:'10px', border:'0px', fontSize:'12px', height:'2rem', width:'11.5rem'}}
                 type='number'
                 value={editingATSContext.editingATS.newItem.numMins}
                 onChange={(e) => {
@@ -214,7 +215,8 @@ const EditATS = () => {
               >
                 <input
                   style={{
-                    width: '6rem',
+                    //width: '6rem',
+                    width: '100%',
                     borderRadius:'10px',
                     border:'0px',
                     fontSize:'12px', 
@@ -238,7 +240,7 @@ const EditATS = () => {
               >
                 <input
                   style={{
-                    width: '100%',
+                    //width: '100%',
                     borderRadius:'10px',
                     border:'0px',
                     width: '100%',
@@ -263,18 +265,21 @@ const EditATS = () => {
 
             
         </Col>
-        <div style={{backgroundColor: 'white', width: '2px', height: '100px', float: 'left', marginLeft:'4%', marginRight:'4%'}}/>
+
+        <div style={{backgroundColor: 'white', width: '2px', height: '350px', float: 'left', marginLeft:'4%', marginRight:'4%'}}/>
+        
         <Col style={{float: 'left', width: '40%'}}>
           
-        <div style={{fontWeight:'bold'}}>Repeating Options</div>
+        <Row style={{fontWeight:'bold'}}>Repeating Options</Row>
             
-            <Col>
+            
               <Row >
                 <div style={{fontSize:'14px', width: '100%'}}>
                   Repeat Every
                   <input
                     type='number'
-                    style={{width: '4rem', marginLeft:'1rem', marginRight:'0.5rem'}}
+                    style={{width: '4rem', marginLeft:'1rem', marginRight:'0.5rem', borderRadius:'10px',
+                    border:'0px', height: '2rem'}}
                     value={editingATSContext.editingATS.newItem.repeat_every}
                     onChange={(e) => {
                       editingATSContext.setEditingATS({
@@ -307,18 +312,19 @@ const EditATS = () => {
                   />
                 </div>
               </Row>
-              <Row>
+              <Row style={{marginTop: '20px'}}>
                 
-                <Row>
+                
                   
-                    <div> Ends </div>
+                    <div style={{float: 'left', width: '30%'}}> Ends </div>
                   
-                  
-                    <div style={{ fontSize:'12px'}}>
+                    <div style={{float: 'left', width: '70%'}}>
+                    <div style={{ fontSize:'16px', height: '31%', marginBottom: '2%'}}>
                       <input
                         name='repeatingEnd'
                         type='radio'
                         value='On'
+                        style={{width: '16px', height: '16px', marginRight: '4px'}}
                         onChange={(e) => {
                           editingATSContext.setEditingATS({
                             ...editingATSContext.editingATS,
@@ -344,12 +350,13 @@ const EditATS = () => {
                           })
                         }}
                       />
-                      </div>
-                    <div>
+                    </div>
+                    <div style={{ fontSize:'16px', height: '31%', marginBottom: '2%'}}>
                       <input
                         name='repeatingEnd'
                         type='radio'
                         value='occurences'
+                        style={{width: '16px', height: '16px', marginRight: '4px'}}
                         onChange={(e) => {
                           editingATSContext.setEditingATS({
                             ...editingATSContext.editingATS,
@@ -377,11 +384,12 @@ const EditATS = () => {
                       />
                       Occurences
                     </div>
-                    <div>
+                    <div  style={{ fontSize:'16px', height: '31%', marginBottom: '2%'}}>
                       <input
                         name='repeatingEnd'
                         type='radio'
                         value='Never'
+                        style={{width: '16px', height: '16px', marginRight: '4px'}}
                         onChange={(e) => {
                           editingATSContext.setEditingATS({
                             ...editingATSContext.editingATS,
@@ -394,8 +402,10 @@ const EditATS = () => {
                       />
                       Never Ends / TBD
                     </div>
+                    </div>
+                    
                   
-                </Row>
+                
                 
               </Row>
             </Col>
@@ -434,14 +444,14 @@ const EditATS = () => {
               }}
             />
             </div>
-        </Col>
+        
         
       </Container>
       <Row style={{textAlign: 'center', width: '100%', paddingBottom: '20px'}}>
             <div
               style={{
                 textAlign: 'center',
-                marginTop:'3rem',
+                // marginTop:'3rem',
                 width: '100%'
               }}
             >
@@ -490,7 +500,7 @@ const EditATS = () => {
     >
       <Container
         style={{
-          padding: '2rem',
+          padding: '2rem', border: 'solid'
         }}
       >
         <Row>
@@ -661,7 +671,9 @@ const EditATS = () => {
                 }}
               />
             </div>
+
             <div style={{marginTop:'1.5rem', marginLeft:'1rem'}}> Minutes </div>
+
             </div>
           </Col>
         </Row>
@@ -843,14 +855,14 @@ const EditATS = () => {
             <div
               style={{
                 textAlign: 'center',
-                marginTop:'3rem'
+                marginTop:'10px'
               }}
             >
               <button
                 style={{
                   width: '100px',
                   padding: '0',
-                  margin: '0 20px',
+                  //margin: '0 20px',
                   backgroundColor: 'inherit',
                   border: '3px white solid',
                   color: '#ffffff',
@@ -863,7 +875,7 @@ const EditATS = () => {
                 style={{
                   width: '100px',
                   padding: '0',
-                  margin: '0 20px',
+                  //margin: '0 20px',
                   backgroundColor: 'inherit',
                   border: '3px white solid',
                   color: '#ffffff',
