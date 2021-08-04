@@ -3,6 +3,8 @@ import { Button, Modal } from 'react-bootstrap';
 import { Form, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 
+const BASE_URL = "https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/" 
+
 export default class AddIconModal extends Component {
   constructor(props) {
     super(props);
@@ -21,6 +23,7 @@ export default class AddIconModal extends Component {
       type: 'icon',
     };
   }
+
 
   onPhotoClick = (e) => {
     console.log('this is the E: ', e);
@@ -59,11 +62,11 @@ export default class AddIconModal extends Component {
   };
 
   onHandleShowClick = () => {
-    let url1 = this.props.BASE_URL + 'getIconsHygiene';
-    let url2 = this.props.BASE_URL + 'getIconsClothing';
-    let url3 = this.props.BASE_URL + 'getIconsFood';
-    let url4 = this.props.BASE_URL + 'getIconsActivities';
-    let url5 = this.props.BASE_URL + 'getIconsOther';
+    let url1 = BASE_URL + 'getIconsHygiene';
+    let url2 = BASE_URL + 'getIconsClothing';
+    let url3 = BASE_URL + 'getIconsFood';
+    let url4 = BASE_URL + 'getIconsActivities';
+    let url5 = BASE_URL + 'getIconsOther';
 
     let iconList1 = [];
     let iconList2 = [];

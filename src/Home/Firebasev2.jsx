@@ -94,7 +94,7 @@ export default function Firebasev2(props)  {
         .catch((error) => {
             console.log(error);
         });
-    },[props.theCurrentUserID])
+    },[props.theCurrentUserID, props.edit])
 
     {/* EXPERIMENTAL */}
 

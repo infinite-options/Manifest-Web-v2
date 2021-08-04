@@ -3,12 +3,15 @@ import { Container, Row, Col } from 'react-bootstrap';
 import EditRTSContext from './EditRTSContext';
 import moment from 'moment';
 import axios from 'axios';
+import AddIconModal from '../AddIconModal';
+import UploadImage from '../UploadImage';
 
 const EditRTS = () => {
   const editingRTSContext = useContext(EditRTSContext);
 
-  console.log(editingRTSContext.editingRTS.gr_array)
+  console.log("Repeat",editingRTSContext.editingRTS.newItem.repeat)
   const updateRTS = (e) => {
+    editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing
     e.stopPropagation()
     let object = {...editingRTSContext.editingRTS.newItem};
     // Get start_day_and_time
@@ -159,6 +162,18 @@ const EditRTS = () => {
               <div>User's library</div>
             </Col>
             <Col style={{width: '50%', float: 'left'}}>
+            <Row>
+            <AddIconModal
+            //  BASE_URL={props.BASE_URL}
+            //  parentFunction={setPhotoURLFunction}
+            />
+            <UploadImage
+            //  BASE_URL={props.BASE_URL}
+            //  parentFunction={setPhotoURLFunction}
+              currentUserId={ editingRTSContext.editingRTS.user_id}
+            />
+            <br />
+          </Row>
               <img alt='icon' src={editingRTSContext.editingRTS.newItem.gr_photo} style={{width: "100%"}}/>
             </Col>
           </Row>
@@ -340,7 +355,7 @@ const EditRTS = () => {
                   <input
                     name='repeating'
                     type='checkbox'
-                    checked={editingRTSContext.editingRTS.newItem.repeat}
+                    checked={!editingRTSContext.editingRTS.newItem.repeat}
                     style={{width: '20px', height: '20px', marginLeft: '10px'}}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({

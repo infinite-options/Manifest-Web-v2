@@ -353,7 +353,7 @@ export default function Home(props) {
       end_time: '',
       // When making API call, convert numMins to expected_completion_time
       numMins: '',
-      repeat: false,
+      repeat: '',
       repeat_frequency: 'Day',
       repeat_every: '',
       repeat_type: '',
@@ -1031,7 +1031,8 @@ export default function Home(props) {
   function showCalendarView(props) {
     // if (this.state.calendarView === 'Month') return this.calendarAbstracted();
     if (stateValue.calendarView === 'Day') return dayViewAbstracted();
-    else if (stateValue.calendarView === 'Week') return weekViewAbstracted();
+    else if (stateValue.calendarView === 'Week') 
+      return weekViewAbstracted();
   }
 
   //   props.hidden = props.hidden !== null ? props.hidden : false;
@@ -1443,7 +1444,7 @@ export default function Home(props) {
         .catch((error) => {
           console.log('Error in getting goals and routines ' + error);
         });
-    }, [userID]);
+    }, [userID,  editingRTS.editing]);
   }
 
   const updateFBGR = () => {
@@ -1478,7 +1479,7 @@ export default function Home(props) {
       <EditRTSContext.Provider
         value={{
           editingRTS: editingRTS,
-          setEditingRTS: setEditingRTS
+          setEditingRTS: setEditingRTS,
         }}
       >
       <EditATSContext.Provider
@@ -1560,6 +1561,7 @@ export default function Home(props) {
                   theCurrentUserID={userID}
                   sethighLight = {setHightlight}
                   highLight = {hightlight}
+                  edit = { editingRTS.editing}
                   />
                 )}
               </div>
