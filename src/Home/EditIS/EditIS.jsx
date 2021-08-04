@@ -68,7 +68,7 @@ const EditIS = () => {
         marginTop: '1rem',
         marginLeft: '5rem',
         marginRight: '3rem',
-
+        width: '33%',
         backgroundColor: '#67ABFC',
         color: '#ffffff'
       }}
@@ -106,23 +106,22 @@ const EditIS = () => {
 
         </Row>
         <Row style={{marginTop:'3rem'}}>
-          <Col md={5}>
+          
             <div style={{fontWeight:'bold'}} >Change Icon</div>
             <Container>
             <Row>
-              <Col style={{fontSize:'10px', textDecoration:'underline'}}>
+              <Col style={{fontSize:'10px', textDecoration:'underline', width: '33%'}}>
                 <div>Add icon to library</div>
                 <div>Use icon from library</div>
                 <div>User's library</div>
               </Col>
-              <Col>
+              <Col style={{width: '66%'}}>
                 <img alt='icon'src={editingISContext.editingIS.newItem.is_photo}/>
               </Col>
             </Row>
             </Container>
-          </Col>
-          <Col md={3}>
-            <div style={{ display:'flex'}}>
+          
+            <div style={{ display:'flex', width: '100%'}}>
             <div>
             <div  style={{fontWeight:'bold', display:'flex'}}>This Takes Me</div>
               <input
@@ -140,11 +139,11 @@ const EditIS = () => {
                 }}
               />
             </div>
-            <div style={{marginTop:'1.5rem', marginLeft:'1rem'}}> Minutes </div>
+            <div style={{marginTop:'1.5rem', marginLeft:'1rem',}}> Minutes </div>
             </div>
-
+            
             <div style={{display:'flex', marginTop:'1rem'}}>
-            <div style={{fontSize:'12px'}}> Available to User </div>
+            <div style={{fontSize:'12px',}}> Available to User </div>
             <input
               style={{ marginLeft:'1rem'}}
               type='checkbox'
@@ -160,7 +159,7 @@ const EditIS = () => {
               }}
             />
             </div>
-          </Col>
+          
         </Row>
         
         <Row>

@@ -63,9 +63,9 @@ const useStyles = makeStyles({
       color: "#889AB5"
     },
     height: '40px',
-    width: '200px',
+    width: '30%',
     textTransform: 'capitalize',
-    margin: '4px'
+    margin: '4px',
   },
 });
 

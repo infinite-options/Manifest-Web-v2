@@ -120,26 +120,30 @@ const EditRTS = () => {
       style={{
         marginTop: '1rem',
         marginLeft: '2rem',
-        marginRight: '3rem',
-        width: '100%',
+        //marginRight: '3rem',
+        width: '90%',
         backgroundColor: '#F57045',
         color: '#ffffff'
       }}
     >
       <Container
         style={{
-          paddingLeft: '2rem',
+          paddingLeft: '1rem',
           paddingTop: '1rem',
+          
+          width: '100%'
         }}
       >
-        <Col style={{ float: 'left', width: '29%'}}>
+        <Col style={{ float: 'left', width: '30%'}}>
         <div style={{fontWeight: 'bold', fontSize: '20px'}}>Routine Name </div>
           <input
             style={{
               borderRadius: '10px',
               border: 'none',
               width: '100%',
-              marginTop: '20px'
+              marginTop: '20px',
+              fontSize: '12px',
+              fontWeight: 'bold'
             }}
             value={editingRTSContext.editingRTS.newItem.gr_title}
             onChange={(e) => {
@@ -182,7 +186,7 @@ const EditRTS = () => {
             <Container>
             <Row>
               <Col
-                sm={6}
+                sm={7}
                 style={{
                   margin: '0',
                   padding: '0',
@@ -193,6 +197,9 @@ const EditRTS = () => {
                     width: '100%',
                     borderRadius: '10px',
                     border: 'none',
+                    height: '26px',
+                    fontSize: '12px',
+                    fontWeight: 'bold'
                   }}
                   type='date'
                   value={editingRTSContext.editingRTS.newItem.start_day}
@@ -208,13 +215,16 @@ const EditRTS = () => {
                 />
               </Col>
               <Col
-                sm={6}
+                sm={5}
               >
                 <input
                   style={{
                     width: '100%',
                     borderRadius: '10px',
                     border: 'none',
+                    height: '26px',
+                    fontSize: '12px',
+                    fontWeight: 'bold'
                   }}
                   type='time'
                   value={editingRTSContext.editingRTS.newItem.start_time}
@@ -238,6 +248,8 @@ const EditRTS = () => {
                 style={{
                   borderRadius: '10px',
                   border: 'none',
+                  fontSize: '12px',
+                  fontWeight: 'bold'
                 }}
                 value={editingRTSContext.editingRTS.newItem.numMins}
                 onChange={(e) => {
@@ -256,7 +268,7 @@ const EditRTS = () => {
             <Container>
             <Row>
               <Col
-                sm={6}
+                sm={7}
                 style={{
                   margin: '0',
                   padding: '0',
@@ -267,6 +279,9 @@ const EditRTS = () => {
                     width: '100%',
                     borderRadius: '10px',
                     border: 'none',
+                    height: '26px',
+                    fontSize: '12px',
+                    fontWeight: 'bold'
                   }}
                   type='date'
                   value={editingRTSContext.editingRTS.newItem.end_day}
@@ -282,13 +297,16 @@ const EditRTS = () => {
                 />
               </Col>
               <Col
-                sm={6}
+                sm={5}
               >
                 <input
                   style={{
                     width: '100%',
                     borderRadius: '10px',
                     border: 'none',
+                    height: '26px',
+                    fontSize: '12px',
+                    fontWeight: 'bold'
                   }}
                   type='time'
                   value={editingRTSContext.editingRTS.newItem.end_time}
@@ -331,7 +349,9 @@ const EditRTS = () => {
                       margin: '0px 0',
                       borderRadius: '10px',
                       border: 'none',
-                      float: 'left'
+                      float: 'left',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
                     }}
                     value={editingRTSContext.editingRTS.newItem.repeat_every}
                     onChange={(e) => {
@@ -369,15 +389,17 @@ const EditRTS = () => {
                   />
                 </Row>
                 <Row style={{marginTop: '40px', verticalAlign: 'middle'}}>
-                    <div style={{float: 'left', width: '30%'}}> Ends </div>
-                    <div style={{float: 'left', width: '70%'}}>
-                    <div>
-                    <div style={{verticalAlign: 'middle'}}>
+                    <div style={{float: 'left', width: '20%'}}> Ends </div>
+                    <div style={{float: 'left', width: '80%', }}>
+                    
+                    <div style={{verticalAlign: 'middle', width: '100%', height: '33%'}}>
+                      
+                      
                       <input
 
                         name='repeatingEnd'
                         type='radio'
-                        style={{width: '20px', height: '20px',
+                        style={{width: '10%', height: '20px',
                         borderRadius: '10px',
                         float: 'left'}}
                         value='On'
@@ -393,7 +415,7 @@ const EditRTS = () => {
                         }}
                       />
                       
-                      <div style={{float: 'left', marginLeft:'8px', marginRight: '8px'}}>
+                      <div style={{float: 'left', marginLeft:'2%', marginRight: '2%', width: '16%'}}>
                       On
                       </div>
 
@@ -402,7 +424,10 @@ const EditRTS = () => {
                           borderRadius: '10px',
                           border: 'none',
                           width: '70%',
-                          float: 'left'
+                          float: 'left',
+                          height: '26px',
+                          fontSize: '12px',
+                          fontWeight: 'bold'
                         }}
                         type='date'
                         value={editingRTSContext.editingRTS.newItem.repeat_ends_on}
@@ -417,15 +442,17 @@ const EditRTS = () => {
                         }}
                       />
                       </div>
-                      </div>
-                      <div style={{marginTop: '35px', verticalAlign: 'middle', width: '100%'}}>
+                      
+                      <div style={{verticalAlign: 'middle', width: '100%', height: '33%'}}>
                         <input
                           style={{
                             borderRadius: '10px',
                             border: 'none',
-                            marginRight: '8px',
+                            marginRight: '2%',
                             float: 'left',
-                            width: '20px', height: '20px'
+                            width: '10%', height: '20px',
+                            fontSize: '12px',
+                            fontWeight: 'bold'
                           }}
                           name='repeatingEnd'
                           type='radio'
@@ -442,52 +469,57 @@ const EditRTS = () => {
                             })
                           }}
                         />
-                      <div style={{float: 'left'}}>After</div>
-                      <input
-                        style={{
-                          width: '40px',
-                          borderRadius: '10px',
-                          border: 'none',
-                          marginLeft:'8px', 
-                          float: 'left'
-                        }}
-                        type='number'
-                        value={editingRTSContext.editingRTS.newItem.repeat_occurences}
-                        onChange={(e) => {
-                          editingRTSContext.setEditingRTS({
-                            ...editingRTSContext.editingRTS,
-                            newItem: {
-                              ...editingRTSContext.editingRTS.newItem,
-                              repeat_occurences: e.target.value
-                            }
-                          })
-                        }}
-                      />
-                      <div style={{marginLeft: '8px'}}>Occurences</div>
+                        <div style={{float: 'left', width: '20%'}}>After</div>
+                        <input
+                          style={{
+                            width: '20%',
+                            borderRadius: '10px',
+                            border: 'none',
+                            marginLeft:'2%', 
+                            float: 'left',
+                            fontSize: '12px',
+                            fontWeight: 'bold'
+                          }}
+                          type='number'
+                          value={editingRTSContext.editingRTS.newItem.repeat_occurences}
+                          onChange={(e) => {
+                            editingRTSContext.setEditingRTS({
+                              ...editingRTSContext.editingRTS,
+                              newItem: {
+                                ...editingRTSContext.editingRTS.newItem,
+                                repeat_occurences: e.target.value
+                              }
+                            })
+                          }}
+                        />
+                        <div style={{marginLeft: '2%', width:'44%', float: 'left'}}>Occurences</div>
                       
                       </div>
-                      <div style={{marginTop: '10px', verticalAlign: 'middle', width: '100%'}}>
-                      <input
-                        style={{
-                          borderRadius: '10px',
-                          
-                        }}
-                        name='repeatingEnd'
-                        type='radio'
-                        style={{width: '20px', height: '20px', marginRight: '8px'}}
-                        value='Never'
-                        checked={editingRTSContext.editingRTS.newItem.repeat_type === 'Never'}
-                        onChange={(e) => {
-                          editingRTSContext.setEditingRTS({
-                            ...editingRTSContext.editingRTS,
-                            newItem: {
-                              ...editingRTSContext.editingRTS.newItem,
-                              repeat_type: e.target.value
-                            }
-                          })
-                        }}
-                      />
-                      Never Ends
+                      <div style={{verticalAlign: 'middle', width: '100%', height: '33%'}}>
+                        <input
+                          style={{
+                            borderRadius: '10px',
+                            
+                          }}
+                          name='repeatingEnd'
+                          type='radio'
+                          style={{width: '10%', height: '20px', marginRight: '2%', float: 'left'}}
+                          value='Never'
+                          checked={editingRTSContext.editingRTS.newItem.repeat_type === 'Never'}
+                          onChange={(e) => {
+                            editingRTSContext.setEditingRTS({
+                              ...editingRTSContext.editingRTS,
+                              newItem: {
+                                ...editingRTSContext.editingRTS.newItem,
+                                repeat_type: e.target.value
+                              }
+                            })
+                          }}
+                        />
+                        <div style={{float: 'left', width: '88%'}}>
+                          Never Ends
+                        </div>
+                      
                       </div>
                       
                     </div>
@@ -498,7 +530,9 @@ const EditRTS = () => {
                         margin: '5px 0',
                         borderRadius: '10px',
                         border: 'none',
-                        width: '100%'
+                        width: '100%',
+                        fontSize: '12px',
+                        fontWeight: 'bold'
                       }}
                       value={editingRTSContext.editingRTS.newItem.location}
                       onChange={(e) => {
@@ -540,7 +574,7 @@ const EditRTS = () => {
 
         <div style={{float: 'left', backgroundColor: 'white', width: '2px', height: '500px', marginLeft:"2.4%", marginRight:"2.4%"}}/>
 
-        <Col style={{ float: 'left', width: '30%'}}>
+        <Col style={{ float: 'left', width: '29%'}}>
           <Row style={{fontWeight: 'bold', fontSize: '20px'}}>Notification</Row>
             
             <Row
@@ -561,6 +595,8 @@ const EditRTS = () => {
                       width: '60px',
                       borderRadius: '10px',
                       border: 'none',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
                     }}
                     value={editingRTSContext.editingRTS.newItem.ta_notifications.before.time}
                     onChange={(e) => {
@@ -623,6 +659,8 @@ const EditRTS = () => {
                     style={{
                       borderRadius: '10px',
                       border: 'none',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
                     }}
                     value={editingRTSContext.editingRTS.newItem.user_notifications.before.message}
                     onChange={(e) => {
@@ -676,6 +714,8 @@ const EditRTS = () => {
                     style={{
                       borderRadius: '10px',
                       border: 'none',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
                     }}
                     value={editingRTSContext.editingRTS.newItem.ta_notifications.before.message}
                     onChange={(e) => {
@@ -709,6 +749,8 @@ const EditRTS = () => {
                       width: '60px',
                       borderRadius: '10px',
                       border: 'none',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
                     }}
                     value={editingRTSContext.editingRTS.newItem.ta_notifications.during.time}
                     onChange={(e) => {
@@ -771,6 +813,8 @@ const EditRTS = () => {
                     style={{
                       borderRadius: '10px',
                       border: 'none',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
                     }}
                     value={editingRTSContext.editingRTS.newItem.user_notifications.during.message}
                     onChange={(e) => {
@@ -824,6 +868,8 @@ const EditRTS = () => {
                     style={{
                       borderRadius: '10px',
                       border: 'none',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
                     }}
                     value={editingRTSContext.editingRTS.newItem.ta_notifications.during.message}
                     onChange={(e) => {
@@ -857,6 +903,8 @@ const EditRTS = () => {
                       width: '60px',
                       borderRadius: '10px',
                       border: 'none',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
                     }}
                     value={editingRTSContext.editingRTS.newItem.ta_notifications.after.time}
                     onChange={(e) => {
@@ -920,6 +968,8 @@ const EditRTS = () => {
                     style={{
                       borderRadius: '10px',
                       border: 'none',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
                     }}
                     value={editingRTSContext.editingRTS.newItem.user_notifications.after.message}
                     onChange={(e) => {
@@ -973,6 +1023,8 @@ const EditRTS = () => {
                     style={{
                       borderRadius: '10px',
                       border: 'none',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
                     }}
                     value={editingRTSContext.editingRTS.newItem.ta_notifications.after.message}
                     onChange={(e) => {
