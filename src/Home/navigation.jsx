@@ -77,8 +77,9 @@ export function Navigation() {
 
   const loginContext = useContext(LoginContext);
   const listOfUsers = loginContext.loginState.usersOfTA;
-  const selectedUser = loginContext.loginState.curUser;
-
+  var selectedUser = loginContext.loginState.curUser;
+  // const selectedUser = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
+  // const [selectedUser, setSelectedUser] = useState('')
   const [showNewUser, toggleNewUser] = useState(false);
   const [showGiveAccess, toggleGiveAccess] = useState(false);
   const [showConfirmed, toggleConfirmed] = useState(false);
@@ -92,11 +93,24 @@ export function Navigation() {
 
   const API_URL = 'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/'
 
+  if (document.cookie
+    .split(";")
+    .some(item => item.trim().startsWith("ta_uid="))
+    ) {
+      selectedUser = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
+    }
+
   console.log('User list', listOfUsers)
   console.log('Cur user', selectedUser)
 
   const userListRendered = () => {
-      if (loginContext.loginState.loggedIn) {
+      if (document.cookie
+        .split(";")
+        .some(item => item.trim().startsWith("ta_uid="))
+        ) {
+      // var temp = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
+      // console.log(temp)
+      selectedUser = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
       console.log("list of users")
       console.log(listOfUsers)
       const elements = listOfUsers.map((user) => (
@@ -116,7 +130,7 @@ export function Navigation() {
             value={selectedUser.user_unique_id}
             onChange={(e) => {
               console.log(JSON.parse(e.target.value))
-              
+              // document.cookie = 'patient_uid'+e.target.value
               loginContext.setLoginState({
                 ...loginContext.loginState,
                 curUser: JSON.parse(e.target.value).user_unique_id,
@@ -475,7 +489,9 @@ export function Navigation() {
               >
                 Sign In
               </Button> */}
-              {loginContext.loginState.loggedIn ? (
+              {(document.cookie
+      .split(";")
+      .some(item => item.trim().startsWith("ta_uid="))) ? (
                 <div style = {{width: '100%', textAlign: 'justify'}}>
                   <Button
                     //className={classes.buttonColor}
@@ -490,6 +506,9 @@ export function Navigation() {
                     className = {classes.myButton}
                     style={{float: 'right'}}
                     onClick={(e) => {
+                      document.cookie = "ta_uid=1;max-age=0";
+                      document.cookie = "ta_email=1;max-age=0";
+                      // document.cookie = "patient_uid=1;max-age=0"
                       loginContext.setLoginState({
                         ...loginContext.loginState,
                         loggedIn: false,

@@ -115,6 +115,29 @@ export default function MainPage(props) {
         .catch((error) => {
             console.log(error);
         });
+
+        axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/usersOfTA/" + document.cookie.split('; ').find(row => row.startsWith('ta_email=')).split('=')[1])
+      .then((response) =>{
+          console.log(response);
+          if (response.result !== false){
+            const usersOfTA = response.data.result;
+            const curUserID = usersOfTA[0].user_unique_id;
+            loginContext.setLoginState({
+              ...loginContext.loginState,
+              usersOfTA: response.data.result,
+              curUser: curUserID
+            })
+            console.log(curUserID);
+            // setUserID(curUserID);
+            // console.log(userID);
+            // GrabFireBaseRoutinesGoalsData();
+            // return userID;
+          }
+          else{console.log("No User Found");}
+      })
+      .catch((error) => {
+          console.log(error);
+      });
     },[])
 
 

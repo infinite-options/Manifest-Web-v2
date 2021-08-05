@@ -371,11 +371,13 @@ const EditRTS = () => {
                 </Row>
                 
                 <Row style={{marginTop: '10px', width: '100%', verticalAlign: 'middle'}}>
-                  Does not repeat 
-                  <input
+                  Does not repeat
+                  {console.log('repeat value =', editingRTSContext.editingRTS.newItem.repeat)}
+                  {editingRTSContext.editingRTS.newItem.repeat == 'False' ? (
+                    <input
                     name='repeating'
                     type='checkbox'
-                    checked={!editingRTSContext.editingRTS.newItem.repeat}
+                    defaultChecked  = 'true'
                     style={{width: '20px', height: '20px', marginLeft: '10px'}}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
@@ -387,12 +389,44 @@ const EditRTS = () => {
                       })
                     }}
                   />
+                  ) : (
+                    <input
+                    name='repeating'
+                    type='checkbox'
+                    // checked={editingRTSContext.editingRTS.newItem.repeat}
+                    style={{width: '20px', height: '20px', marginLeft: '10px'}}
+                    onChange={(e) => {
+                      editingRTSContext.setEditingRTS({
+                        ...editingRTSContext.editingRTS,
+                        newItem: {
+                          ...editingRTSContext.editingRTS.newItem,
+                          repeat: e.target.checked
+                        }
+                      })
+                    }}
+                  />
+                  )} 
+                  {/* <input
+                    name='repeating'
+                    type='checkbox'
+                    defaultChecked={editingRTSContext.editingRTS.newItem.repeat}
+                    style={{width: '20px', height: '20px', marginLeft: '10px'}}
+                    onChange={(e) => {
+                      editingRTSContext.setEditingRTS({
+                        ...editingRTSContext.editingRTS,
+                        newItem: {
+                          ...editingRTSContext.editingRTS.newItem,
+                          repeat: e.target.checked
+                        }
+                      })
+                    }}
+                  /> */}
                 </Row>
                 <Row style={{marginTop: '40px', verticalAlign: 'middle'}}>
                     <div style={{float: 'left', width: '20%'}}> Ends </div>
                     <div style={{float: 'left', width: '80%', }}>
                     
-                    <div style={{verticalAlign: 'middle', width: '100%', height: '33%'}}>
+                    <div style={{verticalAlign: 'middle', width: '100%', height: '30%', marginBottom: '3%'}}>
                       
                       
                       <input
@@ -443,7 +477,7 @@ const EditRTS = () => {
                       />
                       </div>
                       
-                      <div style={{verticalAlign: 'middle', width: '100%', height: '33%'}}>
+                      <div style={{verticalAlign: 'middle', width: '100%', height: '30%', marginBottom: '3%'}}>
                         <input
                           style={{
                             borderRadius: '10px',
@@ -495,7 +529,7 @@ const EditRTS = () => {
                         <div style={{marginLeft: '2%', width:'44%', float: 'left'}}>Occurences</div>
                       
                       </div>
-                      <div style={{verticalAlign: 'middle', width: '100%', height: '33%'}}>
+                      <div style={{verticalAlign: 'middle', width: '100%', height: '30%', marginBottom: '3%'}}>
                         <input
                           style={{
                             borderRadius: '10px',

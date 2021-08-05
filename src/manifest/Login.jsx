@@ -65,6 +65,8 @@ export default function Login() {
       )
       .then((response) => {
         console.log('response', response.data);
+        document.cookie = 'ta_uid='+response.data.result
+        document.cookie = 'ta_email='+email
         if (response.data.result !== false) {
           setLoggedIn(true);
           console.log('response id', response.data.result, loggedIn);
@@ -110,7 +112,10 @@ export default function Login() {
         // username: e,  1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com
         //})
         .then((response) => {
-          console.log(response.data);
+          console.log('social login')
+          console.log(response.data.result);
+          document.cookie = 'ta_uid='+response.data.result
+          document.cookie = 'ta_email='+e
           if (response.data !== false) {
             loginContext.setLoginState({
               ...loginContext.loginState,
@@ -143,6 +148,14 @@ export default function Login() {
         });
     }
   };
+
+  if (
+    document.cookie
+      .split(";")
+      .some(item => item.trim().startsWith("ta_uid="))
+  ) {history.push('/home')} else {
+    
+  }
 
   return (
     <Box

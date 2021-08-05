@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
 import axios from 'axios';
 import {
@@ -32,6 +32,7 @@ import CopyIcon from "../manifest/OldManifest/CopyIcon.jsx";
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
+
 
 
 const useStyles = makeStyles({
@@ -94,7 +95,7 @@ export default function Firebasev2(props)  {
         .catch((error) => {
             console.log(error);
         });
-    },[props.theCurrentUserID, props.edit])
+    },[props.theCurrentUserID, props.edit, ])
 
     {/* EXPERIMENTAL */}
 

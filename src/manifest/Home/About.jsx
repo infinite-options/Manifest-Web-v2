@@ -23,6 +23,7 @@ import 'react-phone-number-input/style.css';
 import { Input, TextField } from '@material-ui/core';
 import MiniNavigation from '../miniNavigation'
 import LoginContext from '../../LoginContext'
+import { useHistory, Redirect } from 'react-router-dom';
 
 const useStyles = makeStyles({
   table: {
@@ -75,6 +76,18 @@ export default function AboutModal(props) {
     },
   });
 
+  const history = useHistory();
+
+  if (
+    document.cookie
+      .split(";")
+      .some(item => item.trim().startsWith("ta_uid="))
+  ) {
+    console.log(document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1])
+  } else {
+    history.push('/')
+  }
+
   const [motivation0 , setMotivation0] = useState('')
   const [motivation1 , setMotivation1] = useState('')
   const [motivation2 , setMotivation2] = useState('')
@@ -95,6 +108,15 @@ export default function AboutModal(props) {
 
   const loginContext = useContext(LoginContext);
   const userID = loginContext.loginState.curUser;
+  //const userID = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1];
+
+  // if (document.cookie
+  //   .split(";")
+  //   .some(item => item.trim().startsWith("ta_uid="))
+  //   ) {
+  //     userID = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
+  //     console.log('userID', userID)
+  //   }
 
   function grabFireBaseAboutMeData() {
     let url =
@@ -138,6 +160,8 @@ export default function AboutModal(props) {
       .catch((err) => {
         console.log('Error getting user details', err);
       });
+      console.log('check userID')
+      console.log(userID)
     axios
       .get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/motivation/" + userID)
       .then((response) => {
@@ -168,6 +192,9 @@ export default function AboutModal(props) {
         }
         
       })
+      .catch((err) => {
+        console.log('Error getting user details', err);
+      });
     axios
       .get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/important/" + userID)
       .then((response) => {
@@ -196,6 +223,9 @@ export default function AboutModal(props) {
           }
         }
       })
+      .catch((err) => {
+        console.log('Error getting user details', err);
+      });
     axios
       .get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/happy/" + userID)
       .then((response) => {
@@ -225,6 +255,9 @@ export default function AboutModal(props) {
           }
         }
       })
+      .catch((err) => {
+        console.log('Error getting user details', err);
+      });
   }
 
   function handleFileSelected(event) {
@@ -279,6 +312,29 @@ export default function AboutModal(props) {
     setHappy4('')
 
     grabFireBaseAboutMeData()
+
+    axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/usersOfTA/" + document.cookie.split('; ').find(row => row.startsWith('ta_email=')).split('=')[1])
+      .then((response) =>{
+          console.log(response);
+          if (response.result !== false){
+            const usersOfTA = response.data.result;
+            const curUserID = usersOfTA[0].user_unique_id;
+            loginContext.setLoginState({
+              ...loginContext.loginState,
+              usersOfTA: response.data.result,
+              curUser: curUserID
+            })
+            console.log(curUserID);
+            // setUserID(curUserID);
+            // console.log(userID);
+            //GrabFireBaseRoutinesGoalsData();
+            // return userID;
+          }
+          else{console.log("No User Found");}
+      })
+      .catch((error) => {
+          console.log(error);
+      });
   }, [userID])
 
   function hideAboutForm(e) {

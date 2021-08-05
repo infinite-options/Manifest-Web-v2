@@ -55,7 +55,7 @@ const EditIcon = ({routine, task, step}) => {
   const editingRTSContext = useContext(EditRTSContext);
   const [arrRoutine, setarrRoutine] = useState([])
   const [routineCall, setroutineCall] = useState(false)
-
+  // var arrRoutine = []
 
   let rowType = '';
   let rowId = '';
@@ -71,24 +71,34 @@ const EditIcon = ({routine, task, step}) => {
   }
 
   useEffect(() => {
-
-    axios
-  .get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/" + step)
-    .then((response) => {
-      console.log("routineGet", response)
-      for(var i=0; i <response.data.result.length; i++){
-        arrRoutine.push(response.data.result[i])
-      }
-    })
-    .catch((err) => {
-      if(err.response) {
-        console.log(err.response);
-      }
-      console.log(err)
-    })
+      console.log('editicon', arrRoutine)
+      console.log('getting new data editicon')
+      axios
+        .get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/" + step)
+        .then((response) => {
+          //let temp = []
+          // console.log("routineGet", response)
+          for(var i=0; i <response.data.result.length; i++){
+            // console.log(response.data.result[i])
+            arrRoutine.push(response.data.result[i])
+            //temp.push(response.data.result[i])
+          }
+          // setarrRoutine(temp)
+        })
+        .catch((err) => {
+          if(err.response) {
+            console.log(err.response);
+          }
+          console.log(err)
+        })
+    
   },[routineCall]);
+
+  const outerFunction = () => {
+    
+  }
  
-  console.log("item", step, routine.id)
+  // console.log("item", step, routine.id)
 
   return (
     <div>
@@ -104,55 +114,141 @@ const EditIcon = ({routine, task, step}) => {
         icon={faEdit}
         onClick={(e) => {
           e.stopPropagation();
-          setroutineCall(!routineCall)
-          console.log("item",arrRoutine[0].gr_start_day_and_time, routine.id)
-          var itemToChange;
-          for (var k=0; k<arrRoutine.length; k++){
-            if(routine.id === arrRoutine[k].gr_unique_id){
-              itemToChange = arrRoutine[k] 
-              rowId =  arrRoutine[k].gr_unique_id
-              console.log("item",arrRoutine[k])
-            }
-          }
-       //   const itemToChange = editingRTSContext.editingRTS.gr_array.filter((elt) => elt.id === rowId)[0];
-          // console.log("item",itemToChange.gr_start_day_and_time)
-          //Convert start_day_and_time to day and time
-          var startDate;
-          if(itemToChange.gr_start_day_and_time!=undefined){
-           startDate = new Date(itemToChange.gr_start_day_and_time);
-          }
-          console.log("start", startDate)
-          const startDay = convertDateToDayString(startDate);
-          const startTime = convertDateToTimeString(startDate);
-          console.log(startTime)
-          itemToChange.start_day = startDay;
-          itemToChange.start_time = startTime;
-          delete itemToChange.gr_start_day_and_time;
-          // Convert end_day_and_time to day and time
-          const endDate = new Date(itemToChange.gr_end_day_and_time);
-          const endDay = convertDateToDayString(endDate);
-          itemToChange.end_day = endDay;
-          const endTime = convertDateToTimeString(endDate);
-          itemToChange.end_time = endTime;
-          delete itemToChange.gr_end_day_and_time;
-          // Convert expected_completion_time to number of minutes
-          const expectedCompletionTime = itemToChange.gr_expected_completion_time ? itemToChange.gr_expected_completion_time : '00:00:00';
-          const numMins = convertTimeLengthToMins(expectedCompletionTime)
-          itemToChange.numMins = numMins;
-          delete itemToChange.gr_expected_completion_time;
-          console.log(itemToChange);
+          //setroutineCall(!routineCall)
 
-          editingRTSContext.setEditingRTS({
-            ...editingRTSContext.editingRTS,
-            editing: rowId === editingRTSContext.editingRTS.id ? !editingRTSContext.editingRTS.editing : true,
-            type: rowType,
-            id: rowId,
-            currentUserId: step,
-            newItem: {
-              ...editingRTSContext.editingRTS.newItem,
-               ...itemToChange,
-            }
-          })
+          // testing
+
+          axios
+            .get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/" + step)
+            .then((response) => {
+              let temp = []
+              console.log('in click editicon')
+              // console.log("routineGet", response)
+              for(var i=0; i <response.data.result.length; i++){
+                // console.log(response.data.result[i])
+                arrRoutine.push(response.data.result[i])
+                // temp.push(response.data.result[i])
+              }
+              //setarrRoutine(temp)
+
+              // testing
+
+              console.log('clicked on editIcon')
+              console.log("item",arrRoutine[0].gr_start_day_and_time, routine.id)
+              console.log(arrRoutine[0].repeat)
+              var itemToChange;
+              for (var k=0; k<arrRoutine.length; k++){
+                if(routine.id === arrRoutine[k].gr_unique_id){
+                  itemToChange = arrRoutine[k] 
+                  rowId =  arrRoutine[k].gr_unique_id
+                  console.log("item",arrRoutine[k])
+                }
+              }
+              //   const itemToChange = editingRTSContext.editingRTS.gr_array.filter((elt) => elt.id === rowId)[0];
+              // console.log("item",itemToChange.gr_start_day_and_time)
+              //Convert start_day_and_time to day and time
+              var startDate;
+              if(itemToChange.gr_start_day_and_time!=undefined){
+              startDate = new Date(itemToChange.gr_start_day_and_time);
+              }
+              console.log("start", startDate)
+              const startDay = convertDateToDayString(startDate);
+              const startTime = convertDateToTimeString(startDate);
+              console.log(startTime)
+              itemToChange.start_day = startDay;
+              itemToChange.start_time = startTime;
+              delete itemToChange.gr_start_day_and_time;
+              // Convert end_day_and_time to day and time
+              const endDate = new Date(itemToChange.gr_end_day_and_time);
+              const endDay = convertDateToDayString(endDate);
+              itemToChange.end_day = endDay;
+              const endTime = convertDateToTimeString(endDate);
+              itemToChange.end_time = endTime;
+              delete itemToChange.gr_end_day_and_time;
+              // Convert expected_completion_time to number of minutes
+              const expectedCompletionTime = itemToChange.gr_expected_completion_time ? itemToChange.gr_expected_completion_time : '00:00:00';
+              const numMins = convertTimeLengthToMins(expectedCompletionTime)
+              itemToChange.numMins = numMins;
+              delete itemToChange.gr_expected_completion_time;
+              console.log('itemToChange')
+              console.log(itemToChange);
+
+              editingRTSContext.setEditingRTS({
+                ...editingRTSContext.editingRTS,
+                editing: rowId === editingRTSContext.editingRTS.id ? !editingRTSContext.editingRTS.editing : true,
+                type: rowType,
+                id: rowId,
+                currentUserId: step,
+                newItem: {
+                  ...editingRTSContext.editingRTS.newItem,
+                  ...itemToChange,
+                }
+              })
+
+              // testing
+
+
+            })
+            .catch((err) => {
+              if(err.response) {
+                console.log(err.response);
+              }
+              console.log(err)
+            })
+
+          // testing
+
+          // console.log('clicked on editIcon')
+          // console.log("item",arrRoutine[0].gr_start_day_and_time, routine.id)
+          // console.log(arrRoutine[0].repeat)
+          // var itemToChange;
+          // for (var k=0; k<arrRoutine.length; k++){
+          //   if(routine.id === arrRoutine[k].gr_unique_id){
+          //     itemToChange = arrRoutine[k] 
+          //     rowId =  arrRoutine[k].gr_unique_id
+          //     console.log("item",arrRoutine[k])
+          //   }
+          // }
+          // //   const itemToChange = editingRTSContext.editingRTS.gr_array.filter((elt) => elt.id === rowId)[0];
+          // // console.log("item",itemToChange.gr_start_day_and_time)
+          // //Convert start_day_and_time to day and time
+          // var startDate;
+          // if(itemToChange.gr_start_day_and_time!=undefined){
+          //  startDate = new Date(itemToChange.gr_start_day_and_time);
+          // }
+          // console.log("start", startDate)
+          // const startDay = convertDateToDayString(startDate);
+          // const startTime = convertDateToTimeString(startDate);
+          // console.log(startTime)
+          // itemToChange.start_day = startDay;
+          // itemToChange.start_time = startTime;
+          // delete itemToChange.gr_start_day_and_time;
+          // // Convert end_day_and_time to day and time
+          // const endDate = new Date(itemToChange.gr_end_day_and_time);
+          // const endDay = convertDateToDayString(endDate);
+          // itemToChange.end_day = endDay;
+          // const endTime = convertDateToTimeString(endDate);
+          // itemToChange.end_time = endTime;
+          // delete itemToChange.gr_end_day_and_time;
+          // // Convert expected_completion_time to number of minutes
+          // const expectedCompletionTime = itemToChange.gr_expected_completion_time ? itemToChange.gr_expected_completion_time : '00:00:00';
+          // const numMins = convertTimeLengthToMins(expectedCompletionTime)
+          // itemToChange.numMins = numMins;
+          // delete itemToChange.gr_expected_completion_time;
+          // console.log('itemToChange')
+          // console.log(itemToChange);
+
+          // editingRTSContext.setEditingRTS({
+          //   ...editingRTSContext.editingRTS,
+          //   editing: rowId === editingRTSContext.editingRTS.id ? !editingRTSContext.editingRTS.editing : true,
+          //   type: rowType,
+          //   id: rowId,
+          //   currentUserId: step,
+          //   newItem: {
+          //     ...editingRTSContext.editingRTS.newItem,
+          //      ...itemToChange,
+          //   }
+          // })
         }}
         size="small"
       />

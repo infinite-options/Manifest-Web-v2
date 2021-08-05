@@ -90,8 +90,9 @@ export default function Home(props) {
   
   // function GetUserID(e){
     useEffect(() => {
-      console.log(props.location.state);
-      axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/usersOfTA/" + props.location.state)
+      console.log('home line 94')
+      console.log(document.cookie.split('; ').find(row => row.startsWith('ta_email=')).split('=')[1]);
+      axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/usersOfTA/" + document.cookie.split('; ').find(row => row.startsWith('ta_email=')).split('=')[1])
       .then((response) =>{
           console.log(response);
           if (response.result !== false){
@@ -353,7 +354,7 @@ export default function Home(props) {
       end_time: '',
       // When making API call, convert numMins to expected_completion_time
       numMins: '',
-      repeat: '',
+      repeat: false,
       repeat_frequency: 'Day',
       repeat_every: '',
       repeat_type: '',
@@ -1458,7 +1459,15 @@ export default function Home(props) {
   function ToggleShowAbout(){
     history.push("/about")
   }
-  if (loginContext.loginState.loggedIn == false) {
+  // if (loginContext.loginState.loggedIn == false) {
+  //   history.push('/')
+  // }
+
+  if (
+    document.cookie
+      .split(";")
+      .some(item => item.trim().startsWith("ta_uid="))
+  ) {} else {
     history.push('/')
   }
 
