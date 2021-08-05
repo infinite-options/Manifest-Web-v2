@@ -74,8 +74,8 @@ export default function Firebasev2(props)  {
     const [currentDate, setCurDate] = useState(new Date(Date.now()))
     const classes = useStyles();
     const [rows, setRows] = useState([]);
-    function createData(name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, id){    //rows structure
-        return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, id}
+    function createData(name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, id, is_available){    //rows structure
+        return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, id, is_available}
     }
 
     useEffect(() => {
@@ -146,31 +146,38 @@ export default function Firebasev2(props)  {
         }
         inRange.reverse();//put latest day at end
 
+        function custom_sort(a, b) {
+            return (new Date(a.start_day_and_time).getHours() + (new Date(a.start_day_and_time).getMinutes() / 60))
+             - (new Date(b.start_day_and_time).getHours() + (new Date(b.start_day_and_time).getMinutes() / 60));
+        }
+
         console.log('inRange', inRange)
         //bigList will hold new data format sidewase
         var bigList = [];       
         for (var d = 0; d < inRange.length; d++){
             const obj = JSON.parse(inRange[d].details)
             console.log("obj",obj);
+            
             //sort obj by time of day
-            obj.sort((a, b) => a.start_day_and_time - b.start_day_and_time);
+            obj.sort(custom_sort);
+            
             for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
              //   if(obj[r].routine !== undefined){
                 if(obj[r].title){
                     // console.log("gere");
                     var isNewR = true;
                     for (var s=0; s<bigList.length; s++){       //check through and see if this is a new routine
-                        if (bigList[s].type == "Routine" && bigList[s].title == obj[r].title){
+                        if (bigList[s].type == "Routine" && bigList[s].id == obj[r].routine){
                             bigList[s].days[d] = obj[r].status;   //if already there- just update that day status
                            // bigList[s].id = obj[r].routine;
                             isNewR = false;
                             break;
                         }
                     }
-                    if (isNewR){
+                    if (isNewR){ //if new, make object and put in bigList
                         var currentR = {type: "Routine", title: obj[r].title, under: "", days: [], tBox: {}, 
-                        show: true, photo: obj[r].photo, startTime: obj[r].start_day_and_time, 
-                        endTime: obj[r].end_day_and_time, is_sublist_available: obj[r].is_sublist_available,id: obj[r].routine || obj[r].goal}; //if new, make object and put in bigList
+                        show: true, photo: obj[r].photo, startTime: obj[r].start_day_and_time, is_available: obj[r].is_available,
+                        endTime: obj[r].end_day_and_time, is_sublist_available: obj[r].is_sublist_available, id: obj[r].routine}; 
                         currentR.days[d] = obj[r].status;
                         bigList.push(currentR);
                     }
@@ -181,14 +188,16 @@ export default function Firebasev2(props)  {
                             if(actions[a].title){
                                 var isNewA = true;
                                 for (var s=0; s<bigList.length; s++){
-                                    if(bigList[s].type == "Action" && bigList[s].title == actions[a].title){
+                                    if(bigList[s].type == "Action" && bigList[s].id == actions[a].action){
                                         bigList[s].days[d] = actions[a].status;
                                         isNewA = false;
                                         break;
                                     }
                                 }
                                 if(isNewA){
-                                    var currentA = {type: "Action", title: actions[a].title, under: obj[r].title, days:[], tBox: {}, show: false, id: actions[a].action};
+                                    var currentA = {type: "Action", title: actions[a].title, under: obj[r].title, days:[], tBox: {}, show: false,
+                                    photo: actions[a].photo, is_sublist_available: actions[a].is_sublist_available,
+                                    is_available: actions[a].is_available, id: actions[a].action};
                                     currentA.days[d] = actions[a].status;
                                     bigList.push(currentA);
                                 }
@@ -198,14 +207,15 @@ export default function Firebasev2(props)  {
                                         if (insts[i].title){
                                             var isNewI = true;
                                             for(var s=0; s<bigList.length; s++){
-                                                if (bigList[s].type == "Instruction" && bigList[s].title == insts[i].title){
+                                                if (bigList[s].type == "Instruction" && bigList[s].id == insts[i].instruction){
                                                     bigList[s].days[d] = insts[i].status;
                                                     isNewI = false;
                                                     break;
                                                 }
                                             }
                                             if(isNewI){
-                                                var currentI = {type: "Instruction", title: insts[i].title, under: actions[a].title, days:[], tBox: {}, show: false};
+                                                var currentI = {type: "Instruction", title: insts[i].title, under: actions[a].title, days:[], tBox: {},
+                                                show: false, photo: insts[i].photo, is_available: insts[i].is_available, id: insts[i].instruction};
                                                 currentI.days[d] = insts[i].status;
                                                 bigList.push(currentI);
                                             }
@@ -230,7 +240,7 @@ export default function Firebasev2(props)  {
         for (var i=0; i< bigList.length; i++){
             rows.push(createData(bigList[i].title, bigList[i].days[6], bigList[i].days[5], bigList[i].days[4], bigList[i].days[3],
                  bigList[i].days[2], bigList[i].days[1], bigList[i].days[0], bigList[i].show, bigList[i].under, bigList[i].photo,
-                 bigList[i].startTime, bigList[i].endTime, bigList[i].is_sublist_available, bigList[i].type, bigList[i].id));
+                 bigList[i].startTime, bigList[i].endTime, bigList[i].is_sublist_available, bigList[i].type, bigList[i].id, bigList[i].is_available));
         }
         // console.log(tempRows);
         // setRows(tempRows);
@@ -450,7 +460,7 @@ export default function Firebasev2(props)  {
                                 style={{ color: "#000000" }}
                                 onClick={(e) => {
                                 e.stopPropagation();
-                                alert("Item Is NOT Availble to the user");
+                                alert("Item Is NOT Availble to the user" + r.is_available);
                                 }}
                                 icon={faUserAltSlash}
                                 size="small"
@@ -540,7 +550,7 @@ export default function Firebasev2(props)  {
         return(
             <div
             
-                style={{  backgroundColor:'#BBC7D7' , marginBottom:'0px'}}
+                style={{  backgroundColor:'#d1dceb' , marginBottom:'0px'}}
             >
                 
                 <div style={{ display:'flex', justifyContent:'space-evenly' }}>
@@ -594,16 +604,25 @@ export default function Firebasev2(props)  {
                     </Col>
                 </div>
                 <div style={{marginLeft:'1.5rem'}}>
-                <FontAwesomeIcon
+                {(a.is_sublist_available === "True") ? (
+                            <div>
+                            <FontAwesomeIcon
                             icon={faList}
                             title="SubList Available"
-                            style={{ color: "#ffffff"}}
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
-                            onClick={(e)=>{
-                            //  style.color = "#000000"
-                            }}
+                            style={{ color: "#ffffff" }}
                             size="small"
+                            onClick = {()=> {
+                                // sendRoutineToParent(a.number);
+                                // setLoading(!isLoading);
+                            }}
                             />
+                        </div>
+                        ) : (
+                            <div
+                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShowATModal: false})}}>
+                            >
+                            </div>
+                        )}
                 </div>
                 </div>
                 </div>
@@ -678,17 +697,28 @@ export default function Firebasev2(props)  {
 
                                {/* {(a.is_sublist_available === "True") ? ( */}
                                 <div>
+                                {(a.is_sublist_available === "True") ? (
+                            <div>
                             <FontAwesomeIcon
                             icon={faList}
                             title="SubList Available"
                             style={{ color: "#ffffff" }}
                             size="small"
                             onClick = {()=> {
-                                // sendRoutineToParent(a.name);
-                                clickHandle(a.name)
+                                // sendRoutineToParent(a.number);
                                 // setLoading(!isLoading);
+                                clickHandle(a.name)
                             }}
                             />
+                        </div>
+                        ) : (
+                            <FontAwesomeIcon
+                                    icon={faList}
+                                    title="SubList Not Available"
+                                    style={{ color: "#d1dceb"}}
+                                    size="small"
+                                    />) 
+                                    }
                         </div>
                         {/* ) : (
                             <div
@@ -718,7 +748,7 @@ export default function Firebasev2(props)  {
         return(
             <div
             
-                style={{ backgroundColor:'#BBC7D7' , marginBottom:'0px'}}
+                style={{ backgroundColor:'#dae5f5' , marginBottom:'0px'}}
             >
                 
                 <div style={{ display:'flex', justifyContent:'space-evenly' }}>
@@ -890,8 +920,8 @@ export default function Firebasev2(props)  {
                     <div>
                     <FontAwesomeIcon
                             icon={faList}
-                            title="SubList Available"
-                            style={{ color: "#ffffff"}}
+                            title="SubList Not Available"
+                            style={{ color: "#dae5f5"}}
                             // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
                             onClick={(e)=>{
                             //  style.color = "#000000"
