@@ -8,6 +8,8 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import { useHistory } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import { GoogleLogin } from 'react-google-login';
+import TimezoneSelect from 'react-timezone-select'
 
 import LoginContext from '../LoginContext';
 import axios from 'axios'
@@ -83,7 +85,14 @@ export function Navigation() {
   const [showGiveAccess, toggleGiveAccess] = useState(false);
   const [showConfirmed, toggleConfirmed] = useState(false);
   const [taListCreated, toggleGetTAList] = useState(false);
+  const [selectedTimezone, setSelectedTimezone] = useState({})
   const [patientName, setPatiantName] = useState('');
+  const [emailUser, setEmailUser] = useState('');
+  const [refreshToken, setrefreshToken] = useState('');
+  const [accessToken, setAccessToken] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+
   const [taName, setTAName] = useState('');
   const [taID, setTAID] = useState('');
   const [taList, setTAList] = useState([])
@@ -94,6 +103,10 @@ export function Navigation() {
 
   console.log('User list', listOfUsers)
   console.log('Cur user', selectedUser)
+
+  function googleLogIn(){
+    
+  }
 
   const userListRendered = () => {
       if (loginContext.loginState.loggedIn) {
@@ -196,77 +209,12 @@ export function Navigation() {
     history.push('/login');
   }
 
-  const newUserModal = () => {
-    if (showNewUser) {
-      return (
-        <div
-          style={{
-            height: "100%",
-            width: "100%",
-            zIndex: "101",
-            left: "0",
-            top: "0",
-            overflow: "auto",
-            position: "fixed",
-            display: "grid",
-            backgroundColor: 'rgba(255, 255, 255, 0.5)'
-          }}
-        >
-          <div
-            style={{
-              position: "relative",
-              justifySelf: "center",
-              alignSelf: "center",
-              display: "block",
-              backgroundColor: "#889AB5",
-              width: "400px",
-              // height: "100px",
-              color: "white",
-              padding: "40px"
-            }}
-          >
-            <div style={{textAlign: 'center', marginBottom: '20px'}}>New User</div>
-            <div>Email:</div>
-            <div style={{marginBottom: '20px'}}>NotARealEmail@something.com</div>
-            <div>First Name:</div>
-            <input placeholder="John" style={{marginBottom: '20px', height: '40px', width: "100%", borderRadius: '15px', border: 'none'}}></input>
-            <div>Last Name:</div>
-            <input placeholder="Doe" style={{marginBottom: '20px', height: '40px', width: "100%", borderRadius: '15px', border: 'none'}}></input>
-            <input placeholder="timezone" style={{marginBottom: '20px', height: '40px', width: "100%", borderRadius: '15px', border: 'none'}}></input>
-            <div>
-              <button style = {{
-                backgroundColor: "#889AB5",
-                color: 'white',
-                border: 'solid',
-                borderWidth: '2px',
-                borderRadius: '25px',
-                width: '30%',
-                marginLeft: "10%",
-                marginRight: "10%"
-              }}
-              onClick = {() => {
-                toggleNewUser(false)
-              }}>Close</button>
-              <button style = {{
-                backgroundColor: "#889AB5",
-                color: 'white',
-                border: 'solid',
-                borderWidth: '2px',
-                borderRadius: '25px',
-                width: '30%',
-                marginLeft: "10%",
-                marginRight: "10%"
-              }}
-              onClick = {() => {
-                toggleNewUser(false)
-              }}>Save</button>
-            </div>
-          </div>
-        </div>
-      )
-    } else {
-      return null
-    }
+  function newUserModal() {
+   // if (showNewUser) {
+   
+    // } else {
+    //   return null
+    // }
   }
 
   const giveAccessModal = () => {
@@ -421,9 +369,134 @@ export function Navigation() {
   console.log(loginContext)
   getTAList()
   console.log(taList)
+
+
+  
+  const responseGoogle = (response) => {
+    console.log('response', response);
+    if (response.profileObj !== null || response.profileObj !== undefined) {
+      let e = response.profileObj.email;
+      let at = response.accessToken;
+      let rt = response.googleId;
+      let first_name = response.profileObj.givenName;
+      let last_name = response.profileObj.familyName;
+      console.log(e, at, rt, first_name, last_name);
+      setEmailUser(e);
+      toggleNewUser(!showNewUser)
+      setAccessToken(at);
+      setrefreshToken(rt);
+      setFirstName(first_name);
+      setLastName(last_name);
+    }
+  };
+
+  function onSubmitUser(){
+    
+    let body = {
+      email_id: emailUser,
+      google_auth_token: accessToken,
+      google_refresh_token: refreshToken,
+      first_name: firstName,
+      last_name: lastName,
+    };
+    console.log("body", body)
+      axios
+        .post(
+          'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/addNewUser' , body)
+          .then((response) => {
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.log('its in landing page');
+          console.log(error);
+        });
+  }
+
   return (
     <>
-      {newUserModal()}
+      {/* {newUserModal()} */}
+      <Box hidden={!showNewUser}>
+      <div
+          style={{
+            height: "100%",
+            width: "100%",
+            zIndex: "101",
+            left: "0",
+            top: "0",
+            overflow: "auto",
+            position: "fixed",
+            display: "grid",
+            backgroundColor: 'rgba(255, 255, 255, 0.5)'
+          }}
+        >
+          <div
+            style={{
+              position: "relative",
+              justifySelf: "center",
+              alignSelf: "center",
+              display: "block",
+              backgroundColor: "#889AB5",
+              width: "400px",
+              // height: "100px",
+              color: "white",
+              padding: "40px"
+            }}
+          >
+            <div style={{textAlign: 'center', marginBottom: '20px'}}>New User</div>
+            <div>Email:</div>
+            <div style={{marginBottom: '20px'}}>{emailUser}</div>
+            <div>First Name:</div>
+            <input placeholder={firstName} style={{marginBottom: '20px', height: '40px', width: "100%", borderRadius: '15px', border: 'none'}}></input>
+            <div>Last Name:</div>
+            <input placeholder={lastName} style={{marginBottom: '20px', height: '40px', width: "100%", borderRadius: '15px', border: 'none'}}></input>
+            {/* <input placeholder="timezone" style={{marginBottom: '20px', height: '40px', width: "100%", borderRadius: '15px', border: 'none'}}></input>
+             */}
+              <div className='App'>
+      <h2>Select Timezone</h2>
+      <blockquote>Please make a selection</blockquote>
+      <div className='select-wrapper'
+      style={{color:'#000000'}}>
+        <TimezoneSelect
+          value={selectedTimezone}
+          onChange={setSelectedTimezone}
+          
+        />
+      </div>
+      <div>{selectedTimezone.value}</div>
+    </div>
+            <div>
+              <button style = {{
+                backgroundColor: "#889AB5",
+                color: 'white',
+                border: 'solid',
+                borderWidth: '2px',
+                borderRadius: '25px',
+                width: '30%',
+                marginLeft: "10%",
+                marginRight: "10%",
+                marginTop:'1rem'
+              }}
+              onClick = {() => {
+                toggleNewUser(false)
+              }}>Close</button>
+              <button style = {{
+                backgroundColor: "#889AB5",
+                color: 'white',
+                border: 'solid',
+                borderWidth: '2px',
+                borderRadius: '25px',
+                width: '30%',
+                marginLeft: "10%",
+                marginRight: "10%"
+              }}
+              onClick = {() => {
+                toggleNewUser(false)
+                onSubmitUser()
+              }}>Save</button>
+            </div>
+          </div>
+        </div>
+      </Box>
       {giveAccessModal()}
       {confirmedModal()}
       <AppBar className={classes.navigationBar} style={{position: 'static'}}>
@@ -532,7 +605,7 @@ export function Navigation() {
                     {taListRendered()}
                   </select>
 
-                  <Button
+                  {/* <Button
                   //className={classes.buttonColor}
                   //variant="text"
                   //onClick={homeNavigation}
@@ -545,13 +618,31 @@ export function Navigation() {
                   className = {classes.myButton}
                   style={{float: 'right'}}
                   onClick={(e) => {
-                    // googleLogIn();
-                    toggleNewUser(!showNewUser)
+                     googleLogIn();
+                   // toggleNewUser(!showNewUser)
 
                   }}
                   >
                     Create New User
-                  </Button>
+                  </Button> */}
+              <GoogleLogin
+              clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
+              render={(renderProps) => (
+                <Button
+                className = {classes.myButton}
+                style={{float: 'right'}}
+                  onClick={renderProps.onClick}
+                  disabled={renderProps.disabled}
+                >  Create New User
+                </Button>
+              )}
+              buttonText="Log In"
+              onSuccess={responseGoogle}
+              onFailure={responseGoogle}
+              isSignedIn={false}
+              disable={true}
+              cookiePolicy={'single_host_origin'}
+            />
                   
                 </div>
               ) : (null)}
