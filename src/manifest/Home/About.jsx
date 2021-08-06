@@ -319,11 +319,22 @@ export default function AboutModal(props) {
           if (response.result !== false){
             const usersOfTA = response.data.result;
             const curUserID = usersOfTA[0].user_unique_id;
-            loginContext.setLoginState({
-              ...loginContext.loginState,
-              usersOfTA: response.data.result,
-              curUser: curUserID
-            })
+            // console.log('pog', loginContext.loginState.curUser)
+            if (loginContext.loginState.curUser == '') {
+              // edge case on refresh
+              loginContext.setLoginState({
+                ...loginContext.loginState,
+                usersOfTA: response.data.result,
+                curUser: curUserID
+              })
+            } else {
+              loginContext.setLoginState({
+                ...loginContext.loginState,
+                usersOfTA: response.data.result,
+                //curUser: curUserID
+              })
+            }
+            
             console.log(curUserID);
             // setUserID(curUserID);
             // console.log(userID);

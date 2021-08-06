@@ -59,10 +59,22 @@ export default function Home(props) {
 
   // const [userID, setUserID] = useState("");
   const loginContext = useContext(LoginContext);
-  const userID = loginContext.loginState.curUser;
+  var userID = ''
+  if (
+    document.cookie
+      .split(";")
+      .some(item => item.trim().startsWith("patient_uid="))
+  ) {
+    userID = document.cookie.split('; ').find(row => row.startsWith('patient_uid=')).split('=')[1]
+  } else {
+    userID = loginContext.loginState.curUser;
+  }
 
+  //const userID = loginContext.loginState.curUser;
+  //const userID = document.cookie.split('; ').find(row => row.startsWith('patient_uid=')).split('=')[1]
   console.log(props.location.state);
-  console.log(userID)
+  console.log('Home',userID)
+  //console.log('Home cookie', document.cookie.split('; ').find(row => row.startsWith('patient_uid=')).split('=')[1])
 
   // GetUserID(props.location.state);
 

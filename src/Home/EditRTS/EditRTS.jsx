@@ -443,7 +443,7 @@ const EditRTS = () => {
                             ...editingRTSContext.editingRTS,
                             newItem: {
                               ...editingRTSContext.editingRTS.newItem,
-                              repeat_type: e.target.value
+                              repeat_type: e.target.value,
                             }
                           })
                         }}

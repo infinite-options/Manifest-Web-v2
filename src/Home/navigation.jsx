@@ -11,6 +11,7 @@ import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 import LoginContext from '../LoginContext';
 import axios from 'axios'
+import { CompareSharp } from '@material-ui/icons';
 
 /* Custom Hook to make styles */
 const useStyles = makeStyles({
@@ -122,6 +123,7 @@ export function Navigation() {
           {user.user_name}
         </option>
       ));
+
       return (
         <div>
           Patient:&nbsp;
@@ -130,7 +132,9 @@ export function Navigation() {
             value={selectedUser.user_unique_id}
             onChange={(e) => {
               console.log(JSON.parse(e.target.value))
-              // document.cookie = 'patient_uid'+e.target.value
+              console.log('patient_uid='+JSON.parse(e.target.value).user_unique_id)
+              document.cookie = 'patient_uid='+JSON.parse(e.target.value).user_unique_id
+              console.log(document.cookie)
               loginContext.setLoginState({
                 ...loginContext.loginState,
                 curUser: JSON.parse(e.target.value).user_unique_id,
@@ -508,7 +512,7 @@ export function Navigation() {
                     onClick={(e) => {
                       document.cookie = "ta_uid=1;max-age=0";
                       document.cookie = "ta_email=1;max-age=0";
-                      // document.cookie = "patient_uid=1;max-age=0"
+                      document.cookie = "patient_uid=1;max-age=0"
                       loginContext.setLoginState({
                         ...loginContext.loginState,
                         loggedIn: false,
