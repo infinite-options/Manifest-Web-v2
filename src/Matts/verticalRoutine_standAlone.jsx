@@ -71,8 +71,8 @@ const VerticalRoutine = ({userID}) => {
     const [currentDate, setCurDate] = useState(new Date(Date.now()))
     const classes = useStyles();
     const [rows, setRows] = useState([]);
-    function createData(name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type){    //rows structure
-        return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type}
+    function createData(name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, is_available){    //rows structure
+        return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, is_available}
     }
 
     useEffect(() => {
@@ -496,16 +496,25 @@ const VerticalRoutine = ({userID}) => {
                     </div>
 
                     <div>
+                    {(r.is_sublist_available === "True") ?(
                     <FontAwesomeIcon
                             icon={faList}
                             title="SubList Available"
                             style={{ color: "#ffffff"}}
                             // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
-                            onClick={(e)=>{
-                            //  style.color = "#000000"
+                            onClick = {()=> {
+                                clickHandle(r.name)
                             }}
                             size="small"
-                            />
+                            />) 
+                            :(
+                                <FontAwesomeIcon
+                                        icon={faList}
+                                        title="SubList Not Available"
+                                        style={{ color: "#000000"}}
+                                        size="small"
+                                        />) 
+                        }
                     </div>
                     </div>
                 </div>
@@ -518,7 +527,7 @@ const VerticalRoutine = ({userID}) => {
         return(
             <div
             
-                style={{ height:'98px', width:'100%', backgroundColor:'#BBC7D7' , marginBottom:'0px'}}
+                style={{ height:'98px', width:'100%', backgroundColor:'#d1dceb' , marginBottom:'0px'}}
             >
                 
                 <div style={{ display:'flex', justifyContent:'space-between' }}>
@@ -733,7 +742,7 @@ const VerticalRoutine = ({userID}) => {
         return(
             <div
             
-                style={{ height:'98px', width:'100%', backgroundColor:'#BBC7D7' , marginBottom:'0px'}}
+                style={{ height:'98px', width:'100%', backgroundColor:'#dae5f5' , marginBottom:'0px'}}
             >
                 
                 <div style={{ display:'flex', justifyContent:'space-between' }}>

@@ -172,8 +172,8 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                             style={{ color: "#ffffff" }}
                             size="small"
                             onClick = {()=> {
-                                sendRoutineToParent(r.name);
-                                setLoading(!isLoading);
+                                // sendRoutineToParent(r.number);
+                                // setLoading(!isLoading);
                             }}
                             />
                         </div>
@@ -302,16 +302,26 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                     </div>
 
                     <div>
+                    {(r.is_sublist_available === "True") ?(
                     <FontAwesomeIcon
                             icon={faList}
                             title="SubList Available"
                             style={{ color: "#ffffff"}}
                             // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
-                            onClick={(e)=>{
-                            //  style.color = "#000000"
+                            onClick = {()=> {
+                                sendRoutineToParent(r.number);
+                                setLoading(!isLoading);
                             }}
                             size="small"
-                            />
+                            />) 
+                            :(
+                                <FontAwesomeIcon
+                                        icon={faList}
+                                        title="SubList Not Available"
+                                        style={{ color: "#BBC7D7"}}
+                                        size="small"
+                                        />) 
+                        }
                     </div>
                     </div>
                 </div>
@@ -324,7 +334,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
         return(
             <div
             
-                style={{ height:'98px', width:'100%', backgroundColor:'#BBC7D7' , marginBottom:'0px'}}
+                style={{ height:'98px', width:'100%', backgroundColor:'#d1dceb' , marginBottom:'0px'}}
             >
                 
                 <div style={{ display:'flex', justifyContent:'space-between' }}>
@@ -385,8 +395,9 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                             style={{ color: "#ffffff" }}
                             size="small"
                             onClick = {()=> {
-                                sendRoutineToParent(a.name);
-                                setLoading(!isLoading);}}
+                                // sendRoutineToParent(a.number);
+                                // setLoading(!isLoading);
+                            }}
                             />
                         </div>
                         ) : (
@@ -514,16 +525,26 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                     </div>
 
                     <div>
-                    <FontAwesomeIcon
+                    {(a.is_sublist_available === "True") ? (
+                            <div>
+                            <FontAwesomeIcon
                             icon={faList}
                             title="SubList Available"
-                            style={{ color: "#ffffff"}}
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
-                            onClick={(e)=>{
-                            //  style.color = "#000000"
-                            }}
+                            style={{ color: "#ffffff" }}
                             size="small"
+                            onClick = {()=> {
+                                sendRoutineToParent(a.number);
+                                setLoading(!isLoading);}}
                             />
+                        </div>
+                        ) : (
+                            <FontAwesomeIcon
+                                    icon={faList}
+                                    title="SubList Not Available"
+                                    style={{ color: "#d1dceb"}}
+                                    size="small"
+                                    />) 
+                                    }
                     </div>
                     </div>
                 </div>
@@ -537,7 +558,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
         return(
             <div
             
-                style={{ height:'98px', width:'100%', backgroundColor:'#BBC7D7' , marginBottom:'0px'}}
+                style={{ height:'98px', width:'100%', backgroundColor:'#dae5f5' , marginBottom:'0px'}}
             >
                 
                 <div style={{ display:'flex', justifyContent:'space-between' }}>
@@ -726,8 +747,8 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                     <div>
                     <FontAwesomeIcon
                             icon={faList}
-                            title="SubList Available"
-                            style={{ color: "#ffffff"}}
+                            title="SubList Not Available"
+                            style={{ color: "#dae5f5"}}
                             // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
                             onClick={(e)=>{
                             //  style.color = "#000000"

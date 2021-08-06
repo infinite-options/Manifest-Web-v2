@@ -80,18 +80,21 @@ export default function MainPage(props) {
     //const currentUser = props.location.state; //matts testing 72
     // const currentUser = "100-000072";
     const loginContext = useContext(LoginContext);
-    const currentUser = loginContext.loginState.curUser;   
+    const [currentUser, setCU] = useState(loginContext.loginState.curUser);   
+    console.log("currentUser: " + currentUser);
     const [historyGot, setHG] = useState([]);
     const inRange = [];
-    const [currentDate, setCurDate] = useState(new Date(Date.now()))
-
+    var start = new Date();
+    start.setHours(0,0,0,0);
+    console.log(start);
+    const [currentDate, setCurDate] = useState(start);
     const history = useHistory();
 
     //table things:
     const classes = useStyles();
     
-    function createData(name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, is_available){    //rows structure
-        return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, is_available}
+    function createData(name, number, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, is_available){    //rows structure
+        return {name, number, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, is_available}
     }
     const [rows, setRows] = useState([]);
     const [isLoading, setLoading] = useState(true);
@@ -107,6 +110,7 @@ export default function MainPage(props) {
             }
             // setHG(historyGot);
             console.log(historyGot);
+            console.log(currentDate);
             cleanData(historyGot, currentDate);
             // console.log(response.data.result[1].details);
            // cleanData(historyGot, currentDate);
@@ -155,14 +159,16 @@ export default function MainPage(props) {
         
         //go through at find historyGots that are within 7 days of useDate
         console.log("date:" + useDate);
+        // console.log(new Date().toISOString());
         const temp = [];
         for(var i=0; i <historyGot.length; i++){
-            var historyDate = new Date(historyGot[i].date);
+            var historyDate = new Date(historyGot[i].date_affected);
             if ((historyDate.getTime() >= useDate.getTime() - 604800000)    //filter for within 7 datets
-            && historyDate.getTime() <= useDate.getTime()){                 // 7: 604800000    2: 172800000
+            && historyDate.getTime() <= useDate.getTime() - 86400000   ){                 // 7: 604800000    2: 172800000
                 temp.push(historyGot[i]);
             }
         }
+        console.log(temp);
         //now temp has data we want
     // move temp to inRange with no repeats
         const map = new Map();
@@ -187,14 +193,19 @@ export default function MainPage(props) {
         // for (var d = (inRange.length - 1); d >= 0; d--){
         for (var d = 0; d < inRange.length; d++){   
         const obj = JSON.parse(inRange[d].details)
-            console.log(obj);
+            // console.log(obj);
 
             //sort obj by time of day
             obj.sort(custom_sort);
-
+            for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
+                // console.log(obj[r]);
+                if(obj[r].routine){
+                    // console.log("gotem");
+                }
+            }
             for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
                 // console.log(r);
-                if(obj[r].title){
+                if(obj[r].routine){
                     // console.log("gere");
                     var isNewR = true;
                     for (var s=0; s<bigList.length; s++){       //check through and see if this is a new routine
@@ -215,7 +226,7 @@ export default function MainPage(props) {
                     if(obj[r].actions!= undefined){
                         var actions = obj[r].actions;
                         console.log("ACTIONS:" + d);
-                        console.log(actions);
+                        // console.log(actions);
                         for (var a=0; a < actions.length; a++){         //FOR ACTIONS
                             if(actions[a].title){
                                 var isNewA = true;
@@ -227,7 +238,7 @@ export default function MainPage(props) {
                                     }
                                 }
                                 if(isNewA){
-                                    var currentA = {type: "Action", title: actions[a].title, under: obj[r].title, days:[], tBox: {}, show: false,
+                                    var currentA = {type: "Action", title: actions[a].title, under: obj[r].routine, days:[], tBox: {}, show: false,
                                      photo: actions[a].photo, is_sublist_available: actions[a].is_sublist_available, 
                                      is_available: actions[a].is_available, number: actions[a].action};
                                     currentA.days[d] = actions[a].status;
@@ -246,7 +257,7 @@ export default function MainPage(props) {
                                                 }
                                             }
                                             if(isNewI){
-                                                var currentI = {type: "Instruction", title: insts[i].title, under: actions[a].title, days:[], tBox: {}, 
+                                                var currentI = {type: "Instruction", title: insts[i].title, under: actions[a].action, days:[], tBox: {}, 
                                                 show: false, photo: insts[i].photo, is_available: insts[i].is_available, number: insts[i].instruction};
                                                 currentI.days[d] = insts[i].status;
                                                 bigList.push(currentI);
@@ -265,14 +276,14 @@ export default function MainPage(props) {
         
         setRows([]);
         console.log("ROWS" + rows);
-        console.log(bigList);
+        console.log({bigList});
         bigList = addCircles(bigList);
         console.log(bigList);
        // bigList = addNames(bigList, routines);
         console.log(bigList);
         var tempRows = [];
         for (var i=0; i< bigList.length; i++){
-            tempRows.push(createData(bigList[i].title, bigList[i].days[6], bigList[i].days[5], bigList[i].days[4], bigList[i].days[3],
+            tempRows.push(createData(bigList[i].title, bigList[i].number, bigList[i].days[6], bigList[i].days[5], bigList[i].days[4], bigList[i].days[3],
                  bigList[i].days[2], bigList[i].days[1], bigList[i].days[0], bigList[i].show, bigList[i].under, bigList[i].photo,
                  bigList[i].startTime, bigList[i].endTime, bigList[i].is_sublist_available, bigList[i].type, bigList[i].is_available));
         }
@@ -304,7 +315,7 @@ export default function MainPage(props) {
                 }
                 else if(bigList[i].type == "Action"){
                     if(bigList[i].days[d] == "not started"){
-                        if(checkAbove(bigList[i].under, d)){
+                        if(checkAbove(bigList[i].under, d, bigList[i])){
                             bigList[i].days[d] = (<div className = "ipA">
                                                     <div className = "whiteHalfTop"></div>
                                                  </div>);
@@ -322,7 +333,7 @@ export default function MainPage(props) {
                 }
                 else{
                     if(bigList[i].days[d] == "not started"){
-                        if(checkAbove(bigList[i].under, d)){
+                        if(checkAbove(bigList[i].under, d, bigList[i])){
                             bigList[i].days[d] = (<div className = "ipI">
                                                     <div className = "whiteHalfTop" ></div>
                                                 </div>);
@@ -337,9 +348,15 @@ export default function MainPage(props) {
         }
         return(bigList);
 
-        function checkAbove(above, d){
+        function checkAbove(above, d, thing){
+            // console.log("checking" + above + " day: " + d + " thing: ");
+            // console.log(thing);
             for (const checks of bigList){
-                if(above == checks.title){
+                // if(checks.days[d] == undefined){
+                //     return false;
+                // }
+                if(above == checks.number){
+                    // console.log(checks);
                     if (checks.days[d] == "completed" || checks.days[d] == "complete"){
                         return true;}
                     if(checks.days[d].props != undefined){
@@ -360,30 +377,30 @@ export default function MainPage(props) {
    
 
 // --------   when routine is clicked on. set children show to true, re-render with setRows ----------
-    function clickHandle(name){
+    function clickHandle(number){
         console.log(rows);
         var newRows = [];
         //take out duplicates of rows (copy into newRows)
         const map = new Map();
         for (const item of rows){
-            if(!map.has(item.name)){
-                map.set(item.name, true);
+            if(!map.has(item.number)){
+                map.set(item.number, true);
                 newRows.push(item)
             }
         }
         //if clicked on, change show of things underneath
-        console.log("click." + name);
+        console.log("click." + number);
         console.log(newRows);
         for (var r =0; r < newRows.length; r++){
-            if (rows[r].under == name){
+            if (rows[r].under == number){
                 //console.log("got " + rows[r].name);
                 newRows[r].show = !rows[r].show;
-                console.log(rows[r].name + " -> " + newRows[r].show);
+                console.log(rows[r].number + " -> " + newRows[r].show);
                 //also close instructions of routines clicked on. 2 levels deep
                 for (var i=0; i<newRows.length; i++){
-                    if(rows[i].under == rows[r].name && rows[i].show){
+                    if(rows[i].under == rows[r].number && rows[i].show){
                         newRows[i].show = !rows[i].show;
-                        console.log(rows[i].name + " -> " + newRows[i].show);
+                        console.log(rows[i].number + " -> " + newRows[i].show);
                     }
                 }
             }
@@ -485,12 +502,11 @@ export default function MainPage(props) {
                                     // flex
                                     >
                                         <Container>
-                                            <Row style={{ marginTop: '20px' }}>
+                                            <Row style={{ marginTop: '10px' }}>
                                                 <Col>
                                                     <div>
                                                         <FontAwesomeIcon
-                                                            // style={{ marginLeft: "50%" }}
-
+                                                            style={{ marginTop: '10px' }}
                                                             icon={faChevronLeft}
                                                             size="2x"
                                                             onClick={(e) => {
@@ -501,11 +517,11 @@ export default function MainPage(props) {
                                                 </Col>
                                                 <Col
                                                     md="auto"
-                                                    style={{ textAlign: 'center' }}
+                                                    style={{ textAlign: 'center' , marginTop:'0px'}}
                                                 >
-                                                    <p style={{textTransform: 'none', margin: '0px'}} > 
+                                                    <p style={{textTransform: 'none', fontWeight: 'bold', margin: '0px'}} > 
                                                     Week of {Moment(currentDate.getTime() - 604800000).format('MMMM D')}-  
-                                                     {Moment(currentDate.getTime()).format('D YYYY')}</p>
+                                                     {Moment(currentDate.getTime()).format('D, YYYY')}</p>
                                                     <p
                                                         style={{ textTransform: 'none', height: '19.5px' }}
                                                     >
@@ -549,7 +565,7 @@ export default function MainPage(props) {
                                     </TableHead>
                                     <TableBody>
                                         {onlyAllowed().map((row) => (
-                                            <TableRow key={row.name} >
+                                            <TableRow key={row.number} >
                                                 <TableCell align="right" height="98px">{row.sun}</TableCell>
                                                 <TableCell align="right">{row.mon}</TableCell>
                                                 <TableCell align="right">{row.tue}</TableCell>
@@ -558,7 +574,7 @@ export default function MainPage(props) {
                                                 <TableCell align="right">{row.fri}</TableCell>
                                                 <TableCell align="right">{row.sat}</TableCell>
                                                 <TableCell align="right" component="th" scope="row"
-                                                onClick = {() => clickHandle(row.name)}
+                                                onClick = {() => clickHandle(row.number)}
                                                 >
                                                     
                                                 </TableCell>
