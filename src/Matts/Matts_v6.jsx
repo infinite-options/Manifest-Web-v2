@@ -80,12 +80,14 @@ export default function MainPage(props) {
     //const currentUser = props.location.state; //matts testing 72
     // const currentUser = "100-000072";
     const loginContext = useContext(LoginContext);
-    const currentUser = loginContext.loginState.curUser;   
+    const [currentUser, setCU] = useState(loginContext.loginState.curUser);   
     console.log("currentUser: " + currentUser);
     const [historyGot, setHG] = useState([]);
     const inRange = [];
-    const [currentDate, setCurDate] = useState(new Date (new Date().toISOString().split("T")[0]));
-    console.log((new Date().toISOString().split("T")[0]));
+    var start = new Date();
+    start.setHours(0,0,0,0);
+    console.log(start);
+    const [currentDate, setCurDate] = useState(start);
     const history = useHistory();
 
     //table things:
@@ -134,12 +136,12 @@ export default function MainPage(props) {
         
         //go through at find historyGots that are within 7 days of useDate
         console.log("date:" + useDate);
-        console.log(new Date().toISOString());
+        // console.log(new Date().toISOString());
         const temp = [];
         for(var i=0; i <historyGot.length; i++){
             var historyDate = new Date(historyGot[i].date_affected);
             if ((historyDate.getTime() >= useDate.getTime() - 604800000)    //filter for within 7 datets
-            && historyDate.getTime() <= useDate.getTime() - 106400000  ){                 // 7: 604800000    2: 172800000
+            && historyDate.getTime() <= useDate.getTime() - 86400000   ){                 // 7: 604800000    2: 172800000
                 temp.push(historyGot[i]);
             }
         }
@@ -168,20 +170,20 @@ export default function MainPage(props) {
         // for (var d = (inRange.length - 1); d >= 0; d--){
         for (var d = 0; d < inRange.length; d++){   
         const obj = JSON.parse(inRange[d].details)
-            console.log(obj);
+            // console.log(obj);
 
             //sort obj by time of day
             obj.sort(custom_sort);
             for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
-                console.log(obj[r]);
+                // console.log(obj[r]);
                 if(obj[r].routine){
-                    console.log("gotem");
+                    // console.log("gotem");
                 }
             }
             for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
                 // console.log(r);
                 if(obj[r].routine){
-                    console.log("gere");
+                    // console.log("gere");
                     var isNewR = true;
                     for (var s=0; s<bigList.length; s++){       //check through and see if this is a new routine
                         if (bigList[s].type == "Routine" && bigList[s].number == obj[r].routine){
@@ -201,7 +203,7 @@ export default function MainPage(props) {
                     if(obj[r].actions!= undefined){
                         var actions = obj[r].actions;
                         console.log("ACTIONS:" + d);
-                        console.log(actions);
+                        // console.log(actions);
                         for (var a=0; a < actions.length; a++){         //FOR ACTIONS
                             if(actions[a].title){
                                 var isNewA = true;
@@ -324,14 +326,14 @@ export default function MainPage(props) {
         return(bigList);
 
         function checkAbove(above, d, thing){
-            console.log("checking" + above + " day: " + d + " thing: ");
-            console.log(thing);
+            // console.log("checking" + above + " day: " + d + " thing: ");
+            // console.log(thing);
             for (const checks of bigList){
                 // if(checks.days[d] == undefined){
                 //     return false;
                 // }
                 if(above == checks.number){
-                    console.log(checks);
+                    // console.log(checks);
                     if (checks.days[d] == "completed" || checks.days[d] == "complete"){
                         return true;}
                     if(checks.days[d].props != undefined){
