@@ -398,6 +398,7 @@ export function Navigation() {
       google_refresh_token: refreshToken,
       first_name: firstName,
       last_name: lastName,
+      time_zone: selectedTimezone.value
     };
     console.log("body", body)
       axios
@@ -446,9 +447,22 @@ export function Navigation() {
             <div>Email:</div>
             <div style={{marginBottom: '20px'}}>{emailUser}</div>
             <div>First Name:</div>
-            <input placeholder={firstName} style={{marginBottom: '20px', height: '40px', width: "100%", borderRadius: '15px', border: 'none'}}></input>
+            <input placeholder={firstName} 
+            style={{marginBottom: '20px', height: '40px', width: "100%", borderRadius: '15px', border: 'none'}}
+          
+            onChange={(e) => {
+             setFirstName(e.target.value)
+             //console.log("change", e.target.value)
+             }}>
+
+            </input>
             <div>Last Name:</div>
-            <input placeholder={lastName} style={{marginBottom: '20px', height: '40px', width: "100%", borderRadius: '15px', border: 'none'}}></input>
+            <input placeholder={lastName} style={{marginBottom: '20px', height: '40px', width: "100%", borderRadius: '15px', border: 'none'}}
+             onChange={(e) => {
+              setLastName(e.target.value)
+              //console.log("change", e.target.value)
+              }}>
+            </input>
             {/* <input placeholder="timezone" style={{marginBottom: '20px', height: '40px', width: "100%", borderRadius: '15px', border: 'none'}}></input>
              */}
               <div className='App'>
@@ -459,10 +473,8 @@ export function Navigation() {
         <TimezoneSelect
           value={selectedTimezone}
           onChange={setSelectedTimezone}
-          
         />
       </div>
-      <div>{selectedTimezone.value}</div>
     </div>
             <div>
               <button style = {{
