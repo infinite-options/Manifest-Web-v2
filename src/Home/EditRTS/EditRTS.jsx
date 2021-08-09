@@ -82,6 +82,7 @@ const EditRTS = (props) => {
     axios
     .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateGR', formData)
     .then((_) => {
+      console.log('editrts', _)
       const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
       const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
       new_gr_array[gr_array_index] = object;
@@ -384,13 +385,14 @@ const EditRTS = (props) => {
                 <Row style={{marginTop: '10px', width: '100%', verticalAlign: 'middle'}}>
                   Does not repeat
                   {console.log('repeat value =', editingRTSContext.editingRTS.newItem.repeat)}
-                  {editingRTSContext.editingRTS.newItem.repeat == 'False' ? (
+                  {editingRTSContext.editingRTS.newItem.repeat == 'True' ? (
                     <input
                     name='repeating'
                     type='checkbox'
                     defaultChecked  = 'true'
                     style={{width: '20px', height: '20px', marginLeft: '10px'}}
                     onChange={(e) => {
+                      console.log('in false')
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
                         newItem: {
@@ -407,6 +409,7 @@ const EditRTS = (props) => {
                     // checked={editingRTSContext.editingRTS.newItem.repeat}
                     style={{width: '20px', height: '20px', marginLeft: '10px'}}
                     onChange={(e) => {
+                      console.log('in true')
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
                         newItem: {
@@ -591,20 +594,51 @@ const EditRTS = (props) => {
                       }}
                     />
                     <span> Available to User </span>
-            <input
-              type='checkbox'
-              style={{width: '20px', height: '20px'}}
-              checked={editingRTSContext.editingRTS.newItem.is_available}
-              onChange={(e) => {
-                editingRTSContext.setEditingRTS({
-                  ...editingRTSContext.editingRTS,
-                  newItem: {
-                    ...editingRTSContext.editingRTS.newItem,
-                    is_available: e.target.checked
-                  }
-                })
-              }}
-            />
+                    {/* <input
+                      type='checkbox'
+                      style={{width: '20px', height: '20px'}}
+                      checked={editingRTSContext.editingRTS.newItem.is_available}
+                      onChange={(e) => {
+                        editingRTSContext.setEditingRTS({
+                          ...editingRTSContext.editingRTS,
+                          newItem: {
+                            ...editingRTSContext.editingRTS.newItem,
+                            is_available: e.target.checked
+                          }
+                        })
+                      }}
+                    /> */}
+                    {editingRTSContext.editingRTS.newItem.is_available == 'True' ? (
+                      <input
+                        type='checkbox'
+                        style={{width:'20px', height: '20px'}}
+                        defaultChecked = 'true'
+                        onChange={(e) => {
+                          editingRTSContext.setEditingRTS({
+                            ...editingRTSContext.editingRTS,
+                            newItem: {
+                              ...editingRTSContext.editingRTS.newItem,
+                              is_available: e.target.checked
+                            }
+                          })
+                        }}
+                      />
+                    ) : (
+                      <input
+                        type='checkbox'
+                        style={{width:'20px', height: '20px'}}
+                        
+                        onChange={(e) => {
+                          editingRTSContext.setEditingRTS({
+                            ...editingRTSContext.editingRTS,
+                            newItem: {
+                              ...editingRTSContext.editingRTS.newItem,
+                              is_available: e.target.checked
+                            }
+                          })
+                        }}
+                      />
+                    )}
                     </div>
             
             
