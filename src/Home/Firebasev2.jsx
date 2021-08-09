@@ -32,6 +32,8 @@ import CopyIcon from "../manifest/OldManifest/CopyIcon.jsx";
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
+import LoginContext from '../LoginContext';
+
 
 
 
@@ -67,7 +69,20 @@ const useStyles = makeStyles({
 export default function Firebasev2(props)  {
     const history = useHistory();
     const inRange = [];
-    const currentUser = props.theCurrentUserID;
+
+    const loginContext = useContext(LoginContext);
+  var userID = ''
+  if (
+    document.cookie
+      .split(";")
+      .some(item => item.trim().startsWith("patient_uid="))
+  ) {
+    userID = document.cookie.split('; ').find(row => row.startsWith('patient_uid=')).split('=')[1]
+  } else {
+    userID = loginContext.loginState.curUser;
+  }
+    const currentUser = userID;
+
     const [listOfBlocks, setlistOfBlocks] = useState([]);
     const [historyGot, setHG] = useState([]);
     const [iconColor, setIconColor] = useState()
@@ -126,9 +141,11 @@ export default function Firebasev2(props)  {
         console.log("date:" + useDate);
         const temp = [];
         for(var i=0; i <historyGot.length; i++){
-            var historyDate = new Date(historyGot[i].date);
+            var historyDate = new Date(historyGot[i].date_affected);
+            console.log("HISTORY DATE: " + historyDate);
             if ((historyDate.getTime() >= useDate.getTime() - 604800000)    //filter for within 7 datets
-            && historyDate.getTime() <= useDate.getTime()){                 // 7: 604800000    2: 172800000
+            // && historyDate.getTime() <= useDate.getTime()
+            ){                 // 7: 604800000    2: 172800000
                 temp.push(historyGot[i]);
             }
         }

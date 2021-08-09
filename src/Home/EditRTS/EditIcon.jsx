@@ -52,6 +52,7 @@ const convertTimeLengthToMins = (timeString) => {
 }
 
 const EditIcon = ({routine, task, step}) => {
+  console.log("EDIT STEP: " + step);
   const editingRTSContext = useContext(EditRTSContext);
   const [arrRoutine, setarrRoutine] = useState([])
   const [routineCall, setroutineCall] = useState(false)
