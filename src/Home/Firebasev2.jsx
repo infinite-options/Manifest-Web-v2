@@ -23,6 +23,7 @@ import {
     Table,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 //import DeleteAT from "../manifest/OldManifest";
 import DeleteGR from "../manifest/OldManifest/deleteGR.jsx";
 import EditIcon from "./EditRTS/EditIcon.jsx";
@@ -65,9 +66,22 @@ const useStyles = makeStyles({
 })
 
 export default function Firebasev2(props)  {
+    console.log('firebase props', props)
     const history = useHistory();
     const inRange = [];
     const currentUser = props.theCurrentUserID;
+    //var currentUser = ''
+
+    // if (
+    //     document.cookie
+    //       .split(";")
+    //       .some(item => item.trim().startsWith("patient_uid="))
+    //   ) {
+    //     currentUser = document.cookie.split('; ').find(row => row.startsWith('patient_uid=')).split('=')[1]
+    //   } else {
+    //     currentUser = props.theCurrentUserID;
+    //   }
+
     const [listOfBlocks, setlistOfBlocks] = useState([]);
     const [historyGot, setHG] = useState([]);
     const [iconColor, setIconColor] = useState()
@@ -75,6 +89,17 @@ export default function Firebasev2(props)  {
     const [currentDate, setCurDate] = useState(new Date(Date.now()))
     const classes = useStyles();
     const [rows, setRows] = useState([]);
+    const [called, toggleCalled] = useState(false)
+
+    const [showCopyModal, toggleCopyModal] = useState([false, ''])
+    const [showCopyModalPatients, toggleCopyModalPatients] = useState([false, ''])
+    const [showCopyModalConfirm, toggleCopyModalConfirm] = useState(false)
+    const [allTAData, setTAData] = useState([])
+    const [allPatientData, setPatientData] = useState([])
+    const [taToCopyTo, setTAToCopyTo] = useState({})
+    const [patientToCopyTo, setPatientToCopyTo] = useState({})
+    const [GR, setGR] = useState([])
+    var copiedRoutineID =''
     function createData(name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, id, is_available){    //rows structure
         return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, id, is_available}
     }
@@ -86,7 +111,10 @@ export default function Firebasev2(props)  {
         axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getHistory/" + currentUser)
         .then((response) =>{
             for(var i=0; i <response.data.result.length; i++){
+            // for(var i=response.data.result.length - 1; i > -1; i--){
+                
                 historyGot.push(response.data.result[i]);
+                
             }
             console.log("historyGot",historyGot);
             cleanData(historyGot, currentDate);
@@ -95,27 +123,335 @@ export default function Firebasev2(props)  {
         .catch((error) => {
             console.log(error);
         });
-    },[props.theCurrentUserID, props.edit, ])
 
-    {/* EXPERIMENTAL */}
-
-    const getCurrentUser = () => {
-        axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getHistory/" + currentUser)
-        .then((response) =>{
-            for(var i=0; i <response.data.result.length; i++){
-                historyGot.push(response.data.result[i]);
-            }
-            console.log("historyGot")
-            console.log(historyGot);
-            cleanData(historyGot, currentDate);
-        })
+        setTAData([])
+        setPatientData([])
+        axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/listAllTAForCopy")
+        .then(response => {
+            setTAData(response.data.result)
+            
+            })
         .catch((error) => {
             console.log(error);
         });
+
+        setGR([])
+        axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/" + currentUser)
+        .then(response => {
+            // setGR(response.data.result)
+            for(var i = 0; i < response.data.result.length; i++) {
+                GR.push(response.data.result[i])
+            }
+            })
+        .catch((error) => {
+            console.log(error);
+        });
+        
+        
+    },[props.theCurrentUserID, props.edit, called])
+
+    const copyModal = () => {
+        // console.log('in FireBase, showCopyModal', showCopyModal)
+        //var taToCopyTo = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
+        // var taToCopyTo = '-1'
+        // var patients = []
+        // var patientToCopyTo = '-1'
+        console.log(allTAData)
+        if (showCopyModal[0]) {
+            return (
+                <div
+                style={{
+                    height: "100%",
+                    width: "100%",
+                    zIndex: "101",
+                    left: "0",
+                    top: "0",
+                    overflow: "auto",
+                    position: "fixed",
+                    display: "grid",
+                    backgroundColor: 'rgba(255, 255, 255, 0.5)'
+                }}
+                >
+                <div
+                    style={{
+                    position: "relative",
+                    justifySelf: "center",
+                    alignSelf: "center",
+                    display: "block",
+                    backgroundColor: "#889AB5",
+                    width: "400px",
+                    // height: "100px",
+                    color: "white",
+                    padding: "40px"
+                    }}
+                >
+                    {console.log('in modal', allTAData)}
+                    <div>{showCopyModal[1]}</div>
+                    <div>
+                        <select
+                            onChange={e => {
+                                console.log(JSON.parse(e.target.value))
+                                setTAToCopyTo(JSON.parse(e.target.value))
+                            }}
+                        >
+                           {allTAData.map((ta) => (
+                               <option value={JSON.stringify({
+                                   name: ta.name,
+                                   ta_unique_id: ta.ta_unique_id,
+                                   users: ta.users
+                               })}>
+                                   {ta.name}
+                               </option>
+                           ))}
+                        </select>
+                    </div>
+                    
+                    <div>
+                    <button style = {{
+                        backgroundColor: "red",
+                        color: 'white',
+                        border: 'solid',
+                        borderWidth: '2px',
+                        borderRadius: '25px',
+                        width: '30%',
+                        marginLeft: "10%",
+                        marginRight: "10%"
+                    }}
+                    onClick = {() => {
+                        toggleCopyModal(false)
+                    }}
+                    >
+                        No
+                    </button>
+                    <button style = {{
+                        backgroundColor: "green",
+                        color: 'white',
+                        border: 'solid',
+                        borderWidth: '2px',
+                        borderRadius: '25px',
+                        width: '30%',
+                        marginLeft: "10%",
+                        marginRight: "10%"
+                    }}
+                    onClick = {() => {
+                        toggleCopyModalPatients([true, ''])
+                        toggleCopyModal([false, showCopyModal[1]])
+                        
+                        console.log(taToCopyTo)
+                    }}
+                    >
+                        Yes
+                    </button>
+                    </div>
+                </div>
+                </div>
+            )
+        }
+        return null
     }
 
-    {/* EXPERIMENTAL */}
+    const copyModalPatients = () => {
+        // console.log('in FireBase, showCopyModal', showCopyModal)
+        //var taToCopyTo = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
+        // var taToCopyTo = '-1'
+        // var patients = []
+        // var patientToCopyTo = '-1'
+        console.log(taToCopyTo)
+        if (showCopyModalPatients[0]) {
+            return (
+                <div
+                style={{
+                    height: "100%",
+                    width: "100%",
+                    zIndex: "101",
+                    left: "0",
+                    top: "0",
+                    overflow: "auto",
+                    position: "fixed",
+                    display: "grid",
+                    backgroundColor: 'rgba(255, 255, 255, 0.5)'
+                }}
+                >
+                <div
+                    style={{
+                    position: "relative",
+                    justifySelf: "center",
+                    alignSelf: "center",
+                    display: "block",
+                    backgroundColor: "#889AB5",
+                    width: "400px",
+                    // height: "100px",
+                    color: "white",
+                    padding: "40px"
+                    }}
+                >
+                    {console.log('in modal', allTAData)}
+                    <div>{taToCopyTo.name}</div>
+                    <div>
+                        <select
+                            onChange={e => {
+                                console.log(JSON.parse(e.target.value))
+                                setPatientToCopyTo(JSON.parse(e.target.value))
+                            }}
+                        >
+                           {taToCopyTo.users.map((pa) => (
+                               <option value={JSON.stringify({
+                                   user_name: pa.user_name,
+                                   user_unique_id: pa.user_unique_id,
+                                //    users: ta.users
+                               })}>
+                                   {pa.user_name}
+                               </option>
+                           ))}
+                        </select>
+                    </div>
+                    
+                    <div>
+                    <button style = {{
+                        backgroundColor: "red",
+                        color: 'white',
+                        border: 'solid',
+                        borderWidth: '2px',
+                        borderRadius: '25px',
+                        width: '30%',
+                        marginLeft: "10%",
+                        marginRight: "10%"
+                    }}
+                    onClick = {() => {
+                        toggleCopyModalPatients(false)
+                    }}
+                    >
+                        No
+                    </button>
+                    <button style = {{
+                        backgroundColor: "green",
+                        color: 'white',
+                        border: 'solid',
+                        borderWidth: '2px',
+                        borderRadius: '25px',
+                        width: '30%',
+                        marginLeft: "10%",
+                        marginRight: "10%"
+                    }}
+                    onClick = {() => {
+                        toggleCopyModalConfirm(true)
+                        toggleCopyModalPatients([false, ''])
+                        console.log(patientToCopyTo)
+                    }}
+                    >
+                        Yes
+                    </button>
+                    </div>
+                </div>
+                </div>
+            )
+        }
+        return null
+    }
 
+    const copyModalConfirm = () => {
+        // console.log('in FireBase, showCopyModal', showCopyModal)
+        //var taToCopyTo = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
+        // var taToCopyTo = '-1'
+        // var patients = []
+        // var patientToCopyTo = '-1'
+        //console.log(allTAData)
+        if (showCopyModalConfirm) {
+            return (
+                <div
+                style={{
+                    height: "100%",
+                    width: "100%",
+                    zIndex: "101",
+                    left: "0",
+                    top: "0",
+                    overflow: "auto",
+                    position: "fixed",
+                    display: "grid",
+                    backgroundColor: 'rgba(255, 255, 255, 0.5)'
+                }}
+                >
+                <div
+                    style={{
+                    position: "relative",
+                    justifySelf: "center",
+                    alignSelf: "center",
+                    display: "block",
+                    backgroundColor: "#889AB5",
+                    width: "400px",
+                    // height: "100px",
+                    color: "white",
+                    padding: "40px"
+                    }}
+                >
+                    {console.log('in confirm', taToCopyTo, patientToCopyTo, showCopyModal[1])}
+                    <div>{showCopyModal[1]}</div>
+                    <div>{taToCopyTo.name}, {taToCopyTo.ta_unique_id}</div>
+                    <div>{patientToCopyTo.user_name}, {patientToCopyTo.user_unique_id}</div>
+                    
+                    
+                    <div>
+                    <button style = {{
+                        backgroundColor: "red",
+                        color: 'white',
+                        border: 'solid',
+                        borderWidth: '2px',
+                        borderRadius: '25px',
+                        width: '30%',
+                        marginLeft: "10%",
+                        marginRight: "10%"
+                    }}
+                    onClick = {() => {
+                        toggleCopyModalConfirm(false)
+                    }}
+                    >
+                        No
+                    </button>
+                    <button style = {{
+                        backgroundColor: "green",
+                        color: 'white',
+                        border: 'solid',
+                        borderWidth: '2px',
+                        borderRadius: '25px',
+                        width: '30%',
+                        marginLeft: "10%",
+                        marginRight: "10%"
+                    }}
+                    onClick = {() => {
+                        
+
+                        
+                        console.log(taToCopyTo)
+
+                        var myObj = {
+                            user_id: patientToCopyTo.user_unique_id,
+                            gr_id: showCopyModal[1],
+                            ta_id: taToCopyTo.ta_unique_id
+                        }
+
+                        console.log(myObj)
+
+                        axios
+                            .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/copyGR', myObj)
+                            .then(response => {
+                                console.log(response.data)
+                                toggleCopyModalConfirm(false)
+                            })
+                            .catch(err => {
+                                console.log(err)
+                                toggleCopyModalConfirm(false)
+                            })
+                    }}
+                    >
+                        Yes
+                    </button>
+                    </div>
+                </div>
+                </div>
+            )
+        }
+        return null
+    }
     
     //This clean data is from History Page - it creates "rows" of routines actions and instructions
 
@@ -125,7 +461,8 @@ export default function Firebasev2(props)  {
         //go through at find historyGots that are within 7 days of useDate
         console.log("date:" + useDate);
         const temp = [];
-        for(var i=0; i <historyGot.length; i++){
+        // for(var i=0; i <historyGot.length; i++){
+        for(var i=historyGot.length - 1; i > -1; i--){
             var historyDate = new Date(historyGot[i].date);
             if ((historyDate.getTime() >= useDate.getTime() - 604800000)    //filter for within 7 datets
             && historyDate.getTime() <= useDate.getTime()){                 // 7: 604800000    2: 172800000
@@ -135,8 +472,22 @@ export default function Firebasev2(props)  {
         console.log('temp',temp)
         //now temp has data we want
     // move temp to inRange with no repeats
+        const tempR = temp.reverse()
+        console.log('tempR', tempR)
+
         const map = new Map();
-        for (const item of temp){
+        
+        // for (const item of temp){
+        //     if(!map.has(item.date)){
+        //         map.set(item.date, true);
+        //         inRange.push({
+        //             date: item.date,
+        //             details: item.details
+        //         })
+        //     }
+        // }
+
+        for (const item of tempR){
             if(!map.has(item.date)){
                 map.set(item.date, true);
                 inRange.push({
@@ -145,11 +496,13 @@ export default function Firebasev2(props)  {
                 })
             }
         }
+
         inRange.reverse();//put latest day at end
 
         function custom_sort(a, b) {
             return (new Date(a.start_day_and_time).getHours() + (new Date(a.start_day_and_time).getMinutes() / 60))
              - (new Date(b.start_day_and_time).getHours() + (new Date(b.start_day_and_time).getMinutes() / 60));
+
         }
 
         console.log('inRange', inRange)
@@ -329,9 +682,69 @@ export default function Firebasev2(props)  {
         makeDisplays(onlyAllowed(newRows));
     }
 
+    function getIsAvailableFromGR(r) {
+        console.log('checking availability', r, GR, currentUser)
+        var NTC1 = r.name
+        for (var i=0; i < GR.length; i++) {
+            var NTC2 = GR[i].gr_title
+            console.log('match ntcs',NTC1, NTC2, i, GR.length)
+            if(NTC1 == NTC2) {
+                console.log('match', GR[i].gr_title, r.name)
+                if (GR[i].is_available == 'True') {
+                    console.log('match true',GR[i].is_available)
+                    return (
+                        <div >
+                            <FontAwesomeIcon
+                                title="Available to the user"
+                                style={{
+                                color: "#ffffff",
+                                }}
+                                onClick={(e) => {
+                                e.stopPropagation();
+                                alert("Item Is Availble to the user");
+                                }}
+                                icon={faUser}
+                                size="small"
+                            />
+                        </div>
+                    )
+                } else {
+                    console.log('match false',GR[i].is_available)
+                    return (
+                        <div>
+                        <FontAwesomeIcon
+                            title="Unavailable to the user"
+                            style={{ color: "#000000" }}
+                            onClick={(e) => {
+                            e.stopPropagation();
+                            alert("Item Is NOT Availble to the user" + r.is_available);
+                            }}
+                            icon={faUserAltSlash}
+                            size="small"
+                        />
+                        </div>
+                    )
+                    
+                }
+            } else {
+                
+                var temp = []
+                for (var j = 0; j < GR.length; j++) {
+                    temp.push(GR[j].gr_title)
+                }
+                console.log('no match found', r.name, temp)
+            }
+        }
+        return ('E')
+    }
+    
+
     //Creates actual boxes to display
 
     function displayRoutines(r){
+        console.log('displayroutines', r)
+        const ret = getIsAvailableFromGR(r)
+        if (ret != 'E') {
         return(
             <ListGroup.Item
             
@@ -422,7 +835,7 @@ export default function Firebasev2(props)  {
                 <div style={{marginRight:'1rem',display:'flex', flexDirection:'column', textAlign: 'center'}}>
                     <div style={{flex:'1'}}>
 
-                <CopyIcon
+                    {/* <CopyIcon
                     //   openCopyModal={() => {
                     //     this.setState({
                     //     showCopyModal: true,
@@ -434,58 +847,91 @@ export default function Firebasev2(props)  {
                     //     i={this.findIndexByID(tempID)} //index to edit
                     //   showModal={this.state.showCopyModal}
                     />
+                    </div> */}
+
+                    <FontAwesomeIcon
+                    title="Copy Item"
+                    onMouseOver={(e) => {
+                        
+                        e.target.style.color = "#48D6D2";
+                    }}
+                    onMouseOut={(e) => {
+                        
+
+                        e.target.style.color = "#FFFFFF";
+                    }}
+                    style={{ color: "#FFFFFF" }}
+                    onClick={(e) => {
+                        // console.log("On click");
+                        e.stopPropagation();
+                        // console.log("On click1");
+                        console.log(r.id)
+                        copiedRoutineID = r.id
+                        toggleCopyModal([!showCopyModal[0], r.id])
+                        
+                        
+                    }}
+                    icon={faCopy}
+                    size="md"
+                    />
+
                     </div>
 
                     <div style={{flex:'1', marginLeft:'1rem'}}>
-
+                    
                     <Row >
-                        {r["is_available"] ? (
-                            <div >
-                            <FontAwesomeIcon
-                                title="Available to the user"
-                                style={{
-                                color: "#ffffff",
-                                }}
-                                onClick={(e) => {
-                                e.stopPropagation();
-                                alert("Item Is Availble to the user");
-                                }}
-                                icon={faUser}
-                                size="small"
-                            />{" "}
-                            </div>
-                        ) : (
-                            <div>
-                            <FontAwesomeIcon
-                                title="Unavailable to the user"
-                                style={{ color: "#000000" }}
-                                onClick={(e) => {
-                                e.stopPropagation();
-                                alert("Item Is NOT Availble to the user" + r.is_available);
-                                }}
-                                icon={faUserAltSlash}
-                                size="small"
-                            />
-                            </div>
-                        )}
+
+                        {console.log('firebase 426',r)}
+                        {console.log('firebase 427',r.name, r.is_available)}
+                        
+                        {ret}
                         
                         </Row>
                     </div>
 
                     <div style={{flex:'1'}} >
-                    <DeleteGR
-                        //   BASE_URL={this.props.BASE_URL}
-                        //     deleteIndex={this.findIndexByID(tempID)}
-                        //     Array={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                        //     // Path={firebase
-                        //     //   .firestore()
-                        //     //   .collection("users")
-                        //     //   .doc(this.props.theCurrentUserID)}
-                        //     // refresh={this.grabFireBaseRoutinesGoalsData}
-                        //     theCurrentUserId={this.props.theCurrentUserID}
-                        //     theCurrentTAID={this.props.theCurrentTAID}
-                        />
+                    {/* <DeleteGR
+                          BASE_URL={this.props.BASE_URL}
+                            // deleteIndex={this.findIndexByID(tempID)}
+                            // Array={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
+                            // // Path={firebase
+                            // //   .firestore()
+                            // //   .collection("users")
+                            // //   .doc(this.props.theCurrentUserID)}
+                            // // refresh={this.grabFireBaseRoutinesGoalsData}
+                            // theCurrentUserId={this.props.theCurrentUserID}
+                            // theCurrentTAID={this.props.theCurrentTAID}
+                        /> */}
+                        {/* <div style={{ marginLeft: '5px' }}> */}
+                            <FontAwesomeIcon
+                                title="Delete Item"
+                                onMouseOver={(event) => {
+                                event.target.style.color = '#48D6D2';
+                                }}
+                                onMouseOut={(event) => {
+                                event.target.style.color = '#FFFFFF';
+                                }}
+                                style={{ color: '#FFFFFF' }}
+                                // style ={{ color:  "#000000" }}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    console.log(r)
+                                    
+                                    let body = {goal_routine_id: r.id}
+
+                                    axios
+                                        .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/deleteGR', body)
+                                        .then(response => {
+                                            console.log('deleting')
+                                            console.log(response.data)
+                                            toggleCalled(!called)
+                                        })
+                                }}
+                                icon={faTrashAlt}
+                                size="md"
+                            />
                         </div>
+                    {/* </div> */}
                 </div>
                     <div style={{marginRight:'1rem',display:'flex',  flexDirection:'column'}}>
 
@@ -545,6 +991,7 @@ export default function Firebasev2(props)  {
                 </div>
             </ListGroup.Item>
         )
+        }
     }
 
     function displayActions(a, r){
@@ -634,7 +1081,7 @@ export default function Firebasev2(props)  {
                     <div style={{flex:'1', marginLeft:'1rem'}}>
 
                     <Row >
-                        {(a.is_available === "True") ? (
+                        {(a.is_available == "True") ? (
                             <div >
                             <FontAwesomeIcon
                                 title="Available to the user"
@@ -944,12 +1391,16 @@ export default function Firebasev2(props)  {
         )
     }
 
-    console.log("Kyle Test: " + currentUser)
+    
     
 
     return(
      
         <row>
+                {console.log('FBGR',GR)}
+                {copyModal()}
+                {copyModalPatients()}
+                {copyModalConfirm()}
                 {/* {getCurrentUser()} */}
                 {listOfBlocks}
         </row>
