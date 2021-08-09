@@ -99,13 +99,14 @@ const EditIcon = ({routine, task, step}) => {
         onClick={(e) => {
           e.stopPropagation();
           e.stopPropagation();
-          console.log(routine[0])
+          console.log("steps",arrSteps)
 
         //  const itemToChange = routine;
           var itemToChange;
           for(var j=0;j<arrSteps.length;j++){
-          if (routine.id === arrSteps[j].at_unique_id){
+          if (routine.id === arrSteps[j].is_unique_id){
             itemToChange = arrSteps[j];
+            console.log("steps",itemToChange)
           }
           }
           const expectedCompletionTime = itemToChange.is_expected_completion_time ? itemToChange.is_expected_completion_time : '00:00:00';

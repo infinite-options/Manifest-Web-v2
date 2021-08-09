@@ -42,8 +42,8 @@ export default class WeekRoutines extends Component {
     let endObject = this.props.dateContext.clone();
     let startDay = startObject.startOf('week');
     let endDay = endObject.endOf('week');
-    let startDate = new Date(startDay.format('MM/DD/YYYY'));
-    let endDate = new Date(endDay.format('MM/DD/YYYY'));
+    let startDate = new Date(startDay.format('YYYY-MM-DD'));
+    let endDate = new Date(endDay.format('YYYY-MM-DD'));
     startDate.setHours(0, 0, 0);
     endDate.setHours(23, 59, 59);
     for (let i = 0; i < arr.length; i++) {
@@ -279,7 +279,7 @@ export default class WeekRoutines extends Component {
                 repeatWeekDays.push(7);
               }
 
-              const d = moment(initFullDate, 'MM/DD/YYYY');
+              const d = moment(initFullDate, 'YYYY-MM-DD');
               const today_day = d.isoWeekday();
               const result = repeatWeekDays.filter((day) => day < today_day);
               if (result.length > 0) {
@@ -299,7 +299,7 @@ export default class WeekRoutines extends Component {
                   numberOfWeek = Math.floor(i / repeatWeekDays.length);
                   dow = repeatWeekDays[i % repeatWeekDays.length];
                 }
-                const new_date = moment(initFullDate, 'MM/DD/YYYY');
+                const new_date = moment(initFullDate, 'YYYY-MM-DD');
                 const nextDayOfTheWeek = getNextDayOfTheWeek(dow, new_date);
                 //console.log("NextDayOfWeek: ", nextDayOfTheWeek.format("L"));
                 //console.log("numberOfWeeks: ", numberOfWeek);
@@ -923,7 +923,7 @@ function getFormattedDate(date) {
   let month = (1 + date.getMonth()).toString().padStart(2, '0');
   let day = date.getDate().toString().padStart(2, '0');
 
-  return month + '/' + day + '/' + year;
+  return year + '-' + month + '-' + day;
 }
 
 function getNextDayOfTheWeek(day, date) {

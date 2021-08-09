@@ -26,7 +26,7 @@ export default class UploadImage extends Component {
   onChange = (e) => {
     if (e.target.files[0]) {
       const image = e.target.files[0];
-      console.log(image);
+      console.log(  image.name);
       this.setState({ image: image });
     }
   };
@@ -45,17 +45,21 @@ export default class UploadImage extends Component {
   };
 
   onClickConfirm = () => {
-    this.setState({ progress: 0 });
-    this.props.parentFunction(
-      this.state.image,
-      this.state.photo_url,
-      this.state.type
-    );
-    this.onHandleShowClick();
+    this.props.setPhotoUrl(this.state.photo_url)
+    let toggle = this.state.modal;
+    this.setState({ modal: !toggle });
+    // this.setState({ progress: 0 });
+    // this.props.parentFunction(
+    //   this.state.image,
+    //   this.state.photo_url,
+    //   this.state.type
+    // );
+    // this.onHandleShowClick();
   };
 
   onHandleShowClick = () => {
-    let url = this.props.BASE_URL + 'getImages/';
+    let url = "https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/" 
+    + 'getImages/';
     let imageList = [];
     axios
       .get(url + this.props.currentUserId)
@@ -104,11 +108,11 @@ export default class UploadImage extends Component {
     return (
       <>
         <Button
-          variant="outline-primary"
-          style={{ marginRight: '15px', marginLeft: '15px' }}
+          variant="text"
+          style={{ textDecoration:'underline', color:'#ffffff', fontSize:'14px' }}
           onClick={this.onHandleShowClick}
         >
-          Users Icon
+          User's Library
         </Button>
         <Modal show={this.state.show} onHide={this.onHandleShowClick}>
           <Modal.Header closeButton>

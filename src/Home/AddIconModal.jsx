@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { Form, Row, Col } from 'react-bootstrap';
+import ButtonMaterialUI from '@material-ui/core/Button';
 import axios from 'axios';
 
 const BASE_URL = "https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/" 
@@ -27,7 +28,11 @@ export default class AddIconModal extends Component {
 
   onPhotoClick = (e) => {
     console.log('this is the E: ', e);
+    this.props.setPhotoUrl(e);
     this.setState({ photo_url: e });
+    let toggle = this.state.show;
+    this.setState({ show: !toggle });
+  
   };
 
   onChange = (e) => {
@@ -215,11 +220,11 @@ export default class AddIconModal extends Component {
     return (
       <>
         <Button
-          variant="outline-primary"
-          style={{ marginRight: '15px', marginLeft: '15px' }}
+          variant="text"
+          style={{ textDecoration:'underline', color:'#ffffff', fontSize:'14px' }}
           onClick={this.onHandleShowClick}
         >
-          Change Icon
+         Use icon from library
         </Button>
         <Modal show={this.state.show} onHide={this.onHandleShowClick}>
           <Modal.Header closeButton>
@@ -227,7 +232,7 @@ export default class AddIconModal extends Component {
           </Modal.Header>
 
           <Modal.Body>
-            <div>
+            <div >
               <div>Hygiene</div>
               {arrButtonsHygiene}
 
@@ -245,12 +250,12 @@ export default class AddIconModal extends Component {
           </Modal.Body>
 
           <Modal.Footer>
-            <Button variant="secondary" onClick={this.onHandleShowClick}>
+            {/* <Button variant="secondary" onClick={this.onHandleShowClick}>
               Close
             </Button>
             <Button variant="primary" onClick={this.onUploadIcon}>
               Upload New Icon
-            </Button>
+            </Button> */}
             <Modal show={this.state.modal} onHide={this.onUploadIcon}>
               <Modal.Header closeButton>
                 <Modal.Title>Upload Image</Modal.Title>
@@ -271,7 +276,7 @@ export default class AddIconModal extends Component {
                   width="400"
                 />
               </Modal.Body>
-
+{/* 
               <Modal.Footer>
                 <Button variant="secondary" onClick={this.onUploadIcon}>
                   Close
@@ -279,11 +284,11 @@ export default class AddIconModal extends Component {
                 <Button variant="primary" onClick={this.onClickConfirm}>
                   Confirm
                 </Button>
-              </Modal.Footer>
+              </Modal.Footer> */}
             </Modal>
-            <Button variant="primary" onClick={this.onSubmitIcon}>
+            {/* <Button variant="primary" onClick={this.onSubmitIcon}>
               Select Icon
-            </Button>
+            </Button> */}
           </Modal.Footer>
         </Modal>
       </>

@@ -127,6 +127,8 @@ const EditIcon = ({routine, task, step}) => {
               for(var i=0; i <response.data.result.length; i++){
                 // console.log(response.data.result[i])
                 arrRoutine.push(response.data.result[i])
+                console.log('in click editicon', response.data.result[i])
+
                 // temp.push(response.data.result[i])
               }
               //setarrRoutine(temp)

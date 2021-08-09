@@ -1,34 +1,43 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import EditATSContext from './EditATSContext';
+import moment from 'moment';
 import axios from 'axios';
+import AddIconModal from '../AddIconModal';
+import UploadImage from '../UploadImage';
+import { propTypes } from 'react-bootstrap/esm/Image';
 
-const EditATS = () => {
+const EditATS = (props) => {
   const editingATSContext = useContext(EditATSContext);
 
   console.log("action", editingATSContext.editingATS.routineId)
 
+  const [photo, setPhoto] = useState(editingATSContext.editingATS.newItem.at_photo)
 
 
   const updateATS = (e) => {
     e.stopPropagation()
     let object = {...editingATSContext.editingATS.newItem}
-    object.start_day_and_time = `${object.start_day} ${object.start_time}:00`;
+    const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
+    const start_day_and_time_string = new Date(start_day_and_time_simple_string).toString();
+    const convertedStartTime =  moment(start_day_and_time_string).format('LTS')
+    object.datetime_started = `${object.start_day}` + ' ' + convertedStartTime; //start_day_and_time_string;
     delete object.start_day;
     delete object.start_time;
-    object.end_day_and_time = `${object.end_day} ${object.end_time}:00`;
+    const end_day_and_time_simple_string = `${object.end_day} ${object.end_time}:00`;
+    const end_day_and_time_string = new Date(end_day_and_time_simple_string).toString();
+    const convertedEndTime =  moment(end_day_and_time_string).format('LTS')
+    object.datetime_completed = `${object.end_day}`+' '+convertedEndTime;
     object.available_start_time = object.at_available_start_time;
     delete object.at_available_start_time;
     object.available_end_time = object.at_available_end_time;
     delete object.at_available_end_time;
-    object.datetime_completed = object.at_datetime_completed;
     delete object.at_datetime_completed;
-    object.datetime_started = object.at_datetime_started;
     delete object.at_datetime_started;
     object.expected_completion_time = object.at_expected_completion_time;
     delete object.at_expected_completion_time;
-    object.photo = object.at_photo;
-    object.photo_url = ""
+    object.photo = "";
+    object.photo_url = photo;
     object.type = ""
     delete object.at_photo;
     delete object.end_day;
@@ -71,6 +80,14 @@ const EditATS = () => {
     .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateAT', formData)
     .then((response) => {
       console.log(response);
+      const gr_array_index = editingATSContext.editingATS.gr_array.findIndex((elt) => elt.id === editingATSContext.editingATS.id)
+      const new_gr_array = [...editingATSContext.editingATS.gr_array];
+      new_gr_array[gr_array_index] = object;
+      editingATSContext.setEditingATS({
+        ...editingATSContext.editingATS,
+        gr_array: new_gr_array,
+        editing: false
+      })
     })
     .catch((err) => {
       if(err.response) {
@@ -118,12 +135,25 @@ const EditATS = () => {
             <Container>
               <Row>
                 <Col style={{fontSize:'10px', textDecoration:'underline'}}>
-                  <div>Add icon to library</div>
-                  <div>Use icon from library</div>
-                  <div>User's library</div>
+                <div >Add icon to library</div>
+              <AddIconModal
+              photoUrl = {photo}
+              setPhotoUrl = {setPhoto}
+            //  BASE_URL={props.BASE_URL}
+            //  parentFunction={setPhotoURLFunction}
+            />
+              {/* <div>Use icon from library</div> */}
+              {/* <div>User's library</div> */}
+              <UploadImage
+            //  BASE_URL={props.BASE_URL}
+            //  parentFunction={setPhotoURLFunction}
+            photoUrl = {photo}
+            setPhotoUrl = {setPhoto}
+              currentUserId={props.CurrentId}
+            />
                 </Col>
                 <Col>
-                  <img alt='icon' src={editingATSContext.editingATS.newItem.at_photo}/>
+                  <img alt='icon' src={photo}/>
                 </Col>
               </Row>
             </Container>

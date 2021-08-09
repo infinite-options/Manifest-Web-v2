@@ -1582,7 +1582,9 @@ export default function Home(props) {
                   theCurrentUserID={userID}
                   sethighLight = {setHightlight}
                   highLight = {hightlight}
-                  edit = { editingRTS.editing}
+                  editRTS = { editingRTS.editing}
+                  editATS = {editingATS.editing}
+                  editIS = {editingIS.editing}
                   />
                 )}
               </div>
@@ -1654,7 +1656,7 @@ export default function Home(props) {
 
             <div style={{width: '100%'}}
               >
-               {editingIS.editing ? <EditIS/> : editingATS.editing ? <EditATS/> : editingRTS.editing ? <EditRTS /> : showCalendarView()}
+               {editingIS.editing ? <EditIS CurrentId={userID}/> : editingATS.editing ? <EditATS  CurrentId={userID}/> : editingRTS.editing ? <EditRTS CurrentId={userID}/> : showCalendarView()}
            
               </div>
           </div>

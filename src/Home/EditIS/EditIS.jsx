@@ -1,10 +1,14 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import EditISContext from './EditISContext';
 import axios from 'axios';
+import AddIconModal from '../AddIconModal';
+import UploadImage from '../UploadImage';
 
-const EditIS = () => {
+const EditIS = (props) => {
   const editingISContext = useContext(EditISContext);
+
+  const [photo, setPhoto] = useState(editingISContext.editingIS.newItem.is_photo)
 
   const updateIS = (e) => {
     e.stopPropagation()
@@ -19,7 +23,7 @@ const EditIS = () => {
     delete object.is_title;
     delete object.at_title;
     delete object.at_title;
-    object.photo_url = object.is_photo;
+    object.photo_url = photo;
     delete object.is_photo;
     delete object.photo;
     delete object.end_day_and_time;
@@ -53,6 +57,14 @@ const EditIS = () => {
     .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateIS', formData)
     .then((response) => {
       console.log(response);
+      const gr_array_index = editingISContext.editingIS.gr_array.findIndex((elt) => elt.id === editingISContext.editingIS.id)
+      const new_gr_array = [...editingISContext.editingIS.gr_array];
+      new_gr_array[gr_array_index] = object;
+      editingISContext.setEditingIS({
+        ...editingISContext.editingIS,
+        gr_array: new_gr_array,
+        editing: false
+      })
     })
     .catch((err) => {
       if(err.response) {
@@ -111,12 +123,25 @@ const EditIS = () => {
             <Container>
             <Row>
               <Col style={{fontSize:'10px', textDecoration:'underline', width: '33%'}}>
-                <div>Add icon to library</div>
-                <div>Use icon from library</div>
-                <div>User's library</div>
+              <div >Add icon to library</div>
+              <AddIconModal
+              photoUrl = {photo}
+              setPhotoUrl = {setPhoto}
+            //  BASE_URL={props.BASE_URL}
+            //  parentFunction={setPhotoURLFunction}
+            />
+              {/* <div>Use icon from library</div> */}
+              {/* <div>User's library</div> */}
+              <UploadImage
+            //  BASE_URL={props.BASE_URL}
+            //  parentFunction={setPhotoURLFunction}
+            photoUrl = {photo}
+            setPhotoUrl = {setPhoto}
+              currentUserId={ props.CurrentId}
+            />
               </Col>
               <Col style={{width: '66%'}}>
-                <img alt='icon'src={editingISContext.editingIS.newItem.is_photo}/>
+                <img alt='icon'src={photo}/>
               </Col>
             </Row>
             </Container>

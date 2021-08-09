@@ -88,6 +88,9 @@ export function Navigation() {
   const [showConfirmed, toggleConfirmed] = useState(false);
   const [taListCreated, toggleGetTAList] = useState(false);
   const [selectedTimezone, setSelectedTimezone] = useState({})
+  const [timezone, setTimezone] = useState(
+    Intl.DateTimeFormat().resolvedOptions().timeZone
+  )
   const [patientName, setPatiantName] = useState('');
   const [emailUser, setEmailUser] = useState('');
   const [refreshToken, setrefreshToken] = useState('');

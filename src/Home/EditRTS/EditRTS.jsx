@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import EditRTSContext from './EditRTSContext';
 import moment from 'moment';
@@ -6,18 +6,25 @@ import axios from 'axios';
 import AddIconModal from '../AddIconModal';
 import UploadImage from '../UploadImage';
 
-const EditRTS = () => {
+const EditRTS = (props) => {
+
+
   const editingRTSContext = useContext(EditRTSContext);
+
+  const [photo, setPhoto] = useState(editingRTSContext.editingRTS.newItem.gr_photo)
+
 
   console.log("Repeat",editingRTSContext.editingRTS.newItem.repeat)
   const updateRTS = (e) => {
     editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing
     e.stopPropagation()
     let object = {...editingRTSContext.editingRTS.newItem};
+    console.log("time")
     // Get start_day_and_time
     const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
-  //  const start_day_and_time_string = new Date(start_day_and_time_simple_string).toString();
-    object.start_day_and_time = `${object.start_day}` + ' ' + `${object.start_time}:00`; //start_day_and_time_string;
+    const start_day_and_time_string = new Date(start_day_and_time_simple_string).toString();
+    const convertedStartTime =  moment(start_day_and_time_string).format('LTS')
+    object.start_day_and_time = `${object.start_day}` + ' ' + convertedStartTime; //start_day_and_time_string;
     delete object.start_day;
     delete object.start_time;
     object.title = object.gr_title;
@@ -25,16 +32,18 @@ const EditRTS = () => {
     delete object.gr_completed;
     delete object.gr_datetime_completed;
     delete object.gr_datetime_started;
-    object.photo_url = object.gr_photo;
+    object.photo_url = photo;
     delete object.gr_photo;
     delete object.gr_unique_id;
     //object.id = Number(object.id);
     delete object.location;
     delete object.notification;
+    object.is_available = "True"
     // Get end_day_and_time
     const end_day_and_time_simple_string = `${object.end_day} ${object.end_time}:00`;
     const end_day_and_time_string = new Date(end_day_and_time_simple_string).toString();
-    object.end_day_and_time = `${object.end_day}`+' '+`${object.end_time}:00`;
+    const convertedEndTime =  moment(end_day_and_time_string).format('LTS')
+    object.end_day_and_time = `${object.end_day}`+' '+convertedEndTime;
     delete object.end_day;
     delete object.end_time;
     // Get expected_completion_time
@@ -45,7 +54,7 @@ const EditRTS = () => {
     object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
     object.id = editingRTSContext.editingRTS.id;
-    object.user_id = editingRTSContext.editingRTS.user_id;
+    object.user_id = props. CurrentId // editingRTSContext.editingRTS.currentUserId;
     object.ta_people_id = '';
     console.log("obj",object);
     let formData = new FormData();
@@ -160,25 +169,27 @@ const EditRTS = () => {
         <div style={{fontWeight: 'bold', fontSize: '20px', marginTop: '20px', marginBottom: '20px'}}>Change Icon</div>
           
           <Row>
-            <Col style={{width: '50%', float: 'left', fontSize: '14px', textDecoration: 'underline'}}>
-              <div>Add icon to library</div>
-              <div>Use icon from library</div>
-              <div>User's library</div>
+            <Col style={{width: '100%', float: 'left', fontSize: '14px',textAlign:'center', textDecoration: 'underline'}}>
+              <div >Add icon to library</div>
+              <AddIconModal
+              photoUrl = {photo}
+              setPhotoUrl = {setPhoto}
+            //  BASE_URL={props.BASE_URL}
+            //  parentFunction={setPhotoURLFunction}
+            />
+              {/* <div>Use icon from library</div> */}
+              {/* <div>User's library</div> */}
+              <UploadImage
+            //  BASE_URL={props.BASE_URL}
+            //  parentFunction={setPhotoURLFunction}
+            photoUrl = {photo}
+            setPhotoUrl = {setPhoto}
+              currentUserId={ editingRTSContext.editingRTS.currentUserId}
+            />
             </Col>
-            <Col style={{width: '50%', float: 'left'}}>
-            <Row>
-            <AddIconModal
-            //  BASE_URL={props.BASE_URL}
-            //  parentFunction={setPhotoURLFunction}
-            />
-            <UploadImage
-            //  BASE_URL={props.BASE_URL}
-            //  parentFunction={setPhotoURLFunction}
-              currentUserId={ editingRTSContext.editingRTS.user_id}
-            />
-            <br />
-          </Row>
-              <img alt='icon' src={editingRTSContext.editingRTS.newItem.gr_photo} style={{width: "100%"}}/>
+            <Col style={{ float: 'right'}}>
+          
+              <img alt='icon' src={photo} style={{width: "100%"}}/>
             </Col>
           </Row>
           
