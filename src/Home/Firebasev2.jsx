@@ -685,16 +685,22 @@ export default function Firebasev2(props)  {
         makeDisplays(onlyAllowed(newRows));
     }
 
+
+    //no need to use GR here - "is_avalible" is part of "r" and comes from getHistory
+    //this was causing an error of not showing routines on the left side of home when
+    //switching pages, because GR was not getting updated before this was called. So GR
+    //was empty. now no need for GR and no issue. 
     function getIsAvailableFromGR(r) {
-        console.log('checking availability', r, GR, currentUser)
-        var NTC1 = r.name
-        for (var i=0; i < GR.length; i++) {
-            var NTC2 = GR[i].gr_title
-            console.log('match ntcs',NTC1, NTC2, i, GR.length)
-            if(NTC1 == NTC2) {
-                console.log('match', GR[i].gr_title, r.name)
-                if (GR[i].is_available == 'True') {
-                    console.log('match true',GR[i].is_available)
+        // console.log('checking availability', r, GR, currentUser)
+        // var NTC1 = r.name
+        // for (var i=0; i < GR.length; i++) {
+        //     var NTC2 = GR[i].gr_title
+        //     console.log('match ntcs',NTC1, NTC2, i, GR.length)
+        //     if(NTC1 == NTC2) {
+        //         console.log('match', GR[i].gr_title, r.name)
+                // if (GR[i].is_available == 'True') {
+                if (r.is_available == 'True') {
+                        // console.log('match true',GR[i].is_available)
                     return (
                         <div >
                             <FontAwesomeIcon
@@ -712,7 +718,7 @@ export default function Firebasev2(props)  {
                         </div>
                     )
                 } else {
-                    console.log('match false',GR[i].is_available)
+                    // console.log('match false',GR[i].is_available)
                     return (
                         <div>
                         <FontAwesomeIcon
@@ -729,15 +735,15 @@ export default function Firebasev2(props)  {
                     )
                     
                 }
-            } else {
+        //     } else {
                 
-                var temp = []
-                for (var j = 0; j < GR.length; j++) {
-                    temp.push(GR[j].gr_title)
-                }
-                console.log('no match found', r.name, temp)
-            }
-        }
+        //         var temp = []
+        //         for (var j = 0; j < GR.length; j++) {
+        //             temp.push(GR[j].gr_title)
+        //         }
+        //         console.log('no match found', r.name, temp)
+        //     }
+        // }
         return ('E')
     }
     
@@ -995,9 +1001,6 @@ export default function Firebasev2(props)  {
                 </div>
             </ListGroup.Item>
         )
-        }
-        else{
-            return("weird E");
         }
     }
 
