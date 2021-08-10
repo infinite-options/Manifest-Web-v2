@@ -80,9 +80,30 @@ export default function MainPage(props) {
     //const currentUser = props.location.state; //matts testing 72
     // const currentUser = "100-000072";
     const loginContext = useContext(LoginContext);
-    const [currentUser, setCU] = useState(loginContext.loginState.curUser);   
-    console.log("currentUser: " + currentUser);
+    const [currentUser, setCU] = useState(loginContext.loginState.curUser); 
+
+    const [rows, setRows] = useState([]);
     const [historyGot, setHG] = useState([]);
+
+
+    // Kyle cookie code
+    var userID = ''
+    if (
+        document.cookie
+        .split(";")
+        .some(item => item.trim().startsWith("patient_uid="))
+    ) {
+        userID = document.cookie.split('; ').find(row => row.startsWith('patient_uid=')).split('=')[1]
+    } else {
+        userID = loginContext.loginState.curUser;
+    }  
+    if (userID != currentUser){
+        setHG([]);
+        setRows([]);
+        setCU(userID);
+        }
+    console.log("currentUser: " + currentUser);
+    
     const inRange = [];
     var start = new Date();
     start.setHours(0,0,0,0);
@@ -96,7 +117,7 @@ export default function MainPage(props) {
     function createData(name, number, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, is_available){    //rows structure
         return {name, number, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, is_available}
     }
-    const [rows, setRows] = useState([]);
+    // const [rows, setRows] = useState([]);
     const [isLoading, setLoading] = useState(true);
     const [childIn, setChildIn] = useState("");
     
@@ -104,6 +125,7 @@ export default function MainPage(props) {
     useEffect(() => {
         axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getHistory/" + currentUser)
         .then((response) =>{
+            console.log(response);
             for(var i=0; i <response.data.result.length; i++){
                 // console.log(response.data.result[i]);
                 historyGot.push(response.data.result[i]);
@@ -142,7 +164,7 @@ export default function MainPage(props) {
       .catch((error) => {
           console.log(error);
       });
-    },[])
+    },[currentUser])
 
 
 
@@ -163,7 +185,7 @@ export default function MainPage(props) {
         const temp = [];
         for(var i=0; i <historyGot.length; i++){
             var historyDate = new Date(historyGot[i].date_affected);
-            if ((historyDate.getTime() >= useDate.getTime() - 604800000)    //filter for within 7 datets
+            if ((historyDate.getTime() >= useDate.getTime() - 691200000)    //filter for within 7 datets
             && historyDate.getTime() <= useDate.getTime() - 86400000   ){                 // 7: 604800000    2: 172800000
                 temp.push(historyGot[i]);
             }
@@ -444,8 +466,8 @@ export default function MainPage(props) {
         // TO DO! WEEKS
         // setRows([]);
         console.log("clocked pre");
-        cleanData(historyGot, new Date(currentDate.getTime() - 604800000));
         setCurDate(new Date(currentDate.getTime() - 604800000));
+        cleanData(historyGot, new Date(currentDate.getTime() - 604800000));
         // console.log((new Date(Date.now())).getTime());
         // console.log(currentDate.getDate());
         setLoading(true);
@@ -521,7 +543,7 @@ export default function MainPage(props) {
                                                 >
                                                     <p style={{textTransform: 'none', fontWeight: 'bold', margin: '0px'}} > 
                                                     Week of {Moment(currentDate.getTime() - 604800000).format('MMMM D')}-  
-                                                     {Moment(currentDate.getTime()).format('D, YYYY')}</p>
+                                                     {Moment(currentDate.getTime() - 86400000).format('D, YYYY')}</p>
                                                     <p
                                                         style={{ textTransform: 'none', height: '19.5px' }}
                                                     >

@@ -620,15 +620,18 @@ export default function Firebasev2(props)  {
 
     //makes listOfBlocks with list of displays routiens and such
     function makeDisplays(onlyAllowed){     //add displays to tempRows
+        console.log(onlyAllowed);
         var tempRows = [];
+        console.log("empty", tempRows);
         var routine;
         var action;
         for (var i=0; i <onlyAllowed.length; i++){
             if (onlyAllowed[i].type == "Routine"){
-                console.log("allow", onlyAllowed[i])
+                // console.log("allow", onlyAllowed[i])
                 tempRows.push(displayRoutines(onlyAllowed[i]));
+                console.log("current Temp" , tempRows);
                 routine = onlyAllowed[i];
-                console.log("only", onlyAllowed[i]);
+                // console.log("only", onlyAllowed[i]);
             }
             else if (onlyAllowed[i].type == "Action"){
                 tempRows.push(displayActions(onlyAllowed[i], routine));
@@ -741,6 +744,7 @@ export default function Firebasev2(props)  {
 
     //Creates actual boxes to display
 
+    
     function displayRoutines(r){
         console.log('displayroutines', r)
         const ret = getIsAvailableFromGR(r)
@@ -991,6 +995,9 @@ export default function Firebasev2(props)  {
                 </div>
             </ListGroup.Item>
         )
+        }
+        else{
+            return("weird E");
         }
     }
 

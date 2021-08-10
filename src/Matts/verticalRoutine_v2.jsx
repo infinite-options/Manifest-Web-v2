@@ -30,7 +30,7 @@ import EditAT from "../manifest/OldManifest/EditAT.jsx";
 import ShowATList from "../manifest/OldManifest/ShowATList";
 import ShowISList from "../manifest/OldManifest/ShowISList";
 import MustDoAT from "../manifest/OldManifest/MustDoAT";
-import EditIcon from "../manifest/OldManifest/EditIcon.jsx";
+import EditIcon from "../Home/EditRTS/EditIcon.jsx";
 import CopyIcon from "../manifest/OldManifest/CopyIcon.jsx";
 import CopyGR from "../manifest/OldManifest/CopyGR.jsx";
 import { Container } from 'react-grid-system';
@@ -72,6 +72,7 @@ const useStyles = makeStyles({
 const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
     const history = useHistory();
     const currentUser = userID;
+    console.log("VR CURRENT USER: "+ currentUser);
     const [routinesGot, setRoutines] = useState([]);
     const [isLoading, setLoading] = useState(false);
     const [rows, setRows] = useState([]);
@@ -281,6 +282,9 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
 
                     <div>
                     <EditIcon
+                        routine={r}
+                        task={null}
+                        step={currentUser} 
                             // openEditModal={() => {
                             //   this.setState({
                             //     showEditModal: true,
