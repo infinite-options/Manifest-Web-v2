@@ -99,7 +99,9 @@ export default function Firebasev2(props)  {
     const [taToCopyTo, setTAToCopyTo] = useState({})
     const [patientToCopyTo, setPatientToCopyTo] = useState({})
     const [GR, setGR] = useState([])
+    const [copiedRoutineName, setCRN] = useState('')
     var copiedRoutineID =''
+    // var copiedRoutineName = ''
     function createData(name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, id, is_available){    //rows structure
         return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, id, is_available}
     }
@@ -186,7 +188,8 @@ export default function Firebasev2(props)  {
                     }}
                 >
                     {console.log('in modal', allTAData)}
-                    <div>{showCopyModal[1]}</div>
+                    <div>Routine: {copiedRoutineName}, {showCopyModal[1]}</div>
+                    <div>Select Trusted Advisor to copy to</div>
                     <div>
                         <select
                             onChange={e => {
@@ -194,6 +197,8 @@ export default function Firebasev2(props)  {
                                 setTAToCopyTo(JSON.parse(e.target.value))
                             }}
                         >
+                            <option value='-1'>Select</option>
+
                            {allTAData.map((ta) => (
                                <option value={JSON.stringify({
                                    name: ta.name,
@@ -234,10 +239,15 @@ export default function Firebasev2(props)  {
                         marginRight: "10%"
                     }}
                     onClick = {() => {
+                        console.log('test',taToCopyTo)
+                        if(!taToCopyTo.users){
+                            alert('Select a TA')
+                        } else {
                         toggleCopyModalPatients([true, ''])
                         toggleCopyModal([false, showCopyModal[1]])
+                        }
                         
-                        console.log(taToCopyTo)
+                        //console.log(taToCopyTo)
                     }}
                     >
                         Yes
@@ -286,7 +296,9 @@ export default function Firebasev2(props)  {
                     }}
                 >
                     {console.log('in modal', allTAData)}
-                    <div>{taToCopyTo.name}</div>
+                    <div>Routine: {copiedRoutineName}, {showCopyModal[1]}</div>
+                    <div>Trusted Advisor: {taToCopyTo.name}, {taToCopyTo.ta_unique_id}</div>
+                    <div>Select patient to copy to</div>
                     <div>
                         <select
                             onChange={e => {
@@ -294,6 +306,7 @@ export default function Firebasev2(props)  {
                                 setPatientToCopyTo(JSON.parse(e.target.value))
                             }}
                         >
+                            <option value='-1'>Select</option>
                            {taToCopyTo.users.map((pa) => (
                                <option value={JSON.stringify({
                                    user_name: pa.user_name,
@@ -334,9 +347,15 @@ export default function Firebasev2(props)  {
                         marginRight: "10%"
                     }}
                     onClick = {() => {
+                        if(!patientToCopyTo.user_name) {
+                            alert('Select a patient')
+                        } else {
+
+                        
                         toggleCopyModalConfirm(true)
                         toggleCopyModalPatients([false, ''])
                         console.log(patientToCopyTo)
+                        }
                     }}
                     >
                         Yes
@@ -385,10 +404,12 @@ export default function Firebasev2(props)  {
                     }}
                 >
                     {console.log('in confirm', taToCopyTo, patientToCopyTo, showCopyModal[1])}
-                    <div>{showCopyModal[1]}</div>
+                    {/* <div>{showCopyModal[1]}</div>
                     <div>{taToCopyTo.name}, {taToCopyTo.ta_unique_id}</div>
-                    <div>{patientToCopyTo.user_name}, {patientToCopyTo.user_unique_id}</div>
-                    
+                    <div>{patientToCopyTo.user_name}, {patientToCopyTo.user_unique_id}</div> */}
+                    <div>Routine: {copiedRoutineName}, {showCopyModal[1]}</div>
+                    <div>Trusted Advisor: {taToCopyTo.name}, {taToCopyTo.ta_unique_id}</div>
+                    <div>Patient: {patientToCopyTo.user_name}, {patientToCopyTo.user_unique_id}</div>
                     
                     <div>
                     <button style = {{
@@ -464,8 +485,9 @@ export default function Firebasev2(props)  {
         // for(var i=0; i <historyGot.length; i++){
         for(var i=historyGot.length - 1; i > -1; i--){
             var historyDate = new Date(historyGot[i].date);
+            console.log('cleanData',historyGot[i].id ,historyDate, useDate, useDate.getTime() - 604800000)
             if ((historyDate.getTime() >= useDate.getTime() - 604800000)    //filter for within 7 datets
-            && historyDate.getTime() <= useDate.getTime()){                 // 7: 604800000    2: 172800000
+            && historyDate.getTime() - 20000 <= useDate.getTime()){                 // 7: 604800000    2: 172800000
                 temp.push(historyGot[i]);
             }
         }
@@ -586,7 +608,7 @@ export default function Firebasev2(props)  {
         
         setRows([]);
         console.log("ROWS" + rows);
-        console.log(bigList);
+        console.log('biglist',bigList);
         // bigList = addCircles(bigList);
         // console.log(bigList);
        // bigList = addNames(bigList, routines);
@@ -639,7 +661,7 @@ export default function Firebasev2(props)  {
             }
             else {tempRows.push(displayInstructions(onlyAllowed[i], action))}
         }
-        console.log(tempRows);
+        console.log('tempRows',tempRows);
         setlistOfBlocks(tempRows);
         console.log(listOfBlocks);
     }
@@ -875,8 +897,12 @@ export default function Firebasev2(props)  {
                         // console.log("On click");
                         e.stopPropagation();
                         // console.log("On click1");
-                        console.log(r.id)
+                        console.log(r.id, r.name)
                         copiedRoutineID = r.id
+                        setCRN(r.name)
+                        setTAToCopyTo({})
+                        setPatientToCopyTo({})
+                        // console.log('test', r.name)
                         toggleCopyModal([!showCopyModal[0], r.id])
                         
                         

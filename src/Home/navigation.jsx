@@ -145,7 +145,7 @@ export function Navigation() {
           Patient:&nbsp;
           <select
             className={classes.myButton}
-            value={selectedUser.user_unique_id}
+            value={selectedUser.user_unique_id} // this is probably wrong
             onChange={(e) => {
               console.log(JSON.parse(e.target.value))
               console.log('patient_uid='+JSON.parse(e.target.value).user_unique_id)
