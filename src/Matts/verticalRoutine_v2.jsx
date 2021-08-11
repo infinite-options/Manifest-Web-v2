@@ -116,9 +116,12 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
             >
                 
                 <div style={{ display:'flex', justifyContent:'space-between' }}>
-                <div flex='1' style={{marginLeft:'1rem', marginTop:'1rem', height:'4.5rem', borderRadius:'10px',width:'65%', display:'flex', justifyContent:'space-between', backgroundColor:'#FF6B4A', boxShadow:
+                <div flex='1' style={{marginLeft:'1rem', marginTop:'1rem', height:'4.5rem', borderRadius:'10px',width:'100%', display:'flex', justifyContent:'space-between', backgroundColor:'#FF6B4A', boxShadow:
                     "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
-                zIndex:'50%'}}>
+                zIndex:'50%'}} onClick = {()=> {
+                    sendRoutineToParent(r.number);
+                    setLoading(!isLoading);
+                }}>
                 <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
                 <div style={{ marginLeft:'1rem'}} >
                 {r["startTime"] && r["endTime"] ? (
@@ -173,8 +176,8 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                             style={{ color: "#ffffff" }}
                             size="small"
                             onClick = {()=> {
-                                // sendRoutineToParent(r.number);
-                                // setLoading(!isLoading);
+                                sendRoutineToParent(r.number);
+                                setLoading(!isLoading);
                             }}
                             />
                         </div>
@@ -190,7 +193,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
 
                 <div style={{ display:"flex" , marginTop:'1rem'}}>
                 <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
-                    <div style={{flex:'1'}}>
+                    {/* <div style={{flex:'1'}}>
 
                 <CopyIcon
                     //   openCopyModal={() => {
@@ -204,9 +207,9 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                     //     i={this.findIndexByID(tempID)} //index to edit
                     //   showModal={this.state.showCopyModal}
                     />
-                    </div>
+                    </div> */}
 
-                    <div style={{flex:'1', marginLeft:'1rem'}}>
+                    {/* <div style={{flex:'1', marginLeft:'1rem'}}>
 
                     <Row >
                         {r["is_available"] ? (
@@ -240,9 +243,9 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                         )}
                         
                         </Row>
-                    </div>
+                    </div> */}
 
-                    <div style={{flex:'1'}} >
+                    {/* <div style={{flex:'1'}} >
                     <DeleteGR
                         //   BASE_URL={this.props.BASE_URL}
                         //     deleteIndex={this.findIndexByID(tempID)}
@@ -255,11 +258,11 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                         //     theCurrentUserId={this.props.theCurrentUserID}
                         //     theCurrentTAID={this.props.theCurrentTAID}
                         />
-                        </div>
+                        </div> */}
                 </div>
                     <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
                 
-                    <div>
+                    {/* <div>
                         <FontAwesomeIcon
                             icon={faBookmark}
                             title="Must Do"
@@ -271,16 +274,16 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                             // }}
                             size="small"
                         />
-                    {/* <MustDoAT
+                    <MustDoAT
                         // BASE_URL={this.props.BASE_URL}
                         //   Index={i}
                         //    Array={this.props.originalGoalsAndRoutineArr}
                         //   // SingleAT={this.state.singleATitemArr[i]}
                         //   // Path={this.state.singleGR.fbPath}
-                        /> */}
-                    </div>
+                        />
+                    </div> */}
 
-                    <div>
+                    {/* <div>
                     <EditIcon
                         routine={r}
                         task={null}
@@ -303,9 +306,9 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                             // // refresh={this.grabFireBaseRoutinesGoalsData}
                         />
 
-                    </div>
+                    </div> */}
 
-                    <div>
+                    {/* <div>
                     {(r.is_sublist_available === "True") ?(
                     <FontAwesomeIcon
                             icon={faList}
@@ -326,7 +329,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                                         size="small"
                                         />) 
                         }
-                    </div>
+                    </div> */}
                     </div>
                 </div>
                 </div>
@@ -342,9 +345,13 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
             >
                 
                 <div style={{ display:'flex', justifyContent:'space-between' }}>
-                <div flex='1' style={{marginLeft:'1.5rem', marginTop:'1rem', height:'4.25rem', borderRadius:'10px',width:'65%', display:'flex', justifyContent:'space-between', backgroundColor:'#F8BE28', boxShadow:
+                <div flex='1' style={{marginLeft:'1.5rem', marginTop:'1rem', height:'4.25rem', borderRadius:'10px',width:'83%', display:'flex', justifyContent:'space-between', backgroundColor:'#F8BE28', boxShadow:
                     "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
-                zIndex:'50%'}}>
+                zIndex:'50%'}}
+                onClick = {()=> {
+                    sendRoutineToParent(a.number);
+                    setLoading(!isLoading);
+                }}>
                 <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
                 <div style={{ marginLeft:'1rem'}} >
                 {true ? (
@@ -416,7 +423,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
 
                 <div style={{ display:"flex" , marginTop:'1rem'}}>
                 <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
-                    <div style={{flex:'1'}}>
+                    {/* <div style={{flex:'1'}}>
 
                 <CopyIcon
                     //   openCopyModal={() => {
@@ -430,9 +437,9 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                     //     i={this.findIndexByID(tempID)} //index to edit
                     //   showModal={this.state.showCopyModal}
                     />
-                    </div>
+                    </div> */}
 
-                    <div style={{flex:'1', marginLeft:'1rem'}}>
+                    {/* <div style={{flex:'1', marginLeft:'1rem'}}>
 
                     <Row >
                         {(a.is_available === "True") ? (
@@ -466,9 +473,9 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                         )}
                         
                         </Row>
-                    </div>
+                    </div> */}
 
-                    <div style={{flex:'1'}} >
+                    {/* <div style={{flex:'1'}} >
                     <DeleteGR
                         //   BASE_URL={this.props.BASE_URL}
                         //     deleteIndex={this.findIndexByID(tempID)}
@@ -481,9 +488,9 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                         //     theCurrentUserId={this.props.theCurrentUserID}
                         //     theCurrentTAID={this.props.theCurrentTAID}
                         />
-                        </div>
+                        </div> */}
                 </div>
-                    <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
+                    {/* <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
                 
                     <div>
                         <FontAwesomeIcon
@@ -497,13 +504,13 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                             // }}
                             size="small"
                         />
-                    {/* <MustDoAT
+                    <MustDoAT
                         // BASE_URL={this.props.BASE_URL}
                         //   Index={i}
                         //    Array={this.props.originalGoalsAndRoutineArr}
                         //   // SingleAT={this.state.singleATitemArr[i]}
                         //   // Path={this.state.singleGR.fbPath}
-                        /> */}
+                        />
                     </div>
 
                     <div>
@@ -550,7 +557,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                                     />) 
                                     }
                     </div>
-                    </div>
+                    </div> */}
                 </div>
                 </div>
 
@@ -566,7 +573,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
             >
                 
                 <div style={{ display:'flex', justifyContent:'space-between' }}>
-                <div flex='1' style={{marginLeft:'2rem', marginTop:'1rem', height:'4rem', borderRadius:'10px',width:'65%', display:'flex', justifyContent:'space-between', backgroundColor:'#67ABFC', boxShadow:
+                <div flex='1' style={{marginLeft:'2rem', marginTop:'1rem', height:'4rem', borderRadius:'10px',width:'80%', display:'flex', justifyContent:'space-between', backgroundColor:'#67ABFC', boxShadow:
                     "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
                 zIndex:'50%'}}>
                 <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
@@ -635,7 +642,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                 </div>
 
                 <div style={{ display:"flex" , marginTop:'1rem'}}>
-                <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
+                {/* <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
                     <div style={{flex:'1'}}>
 
                 <CopyIcon
@@ -702,8 +709,8 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                         //     theCurrentTAID={this.props.theCurrentTAID}
                         />
                         </div>
-                </div>
-                    <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
+                </div> */}
+                    {/* <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
                 
                     <div>
                         <FontAwesomeIcon
@@ -717,13 +724,13 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                             // }}
                             size="small"
                         />
-                    {/* <MustDoAT
+                    <MustDoAT
                         // BASE_URL={this.props.BASE_URL}
                         //   Index={i}
                         //    Array={this.props.originalGoalsAndRoutineArr}
                         //   // SingleAT={this.state.singleATitemArr[i]}
                         //   // Path={this.state.singleGR.fbPath}
-                        /> */}
+                        />
                     </div>
 
                     <div>
@@ -760,7 +767,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                             size="small"
                             />
                     </div>
-                    </div>
+                    </div> */}
                 </div>
                 </div>
 
