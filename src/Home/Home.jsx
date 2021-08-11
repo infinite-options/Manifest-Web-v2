@@ -65,9 +65,13 @@ export default function Home(props) {
       .split(";")
       .some(item => item.trim().startsWith("patient_uid="))
   ) {
+    console.log('in there')
     userID = document.cookie.split('; ').find(row => row.startsWith('patient_uid=')).split('=')[1]
+    // document.cookie = 'patient_name=test'
   } else {
+    console.log('in here', console.log(loginContext.loginState))
     userID = loginContext.loginState.curUser;
+    // document.cookie = 'patient_name=test'
   }
 
   //const userID = loginContext.loginState.curUser;

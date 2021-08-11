@@ -67,6 +67,7 @@ export default function Login() {
         console.log('response', response.data);
         document.cookie = 'ta_uid='+response.data.result
         document.cookie = 'ta_email='+email
+        document.cookie = 'patient_name=Loading'
         if (response.data.result !== false) {
           setLoggedIn(true);
           console.log('response id', response.data.result, loggedIn);
@@ -116,6 +117,7 @@ export default function Login() {
           console.log(response.data.result);
           document.cookie = 'ta_uid='+response.data.result
           document.cookie = 'ta_email='+e
+          document.cookie = 'patient_name=Loading'
           if (response.data !== false) {
             loginContext.setLoginState({
               ...loginContext.loginState,

@@ -91,8 +91,11 @@ export default function Firebasev2(props)  {
     const [rows, setRows] = useState([]);
     const [called, toggleCalled] = useState(false)
 
+    const [showCopyPicker, toggleCopyPicker] = useState(false)
     const [showCopyModal, toggleCopyModal] = useState([false, ''])
+    const [showCopyModal2, toggleCopyModal2] = useState([false, ''])
     const [showCopyModalPatients, toggleCopyModalPatients] = useState([false, ''])
+    const [showCopyModalTA, toggleCopyModalTA] = useState([false, ''])
     const [showCopyModalConfirm, toggleCopyModalConfirm] = useState(false)
     const [allTAData, setTAData] = useState([])
     const [allPatientData, setPatientData] = useState([])
@@ -100,7 +103,10 @@ export default function Firebasev2(props)  {
     const [patientToCopyTo, setPatientToCopyTo] = useState({})
     const [GR, setGR] = useState([])
     const [copiedRoutineName, setCRN] = useState('')
-    var copiedRoutineID =''
+    const [copiedRoutineID, setCRID] = useState('')
+
+
+    // var copiedRoutineID =''
     // var copiedRoutineName = ''
     function createData(name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, id, is_available){    //rows structure
         return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, id, is_available}
@@ -128,9 +134,19 @@ export default function Firebasev2(props)  {
 
         setTAData([])
         setPatientData([])
+
         axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/listAllTAForCopy")
         .then(response => {
             setTAData(response.data.result)
+            
+            })
+        .catch((error) => {
+            console.log(error);
+        });
+
+        axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/listAllUsersForCopy")
+        .then(response => {
+            setPatientData(response.data.result)
             
             })
         .catch((error) => {
@@ -151,6 +167,93 @@ export default function Firebasev2(props)  {
         
         
     },[props.theCurrentUserID, props.edit, called, props.editRTS,props.editATS,props.editIS])
+
+
+    const copyPicker = () => {
+        // console.log('in FireBase, showCopyModal', showCopyModal)
+        //var taToCopyTo = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
+        // var taToCopyTo = '-1'
+        // var patients = []
+        // var patientToCopyTo = '-1'
+        console.log(allTAData)
+        if (showCopyPicker) {
+            return (
+                <div
+                style={{
+                    height: "100%",
+                    width: "100%",
+                    zIndex: "101",
+                    left: "0",
+                    top: "0",
+                    overflow: "auto",
+                    position: "fixed",
+                    display: "grid",
+                    backgroundColor: 'rgba(255, 255, 255, 0.5)'
+                }}
+                >
+                <div
+                    style={{
+                    position: "relative",
+                    justifySelf: "center",
+                    alignSelf: "center",
+                    display: "block",
+                    backgroundColor: "#889AB5",
+                    width: "400px",
+                    // height: "100px",
+                    color: "white",
+                    padding: "40px",
+                    textAlign: 'center'
+                    }}
+                >
+                    {console.log('in modal', allTAData)}
+                    <div>Routine: {copiedRoutineName}, {copiedRoutineID}</div>
+                    
+                    
+                    <div>
+                    <button style = {{
+                        backgroundColor: "red",
+                        color: 'white',
+                        border: 'solid',
+                        borderWidth: '2px',
+                        borderRadius: '25px',
+                        width: '30%',
+                        marginLeft: "10%",
+                        marginRight: "10%"
+                    }}
+                    onClick = {() => {
+                        toggleCopyModal([true, copiedRoutineID])
+                        toggleCopyPicker(false)
+                    }}
+                    >
+                        Copy to TA
+                    </button>
+                    <button style = {{
+                        backgroundColor: "green",
+                        color: 'white',
+                        border: 'solid',
+                        borderWidth: '2px',
+                        borderRadius: '25px',
+                        width: '30%',
+                        marginLeft: "10%",
+                        marginRight: "10%"
+                    }}
+                    onClick = {() => {
+                        console.log('test',taToCopyTo)
+                        toggleCopyModal2([true, copiedRoutineID])
+                        toggleCopyPicker(false)
+                        
+                        //console.log(taToCopyTo)
+                    }}
+                    >
+                        Copy to patient
+                    </button>
+                    </div>
+                </div>
+                </div>
+            )
+        }
+        return null
+    }
 
     const copyModal = () => {
         // console.log('in FireBase, showCopyModal', showCopyModal)
@@ -184,14 +287,21 @@ export default function Firebasev2(props)  {
                     width: "400px",
                     // height: "100px",
                     color: "white",
-                    padding: "40px"
+                    padding: "40px",
+                    textAlign: 'center',
+                    fontWeight: 'bold'
                     }}
                 >
                     {console.log('in modal', allTAData)}
-                    <div>Routine: {copiedRoutineName}, {showCopyModal[1]}</div>
-                    <div>Select Trusted Advisor to copy to</div>
+                    <div>Copy Routine</div>
+                    <br></br>
+                    <div>Routine:</div>
+                    <div>{copiedRoutineName}, {showCopyModal[1]}</div>
+                    <br></br>
+                    <div>Select trusted advisor to copy to</div>
                     <div>
                         <select
+                            style={{width: '90%', border: 'none'}}
                             onChange={e => {
                                 console.log(JSON.parse(e.target.value))
                                 setTAToCopyTo(JSON.parse(e.target.value))
@@ -210,7 +320,20 @@ export default function Firebasev2(props)  {
                            ))}
                         </select>
                     </div>
-                    
+                    <br></br>
+                    <div>Select patient to copy to</div>
+                    <div>
+                        {console.log(taToCopyTo.users)}
+                        
+                        
+
+                        {patientDropdown()}
+                                
+
+                            
+                            
+                    </div>
+                    <br></br>
                     <div>
                     <button style = {{
                         backgroundColor: "red",
@@ -242,9 +365,192 @@ export default function Firebasev2(props)  {
                         console.log('test',taToCopyTo)
                         if(!taToCopyTo.users){
                             alert('Select a TA')
+                        } else if(!patientToCopyTo.user_name){
+                            alert('Select a Patient')
                         } else {
-                        toggleCopyModalPatients([true, ''])
+                        // toggleCopyModalPatients([true, ''])
+                        toggleCopyModalConfirm(true)
                         toggleCopyModal([false, showCopyModal[1]])
+                        }
+                        
+                        //console.log(taToCopyTo)
+                    }}
+                    >
+                        Yes
+                    </button>
+                    </div>
+                </div>
+                </div>
+            )
+        }
+        return null
+    }
+
+    const patientDropdown = () => {
+        if (taToCopyTo.users) {
+            return (
+                <select
+                    style={{width: '90%', border: 'none'}}
+                    onChange={e => {
+                        console.log(JSON.parse(e.target.value))
+                        setPatientToCopyTo(JSON.parse(e.target.value))
+                    }}
+                >
+                    <option value='-1'>Select</option>
+                    {taToCopyTo.users.map((pa) => (
+                        <option value={JSON.stringify({
+                            user_name: pa.user_name,
+                            user_unique_id: pa.user_unique_id,
+                        //    users: ta.users
+                        })}>
+                            {pa.user_name}
+                        </option>
+                    ))}
+                </select>
+            )
+        }
+        return (
+            <select style={{width: '90%', border: 'none'}} disabled>
+                <option>Select</option>
+            </select>
+        )
+    }
+
+    const taDropdown = () => {
+        if (patientToCopyTo.TA) {
+            return (
+                <select
+                    style={{width: '90%', border: 'none'}}
+                    onChange={e => {
+                        console.log(JSON.parse(e.target.value))
+                        setTAToCopyTo(JSON.parse(e.target.value))
+                    }}
+                >
+                    <option value='-1'>Select</option>
+                    {patientToCopyTo.TA.map((ta) => (
+                        <option value={JSON.stringify({
+                            name: ta.name,
+                            ta_unique_id: ta.ta_unique_id,
+                        //    users: ta.users
+                        })}>
+                            {ta.name}
+                        </option>
+                    ))}
+                </select>
+            )
+        }
+        return (
+            <select style={{width: '90%', border: 'none'}} disabled>
+                <option>Select</option>
+            </select>
+        )
+    }
+
+
+
+    const copyModal2 = () => {
+        // console.log('in FireBase, showCopyModal', showCopyModal)
+        //var taToCopyTo = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
+        // var taToCopyTo = '-1'
+        // var patients = []
+        // var patientToCopyTo = '-1'
+        console.log(allTAData)
+        if (showCopyModal2[0]) {
+            return (
+                <div
+                style={{
+                    height: "100%",
+                    width: "100%",
+                    zIndex: "101",
+                    left: "0",
+                    top: "0",
+                    overflow: "auto",
+                    position: "fixed",
+                    display: "grid",
+                    backgroundColor: 'rgba(255, 255, 255, 0.5)'
+                }}
+                >
+                <div
+                    style={{
+                    position: "relative",
+                    justifySelf: "center",
+                    alignSelf: "center",
+                    display: "block",
+                    backgroundColor: "#889AB5",
+                    width: "400px",
+                    // height: "100px",
+                    color: "white",
+                    padding: "40px",
+                    textAlign: 'center',
+                    fontWeight: 'bold'
+                    }}
+                >
+                    {console.log('in modal', allTAData)}
+                    <div>Routine:</div>
+                    <div>{copiedRoutineName}, {showCopyModal[1]}</div>
+                    <br></br>
+                    <div>Select patient to copy to</div>
+                    <div>
+                        <select
+                            style={{width: '90%', border: 'none'}}
+                            onChange={e => {
+                                console.log(JSON.parse(e.target.value))
+                                setPatientToCopyTo(JSON.parse(e.target.value))
+                            }}
+                        >
+                            <option value='-1'>Select</option>
+
+                           {allPatientData.map((patient) => (
+                               <option value={JSON.stringify({
+                                   name: patient.name,
+                                   user_unique_id: patient.user_unique_id,
+                                   TA: patient.TA
+                               })}>
+                                   {patient.name}
+                               </option>
+                           ))}
+                        </select>
+                    </div>
+                    
+                    <div>
+                        {taDropdown()}
+                    </div>
+
+                    <div>
+                    <button style = {{
+                        backgroundColor: "red",
+                        color: 'white',
+                        border: 'solid',
+                        borderWidth: '2px',
+                        borderRadius: '25px',
+                        width: '30%',
+                        marginLeft: "10%",
+                        marginRight: "10%"
+                    }}
+                    onClick = {() => {
+                        toggleCopyModal2(false)
+                    }}
+                    >
+                        No
+                    </button>
+                    <button style = {{
+                        backgroundColor: "green",
+                        color: 'white',
+                        border: 'solid',
+                        borderWidth: '2px',
+                        borderRadius: '25px',
+                        width: '30%',
+                        marginLeft: "10%",
+                        marginRight: "10%"
+                    }}
+                    onClick = {() => {
+                        console.log('test',taToCopyTo)
+                        if(!patientToCopyTo.TA){
+                            alert('Select a Patient')
+                        } else {
+                        // toggleCopyModalTA([true, ''])
+                        toggleCopyModalConfirm(true)
+                        toggleCopyModal2([false, showCopyModal[1]])
                         }
                         
                         //console.log(taToCopyTo)
@@ -368,6 +674,114 @@ export default function Firebasev2(props)  {
         return null
     }
 
+    const copyModalTA = () => {
+        // console.log('in FireBase, showCopyModal', showCopyModal)
+        //var taToCopyTo = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
+        // var taToCopyTo = '-1'
+        // var patients = []
+        // var patientToCopyTo = '-1'
+        console.log(taToCopyTo)
+        if (showCopyModalTA[0]) {
+            return (
+                <div
+                style={{
+                    height: "100%",
+                    width: "100%",
+                    zIndex: "101",
+                    left: "0",
+                    top: "0",
+                    overflow: "auto",
+                    position: "fixed",
+                    display: "grid",
+                    backgroundColor: 'rgba(255, 255, 255, 0.5)'
+                }}
+                >
+                <div
+                    style={{
+                    position: "relative",
+                    justifySelf: "center",
+                    alignSelf: "center",
+                    display: "block",
+                    backgroundColor: "#889AB5",
+                    width: "400px",
+                    // height: "100px",
+                    color: "white",
+                    padding: "40px"
+                    }}
+                >
+                    {console.log('in modal', allPatientData)}
+                    <div>Routine: {copiedRoutineName}, {showCopyModal[1]}</div>
+                    <div>Trusted Advisor: {patientToCopyTo.name}, {patientToCopyTo.user_unique_id}</div>
+                    <div>Select patient to copy to</div>
+                    <div>
+                        <select
+                            onChange={e => {
+                                console.log(JSON.parse(e.target.value))
+                                setTAToCopyTo(JSON.parse(e.target.value))
+                            }}
+                        >
+                            <option value='-1'>Select</option>
+                           {patientToCopyTo.TA.map((ta) => (
+                               <option value={JSON.stringify({
+                                   name: ta.name,
+                                   ta_unique_id: ta.ta_unique_id,
+                                //    users: ta.users
+                               })}>
+                                   {ta.name}
+                               </option>
+                           ))}
+                        </select>
+                    </div>
+                    
+                    <div>
+                    <button style = {{
+                        backgroundColor: "red",
+                        color: 'white',
+                        border: 'solid',
+                        borderWidth: '2px',
+                        borderRadius: '25px',
+                        width: '30%',
+                        marginLeft: "10%",
+                        marginRight: "10%"
+                    }}
+                    onClick = {() => {
+                        toggleCopyModalTA(false)
+                    }}
+                    >
+                        No
+                    </button>
+                    <button style = {{
+                        backgroundColor: "green",
+                        color: 'white',
+                        border: 'solid',
+                        borderWidth: '2px',
+                        borderRadius: '25px',
+                        width: '30%',
+                        marginLeft: "10%",
+                        marginRight: "10%"
+                    }}
+                    onClick = {() => {
+                        if(!taToCopyTo.name) {
+                            alert('Select a patient')
+                        } else {
+
+                        
+                        toggleCopyModalConfirm(true)
+                        toggleCopyModalTA([false, ''])
+                        console.log(patientToCopyTo)
+                        }
+                    }}
+                    >
+                        Yes
+                    </button>
+                    </div>
+                </div>
+                </div>
+            )
+        }
+        return null
+    }
+
     const copyModalConfirm = () => {
         // console.log('in FireBase, showCopyModal', showCopyModal)
         //var taToCopyTo = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
@@ -407,7 +821,7 @@ export default function Firebasev2(props)  {
                     {/* <div>{showCopyModal[1]}</div>
                     <div>{taToCopyTo.name}, {taToCopyTo.ta_unique_id}</div>
                     <div>{patientToCopyTo.user_name}, {patientToCopyTo.user_unique_id}</div> */}
-                    <div>Routine: {copiedRoutineName}, {showCopyModal[1]}</div>
+                    <div>Routine: {copiedRoutineName}, {copiedRoutineID}</div>
                     <div>Trusted Advisor: {taToCopyTo.name}, {taToCopyTo.ta_unique_id}</div>
                     <div>Patient: {patientToCopyTo.user_name}, {patientToCopyTo.user_unique_id}</div>
                     
@@ -446,7 +860,7 @@ export default function Firebasev2(props)  {
 
                         var myObj = {
                             user_id: patientToCopyTo.user_unique_id,
-                            gr_id: showCopyModal[1],
+                            gr_id: copiedRoutineID,
                             ta_id: taToCopyTo.ta_unique_id
                         }
 
@@ -482,12 +896,13 @@ export default function Firebasev2(props)  {
         //go through at find historyGots that are within 7 days of useDate
         console.log("date:" + useDate);
         const temp = [];
-        // for(var i=0; i <historyGot.length; i++){
-        for(var i=historyGot.length - 1; i > -1; i--){
+        for(var i=0; i <historyGot.length; i++){
+        // for(var i=historyGot.length - 1; i > -1; i--){
             var historyDate = new Date(historyGot[i].date);
             console.log('cleanData',historyGot[i].id ,historyDate, useDate, useDate.getTime() - 604800000)
             if ((historyDate.getTime() >= useDate.getTime() - 604800000)    //filter for within 7 datets
-            && historyDate.getTime() - 20000 <= useDate.getTime()){                 // 7: 604800000    2: 172800000
+            // && historyDate.getTime() - 20000 <= useDate.getTime()){                 // 7: 604800000    2: 172800000
+            ){
                 temp.push(historyGot[i]);
             }
         }
@@ -721,6 +1136,26 @@ export default function Firebasev2(props)  {
         //     if(NTC1 == NTC2) {
         //         console.log('match', GR[i].gr_title, r.name)
                 // if (GR[i].is_available == 'True') {
+                var temp = []
+                var temp2 = []
+
+                for (var i = 0; i < GR.length; i++) {
+                    temp.push(GR[i].gr_title)
+                }
+
+                for (var j = 0; j < GR.length; j++) {
+                    temp2.push(GR[j].gr_unique_id)
+                }
+                console.log('titles', temp)
+                console.log('titles2', temp2)
+
+                console.log('current name',r.name, temp.indexOf(r.name))
+                console.log('current id',r.id, temp2.indexOf(r.id))
+                
+                if (temp2.indexOf(r.id) == -1) {
+                    return 'E'
+                }
+
                 if (r.is_available == 'True') {
                         // console.log('match true',GR[i].is_available)
                     return (
@@ -898,12 +1333,15 @@ export default function Firebasev2(props)  {
                         e.stopPropagation();
                         // console.log("On click1");
                         console.log(r.id, r.name)
-                        copiedRoutineID = r.id
+                        // copiedRoutineID = r.id
                         setCRN(r.name)
+                        setCRID(r.id)
                         setTAToCopyTo({})
                         setPatientToCopyTo({})
                         // console.log('test', r.name)
-                        toggleCopyModal([!showCopyModal[0], r.id])
+                        // toggleCopyModal([!showCopyModal[0], r.id])
+                        // toggleCopyModal2([!showCopyModal2[0], r.id])
+                        toggleCopyPicker(!showCopyPicker)
                         
                         
                     }}
@@ -1434,8 +1872,11 @@ export default function Firebasev2(props)  {
      
         <row>
                 {console.log('FBGR',GR)}
+                {copyPicker()}
                 {copyModal()}
+                {copyModal2()}
                 {copyModalPatients()}
+                {copyModalTA()}
                 {copyModalConfirm()}
                 {/* {getCurrentUser()} */}
                 {listOfBlocks}

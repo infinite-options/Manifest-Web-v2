@@ -385,7 +385,7 @@ const EditRTS = (props) => {
                 <Row style={{marginTop: '10px', width: '100%', verticalAlign: 'middle'}}>
                   Does not repeat
                   {console.log('repeat value =', editingRTSContext.editingRTS.newItem.repeat)}
-                  {editingRTSContext.editingRTS.newItem.repeat == 'True' ? (
+                  {editingRTSContext.editingRTS.newItem.repeat == 'False' ? (
                     <input
                     name='repeating'
                     type='checkbox'
@@ -397,7 +397,7 @@ const EditRTS = (props) => {
                         ...editingRTSContext.editingRTS,
                         newItem: {
                           ...editingRTSContext.editingRTS.newItem,
-                          repeat: e.target.checked
+                          repeat: !e.target.checked
                         }
                       })
                     }}
@@ -414,7 +414,7 @@ const EditRTS = (props) => {
                         ...editingRTSContext.editingRTS,
                         newItem: {
                           ...editingRTSContext.editingRTS.newItem,
-                          repeat: e.target.checked
+                          repeat: !e.target.checked
                         }
                       })
                     }}
@@ -506,7 +506,7 @@ const EditRTS = (props) => {
                           type='radio'
 
                           value='Occurences'
-                          checked={editingRTSContext.editingRTS.newItem.repeat_type === 'Occurences'}
+                          checked={editingRTSContext.editingRTS.newItem.repeat_type === 'Occur'}
                           onChange={(e) => {
                             editingRTSContext.setEditingRTS({
                               ...editingRTSContext.editingRTS,

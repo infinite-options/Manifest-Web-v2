@@ -140,6 +140,29 @@ export function Navigation() {
         </option>
       ));
 
+      console.log('document cookie', document.cookie)
+
+      if (document.cookie
+        .split(";")
+        .some(item => item.trim().startsWith("patient_name=")) 
+        ) {
+          if (document.cookie.split('; ').find(row => row.startsWith('patient_name=')).split('=')[1] == 'Loading'){
+            console.log('do something here', listOfUsers)
+            if (listOfUsers[0]){
+              console.log('document cookie set to first user')
+              document.cookie = 'patient_name='+listOfUsers[0].user_name
+            } 
+          }
+        } else {
+          if (listOfUsers[0]){
+            console.log('document cookie set to first user')
+            document.cookie = 'patient_name='+listOfUsers[0].user_name
+          } else {
+            console.log('document cookie set to loading')
+            document.cookie = 'patient_name=Loading'
+          }
+        }
+
       return (
         <div>
           Patient:&nbsp;
@@ -150,6 +173,7 @@ export function Navigation() {
               console.log(JSON.parse(e.target.value))
               console.log('patient_uid='+JSON.parse(e.target.value).user_unique_id)
               document.cookie = 'patient_uid='+JSON.parse(e.target.value).user_unique_id
+              document.cookie = 'patient_name='+JSON.parse(e.target.value).user_name
               console.log(document.cookie)
               loginContext.setLoginState({
                 ...loginContext.loginState,
@@ -160,6 +184,7 @@ export function Navigation() {
               setPatiantName(JSON.parse(e.target.value).user_name)
             }}
           >
+            <option selected disabled hidden>{document.cookie.split('; ').find(row => row.startsWith('patient_name=')).split('=')[1]}</option>
             {elements}
           </select>
         </div>
@@ -601,6 +626,7 @@ export function Navigation() {
                       document.cookie = "ta_uid=1;max-age=0";
                       document.cookie = "ta_email=1;max-age=0";
                       document.cookie = "patient_uid=1;max-age=0"
+                      document.cookie = "patient_name=1;max-age=0"
                       loginContext.setLoginState({
                         ...loginContext.loginState,
                         loggedIn: false,

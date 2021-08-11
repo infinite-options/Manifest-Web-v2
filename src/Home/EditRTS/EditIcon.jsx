@@ -173,8 +173,11 @@ const EditIcon = ({routine, task, step}) => {
               const numMins = convertTimeLengthToMins(expectedCompletionTime)
               itemToChange.numMins = numMins;
               delete itemToChange.gr_expected_completion_time;
-              console.log('itemToChange')
-              console.log(itemToChange);
+
+              
+
+              // console.log('itemToChange')
+              console.log('itemToChange',itemToChange);
 
               editingRTSContext.setEditingRTS({
                 ...editingRTSContext.editingRTS,
