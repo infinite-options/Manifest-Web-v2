@@ -1115,6 +1115,7 @@ export default function Home(props) {
               gr.id = x[i].gr_unique_id;
 
               gr.is_available = x[i].is_available.toLowerCase() === 'true';
+              
               gr.is_complete = x[i].is_complete.toLowerCase() === 'true';
               gr.is_displayed_today =
                 x[i].is_displayed_today.toLowerCase() === 'true';
@@ -1417,6 +1418,7 @@ export default function Home(props) {
                 //   goal.push(gr);
                 // }
               }
+            
             }
 
             setStateValue((prevState) => {
@@ -1441,6 +1443,7 @@ export default function Home(props) {
           } else {
             setStateValue((prevState) => {
               return {
+                ...prevState,
                 originalGoalsAndRoutineArr: [],
                 // goals: goal,
                 addNewGRModalShow: false,
@@ -1483,13 +1486,14 @@ export default function Home(props) {
     history.push('/')
   }
 
+  let startWeek = '';
   /*----------------------------return()----------------------------*/
+  if(stateValue.dateContext != undefined){
   let startObject = stateValue.dateContext;
-  let startWeek = startObject.startOf('week');
-
-  console.log('stateValue')
-  console.log(stateValue)
-
+  startWeek = startObject.startOf('week');
+  }
+  console.log('stateValue', stateValue)
+  
   return (
     // console.log('home routines', stateValue.routines),
     /*----------------------------button
@@ -1521,7 +1525,7 @@ export default function Home(props) {
           stateValue.routines,
           stateValue.originalGoalsAndRoutineArr,
           stateValue.showRoutineModal,
-          stateValue.itemToEdit.is_available,
+          stateValue.itemToEdit.is_available ,
           stateValue.itemToEdit.is_complete,
           stateValue.addNewGRModalShow,
           stateValue.dateContext,
@@ -1630,7 +1634,7 @@ export default function Home(props) {
                     className="bigfancytext"
                   >
                     <p> Week of {startWeek.format('D MMMM YYYY')} </p>
-                    <p
+                    <p  
                       style={{ marginBottom: '0', height: '19.5px' }}
                       className="normalfancytext"
                     >

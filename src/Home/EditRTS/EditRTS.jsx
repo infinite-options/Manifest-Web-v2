@@ -106,10 +106,10 @@ const EditRTS = (props) => {
       console.log(_)
       const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
       const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
-      new_gr_array[gr_array_index] = object;
+   //   new_gr_array[gr_array_index] = object;
       editingRTSContext.setEditingRTS({
         ...editingRTSContext.editingRTS,
-        gr_array: new_gr_array,
+      //  gr_array: new_gr_array,
         editing: false
       })
     })
@@ -376,7 +376,7 @@ const EditRTS = (props) => {
                       })
                     }}
                   />
-                  
+
                 </div>
                 
                 <div style={{float: 'left', marginRight: '8px', display: 'inline-block'}}>Days</div>
@@ -715,7 +715,7 @@ const EditRTS = (props) => {
                   <input
                     type='checkbox'
                     style={{width: '20px', height: '20px'}}
-                    checked={editingRTSContext.editingRTS.newItem.user_notifications.before.is_enabled}
+                    checked={editingRTSContext.editingRTS.newItem.notifications.before_is_enable}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
