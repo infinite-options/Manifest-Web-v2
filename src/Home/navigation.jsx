@@ -444,7 +444,8 @@ export function Navigation() {
       google_refresh_token: refreshToken,
       first_name: firstName,
       last_name: lastName,
-      time_zone: selectedTimezone.value
+      time_zone: selectedTimezone.value,
+      ta_people_id: selectedUser
     };
     console.log("body", body)
       axios

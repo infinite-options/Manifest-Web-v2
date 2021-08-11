@@ -59,7 +59,19 @@ export default function Home(props) {
 
   // const [userID, setUserID] = useState("");
   const loginContext = useContext(LoginContext);
-  var userID = ''
+ 
+
+  var selectedUser = loginContext.loginState.curUser;
+
+
+  if (document.cookie
+    .split(";")
+    .some(item => item.trim().startsWith("ta_uid="))
+    ) {
+      selectedUser = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
+    }
+
+    var userID = ''
   if (
     document.cookie
       .split(";")
@@ -136,7 +148,6 @@ export default function Home(props) {
 
   /*----------------------------Use states to define variables----------------------------*/
   
-
 
   const [hightlight, setHightlight] = useState('')
   const [stateValue, setStateValue] = useState({
@@ -1119,6 +1130,7 @@ export default function Home(props) {
               gr.id = x[i].gr_unique_id;
 
               gr.is_available = x[i].is_available.toLowerCase() === 'true';
+              
               gr.is_complete = x[i].is_complete.toLowerCase() === 'true';
               gr.is_displayed_today =
                 x[i].is_displayed_today.toLowerCase() === 'true';
@@ -1421,6 +1433,7 @@ export default function Home(props) {
                 //   goal.push(gr);
                 // }
               }
+            
             }
 
             setStateValue((prevState) => {
@@ -1445,6 +1458,7 @@ export default function Home(props) {
           } else {
             setStateValue((prevState) => {
               return {
+                ...prevState,
                 originalGoalsAndRoutineArr: [],
                 // goals: goal,
                 addNewGRModalShow: false,
@@ -1487,13 +1501,14 @@ export default function Home(props) {
     history.push('/')
   }
 
+  let startWeek = '';
   /*----------------------------return()----------------------------*/
+  if(stateValue.dateContext != undefined){
   let startObject = stateValue.dateContext;
-  let startWeek = startObject.startOf('week');
-
-  console.log('stateValue')
-  console.log(stateValue)
-
+  startWeek = startObject.startOf('week');
+  }
+  console.log('stateValue', stateValue)
+  
   return (
     // console.log('home routines', stateValue.routines),
     /*----------------------------button
@@ -1525,7 +1540,7 @@ export default function Home(props) {
           stateValue.routines,
           stateValue.originalGoalsAndRoutineArr,
           stateValue.showRoutineModal,
-          stateValue.itemToEdit.is_available,
+          stateValue.itemToEdit.is_available ,
           stateValue.itemToEdit.is_complete,
           stateValue.addNewGRModalShow,
           stateValue.dateContext,
@@ -1634,7 +1649,7 @@ export default function Home(props) {
                     className="bigfancytext"
                   >
                     <p> Week of {startWeek.format('D MMMM YYYY')} </p>
-                    <p
+                    <p  
                       style={{ marginBottom: '0', height: '19.5px' }}
                       className="normalfancytext"
                     >
@@ -1660,7 +1675,7 @@ export default function Home(props) {
 
             <div style={{width: '100%'}}
               >
-               {editingIS.editing ? <EditIS CurrentId={userID}/> : editingATS.editing ? <EditATS  CurrentId={userID}/> : editingRTS.editing ? <EditRTS CurrentId={userID}/> : showCalendarView()}
+               {editingIS.editing ? <EditIS CurrentId={userID}/> : editingATS.editing ? <EditATS  CurrentId={userID}/> : editingRTS.editing ? <EditRTS CurrentId={userID} ta_ID={selectedUser}/> : showCalendarView()}
            
               </div>
           </div>
