@@ -59,7 +59,19 @@ export default function Home(props) {
 
   // const [userID, setUserID] = useState("");
   const loginContext = useContext(LoginContext);
-  var userID = ''
+ 
+
+  var selectedUser = loginContext.loginState.curUser;
+
+
+  if (document.cookie
+    .split(";")
+    .some(item => item.trim().startsWith("ta_uid="))
+    ) {
+      selectedUser = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
+    }
+
+    var userID = ''
   if (
     document.cookie
       .split(";")
@@ -132,7 +144,6 @@ export default function Home(props) {
 
   /*----------------------------Use states to define variables----------------------------*/
   
-
 
   const [hightlight, setHightlight] = useState('')
   const [stateValue, setStateValue] = useState({
@@ -1660,7 +1671,7 @@ export default function Home(props) {
 
             <div style={{width: '100%'}}
               >
-               {editingIS.editing ? <EditIS CurrentId={userID}/> : editingATS.editing ? <EditATS  CurrentId={userID}/> : editingRTS.editing ? <EditRTS CurrentId={userID}/> : showCalendarView()}
+               {editingIS.editing ? <EditIS CurrentId={userID}/> : editingATS.editing ? <EditATS  CurrentId={userID}/> : editingRTS.editing ? <EditRTS CurrentId={userID} ta_ID={selectedUser}/> : showCalendarView()}
            
               </div>
           </div>

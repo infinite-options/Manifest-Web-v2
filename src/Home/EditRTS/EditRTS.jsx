@@ -55,7 +55,7 @@ const EditRTS = (props) => {
     delete object.numMins;
     object.id = editingRTSContext.editingRTS.id;
     object.user_id = props. CurrentId // editingRTSContext.editingRTS.currentUserId;
-    object.ta_people_id = '';
+    object.ta_people_id = props.ta_ID;
     console.log("obj",object);
     let formData = new FormData();
     Object.entries(object).forEach(entry => {
@@ -715,7 +715,7 @@ const EditRTS = (props) => {
                   <input
                     type='checkbox'
                     style={{width: '20px', height: '20px'}}
-                    checked={editingRTSContext.editingRTS.newItem.notifications.before_is_enable}
+                    checked={editingRTSContext.editingRTS.newItem.ta_notifications.before.is_enabled}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
