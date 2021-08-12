@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
 import EditRTSContext from './EditRTSContext';
 import moment from 'moment';
 import axios from 'axios';
@@ -12,6 +12,10 @@ const EditRTS = (props) => {
   const editingRTSContext = useContext(EditRTSContext);
 
   const [photo, setPhoto] = useState(editingRTSContext.editingRTS.newItem.gr_photo)
+  const [showUploadImage, toggleUploadImage] = useState(false)
+  const [image, setImage] = useState(null)
+  const [imageName, setImageName] = useState('')
+  const [imageURL, setImageURL] = useState('')
 
 
   console.log("Repeat",editingRTSContext.editingRTS.newItem.repeat)
@@ -125,6 +129,74 @@ const EditRTS = (props) => {
   //   editing: false
   // })
   }
+
+  const uploadImageModal = () => {
+    return (
+      <Modal show={showUploadImage} onHide={() => {toggleUploadImage(false)}}>
+        <Modal.Header closeButton>
+          <Modal.Title>Upload Image</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <div>Upload Image</div>
+          <input type="file" 
+            onChange={
+              (e) => {
+                if (e.target.files[0]) {
+                  const image1 = e.target.files[0];
+                  console.log(image1.name);
+                  setImage(image1)
+                }
+              }
+            }
+          />
+          <Button variant="dark" 
+            onClick={() => {
+              if (image === null) {
+                alert('Please select an image to upload');
+                return;
+              }
+              const salt = Math.floor(Math.random() * 9999999999);
+              let image_name = image.name;
+              image_name = image_name + salt.toString();
+              setImageName(image_name)
+              setImageURL(URL.createObjectURL(image))
+
+            }}
+          >
+            Upload
+          </Button>
+          <img
+            src={
+              imageURL || 'http://via.placeholder.com/400x300'
+            }
+            alt="Uploaded images"
+            height="300"
+            width="400"
+          />
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="secondary" 
+            onClick={() => {
+              toggleUploadImage(false)
+            }}
+          >
+            Close
+          </Button>
+          <Button variant="primary" 
+            onClick={() => {
+              setPhoto(imageURL)
+              toggleUploadImage(false)
+            }}
+          >
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    )
+  }
+
   return (
     <div
       style={{
@@ -136,6 +208,7 @@ const EditRTS = (props) => {
         color: '#ffffff'
       }}
     >
+      {uploadImageModal()}
       <Container
         style={{
           paddingLeft: '1rem',
@@ -162,6 +235,7 @@ const EditRTS = (props) => {
                 newItem: {
                   ...editingRTSContext.editingRTS.newItem,
                   gr_title: e.target.value
+                  
                 }
               })
             }}
@@ -171,7 +245,9 @@ const EditRTS = (props) => {
           
           <Row>
             <Col style={{width: '100%', float: 'left', fontSize: '14px',textAlign:'center', textDecoration: 'underline'}}>
-              <div >Add icon to library</div>
+              <div onClick={() => {
+                toggleUploadImage(!showUploadImage)
+              }}>Add icon to library</div>
               <AddIconModal
               photoUrl = {photo}
               setPhotoUrl = {setPhoto}
