@@ -133,6 +133,9 @@ export default class UploadImage extends Component {
             <Button variant="primary" onClick={this.onUploadImage}>
               Upload New Image
             </Button>
+
+            {/* MODAL I WANT ON FIREBASE */}
+
             <Modal show={this.state.modal} onHide={this.onUploadImage}>
               <Modal.Header closeButton>
                 <Modal.Title>Upload Image</Modal.Title>
@@ -163,6 +166,9 @@ export default class UploadImage extends Component {
                 </Button>
               </Modal.Footer>
             </Modal>
+
+            {/* MODAL I WANT ON FIREBASE */}
+
             <Button variant="primary" onClick={this.onSubmitImage}>
               Select Image
             </Button>

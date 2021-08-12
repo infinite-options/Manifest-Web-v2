@@ -349,6 +349,94 @@ const EditRTS = (props) => {
               }}
             >
               <Col style={{ margin: '10px 0',}}>
+              <Row style={{marginBottom: '20px', verticalAlign: 'middle', }}>
+                  <div style={{width: '20%', float: 'left', }}></div>
+                  <div style={{width: '80%', float: 'left'}}>
+                    <div style={{width: '100%'}}
+                      onClick={()=>{
+                      
+                        editingRTSContext.setEditingRTS({
+                          ...editingRTSContext.editingRTS,
+                          newItem: {
+                            ...editingRTSContext.editingRTS.newItem,
+                            repeat: !editingRTSContext.editingRTS.newItem.repeat,
+                            repeat_type: ''
+                          }
+                        })
+                        
+                      }}
+                    >
+                      <input
+                        type='radio'
+                        style={{width: '10%', height: '20px',
+                            borderRadius: '10px',
+                            float: 'left'}}
+                        checked = {editingRTSContext.editingRTS.newItem.repeat=== 'False' || editingRTSContext.editingRTS.newItem.repeat=== false}
+                      />
+                      <div style={{marginLeft:'2%', minWidth: '82%', float: 'left'}}>Does not repeat</div>
+                      
+                    </div>
+                  </div>
+                  
+                  {/* Does not repeat */}
+                  {console.log('repeat value =', editingRTSContext.editingRTS.newItem.repeat)}
+                  {/* {editingRTSContext.editingRTS.newItem.repeat == 'False' ? (
+                    <input
+                    name='repeating'
+                    id='repeating'
+                    type='checkbox'
+                    //type='radio'
+                    defaultChecked  = 'true'
+                    //checked={editingRTSContext.editingRTS.newItem.repeat=== 'False'}
+                    style={{width: '20px', height: '20px', marginLeft: '10px', borderRadius: '50%'}}
+                    onChange={(e) => {
+                      console.log('in false')
+                      editingRTSContext.setEditingRTS({
+                        ...editingRTSContext.editingRTS,
+                        newItem: {
+                          ...editingRTSContext.editingRTS.newItem,
+                          repeat: !e.target.checked
+                        }
+                      })
+                    }}
+                  />
+                  ) : (
+                    <input
+                    name='repeating'
+                    id='repeating'
+                    type='checkbox'
+                    //type='radio'
+                    // checked={editingRTSContext.editingRTS.newItem.repeat}
+                    style={{width: '20px', height: '20px', marginLeft: '10px', borderRadius: '50%'}}
+                    onChange={(e) => {
+                      console.log('in true')
+                      editingRTSContext.setEditingRTS({
+                        ...editingRTSContext.editingRTS,
+                        newItem: {
+                          ...editingRTSContext.editingRTS.newItem,
+                          repeat: !e.target.checked
+                        }
+                      })
+                    }}
+                  />
+                  )} */}
+                  
+                  {/* <input
+                    name='repeating'
+                    type='checkbox'
+                    defaultChecked={editingRTSContext.editingRTS.newItem.repeat}
+                    style={{width: '20px', height: '20px', marginLeft: '10px'}}
+                    onChange={(e) => {
+                      editingRTSContext.setEditingRTS({
+                        ...editingRTSContext.editingRTS,
+                        newItem: {
+                          ...editingRTSContext.editingRTS.newItem,
+                          repeat: e.target.checked
+                        }
+                      })
+                    }}
+                  /> */}
+                </Row>
                 <Row style={{verticalAlign: 'middle'}}>
                 <div style={{float: 'left', marginRight: '8px', display: 'inline-block'}}>
                   Repeat Every
@@ -382,61 +470,8 @@ const EditRTS = (props) => {
                 <div style={{float: 'left', marginRight: '8px', display: 'inline-block'}}>Days</div>
                 </Row>
                 
-                <Row style={{marginTop: '10px', width: '100%', verticalAlign: 'middle'}}>
-                  Does not repeat
-                  {console.log('repeat value =', editingRTSContext.editingRTS.newItem.repeat)}
-                  {editingRTSContext.editingRTS.newItem.repeat == 'False' ? (
-                    <input
-                    name='repeating'
-                    type='checkbox'
-                    defaultChecked  = 'true'
-                    style={{width: '20px', height: '20px', marginLeft: '10px'}}
-                    onChange={(e) => {
-                      console.log('in false')
-                      editingRTSContext.setEditingRTS({
-                        ...editingRTSContext.editingRTS,
-                        newItem: {
-                          ...editingRTSContext.editingRTS.newItem,
-                          repeat: !e.target.checked
-                        }
-                      })
-                    }}
-                  />
-                  ) : (
-                    <input
-                    name='repeating'
-                    type='checkbox'
-                    // checked={editingRTSContext.editingRTS.newItem.repeat}
-                    style={{width: '20px', height: '20px', marginLeft: '10px'}}
-                    onChange={(e) => {
-                      console.log('in true')
-                      editingRTSContext.setEditingRTS({
-                        ...editingRTSContext.editingRTS,
-                        newItem: {
-                          ...editingRTSContext.editingRTS.newItem,
-                          repeat: !e.target.checked
-                        }
-                      })
-                    }}
-                  />
-                  )} 
-                  {/* <input
-                    name='repeating'
-                    type='checkbox'
-                    defaultChecked={editingRTSContext.editingRTS.newItem.repeat}
-                    style={{width: '20px', height: '20px', marginLeft: '10px'}}
-                    onChange={(e) => {
-                      editingRTSContext.setEditingRTS({
-                        ...editingRTSContext.editingRTS,
-                        newItem: {
-                          ...editingRTSContext.editingRTS.newItem,
-                          repeat: e.target.checked
-                        }
-                      })
-                    }}
-                  /> */}
-                </Row>
-                <Row style={{marginTop: '40px', verticalAlign: 'middle'}}>
+                
+                <Row style={{marginTop: '20px', verticalAlign: 'middle', }}>
                     <div style={{float: 'left', width: '20%'}}> Ends </div>
                     <div style={{float: 'left', width: '80%', }}>
                     
@@ -458,6 +493,7 @@ const EditRTS = (props) => {
                             newItem: {
                               ...editingRTSContext.editingRTS.newItem,
                               repeat_type: e.target.value,
+                              repeat: 'True'
                             }
                           })
                         }}
@@ -505,14 +541,15 @@ const EditRTS = (props) => {
                           name='repeatingEnd'
                           type='radio'
 
-                          value='Occurences'
+                          value='Occur'
                           checked={editingRTSContext.editingRTS.newItem.repeat_type === 'Occur'}
                           onChange={(e) => {
                             editingRTSContext.setEditingRTS({
                               ...editingRTSContext.editingRTS,
                               newItem: {
                                 ...editingRTSContext.editingRTS.newItem,
-                                repeat_type: e.target.value
+                                repeat_type: e.target.value,
+                                repeat: 'True'
                               }
                             })
                           }}
@@ -559,7 +596,8 @@ const EditRTS = (props) => {
                               ...editingRTSContext.editingRTS,
                               newItem: {
                                 ...editingRTSContext.editingRTS.newItem,
-                                repeat_type: e.target.value
+                                repeat_type: e.target.value,
+                                repeat: 'True'
                               }
                             })
                           }}

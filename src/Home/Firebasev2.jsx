@@ -300,7 +300,7 @@ export default function Firebasev2(props)  {
                     <br></br>
                     <div>Select trusted advisor to copy to</div>
                     <div>
-                        <select
+                        {/* <select
                             style={{width: '90%', border: 'none'}}
                             onChange={e => {
                                 console.log(JSON.parse(e.target.value))
@@ -318,20 +318,15 @@ export default function Firebasev2(props)  {
                                    {ta.name}
                                </option>
                            ))}
-                        </select>
+                        </select> */}
+                        {taDropdown()}
                     </div>
                     <br></br>
                     <div>Select patient to copy to</div>
                     <div>
                         {console.log(taToCopyTo.users)}
-                        
-                        
-
                         {patientDropdown()}
-                                
-
-                            
-                            
+ 
                     </div>
                     <br></br>
                     <div>
@@ -363,13 +358,34 @@ export default function Firebasev2(props)  {
                     }}
                     onClick = {() => {
                         console.log('test',taToCopyTo)
-                        if(!taToCopyTo.users){
+                        console.log('test', patientToCopyTo)
+                        if(!taToCopyTo.name){
                             alert('Select a TA')
                         } else if(!patientToCopyTo.user_name){
                             alert('Select a Patient')
                         } else {
                         // toggleCopyModalPatients([true, ''])
-                        toggleCopyModalConfirm(true)
+                        // toggleCopyModalConfirm(true)
+
+                        var myObj = {
+                            user_id: patientToCopyTo.user_unique_id,
+                            gr_id: copiedRoutineID,
+                            ta_id: taToCopyTo.ta_unique_id
+                        }
+
+                        console.log(myObj)
+
+                        axios
+                            .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/copyGR', myObj)
+                            .then(response => {
+                                console.log(response.data)
+                                toggleCopyModalConfirm(false)
+                            })
+                            .catch(err => {
+                                console.log(err)
+                                toggleCopyModalConfirm(false)
+                            })
+
                         toggleCopyModal([false, showCopyModal[1]])
                         }
                         
@@ -410,10 +426,29 @@ export default function Firebasev2(props)  {
             )
         }
         return (
-            <select style={{width: '90%', border: 'none'}} disabled>
-                <option>Select</option>
+            // <select style={{width: '90%', border: 'none'}} disabled>
+            //     <option>Select</option>
+            // </select>
+            <select
+                style={{width: '90%', border: 'none'}}
+                onChange={e => {
+                    console.log(JSON.parse(e.target.value))
+                    setPatientToCopyTo(JSON.parse(e.target.value))
+                }}
+            >
+                <option value='-1'>Select</option>
+
+                {allPatientData.map((patient) => (
+                    <option value={JSON.stringify({
+                        user_name: patient.name,
+                        user_unique_id: patient.user_unique_id,
+                        TA: patient.TA
+                    })}>
+                        {patient.name}
+                    </option>
+                ))}
             </select>
-        )
+)
     }
 
     const taDropdown = () => {
@@ -440,8 +475,27 @@ export default function Firebasev2(props)  {
             )
         }
         return (
-            <select style={{width: '90%', border: 'none'}} disabled>
-                <option>Select</option>
+            // <select style={{width: '90%', border: 'none'}} disabled>
+            //     <option>Select</option>
+            // </select>
+            <select
+                style={{width: '90%', border: 'none'}}
+                onChange={e => {
+                    console.log(JSON.parse(e.target.value))
+                    setTAToCopyTo(JSON.parse(e.target.value))
+                }}
+            >
+                <option value='-1'>Select</option>
+
+                {allTAData.map((ta) => (
+                    <option value={JSON.stringify({
+                        name: ta.name,
+                        ta_unique_id: ta.ta_unique_id,
+                        users: ta.users
+                    })}>
+                        {ta.name}
+                    </option>
+                ))}
             </select>
         )
     }
@@ -1339,9 +1393,9 @@ export default function Firebasev2(props)  {
                         setTAToCopyTo({})
                         setPatientToCopyTo({})
                         // console.log('test', r.name)
-                        // toggleCopyModal([!showCopyModal[0], r.id])
+                        toggleCopyModal([!showCopyModal[0], r.id])
                         // toggleCopyModal2([!showCopyModal2[0], r.id])
-                        toggleCopyPicker(!showCopyPicker)
+                        //toggleCopyPicker(!showCopyPicker)
                         
                         
                     }}
