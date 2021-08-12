@@ -22,22 +22,11 @@ import {
     Table,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-//import DeleteAT from "../manifest/OldManifest";
-import DeleteGR from "../manifest/OldManifest/deleteGR.jsx";
-import EditGR from "../manifest/OldManifest/editGR.jsx";
-import EditIS from "../manifest/OldManifest/editIS.jsx";
-import EditAT from "../manifest/OldManifest/EditAT.jsx";
-import ShowATList from "../manifest/OldManifest/ShowATList";
-import ShowISList from "../manifest/OldManifest/ShowISList";
-import MustDoAT from "../manifest/OldManifest/MustDoAT";
-import EditIcon from "../Home/EditRTS/EditIcon.jsx";
-import CopyIcon from "../manifest/OldManifest/CopyIcon.jsx";
-import CopyGR from "../manifest/OldManifest/CopyGR.jsx";
-import { Container } from 'react-grid-system';
-import Button from '@material-ui/core/Button';
+
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 import MiniNavigation from '../manifest/miniNavigation'
+import './history.css'
 
 
 const useStyles = makeStyles({
@@ -69,7 +58,7 @@ const useStyles = makeStyles({
       },
 })
 
-const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
+const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent, allRows}) => {
     const history = useHistory();
     const currentUser = userID;
     console.log("VR CURRENT USER: "+ currentUser);
@@ -78,7 +67,8 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
     const [rows, setRows] = useState([]);
     const [onlyAllowedHere, setOAH] = useState([]);
     const classes = useStyles();
-    console.log(onlyAllowed);
+    console.log("allRows", allRows);
+    console.log("onlyAllowed", onlyAllowed);
 
     if(onlyAllowed != onlyAllowedHere){ //see if we got new data to display
         console.log("new onlyAllowed in");
@@ -192,144 +182,17 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                 </div>
 
                 <div style={{ display:"flex" , marginTop:'1rem'}}>
-                <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
-                    {/* <div style={{flex:'1'}}>
-
-                <CopyIcon
-                    //   openCopyModal={() => {
-                    //     this.setState({
-                    //     showCopyModal: true,
-                    //     indexEditing: this.findIndexByID(tempID),
-
-                    //     })
-                    //   }}
-                    //   indexEditing={this.state.indexEditing}
-                    //     i={this.findIndexByID(tempID)} //index to edit
-                    //   showModal={this.state.showCopyModal}
-                    />
-                    </div> */}
-
-                    {/* <div style={{flex:'1', marginLeft:'1rem'}}>
-
-                    <Row >
-                        {r["is_available"] ? (
-                            <div >
-                            <FontAwesomeIcon
-                                title="Available to the user"
-                                style={{
-                                color: "#ffffff",
-                                }}
-                                onClick={(e) => {
-                                e.stopPropagation();
-                                alert("Item Is Availble to the user");
-                                }}
-                                icon={faUser}
-                                size="small"
-                            />{" "}
-                            </div>
-                        ) : (
-                            <div>
-                            <FontAwesomeIcon
-                                title="Unavailable to the user"
-                                style={{ color: "#000000" }}
-                                onClick={(e) => {
-                                e.stopPropagation();
-                                alert("Item Is NOT Availble to the user");
-                                }}
-                                icon={faUserAltSlash}
-                                size="small"
-                            />
-                            </div>
-                        )}
-                        
-                        </Row>
-                    </div> */}
-
-                    {/* <div style={{flex:'1'}} >
-                    <DeleteGR
-                        //   BASE_URL={this.props.BASE_URL}
-                        //     deleteIndex={this.findIndexByID(tempID)}
-                        //     Array={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                        //     // Path={firebase
-                        //     //   .firestore()
-                        //     //   .collection("users")
-                        //     //   .doc(this.props.theCurrentUserID)}
-                        //     // refresh={this.grabFireBaseRoutinesGoalsData}
-                        //     theCurrentUserId={this.props.theCurrentUserID}
-                        //     theCurrentTAID={this.props.theCurrentTAID}
-                        />
-                        </div> */}
-                </div>
-                    <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
-                
-                    {/* <div>
-                        <FontAwesomeIcon
-                            icon={faBookmark}
-                            title="Must Do"
-                            style={{ color: "#ffffff" }}
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
-                            // onClick={(e) => {
-                            //     e.stopPropagation();
-                            //     this.toggleFBmustDo(!this.state.iconShow);
-                            // }}
-                            size="small"
-                        />
-                    <MustDoAT
-                        // BASE_URL={this.props.BASE_URL}
-                        //   Index={i}
-                        //    Array={this.props.originalGoalsAndRoutineArr}
-                        //   // SingleAT={this.state.singleATitemArr[i]}
-                        //   // Path={this.state.singleGR.fbPath}
-                        />
-                    </div> */}
-
-                    {/* <div>
-                    <EditIcon
-                        routine={r}
-                        task={null}
-                        step={currentUser} 
-                            // openEditModal={() => {
-                            //   this.setState({
-                            //     showEditModal: true,
-                            //     indexEditing: this.findIndexByID(tempID),
-                            //   });
-                            
-                            // }}
-                            // showModal={this.state.showEditModal}
-                            // indexEditing={this.state.indexEditing}
-                            // i={this.findIndexByID(tempID)} //index to edit
-                            // ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                            // // FBPath={firebase
-                            // //   .firestore()
-                            // //   .collection("users")
-                            // //   .doc(this.props.theCurrentUserID)}
-                            // // refresh={this.grabFireBaseRoutinesGoalsData}
-                        />
-
-                    </div> */}
-
-                    {/* <div>
-                    {(r.is_sublist_available === "True") ?(
-                    <FontAwesomeIcon
-                            icon={faList}
-                            title="SubList Available"
-                            style={{ color: "#ffffff"}}
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
-                            onClick = {()=> {
-                                sendRoutineToParent(r.number);
-                                setLoading(!isLoading);
-                            }}
-                            size="small"
-                            />) 
-                            :(
-                                <FontAwesomeIcon
-                                        icon={faList}
-                                        title="SubList Not Available"
-                                        style={{ color: "#BBC7D7"}}
-                                        size="small"
-                                        />) 
-                        }
-                    </div> */}
+                {/* STUFF GOES HERE */}
+                    <div style={{width:'55px', height:'4.5rem', borderRadius:'10px', border:'2px solid #51CC4E', background: '#FFFFFF',
+                                marginLeft: '10px', marginRight: '10px', flex: '1', alignItems: 'center', justifyContent: 'center'}}>
+                        <Col>
+                            <Row title="Percentage of routine completed in last 7 days" style={{ justifyContent: 'center', color: '#FF6B4A', fontWeight: 'bold', fontSize: 15}}>
+                                {getPercent(r)}</Row>
+                            <Row title="Percentage of actions completed in last 7 days" style={{ justifyContent: 'center', color: '#F8BE28', fontWeight: 'bold', fontSize: 15}}>
+                                {getBelowPercent(r)}</Row>
+                            <Row title="Percentage of instructions completed in last 7 days" style={{ justifyContent: 'center', color: '#67ABFC', fontWeight: 'bold', fontSize: 15}}>
+                                {getDoubleBelowPercent(r)}</Row>
+                        </Col>
                     </div>
                 </div>
                 </div>
@@ -422,142 +285,17 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                 </div>
 
                 <div style={{ display:"flex" , marginTop:'1rem'}}>
-                <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
-                    {/* <div style={{flex:'1'}}>
-
-                <CopyIcon
-                    //   openCopyModal={() => {
-                    //     this.setState({
-                    //     showCopyModal: true,
-                    //     indexEditing: this.findIndexByID(tempID),
-
-                    //     })
-                    //   }}
-                    //   indexEditing={this.state.indexEditing}
-                    //     i={this.findIndexByID(tempID)} //index to edit
-                    //   showModal={this.state.showCopyModal}
-                    />
-                    </div> */}
-
-                    {/* <div style={{flex:'1', marginLeft:'1rem'}}>
-
-                    <Row >
-                        {(a.is_available === "True") ? (
-                            <div >
-                            <FontAwesomeIcon
-                                title="Available to the user"
-                                style={{
-                                color: "#ffffff",
-                                }}
-                                onClick={(e) => {
-                                e.stopPropagation();
-                                alert("Item Is Availble to the user");
-                                }}
-                                icon={faUser}
-                                size="small"
-                            />{" "}
-                            </div>
-                        ) : (
-                            <div>
-                            <FontAwesomeIcon
-                                title="Unavailable to the user"
-                                style={{ color: "#000000" }}
-                                onClick={(e) => {
-                                e.stopPropagation();
-                                alert("Item Is NOT Availble to the user");
-                                }}
-                                icon={faUserAltSlash}
-                                size="small"
-                            />
-                            </div>
-                        )}
-                        
-                        </Row>
-                    </div> */}
-
-                    {/* <div style={{flex:'1'}} >
-                    <DeleteGR
-                        //   BASE_URL={this.props.BASE_URL}
-                        //     deleteIndex={this.findIndexByID(tempID)}
-                        //     Array={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                        //     // Path={firebase
-                        //     //   .firestore()
-                        //     //   .collection("users")
-                        //     //   .doc(this.props.theCurrentUserID)}
-                        //     // refresh={this.grabFireBaseRoutinesGoalsData}
-                        //     theCurrentUserId={this.props.theCurrentUserID}
-                        //     theCurrentTAID={this.props.theCurrentTAID}
-                        />
-                        </div> */}
-                </div>
-                    {/* <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
-                
-                    <div>
-                        <FontAwesomeIcon
-                            icon={faBookmark}
-                            title="Must Do"
-                            style={{ color: "#ffffff" }}
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
-                            // onClick={(e) => {
-                            //     e.stopPropagation();
-                            //     this.toggleFBmustDo(!this.state.iconShow);
-                            // }}
-                            size="small"
-                        />
-                    <MustDoAT
-                        // BASE_URL={this.props.BASE_URL}
-                        //   Index={i}
-                        //    Array={this.props.originalGoalsAndRoutineArr}
-                        //   // SingleAT={this.state.singleATitemArr[i]}
-                        //   // Path={this.state.singleGR.fbPath}
-                        />
+                    {/* STUFF GOES HERE */}
+                    <div style={{width:'55px', height:'4.5rem', borderRadius:'10px', border:'2px solid #51CC4E', background: '#FFFFFF',
+                                marginLeft: '10px', marginRight: '10px', flex: '1', alignItems: 'center', justifyContent: 'center'}}>
+                        <Col>
+                            <Row title="Percentage of action completed in last 7 days" style={{ marginTop: '12px', justifyContent: 'center', color: '#F8BE28', fontWeight: 'bold', fontSize: 15}}>
+                                {getPercent(a)}</Row>
+                            <Row title="Percentage of instructions completed in last 7 days" style={{ justifyContent: 'center', color: '#67ABFC', fontWeight: 'bold', fontSize: 15}}>
+                                {getBelowPercent(a)}</Row>
+                        </Col>
                     </div>
 
-                    <div>
-                    <EditIcon
-                            // openEditModal={() => {
-                            //   this.setState({
-                            //     showEditModal: true,
-                            //     indexEditing: this.findIndexByID(tempID),
-                            //   });
-                            
-                            // }}
-                            // showModal={this.state.showEditModal}
-                            // indexEditing={this.state.indexEditing}
-                            // i={this.findIndexByID(tempID)} //index to edit
-                            // ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                            // // FBPath={firebase
-                            // //   .firestore()
-                            // //   .collection("users")
-                            // //   .doc(this.props.theCurrentUserID)}
-                            // // refresh={this.grabFireBaseRoutinesGoalsData}
-                        />
-
-                    </div>
-
-                    <div>
-                    {(a.is_sublist_available === "True") ? (
-                            <div>
-                            <FontAwesomeIcon
-                            icon={faList}
-                            title="SubList Available"
-                            style={{ color: "#ffffff" }}
-                            size="small"
-                            onClick = {()=> {
-                                sendRoutineToParent(a.number);
-                                setLoading(!isLoading);}}
-                            />
-                        </div>
-                        ) : (
-                            <FontAwesomeIcon
-                                    icon={faList}
-                                    title="SubList Not Available"
-                                    style={{ color: "#d1dceb"}}
-                                    size="small"
-                                    />) 
-                                    }
-                    </div>
-                    </div> */}
                 </div>
                 </div>
 
@@ -566,6 +304,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
     }
 
     function displayInstructions(i){
+        console.log("i: ", i);
         return(
             <div
             
@@ -579,21 +318,13 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                 <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
                 <div style={{ marginLeft:'1rem'}} >
                 {true ? (
-                    <div
-                    style={{
+                    <div style={{
                         fontSize: "8px",
                         color:'#67ABFC'
-                    }}
-                    >
-                    {
-                        formatDateTime(
-                            "6/23/2021, 8:31:56 AM"  
-                        )}
+                    }} >
+                    {formatDateTime( "6/23/2021, 8:31:56 AM"  )}
                         -
-                    {
-                        formatDateTime(
-                            "6/23/2021, 8:31:56 AM"
-                        )}
+                    {formatDateTime( "6/23/2021, 8:31:56 AM")}
                     </div>
                 ) : (
                     <Col> </Col>
@@ -611,7 +342,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
             <div style={{display:'flex', flexDirection:'column', justifyContent:'space-evenly'}}>
                 <div>
 
-                <Col xs={7} style={{ paddingRight: "1rem"  ,marginTop:'0.5rem'}}>
+                    <Col xs={7} style={{ paddingRight: "1rem"  ,marginTop:'0.5rem'}}>
                         <img
                         src={i["photo"]}
                         alt="Routines"
@@ -622,152 +353,22 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
                     </Col>
                 </div>
                 <div style={{marginLeft:'1.5rem'}}>
-                {/* {a["is_sublist_available"] ? (
-                            <div>
-                            <FontAwesomeIcon
-                            icon={faList}
-                            title="SubList Available"
-                            style={{ color: "#ffffff" }}
-                            size="small"
-                            />
-                        </div>
-                        ) : (
-                            <div
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShowATModal: false})}}>
-                            >
-                            </div>
-                        )} */}
+                    
+               
                 </div>
-                </div>
+            </div>
                 </div>
 
                 <div style={{ display:"flex" , marginTop:'1rem'}}>
-                {/* <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
-                    <div style={{flex:'1'}}>
-
-                <CopyIcon
-                    //   openCopyModal={() => {
-                    //     this.setState({
-                    //     showCopyModal: true,
-                    //     indexEditing: this.findIndexByID(tempID),
-
-                    //     })
-                    //   }}
-                    //   indexEditing={this.state.indexEditing}
-                    //     i={this.findIndexByID(tempID)} //index to edit
-                    //   showModal={this.state.showCopyModal}
-                    />
+                {/* STUFF GOES HERE */}
+                <div style={{width:'55px', height:'4.5rem', borderRadius:'10px', border:'2px solid #51CC4E', background: '#FFFFFF',
+                                marginLeft: '10px', marginRight: '10px', flex: '1', alignItems: 'center', justifyContent: 'center'}}>
+                        <Col>
+                            <Row title="Percentage of instructions completed in last 7 days" style={{ marginTop: '24px', justifyContent: 'center', color: '#67ABFC', fontWeight: 'bold', fontSize: 15}}>
+                                {getPercent(i)}</Row>
+                        </Col>
                     </div>
 
-                    <div style={{flex:'1', marginLeft:'1rem'}}>
-
-                    <Row >
-                        {i.is_available ? (
-                            <div >
-                            <FontAwesomeIcon
-                                title="Available to the user"
-                                style={{
-                                color: "#ffffff",
-                                }}
-                                onClick={(e) => {
-                                e.stopPropagation();
-                                alert("Item Is Availble to the user");
-                                }}
-                                icon={faUser}
-                                size="small"
-                            />{" "}
-                            </div>
-                        ) : (
-                            <div>
-                            <FontAwesomeIcon
-                                title="Unavailable to the user"
-                                style={{ color: "#000000" }}
-                                onClick={(e) => {
-                                e.stopPropagation();
-                                alert("Item Is NOT Availble to the user");
-                                }}
-                                icon={faUserAltSlash}
-                                size="small"
-                            />
-                            </div>
-                        )}
-                        
-                        </Row>
-                    </div>
-
-                    <div style={{flex:'1'}} >
-                    <DeleteGR
-                        //   BASE_URL={this.props.BASE_URL}
-                        //     deleteIndex={this.findIndexByID(tempID)}
-                        //     Array={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                        //     // Path={firebase
-                        //     //   .firestore()
-                        //     //   .collection("users")
-                        //     //   .doc(this.props.theCurrentUserID)}
-                        //     // refresh={this.grabFireBaseRoutinesGoalsData}
-                        //     theCurrentUserId={this.props.theCurrentUserID}
-                        //     theCurrentTAID={this.props.theCurrentTAID}
-                        />
-                        </div>
-                </div> */}
-                    {/* <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
-                
-                    <div>
-                        <FontAwesomeIcon
-                            icon={faBookmark}
-                            title="Must Do"
-                            style={{ color: "#ffffff" }}
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
-                            // onClick={(e) => {
-                            //     e.stopPropagation();
-                            //     this.toggleFBmustDo(!this.state.iconShow);
-                            // }}
-                            size="small"
-                        />
-                    <MustDoAT
-                        // BASE_URL={this.props.BASE_URL}
-                        //   Index={i}
-                        //    Array={this.props.originalGoalsAndRoutineArr}
-                        //   // SingleAT={this.state.singleATitemArr[i]}
-                        //   // Path={this.state.singleGR.fbPath}
-                        />
-                    </div>
-
-                    <div>
-                    <EditIcon
-                            // openEditModal={() => {
-                            //   this.setState({
-                            //     showEditModal: true,
-                            //     indexEditing: this.findIndexByID(tempID),
-                            //   });
-                            
-                            // }}
-                            // showModal={this.state.showEditModal}
-                            // indexEditing={this.state.indexEditing}
-                            // i={this.findIndexByID(tempID)} //index to edit
-                            // ATArray={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                            // // FBPath={firebase
-                            // //   .firestore()
-                            // //   .collection("users")
-                            // //   .doc(this.props.theCurrentUserID)}
-                            // // refresh={this.grabFireBaseRoutinesGoalsData}
-                        />
-
-                    </div>
-
-                    <div>
-                    <FontAwesomeIcon
-                            icon={faList}
-                            title="SubList Not Available"
-                            style={{ color: "#dae5f5"}}
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShow: false}); this.editFirBaseFalse()}}
-                            onClick={(e)=>{
-                            //  style.color = "#000000"
-                            }}
-                            size="small"
-                            />
-                    </div>
-                    </div> */}
                 </div>
                 </div>
 
@@ -776,40 +377,121 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent}) => {
         )
     }
 
+    function getPercent (x){
+            var total = getTotalAndDone(x)[0];
+            var done = getTotalAndDone(x)[1];
+            return(Math.round((done/total)*100) + "%");
+    }
+
+    function getBelowPercent(x){
+        var total = 0;
+        var done = 0;
+        // console.log("rows in get below", )
+        for (const item of allRows){
+            if(item.under === x.number){
+                total = total + getTotalAndDone(item)[0];
+                done = done + getTotalAndDone(item)[1];
+            }
+        }
+        if(total === 0){
+            return("");
+        }
+        return(Math.round((done/total)*100) + "%");
+    }
+
+    function getDoubleBelowPercent(x){
+        var total =0;
+        var done=0;
+        for (const item of allRows){
+            if(item.under === x.number){
+                for (const item2 of allRows){
+                    if(item2.under === item.number){
+                        total = total + getTotalAndDone(item2)[0];
+                        done = done + getTotalAndDone(item2)[1];
+                    }
+                }
+            }
+        }
+        if(total === 0){
+            return("");
+        }
+        console.log("total", total,"done",done);
+        return(Math.round((done/total)*100) + "%");
+    }
+
+    function getTotalAndDone(x){
+        var total = 0;
+        var done = 0;
+        if(x.mon != undefined){
+            total++;
+            if(x.mon.props.className === "cR" || x.mon.props.className === "cA" || x.mon.props.className === "cI"){
+                done++;}
+        }
+        if(x.tue != undefined){
+            total++;
+            if(x.tue.props.className === "cR" || x.tue.props.className === "cA" || x.tue.props.className === "cI"){
+                done++;}
+        }
+        if(x.wed != undefined){
+            total++;
+            if(x.wed.props.className === "cR" || x.wed.props.className === "cA" || x.wed.props.className === "cI"){
+                done++;}
+        }
+        if(x.thurs != undefined){
+            total++;
+            if(x.thurs.props.className === "cR" || x.thurs.props.className === "cA" || x.thurs.props.className === "cI"){
+                done++;}
+        }
+        if(x.fri != undefined){
+            total++;
+            if(x.fri.props.className === "cR" || x.fri.props.className === "cA" || x.fri.props.className === "cI"){
+                done++;}
+        }
+        if(x.sat != undefined){
+            total++;
+            if(x.sat.props.className === "cR" || x.sat.props.className === "cA" || x.sat.props.className === "cI"){
+                done++;}
+        }
+        if(x.sun != undefined){
+            total++;
+            if(x.sun.props.className === "cR" || x.sun.props.className === "cA" || x.sun.props.className === "cI"){
+                done++;}
+        }
+        console.log([total,done]);
+        return([total, done]);
+    }
 
 
-    // if(isLoading){
-    //     return(
-    //         <div>
-    //             <h1>Loading...</h1>
-    //         </div>
-    //     )
-    // }
+
+    
     return(
         <Box width = "350px">
-            {/* <Button className={classes.buttonSelection} onClick={() => history.push(
-                {pathname: "/matts", state: currentUser})} id="one">
-                History
-        </Button>
-            <Button className={classes.buttonSelection} id="one">
-                Events
-        </Button>
-            <Button
-                className={classes.buttonSelection}
-                // onClick={toggleShowRoutine}
-                id="one">
-                Routines
-        </Button>
-
-            <Button className={classes.buttonSelection} onClick={() => history.push(
-                { pathname: "/main", state: currentUser })} id="one">
-                Goals
-        </Button>
-            <Button className={classes.buttonSelection} id="one">
-                About
-        </Button> */}
+            
         <MiniNavigation/>
-        <p style={{height:"54.5px", margin:"0px"}}></p>
+        <div style={{height:"54.5px", margin:"0px"}}>
+            <Row>
+            <Col>
+                <Row style={{margin: "0px", fontSize:12, fontWeight:"bold", padding: "4px"}}>
+                    <div className = "cR" style={{width: "22px", height:"22px", border: "#000000", backgroundColor: "#000000"}}></div> 
+                    <p style={{margin:"0px", paddingLeft:"6px", fontSize:"14px"}}>{"Completed"}</p></Row>
+                <Row style={{margin: "0px", fontSize:12, fontWeight:"bold", padding: "4px"}} align="right">
+                    <div className = "ipR" style={{width: "22px", height:"22px", paddingBottom:"0px", margin:"0px", borderColor: "#000000", borderWidth: "2px", backgroundColor: "#000000"}} >
+                        <div className = "whiteHalfSide" style={{borderBottomRightRadius:"9px", borderTopRightRadius:"9px", marginTop:"0px", paddingTop:"0px"}} ></div>
+                    </div> 
+                    <p style={{margin:"0px", paddingLeft:"6px",fontSize:"14px"}}>{"Partially Done"}</p></Row>
+            </Col>
+            <Col>
+                <Row style={{margin: "0px", fontSize:12, fontWeight:"bold", padding: "4px"}} align="right">
+                    <div className = "ipR" style={{width: "22px", height:"22px", paddingBottom:"0px", margin:"0px", borderColor: "#000000", borderWidth: "2px", backgroundColor: "#000000"}} >
+                        <div className = "whiteHalfTop" style={{borderTopRightRadius:"11px", borderTopLeftRadius:"11px", marginTop:"0px", paddingTop:"0px"}} ></div>
+                    </div> 
+                    <p style={{margin:"0px", paddingLeft:"6px", fontSize:"14px"}}>{"Autofilled"}</p></Row>
+                <Row style={{margin: "0px", fontSize:12, fontWeight:"bold", padding:"4px"}}>
+                    <div className = "nsR" style={{width: "22px", height:"22px", border: "#000000", backgroundColor: "#000000"}}></div> 
+                    <p style={{margin:"0px", paddingLeft:"6px", fontSize:"14px"}}>{"Not Started"}</p></Row>
+            </Col>
+            </Row>
+        </div>
         <row>
                 {rows}
         </row>

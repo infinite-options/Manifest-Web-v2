@@ -443,6 +443,7 @@ export default function MainPage(props) {
                 newRows.push(rows[r]);
             }
         }
+        console.log("ROWS HERE: ", rows);
         console.log("ONLY ALLOWED HERE:")
         console.log(newRows);
         return(newRows);
@@ -523,8 +524,8 @@ export default function MainPage(props) {
                                         style={{ width: '100%' }}
                                     // flex
                                     >
-                                        <Container>
-                                            <Row style={{ marginTop: '10px' }}>
+                                        <Container fluid>
+                                            <Row style={{ marginTop: '10px' , flex:'1'}}>
                                                 <Col>
                                                     <div>
                                                         <FontAwesomeIcon
@@ -550,7 +551,7 @@ export default function MainPage(props) {
                                                         {Intl.DateTimeFormat().resolvedOptions().timeZone}
                                                     </p>
                                                 </Col>
-                                                <Col>
+                                                <Col style={{justifyContent: 'right'}}>
                                                     {(new Date(Date.now()).getDate() != currentDate.getDate()) ?  (       
                                                     <FontAwesomeIcon
                                                         // style={{ marginLeft: "50%" }}
@@ -611,7 +612,7 @@ export default function MainPage(props) {
                 <Col overflow= "hidden" marginLeft = "0px" xs="auto" style={{paddingLeft:"0px", overflow: "hidden", paddingRight: "0px", paddingTop:"4px"}}>
                     {/* <br></br> */}
                     {/* <br></br> */}
-                    <VerticalRoutine onlyAllowed = {onlyAllowed()} userID = {currentUser} sendRoutineToParent={sendRoutineToParent}/>
+                    <VerticalRoutine onlyAllowed = {onlyAllowed()} userID = {currentUser} sendRoutineToParent={sendRoutineToParent} allRows = {rows}/>
                     {/* <Container style={{padding:"0px"}}>{vertRou}</Container> */}
                 </Col>
             </Row>
