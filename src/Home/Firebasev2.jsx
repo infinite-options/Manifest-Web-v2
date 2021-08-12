@@ -934,7 +934,7 @@ export default function Firebasev2(props)  {
             }
         }
 
-        inRange.reverse();//put latest day at end
+        // inRange.reverse();//put latest day at end
 
         function custom_sort(a, b) {
             return (new Date(a.start_day_and_time).getHours() + (new Date(a.start_day_and_time).getMinutes() / 60))
