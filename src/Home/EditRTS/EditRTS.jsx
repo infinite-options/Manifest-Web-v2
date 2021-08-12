@@ -14,7 +14,7 @@ const EditRTS = (props) => {
   const [photo, setPhoto] = useState(editingRTSContext.editingRTS.newItem.gr_photo)
 
 
-  console.log("Repeat",editingRTSContext.editingRTS.newItem.repeat)
+  //console.log("Repeat",editingRTSContext.editingRTS.notArr[0].before_time)
   const updateRTS = (e) => {
     editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing
     e.stopPropagation()
@@ -55,7 +55,7 @@ const EditRTS = (props) => {
     delete object.numMins;
     object.id = editingRTSContext.editingRTS.id;
     object.user_id = props. CurrentId // editingRTSContext.editingRTS.currentUserId;
-    object.ta_people_id = '';
+    object.ta_people_id = props.ta_ID;
     console.log("obj",object);
     let formData = new FormData();
     Object.entries(object).forEach(entry => {
@@ -106,10 +106,10 @@ const EditRTS = (props) => {
       console.log(_)
       const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
       const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
-      new_gr_array[gr_array_index] = object;
+   //   new_gr_array[gr_array_index] = object;
       editingRTSContext.setEditingRTS({
         ...editingRTSContext.editingRTS,
-        gr_array: new_gr_array,
+      //  gr_array: new_gr_array,
         editing: false
       })
     })
@@ -376,7 +376,7 @@ const EditRTS = (props) => {
                       })
                     }}
                   />
-                  
+
                 </div>
                 
                 <div style={{float: 'left', marginRight: '8px', display: 'inline-block'}}>Days</div>
@@ -677,7 +677,7 @@ const EditRTS = (props) => {
                       fontSize: '12px',
                       fontWeight: 'bold'
                     }}
-                    value={editingRTSContext.editingRTS.newItem.ta_notifications.before.time}
+                //    value={ editingRTSContext.editingRTS.newItem.ta_notifications.before.time }
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -715,7 +715,7 @@ const EditRTS = (props) => {
                   <input
                     type='checkbox'
                     style={{width: '20px', height: '20px'}}
-                    checked={editingRTSContext.editingRTS.newItem.user_notifications.before.is_enabled}
+                    checked={ editingRTSContext.editingRTS.id != '' ?   editingRTSContext.editingRTS.notArr[1].before_is_enable :   editingRTSContext.editingRTS.newItem.ta_notifications.before.is_enabled}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -741,7 +741,7 @@ const EditRTS = (props) => {
                       fontSize: '12px',
                       fontWeight: 'bold'
                     }}
-                    value={editingRTSContext.editingRTS.newItem.user_notifications.before.message}
+                    value={  editingRTSContext.editingRTS.id != '' ?  editingRTSContext.editingRTS.notArr[1].before_message  :editingRTSContext.editingRTS.newItem.user_notifications.before.message}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -770,7 +770,7 @@ const EditRTS = (props) => {
                   <input
                     type='checkbox'
                     style={{width: '20px', height: '20px'}}
-                    checked={editingRTSContext.editingRTS.newItem.ta_notifications.before.is_enabled}
+                   checked={ editingRTSContext.editingRTS.id != '' ? editingRTSContext.editingRTS.notArr[0].before_is_enable :  editingRTSContext.editingRTS.newItem.ta_notifications.before.is_enabled}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -796,7 +796,7 @@ const EditRTS = (props) => {
                       fontSize: '12px',
                       fontWeight: 'bold'
                     }}
-                    value={editingRTSContext.editingRTS.newItem.ta_notifications.before.message}
+                    value={ editingRTSContext.editingRTS.id != '' ?  editingRTSContext.editingRTS.notArr[0].before_message   : editingRTSContext.editingRTS.newItem.ta_notifications.before.message}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -831,7 +831,7 @@ const EditRTS = (props) => {
                       fontSize: '12px',
                       fontWeight: 'bold'
                     }}
-                    value={editingRTSContext.editingRTS.newItem.ta_notifications.during.time}
+                    value={ editingRTSContext.editingRTS.id != '' ?  editingRTSContext.editingRTS.notArr[1].during_time  : editingRTSContext.editingRTS.newItem.ta_notifications.during.time}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -869,7 +869,7 @@ const EditRTS = (props) => {
                   <input
                     type='checkbox'
                     style={{width: '20px', height: '20px'}}
-                    checked={editingRTSContext.editingRTS.newItem.user_notifications.during.is_enabled}
+                    checked={ editingRTSContext.editingRTS.id != '' ?  editingRTSContext.editingRTS.notArr[1].before_is_enable  :editingRTSContext.editingRTS.newItem.user_notifications.during.is_enabled}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -895,7 +895,7 @@ const EditRTS = (props) => {
                       fontSize: '12px',
                       fontWeight: 'bold'
                     }}
-                    value={editingRTSContext.editingRTS.newItem.user_notifications.during.message}
+                    value={editingRTSContext.editingRTS.id != '' ? editingRTSContext.editingRTS.notArr[1].during_message  :editingRTSContext.editingRTS.newItem.user_notifications.during.message}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -924,7 +924,7 @@ const EditRTS = (props) => {
                   <input
                     type='checkbox'
                     style={{width: '20px', height: '20px'}}
-                    checked={editingRTSContext.editingRTS.newItem.ta_notifications.during.is_enabled}
+                   checked={ editingRTSContext.editingRTS.id != '' ?  editingRTSContext.editingRTS.notArr[0].during_is_enable  :editingRTSContext.editingRTS.newItem.ta_notifications.during.is_enabled}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -950,7 +950,7 @@ const EditRTS = (props) => {
                       fontSize: '12px',
                       fontWeight: 'bold'
                     }}
-                    value={editingRTSContext.editingRTS.newItem.ta_notifications.during.message}
+                    value={ editingRTSContext.editingRTS.id != '' ?  editingRTSContext.editingRTS.notArr[0].during_message   :editingRTSContext.editingRTS.newItem.ta_notifications.during.message}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -985,8 +985,9 @@ const EditRTS = (props) => {
                       fontSize: '12px',
                       fontWeight: 'bold'
                     }}
-                    value={editingRTSContext.editingRTS.newItem.ta_notifications.after.time}
+                    value={ editingRTSContext.editingRTS.id != '' ?   editingRTSContext.editingRTS.notArr[1].after_time   : editingRTSContext.editingRTS.newItem.ta_notifications.after.time}
                     onChange={(e) => {
+                      
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
                         newItem: {
@@ -1024,7 +1025,7 @@ const EditRTS = (props) => {
                   <input
                     type='checkbox'
                     style={{width: '20px', height: '20px'}}
-                    checked={editingRTSContext.editingRTS.newItem.user_notifications.after.is_enabled}
+                    checked={ editingRTSContext.editingRTS.id != '' ?   editingRTSContext.editingRTS.notArr[1].after_is_enable  :editingRTSContext.editingRTS.newItem.user_notifications.after.is_enabled}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -1050,7 +1051,7 @@ const EditRTS = (props) => {
                       fontSize: '12px',
                       fontWeight: 'bold'
                     }}
-                    value={editingRTSContext.editingRTS.newItem.user_notifications.after.message}
+                    value={editingRTSContext.editingRTS.id != '' ?   editingRTSContext.editingRTS.notArr[1].after_message : editingRTSContext.editingRTS.newItem.user_notifications.after.message}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -1079,7 +1080,7 @@ const EditRTS = (props) => {
                   <input
                     type='checkbox'
                     style={{width: '20px', height: '20px'}}
-                    checked={editingRTSContext.editingRTS.newItem.ta_notifications.after.is_enabled}
+                    checked={editingRTSContext.editingRTS.id != '' ?   editingRTSContext.editingRTS.notArr[0].after_is_enable  :editingRTSContext.editingRTS.newItem.ta_notifications.after.is_enabled}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
@@ -1105,7 +1106,7 @@ const EditRTS = (props) => {
                       fontSize: '12px',
                       fontWeight: 'bold'
                     }}
-                    value={editingRTSContext.editingRTS.newItem.ta_notifications.after.message}
+                    value={editingRTSContext.editingRTS.id != '' ?  editingRTSContext.editingRTS.notArr[0].after_message  :editingRTSContext.editingRTS.newItem.ta_notifications.after.message}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,

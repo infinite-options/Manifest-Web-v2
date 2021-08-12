@@ -182,6 +182,7 @@ const EditIcon = ({routine, task, step}) => {
                 type: rowType,
                 id: rowId,
                 currentUserId: step,
+                notArr = itemToChange.notifications,
                 newItem: {
                   ...editingRTSContext.editingRTS.newItem,
                   ...itemToChange,
