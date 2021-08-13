@@ -43,7 +43,7 @@
     border-top-right-radius: 15px;
     border-bottom-right-radius: 15px;
     height:100%; width: 50%;
-    display: inline-block;
+    display: inline-flex;
     border-left: solid white 1px;
 }
 .whiteHalfTop{
