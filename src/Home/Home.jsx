@@ -535,6 +535,36 @@ export default function Home(props) {
     },
   }
 
+  const newEditingATSState = {
+    editing: true,
+    type: '',
+    id: '',
+    user_id: props.location.state,
+    gr_array: [],
+    newItem: {
+      audio: '',
+      datetime_completed: '',
+      datetime_started: '',
+      at_title: '',
+      // When making API call, combine start_day and start_time to start_day_and_time
+      start_day: '',
+      start_time: '',
+      // When making API call, combine end_day and end_time to end_day_and_time
+      end_day: '',
+      end_time: '',
+      // When making API call, convert numMins to expected_completion_time
+      numMins: '',
+      location: '',
+      is_available: false,
+      is_persistent: true,
+      is_complete: true,
+      is_displayed_today: true,
+      is_timed: false,
+      is_sublist_available: true,
+      photo: '',     
+    },
+  }
+
   const initialEditingATSState = {
     editing: false,
     type: '',
@@ -564,9 +594,25 @@ export default function Home(props) {
       photo: '',     
     },
   }
-
   const initialEditingISState = {
     editing: false,
+    type: '',
+    id: '',
+    user_id: props.location.state,
+    gr_array: [],
+    newItem: {
+      audio: '',
+      // When making API call, convert numMins to expected_completion_time
+      numMins: '',
+      is_available: false,
+      is_complete: true,
+      is_timed: false,
+      photo: '',     
+    },
+  }
+
+  const newEditingISState = {
+    editing: true,
     type: '',
     id: '',
     user_id: props.location.state,
@@ -584,6 +630,8 @@ export default function Home(props) {
   const [editingRTS, setEditingRTS] = useState(initialEditingRTSState)
   const [editingATS, setEditingATS] = useState(initialEditingATSState)
   const [editingIS, setEditingIS] = useState(initialEditingISState)
+  const [routineID, setRoutineID] = useState('')
+  const [actionID, setActionID] = useState('')
 
 
   // console.log(calendarView);
@@ -1475,7 +1523,7 @@ export default function Home(props) {
         .catch((error) => {
           console.log('Error in getting goals and routines ' + error);
         });
-    }, [userID,  editingRTS.editing]);
+    }, [userID,  editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
 
   const updateFBGR = () => {
@@ -1601,9 +1649,18 @@ export default function Home(props) {
                   theCurrentUserID={userID}
                   sethighLight = {setHightlight}
                   highLight = {hightlight}
+                  setATS = {setEditingATS}
+                  newATS = {newEditingATSState}
+                  rID = {routineID}
+                  setrID = {setRoutineID}
+                  newIS = {newEditingISState}
+                  setIS = {setEditingIS}
+                  aID = {actionID}
+                  setaID = {setActionID}
                   editRTS = { editingRTS.editing}
                   editATS = {editingATS.editing}
                   editIS = {editingIS.editing}
+
                   />
                 )}
               </div>
@@ -1675,7 +1732,7 @@ export default function Home(props) {
 
             <div style={{width: '100%'}}
               >
-               {editingIS.editing ? <EditIS CurrentId={userID}/> : editingATS.editing ? <EditATS  CurrentId={userID}/> : editingRTS.editing ? <EditRTS CurrentId={userID} ta_ID={selectedUser}/> : showCalendarView()}
+               {editingIS.editing ? <EditIS  actionID= {actionID} CurrentId={userID}/> : editingATS.editing ? <EditATS routineID ={routineID}  CurrentId={userID}/> : editingRTS.editing ? <EditRTS CurrentId={userID} ta_ID={selectedUser}/> : showCalendarView()}
            
               </div>
           </div>
