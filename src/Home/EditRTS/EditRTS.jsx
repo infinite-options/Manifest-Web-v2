@@ -21,6 +21,7 @@ const EditRTS = (props) => {
   console.log("Repeat",editingRTSContext.editingRTS.newItem.repeat)
   const updateRTS = (e) => {
     editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing
+    props.setUpdateGetHistory(!props.updateGetHistory)
     e.stopPropagation()
     let object = {...editingRTSContext.editingRTS.newItem};
     console.log("time")

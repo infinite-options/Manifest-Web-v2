@@ -166,7 +166,7 @@ export default function Firebasev2(props)  {
         });
         
         
-    },[props.theCurrentUserID, called,])
+    },[props.theCurrentUserID, called,props.updateGetHistory])
 
 
     const copyPicker = () => {
@@ -1510,8 +1510,8 @@ export default function Firebasev2(props)  {
                     onClick = {(e)=> {
                           e.target.style.color = "#000000"
                           props.setATS(props.newATS)
-                          props.setrID(r['id'])
-                        // console.log("rID", r['id'])
+                          props.setrID(r)
+                       //  console.log("rID", r)
                     }}/>
                     </div>
                     </div>

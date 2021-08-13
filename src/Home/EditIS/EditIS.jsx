@@ -13,6 +13,7 @@ const EditIS = (props) => {
   const updateIS = (e) => {
     e.stopPropagation()
     let object = {...editingISContext.editingIS.newItem}
+    props.setUpdateGetHistory(!props.updateGetHistory)
     object.start_day_and_time = `${object.start_day} ${object.start_time}:00`;
     delete object.start_day;
     delete object.start_time;
@@ -109,7 +110,7 @@ const EditIS = (props) => {
         marginTop: '1rem',
         marginLeft: '5rem',
         marginRight: '3rem',
-        width: '33%',
+        width: '50%',
         backgroundColor: '#67ABFC',
         color: '#ffffff'
       }}
@@ -146,13 +147,12 @@ const EditIS = (props) => {
           </Col>
 
         </Row>
-        <Row style={{marginTop:'3rem'}}>
           
-            <div style={{fontWeight:'bold'}} >Change Icon</div>
-            <Container>
+            <div style={{fontWeight:'bold', marginTop:'2rem'}} >Change Icon</div>
+            <div style={{textAlign:'left', marginTop:'1rem'}}>
             <Row>
-              <Col style={{fontSize:'10px', textDecoration:'underline', width: '33%'}}>
-              <div >Add icon to library</div>
+            <Col style={{fontSize:'14px', textDecoration:'underline'}}>
+            <div style={{ marginLeft:'1rem', marginBottom:'8px'}}>Add icon to library</div>
               <AddIconModal
               photoUrl = {photo}
               setPhotoUrl = {setPhoto}
@@ -173,7 +173,7 @@ const EditIS = (props) => {
                 <img alt='icon'src={photo}/>
               </Col>
             </Row>
-            </Container>
+            </div>
           
             <div style={{ display:'flex', width: '100%'}}>
             <div>
@@ -214,7 +214,6 @@ const EditIS = (props) => {
             />
             </div>
           
-        </Row>
         
         <Row>
           <Col md={12}>

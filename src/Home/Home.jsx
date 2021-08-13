@@ -147,7 +147,9 @@ export default function Home(props) {
 
 
   /*----------------------------Use states to define variables----------------------------*/
-  
+  const [routineID, setRoutineID] = useState('')
+  const [actionID, setActionID] = useState('')
+  const [updategetHistoryOnClick, setUpdateGetHistoryOnClick] = useState(false)
 
   const [hightlight, setHightlight] = useState('')
   const [stateValue, setStateValue] = useState({
@@ -630,8 +632,6 @@ export default function Home(props) {
   const [editingRTS, setEditingRTS] = useState(initialEditingRTSState)
   const [editingATS, setEditingATS] = useState(initialEditingATSState)
   const [editingIS, setEditingIS] = useState(initialEditingISState)
-  const [routineID, setRoutineID] = useState('')
-  const [actionID, setActionID] = useState('')
 
 
   // console.log(calendarView);
@@ -1660,7 +1660,7 @@ export default function Home(props) {
                   editRTS = { editingRTS.editing}
                   editATS = {editingATS.editing}
                   editIS = {editingIS.editing}
-
+                  updateGetHistory = {updategetHistoryOnClick}
                   />
                 )}
               </div>
@@ -1732,7 +1732,16 @@ export default function Home(props) {
 
             <div style={{width: '100%'}}
               >
-               {editingIS.editing ? <EditIS  actionID= {actionID} CurrentId={userID}/> : editingATS.editing ? <EditATS routineID ={routineID}  CurrentId={userID}/> : editingRTS.editing ? <EditRTS CurrentId={userID} ta_ID={selectedUser}/> : showCalendarView()}
+               {editingIS.editing ? <EditIS  actionID= {actionID} CurrentId={userID}
+                 updateGetHistory = {updategetHistoryOnClick}
+                 setUpdateGetHistory = {setUpdateGetHistoryOnClick} /> : 
+               editingATS.editing ? <EditATS routineID ={routineID}  CurrentId={userID} 
+               updateGetHistory = {updategetHistoryOnClick}
+               setUpdateGetHistory = {setUpdateGetHistoryOnClick} /> :
+                editingRTS.editing ? <EditRTS CurrentId={userID} ta_ID={selectedUser}  
+                updateGetHistory = {updategetHistoryOnClick}
+                 setUpdateGetHistory = {setUpdateGetHistoryOnClick} /> :
+                  showCalendarView()}
            
               </div>
           </div>
