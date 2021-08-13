@@ -115,7 +115,7 @@ const EditIcon = ({routine, task, step}) => {
         icon={faEdit}
         onClick={(e) => {
           e.stopPropagation();
-          //setroutineCall(!routineCall)
+        //  setroutineCall(!routineCall)
 
           // testing
 
@@ -173,11 +173,8 @@ const EditIcon = ({routine, task, step}) => {
               const numMins = convertTimeLengthToMins(expectedCompletionTime)
               itemToChange.numMins = numMins;
               delete itemToChange.gr_expected_completion_time;
-
-              
-
-              // console.log('itemToChange')
-              console.log('itemToChange',itemToChange);
+              console.log('itemToChange', itemToChange.notifications[0].after_message)
+              console.log(itemToChange);
 
               editingRTSContext.setEditingRTS({
                 ...editingRTSContext.editingRTS,
@@ -185,8 +182,55 @@ const EditIcon = ({routine, task, step}) => {
                 type: rowType,
                 id: rowId,
                 currentUserId: step,
+              
+                notArr :itemToChange.notifications,
+              
                 newItem: {
+               
                   ...editingRTSContext.editingRTS.newItem,
+                  ta_notifications: {
+                    ...editingRTSContext.editingRTS.newItem.ta_notifications,
+                    before:{
+                      ...editingRTSContext.editingRTS.newItem.ta_notifications.after,
+                      message:  itemToChange.notifications[0].before_message,
+                      is_enabled:  itemToChange.notifications[0].before_is_enable,
+                      time: itemToChange.notifications[0].before_time,
+                    },
+                    during:{
+                      ...editingRTSContext.editingRTS.newItem.ta_notifications.after,
+                      message:  itemToChange.notifications[0].during_message,
+                      is_enabled:  itemToChange.notifications[0].during_is_enable,
+                      time: itemToChange.notifications[0].during_time,
+                    },
+                    after: {
+                      ...editingRTSContext.editingRTS.newItem.ta_notifications.after,
+                      message:  itemToChange.notifications[0].after_message,
+                      is_enabled:  itemToChange.notifications[0].after_is_enable,
+                      time: itemToChange.notifications[0].after_time,
+                    }
+                  },
+
+                  user_notifications: {
+                    ...editingRTSContext.editingRTS.newItem.user_notifications,
+                    before:{
+                      ...editingRTSContext.editingRTS.newItem.user_notifications.after,
+                      message:  itemToChange.notifications[0].before_message,
+                      is_enabled:  itemToChange.notifications[0].before_is_enable,
+                      time: itemToChange.notifications[0].before_time,
+                    },
+                    during:{
+                      ...editingRTSContext.editingRTS.newItem.user_notifications.after,
+                      message:  itemToChange.notifications[1].during_message,
+                      is_enabled:  itemToChange.notifications[1].during_is_enable,
+                      time: itemToChange.notifications[1].during_time,
+                    },
+                    after: {
+                      ...editingRTSContext.editingRTS.newItem.user_notifications.after,
+                      message:  itemToChange.notifications[1].after_message,
+                      is_enabled:  itemToChange.notifications[1].after_is_enable,
+                      time: itemToChange.notifications[0].after_time,
+                    }
+                  },
                   ...itemToChange,
                 }
               })

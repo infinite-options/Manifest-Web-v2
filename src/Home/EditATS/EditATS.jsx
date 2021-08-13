@@ -10,7 +10,7 @@ import { propTypes } from 'react-bootstrap/esm/Image';
 const EditATS = (props) => {
   const editingATSContext = useContext(EditATSContext);
 
-  console.log("action", editingATSContext.editingATS.routineId)
+  console.log("action", props.routineID)
 
   const [photo, setPhoto] = useState(editingATSContext.editingATS.newItem.at_photo)
 
@@ -51,6 +51,7 @@ const EditATS = (props) => {
     delete object.location
     delete object.start_day_and_time
     object.title = object.at_title
+    object.gr_id = props.routineID
     delete object.at_title
     const numHours = object.numMins / 60;
     let numMins = object.numMins % 60;
@@ -59,10 +60,10 @@ const EditATS = (props) => {
     object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
     object.id = editingATSContext.editingATS.newItem.at_unique_id;
-    console.log(object);
+    console.log("obj",object);
     let formData = new FormData();
     Object.entries(object).forEach(entry => {
-      if (typeof entry[1].name == 'string'){
+      if (typeof entry[1] == 'string'){
       
           formData.append(entry[0], entry[1]);
       }
@@ -75,7 +76,8 @@ const EditATS = (props) => {
           formData.append(entry[0], entry[1]);
       }
   });
-   
+  if (object.id != undefined) {
+    console.log("update AT")
     axios
     .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateAT', formData)
     .then((response) => {
@@ -95,8 +97,29 @@ const EditATS = (props) => {
       }
       console.log(err)
     })
+  }else{
+    console.log("add AT")
+    axios
+    .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/addAT', formData)
+    .then((response) => {
+      console.log(response);
+      const gr_array_index = editingATSContext.editingATS.gr_array.findIndex((elt) => elt.id === editingATSContext.editingATS.id)
+      const new_gr_array = [...editingATSContext.editingATS.gr_array];
+      new_gr_array[gr_array_index] = object;
+      editingATSContext.setEditingATS({
+        ...editingATSContext.editingATS,
+        gr_array: new_gr_array,
+        editing: false
+      })
+    })
+    .catch((err) => {
+      if(err.response) {
+        console.log(err.response);
+      }
+      console.log(err)
+    })
   }
-
+  }
   return (
     <div
       style={{
@@ -494,6 +517,12 @@ const EditATS = (props) => {
                   border: '3px white solid',
                   color: '#ffffff',
                   textAlign: 'center',
+                }}
+                onClick={()=>{
+                  editingATSContext.setEditingATS({
+                    ...editingATSContext.editingATS,
+                    editing: false
+                  })
                 }}
               >
                 Cancel
@@ -898,6 +927,14 @@ const EditATS = (props) => {
                   color: '#ffffff',
                   textAlign: 'center',
                 }}
+
+                onClick={()=>{
+                  editingATSContext.setEditingATS({
+                    ...editingATSContext.editingATS,
+                    editing: false
+                  })
+                }}
+          
               >
                 Cancel
               </button>

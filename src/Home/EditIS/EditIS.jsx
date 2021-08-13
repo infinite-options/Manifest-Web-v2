@@ -25,7 +25,7 @@ const EditIS = (props) => {
     delete object.at_title;
     object.photo_url = photo;
     delete object.is_photo;
-    delete object.photo;
+    //delete object.photo;
     delete object.end_day_and_time;
     delete object.start_day_and_time;
     const numHours = object.numMins / 60;
@@ -35,11 +35,15 @@ const EditIS = (props) => {
     object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
     object.is_id = object.is_unique_id;
+    object.at_id = props.actionID;
     delete object.is_unique_id;
+    object.is_sequence = 0;
+    object.is_in_progress = "False";
+    object.icon_type='';
     console.log(object);
     let formData = new FormData();
     Object.entries(object).forEach(entry => {
-      if (typeof entry[1].name == 'string'){
+      if (typeof entry[1] == 'string'){
       
           formData.append(entry[0], entry[1]);
       }
@@ -52,7 +56,8 @@ const EditIS = (props) => {
           formData.append(entry[0], entry[1]);
       }
   });
-   
+   if (object.is_id != undefined){
+     console.log("update IS")
     axios
     .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateIS', formData)
     .then((response) => {
@@ -72,7 +77,31 @@ const EditIS = (props) => {
       }
       console.log(err)
     })
+  
+  }else{
+    console.log("add IS")
+    axios
+    .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/addIS', formData)
+    .then((response) => {
+      console.log(response);
+      const gr_array_index = editingISContext.editingIS.gr_array.findIndex((elt) => elt.id === editingISContext.editingIS.id)
+      const new_gr_array = [...editingISContext.editingIS.gr_array];
+      new_gr_array[gr_array_index] = object;
+      editingISContext.setEditingIS({
+        ...editingISContext.editingIS,
+        gr_array: new_gr_array,
+        editing: false
+      })
+    })
+    .catch((err) => {
+      if(err.response) {
+        console.log(err.response);
+      }
+      console.log(err)
+    })
   }
+}
+
 
   return (
     <div
@@ -204,6 +233,13 @@ const EditIS = (props) => {
                   border: '3px white solid',
                   color: '#ffffff',
                   textAlign: 'center',
+                }}
+
+                onClick={()=>{
+                  editingISContext.setEditingIS({
+                    ...editingISContext.editingIS,
+                    editing: false
+                  })
                 }}
               >
                 Cancel

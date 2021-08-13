@@ -166,7 +166,7 @@ export default function Firebasev2(props)  {
         });
         
         
-    },[props.theCurrentUserID, props.edit, called, props.editRTS,props.editATS,props.editIS])
+    },[props.theCurrentUserID, called,])
 
 
     const copyPicker = () => {
@@ -1509,7 +1509,9 @@ export default function Firebasev2(props)  {
                     style={{color:"#ffffff"}}
                     onClick = {(e)=> {
                           e.target.style.color = "#000000"
-                      
+                          props.setATS(props.newATS)
+                          props.setrID(r['id'])
+                        // console.log("rID", r['id'])
                     }}/>
                     </div>
                     </div>
@@ -1707,7 +1709,8 @@ export default function Firebasev2(props)  {
                     style={{color:"#ffffff"}}
                     onClick = {(e)=> {
                           e.target.style.color = "#000000"
-                      
+                          props.setIS(props.newIS)
+                          props.setaID(a['id'])
                     }}/>
                     </div>
                     </div>
