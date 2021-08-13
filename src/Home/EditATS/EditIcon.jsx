@@ -122,6 +122,7 @@ const EditIcon = ({routine, task, step}) => {
           const endDate = new Date(itemToChange.at_datetime_completed);
           const endDay = convertDateToDayString(endDate);
           itemToChange.end_day = endDay;
+          console.log("chan",endDay )
           const endTime = convertDateToTimeString(endDate);
           itemToChange.end_time = endTime;
           delete itemToChange.end_day_and_time;

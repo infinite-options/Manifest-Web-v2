@@ -48,25 +48,29 @@ const EditATS = (props) => {
   const startTime = new Date(props.routineID.startTime)
   const endTime = new Date(props.routineID.endTime)
   const startDay = convertDateToDayString(startTime) 
-  console.log("action",convertDateToDayString(startTime) )
+  const endDay = convertDateToDayString(endTime) 
+  
+  console.log("action", convertDateToTimeString(new Date(props.routineID.startTime)))
 
   const [photo, setPhoto] = useState(editingATSContext.editingATS.newItem.at_photo)
 
-  // if(editingATSContext.editingATS.newItem.at_unique_id === undefined) {
-  // editingATSContext.editingATS.newItem.at_available_start_day = startDay
-  // }
   useEffect(()=> {
+    if(editingATSContext.editingATS.newItem.at_unique_id === undefined){
     editingATSContext.setEditingATS({
       ...editingATSContext.editingATS,
       newItem: {
         ...editingATSContext.editingATS.newItem,
-        start_day: startDay
+        start_day: startDay,
+        end_day : endDay,
+        at_available_start_time:  convertDateToTimeString(new Date(props.routineID.startTime)),
+        at_available_end_time:  convertDateToTimeString(new Date(props.routineID.endTime)),
       }
     })
-  },[])
+  }
+  },[editingATSContext.editingATS.newItem.start_day])
+
 
   console.log("action",editingATSContext.editingATS.newItem.start_day )
-
 
   const updateATS = (e) => {
     e.stopPropagation()
@@ -75,13 +79,13 @@ const EditATS = (props) => {
     const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
     const start_day_and_time_string = new Date(start_day_and_time_simple_string).toString();
     const convertedStartTime =  moment(start_day_and_time_string).format('LTS')
-    object.datetime_started = `${object.start_day}` + ' ' + convertedStartTime; //start_day_and_time_string;
+    object.datetime_started = `${object.start_day}` + ' ' + object.at_available_start_time; //start_day_and_time_string;
     delete object.start_day;
     delete object.start_time;
     const end_day_and_time_simple_string = `${object.end_day} ${object.end_time}:00`;
     const end_day_and_time_string = new Date(end_day_and_time_simple_string).toString();
     const convertedEndTime =  moment(end_day_and_time_string).format('LTS')
-    object.datetime_completed = `${object.end_day}`+' '+convertedEndTime;
+    object.datetime_completed = `${object.end_day}`+' '+ object.at_available_end_time;
     object.available_start_time = object.at_available_start_time;
     delete object.at_available_start_time;
     object.available_end_time = object.at_available_end_time;
@@ -111,7 +115,7 @@ const EditATS = (props) => {
     let numMins = object.numMins % 60;
     if(numMins < 10)
       numMins = '0' + numMins
-    object.expected_completion_time = `${numHours}:${numMins}:00`;
+    object.expected_completion_time = `${numMins}:00`;
     delete object.numMins;
     object.id = editingATSContext.editingATS.newItem.at_unique_id;
     console.log("obj",object);
@@ -245,13 +249,13 @@ const EditATS = (props) => {
                     //width:'5rem'
                   }}
                   type='date'
-                  value={editingATSContext.editingATS.newItem.at_available_start_day}
+                  value={editingATSContext.editingATS.newItem.start_day}
                   onChange={(e) => {
                     editingATSContext.setEditingATS({
                       ...editingATSContext.editingATS,
                       newItem: {
                         ...editingATSContext.editingATS.newItem,
-                        start_day: e.target.value
+                        start_day:  e.target.value
                       }
                     })
                   }}

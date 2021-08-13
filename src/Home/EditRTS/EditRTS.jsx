@@ -24,7 +24,7 @@ const EditRTS = (props) => {
     props.setUpdateGetHistory(!props.updateGetHistory)
     e.stopPropagation()
     let object = {...editingRTSContext.editingRTS.newItem};
-    console.log("time")
+    console.log("time", props.routineID.start_day)
     // Get start_day_and_time
     const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
     const start_day_and_time_string = new Date(start_day_and_time_simple_string).toString();
@@ -830,7 +830,7 @@ const EditRTS = (props) => {
                   <input
                     type='checkbox'
                     style={{width: '20px', height: '20px'}}
-                    checked={editingRTSContext.editingRTS.newItem.ta_notifications.before.is_enabled}
+                    checked={editingRTSContext.editingRTS.newItem.user_notifications.before.is_enabled}
                     onChange={(e) => {
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
