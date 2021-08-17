@@ -453,6 +453,10 @@ export function Navigation() {
           'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/addNewUser' , body)
           .then((response) => {
           console.log(response.data);
+          loginContext.setLoginState({
+            ...loginContext.loginState,
+           reload: true
+          })
         })
         .catch((error) => {
           console.log('its in landing page');

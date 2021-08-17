@@ -142,7 +142,7 @@ export default function Home(props) {
       .catch((error) => {
           console.log(error);
       });
-    },[])
+    },[loginContext.loginState.reload])
   // } 
 
 
@@ -162,8 +162,7 @@ export default function Home(props) {
       type: '',
       is_complete: false,
       is_available: true,
-
-      is_displayed_today: false,
+      is_displayed_today: true,
       is_in_progress: false,
       // todayDateObject: this.props.todayDateObject,
       // available_end_time: this.props.singleGR.available_end_time,
@@ -1149,7 +1148,7 @@ export default function Home(props) {
         .then((response) => {
           if (response.data.result && response.data.result.length !== 0) {
             let x = response.data.result;
-            console.log(x);
+            console.log("response",x);
             x.sort((a, b) => {
               // console.log(a);
               // console.log(b);

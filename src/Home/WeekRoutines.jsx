@@ -38,7 +38,7 @@ export default class WeekRoutines extends Component {
     var arr = this.props.routines;
     var dic = {};
     let startObject = this.props.dateContext.clone();
-    console.log(startObject);
+    console.log(this.props.routines, "start");
     let endObject = this.props.dateContext.clone();
     let startDay = startObject.startOf('week');
     let endDay = endObject.endOf('week');
@@ -511,9 +511,9 @@ export default class WeekRoutines extends Component {
                       </div>
                 
                       <div style={{
-                       width:'8px',
-                       height:'8px', 
-                       backgroundImage: arr[i].is_complete ? `url(${greenTick})` : arr[i].is_in_progress ? `url(${yelloTick})` : ""
+                       width:'13px',
+                       height:'13px', 
+                       backgroundImage: arr[i].is_complete === true ?`url(${yelloTick})` : arr[i].is_in_progress === true ?  `url(${greenTick})`  : ""
 
                     }}>
                     </div>
@@ -725,7 +725,7 @@ export default class WeekRoutines extends Component {
             }}
           >
 
-            {i>11? i-12 + 'pm' : i + 'am' }
+            { i == 0 ? '12am' : i == 12 ? i + 'pm' :  i>11? i-12 + 'pm' : i + 'am' }
           </Col>
         </Row>
       );
@@ -859,9 +859,8 @@ export default class WeekRoutines extends Component {
          // className="fancytext"
           style={{
             color: day === today.toString() ? '#FF6B4A' : '',
-            textAlign: 'left',
+            textAlign: 'center',
             fontWeight:'bold',
-            width: '100%'
           //  paddingBottom: '2%',
            
           }}
@@ -875,25 +874,24 @@ export default class WeekRoutines extends Component {
     });
     return (
       <Container>
-        <div>
+        <Row style={{marginLeft:'9rem'}}>
         <Row
           style={{
-            // height: '560px',
            overflowX: 'hidden',
            overflowY: 'visible',
-         //  width:'100vh',
-         //  backgroundColor:'#000000'
+           
             width: '100%'
           }}
         >
-          <Col className="fancytext"></Col>
           {weekdays}
         </Row>
         
         <Row 
-          style={{ marginLeft:'5rem', fontWeight:'bold'}}
-        > {this.dateDisplay()}</Row>
-        </div>
+          style={{             width: '100%'
+,          fontWeight:'bold'}}
+        > 
+        {this.dateDisplay()}</Row>
+        </Row>
         <Row
           ref={this.hourDisplay}
           noGutters={true}
