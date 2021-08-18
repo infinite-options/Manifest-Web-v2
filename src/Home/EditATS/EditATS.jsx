@@ -235,6 +235,7 @@ const EditATS = (props) => {
               <Col
                 sm={6}
               >
+                {console.log('238',editingATSContext.editingATS.newItem.at_available_start_day)}
                 <input
                   style={{
                     borderRadius:'10px',

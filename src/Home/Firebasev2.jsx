@@ -1509,6 +1509,7 @@ export default function Firebasev2(props)  {
                     style={{color:"#ffffff"}}
                     onClick = {(e)=> {
                           e.target.style.color = "#000000"
+                          console.log('1512', props.newATS)
                           props.setATS(props.newATS)
                           props.setrID(r)
                        //  console.log("rID", r)
@@ -1710,6 +1711,7 @@ export default function Firebasev2(props)  {
                     onClick = {(e)=> {
                           e.target.style.color = "#000000"
                           props.setIS(props.newIS)
+                        //   console.log('line 1713',a)
                           props.setaID(a['id'])
                     }}/>
                     </div>

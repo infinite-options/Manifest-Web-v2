@@ -533,248 +533,688 @@ export default function AboutModal(props) {
           width: '100%',
           float: 'left',
           marginRight: '20px',
-          marginTop: '10px'
+          marginTop: '10px',
+          
         }}
       >
         <div
           style={{
-            width: '29%',
+            width: '70%',
             float: 'left',
-            margin: '25px',
-            paddingRight: '10%',
+            //margin: '25px',
+            paddingRight: '5%',
+            
           }}
         >
-          <Form.Group>
-            <Row>
-              <Col style={{ paddingRight: '10px' }}>
-                <FormLabel
-                  style={{
-                    marginTop: '10px',
-                    marginLeft: '10px',
-                    fontWeight: 'bolder',
-                    color: 'white',
-                  }}
-                >
-                  First Name:
-                </FormLabel>
-                <Form.Control
-                  type="text"
-                  placeholder="First Last"
-                  value={firstName || ''}
-                  onChange={(e) => {
-                    e.stopPropagation();
-                    setFirstName(e.target.value);
-                  }}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col style={{ paddingRight: '10px' }}>
-                <label
-                  style={{
-                    marginTop: '10px',
-                    marginLeft: '10px',
-                    fontWeight: 'bolder',
-                    color: 'white',
-                  }}
-                >
-                  Last Name:
-                </label>
+          <div style={{width:'47.5%', float: 'left', marginRight: '2.5%'}}>
+            <Form.Group>
+              <Row>
+                <Col style={{ paddingRight: '10px' }}>
+                  <FormLabel
+                    style={{
+                      marginTop: '10px',
+                      marginLeft: '10px',
+                      fontWeight: 'bolder',
+                      color: 'white',
+                    }}
+                  >
+                    First Name:
+                  </FormLabel>
+                  <Form.Control
+                    type="text"
+                    placeholder="First Last"
+                    value={firstName || ''}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      setFirstName(e.target.value);
+                    }}
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col style={{ paddingRight: '10px' }}>
+                  <label
+                    style={{
+                      marginTop: '10px',
+                      marginLeft: '10px',
+                      fontWeight: 'bolder',
+                      color: 'white',
+                    }}
+                  >
+                    Last Name:
+                  </label>
 
-                <Form.Control
-                  type="text"
-                  placeholder="First Last"
-                  value={lastName || ''}
-                  onChange={(e) => {
-                    e.stopPropagation();
-                    setLastName(e.target.value);
-                  }}
-                />
-              </Col>
-            </Row>
-            <br />
-            <Row>
-              <Col style={{ color: 'white' }}>
-                <h1
-                  style={{
-                    fontSize: '24px',
-                    font: 'SF-Compact-Text-Semibold',
-                  }}
-                >
-                  Change Image
-                </h1>
-                <div
-                  style={{
-                    fontSize: '16px',
-                    textDecoration: 'underline',
-                  }}
-                >
-                  Upload from Computer
-                </div>
-                <div
-                  style={{
-                    fontSize: '16px',
-                    textDecoration: 'underline',
-                  }}
-                >
-                  User's library
-                </div>
-              </Col>
-              <Col>
-                {aboutMeObject.have_pic === false ? (
-                  <FontAwesomeIcon icon={faImage} size="6x" />
-                ) : aboutMeObject.pic === '' ? (
-                  // <img
-                  //   style={{
-                  //     display: 'block',
-                  //     marginLeft: 'auto',
-                  //     marginRight: 'auto',
-                  //     width: '100%',
-                  //     height: '70px',
-                  //     marginTop: '50px',
-                  //     marginBottom: '50px',
-                  //   }}
-                  //   src={this.state.aboutMeObject.pic}
-                  //   alt="Profile"
-                  // />
+                  <Form.Control
+                    type="text"
+                    placeholder="First Last"
+                    value={lastName || ''}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      setLastName(e.target.value);
+                    }}
+                  />
+                </Col>
+              </Row>
+              <br />
+              <Row style={{width: '100%'}}>
+                <Col style={{ color: 'white', width: '50%'}}>
+                  <h1
+                    style={{
+                      fontSize: '24px',
+                      font: 'SF-Compact-Text-Semibold',
+                    }}
+                  >
+                    Change Image
+                  </h1>
                   <div
                     style={{
-                      display: 'block',
-                      float: 'right',
-                      width: '100px',
-                      height: '100px',
-                      border: 'none',
-                      borderRadius: '10px',
-                      backgroundColor: 'white',
-                      marginBottom: '15px',
+                      fontSize: '16px',
+                      textDecoration: 'underline',
                     }}
-                  ></div>
-                ) : (
-                  <img
+                  >
+                    Upload from Computer
+                  </div>
+                  <div
                     style={{
-                      display: 'block',
-                      float: 'right',
-                      marginLeft: 'auto',
-                      marginRight: 'auto',
-                      width: '100%',
-                      height: '70px',
-                      marginBottom: '15px',
+                      fontSize: '16px',
+                      textDecoration: 'underline',
                     }}
-                    src={aboutMeObject.pic}
-                    alt="Profile"
+                  >
+                    User's library
+                  </div>
+                </Col>
+                <Col style={{ color: 'white', width: '50%'}}>
+                  {aboutMeObject.have_pic === false ? (
+                    <FontAwesomeIcon icon={faImage} size="6x" />
+                  ) : aboutMeObject.pic === '' ? (
+                    // <img
+                    //   style={{
+                    //     display: 'block',
+                    //     marginLeft: 'auto',
+                    //     marginRight: 'auto',
+                    //     width: '100%',
+                    //     height: '70px',
+                    //     marginTop: '50px',
+                    //     marginBottom: '50px',
+                    //   }}
+                    //   src={this.state.aboutMeObject.pic}
+                    //   alt="Profile"
+                    // />
+                    <div
+                      style={{
+                        display: 'block',
+                        float: 'right',
+                        width: '100px',
+                        height: '100px',
+                        border: 'none',
+                        borderRadius: '10px',
+                        backgroundColor: 'white',
+                        marginBottom: '15px',
+                      }}
+                    ></div>
+                  ) : (
+                    <img
+                      style={{
+                        display: 'block',
+                        float: 'right',
+                        marginLeft: 'auto',
+                        marginRight: 'auto',
+                        width: '100px',
+                        height: '100px',
+                        marginBottom: '15px',
+                      }}
+                      src={aboutMeObject.pic}
+                      alt="Profile"
+                    />
+                  )}
+                </Col>
+                <Col >
+                  <label
+                    style={{
+                      marginBottom: '15px',
+                      color: 'white',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    Upload A New Image
+                  </label>
+                  <input
+                    style={{ color: 'transparent' }}
+                    accept="image/*"
+                    type="file"
+                    onChange={handleFileSelected}
+                    id="ProfileImage"
                   />
-                )}
-              </Col>
-              <Col xs={8}>
-                <label
-                  style={{
-                    marginBottom: '15px',
-                    color: 'white',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Upload A New Image
-                </label>
-                <input
-                  style={{ color: 'transparent' }}
-                  accept="image/*"
-                  type="file"
-                  onChange={handleFileSelected}
-                  id="ProfileImage"
-                />
-              </Col>
-            </Row>
-            <br />
-            <Row>
-              <Col style={{ paddingRight: '10px' }}>
-                <label
-                  style={{
-                    marginTop: '10px',
-                    marginRight: '20px',
-                    fontWeight: 'bolder',
-                    color: 'white',
-                  }}
-                >
-                  Birth Date:
-                </label>
-                <Form.Control
-                  type="date"
-                  value={aboutMeObject.birth_date}
-                  // selected={aboutMeObject.birth_date}
-                  onChange={(date) => {
-                    console.log(date.target.value)
-                    setAboutMeObject({
-                      ...aboutMeObject,
-                      birth_date: date.target.value,
-                      birth_date_change: true,
-                    })
-                  }}
-                  dateFormat="MMMM d, yyyy"
-                />
-                {/* <DatePicker
-              className="form-control"
+                </Col>
+              </Row>
+              <br />
+              <Row>
+                <Col style={{ paddingRight: '10px' }}>
+                  <label
+                    style={{
+                      marginTop: '10px',
+                      marginRight: '20px',
+                      fontWeight: 'bolder',
+                      color: 'white',
+                    }}
+                  >
+                    Birth Date:
+                  </label>
+                  <Form.Control
+                    type="date"
+                    value={aboutMeObject.birth_date}
+                    // selected={aboutMeObject.birth_date}
+                    onChange={(date) => {
+                      console.log(date.target.value)
+                      setAboutMeObject({
+                        ...aboutMeObject,
+                        birth_date: date.target.value,
+                        birth_date_change: true,
+                      })
+                    }}
+                    dateFormat="MMMM d, yyyy"
+                  />
+                  {/* <DatePicker
+                className="form-control"
+                type="text"
+                placeholder="Enter Birth Date"
+                selected={this.state.aboutMeObject.birth_date}
+                onChange={(date) => {
+                  let temp = this.state.aboutMeObject;
+                  temp.birth_date = date;
+                  temp.birth_date_change = true;
+                  console.log(date);
+                  this.setState({
+                    aboutmeObject: temp,
+                  });
+                }}
+                dateFormat="MMMM d, yyyy"
+              /> */}
+                </Col>
+              </Row>
+              <br />
+              <Row>
+                <Col style={{ paddingRight: '10px' }}>
+                  <label
+                    style={{
+                      marginTop: '10px',
+                      fontWeight: 'bolder',
+                      color: 'white',
+                    }}
+                  >
+                    Phone Number:
+                  </label>
+                  <PhoneInput
+                    class="form-control"
+                    placeholder="Enter phone number"
+                    value={aboutMeObject.phone_number}
+                    onChange={(e) => {
+                      setAboutMeObject((prevState) => ({
+                        ...prevState,
+                        phone_number: e,
+                        timeSettings: {
+                          ...prevState.timeSettings,
+                        },
+                      }));
+                    }}
+                  />
+                  {/* <input
+              class= "form-control"
               type="text"
-              placeholder="Enter Birth Date"
-              selected={this.state.aboutMeObject.birth_date}
-              onChange={(date) => {
-                let temp = this.state.aboutMeObject;
-                temp.birth_date = date;
-                temp.birth_date_change = true;
-                console.log(date);
-                this.setState({
-                  aboutmeObject: temp,
-                });
+              placeholder="Enter phone number"
+              value={this.state.aboutMeObject.phone_number}
+              // value={this.state.aboutMeObject.phone_number}
+              // onChange={(e) => {
+              //   let temp = this.state.aboutMeObject
+              //   temp.phone_number = e
+              //   this.setState(
+              //     {
+              //       aboutMeObject: temp,
+              //     });
+              // }}
+              /> */}
+                </Col>
+              </Row>
+            </Form.Group>
+            <Form.Group
+              controlId="MajorEvents"
+              style={{
+                marginTop: '10px',
+                fontWeight: 'bolder',
+                color: 'white',
               }}
-              dateFormat="MMMM d, yyyy"
-            /> */}
-              </Col>
-            </Row>
-            <br />
-            <Row>
-              <Col style={{ paddingRight: '10px' }}>
-                <label
-                  style={{
-                    marginTop: '10px',
-                    fontWeight: 'bolder',
-                    color: 'white',
-                  }}
-                >
-                  Phone Number:
-                </label>
-                <PhoneInput
-                  class="form-control"
-                  placeholder="Enter phone number"
-                  value={aboutMeObject.phone_number}
-                  onChange={(e) => {
-                    setAboutMeObject((prevState) => ({
-                      ...prevState,
-                      phone_number: e,
+            >
+              <Form.Label>Time Settings</Form.Label>
+              <Form.Control
+                style={{ borderRadius: '10px' }}
+                type="text"
+                rows="4"
+                type="text"
+                //placeholder="(GMT-08:00) Pacific Time"
+                value={aboutMeObject.timeSettings.timeZone || ''}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  setAboutMeObject((prevState) => ({
+                    ...prevState,
+                    message_card: e.target.value,
+                    timeSettings: {
+                      ...prevState.timeSettings,
+                    },
+                  }));
+                }}
+              />
+            </Form.Group>
+            <table>
+              <tr>
+                <td>
+                  <p
+                    style={{
+                      marginRight: '20px',
+                      marginTop: '10px',
+                      color: 'white',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    Morning
+                  </p>
+                </td>
+                <td>
+                  <input
+                    style={{
+                      width: '90px',
+                      padding: '3px 0',
+                      borderRadius: '10px',
+                      border: '1px solid #889AB5',
+                    }}
+                    value={aboutMeObject.timeSettings.morning || ''}
+                    onChange = {(e) => setAboutMeObject({
+                      ...aboutMeObject,
                       timeSettings: {
-                        ...prevState.timeSettings,
-                      },
-                    }));
-                  }}
-                />
-                {/* <input
-            class= "form-control"
-            type="text"
-            placeholder="Enter phone number"
-            value={this.state.aboutMeObject.phone_number}
-            // value={this.state.aboutMeObject.phone_number}
-            // onChange={(e) => {
-            //   let temp = this.state.aboutMeObject
-            //   temp.phone_number = e
-            //   this.setState(
-            //     {
-            //       aboutMeObject: temp,
-            //     });
-            // }}
-            /> */}
-              </Col>
-            </Row>
-          </Form.Group>
+                        ...aboutMeObject.timeSettings,
+                        morning: e.target.value
+                      }
+                    })}
+                  ></input>
+                </td>
+                <td>
+                  <p
+                    style={{
+                      marginRight: '20px',
+                      marginLeft: '20px',
+                      marginTop: '10px',
+                      color: 'white',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    Afternoon
+                  </p>
+                </td>
+                <td>
+                  <input
+                    style={{
+                      width: '90px',
+                      padding: '3px 0',
+                      borderRadius: '10px',
+                      border: '1px solid #889AB5',
+                    }}
+                    value={aboutMeObject.timeSettings.afternoon || ''}
+                    onChange = {(e) => setAboutMeObject({
+                      ...aboutMeObject,
+                      timeSettings: {
+                        ...aboutMeObject.timeSettings,
+                        afternoon: e.target.value
+                      }
+                    })}
+                  ></input>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <p
+                    style={{
+                      marginRight: '20px',
+                      marginTop: '10px',
+                      color: 'white',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    Evening
+                  </p>
+                </td>
+                <td>
+                  <input
+                    style={{
+                      width: '90px',
+                      padding: '3px 0',
+                      borderRadius: '10px',
+                      border: '1px solid #889AB5',
+                    }}
+                    value={aboutMeObject.timeSettings.evening || ''}
+                    onChange = {(e) => setAboutMeObject({
+                      ...aboutMeObject,
+                      timeSettings: {
+                        ...aboutMeObject.timeSettings,
+                        evening: e.target.value
+                      }
+                    })}
+                  ></input>
+                </td>
+                <td>
+                  <p
+                    style={{
+                      marginRight: '20px',
+                      marginLeft: '20px',
+                      marginTop: '10px',
+                      color: 'white',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    Night
+                  </p>
+                </td>
+                <td>
+                  <input
+                    style={{
+                      width: '90px',
+                      padding: '3px 0',
+                      borderRadius: '10px',
+                      border: '1px solid #889AB5',
+                    }}
+                    value={aboutMeObject.timeSettings.night || ''}
+                    onChange = {(e) => setAboutMeObject({
+                      ...aboutMeObject,
+                      timeSettings: {
+                        ...aboutMeObject.timeSettings,
+                        night: e.target.value
+                      }
+                    })}
+                  ></input>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <p
+                    style={{
+                      marginRight: '20px',
+                      // marginTop: '10px',
+                      color: 'white',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    Day Start
+                  </p>
+                </td>
+                <td>
+                  <input
+                    style={{
+                      width: '90px',
+                      padding: '3px 0',
+                      borderRadius: '10px',
+                      border: '1px solid #889AB5',
+                    }}
+                    value={aboutMeObject.timeSettings.dayStart || ''}
+                    onChange = {(e) => setAboutMeObject({
+                      ...aboutMeObject,
+                      timeSettings: {
+                        ...aboutMeObject.timeSettings,
+                        dayStart: e.target.value
+                      }
+                    })}
+                  ></input>
+                </td>
+                <td>
+                  <p
+                    style={{
+                      marginRight: '20px',
+                      marginLeft: '20px',
+                      // marginTop: '10px',
+                      color: 'white',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    Day End
+                  </p>
+                </td>
+                <td>
+                  <input
+                    style={{
+                      width: '90px',
+                      padding: '3px 0',
+                      borderRadius: '10px',
+                      border: '1px solid #889AB5',
+                    }}
+                    value={aboutMeObject.timeSettings.dayEnd || ''}
+                    onChange = {(e) => setAboutMeObject({
+                      ...aboutMeObject,
+                      timeSettings: {
+                        ...aboutMeObject.timeSettings,
+                        dayEnd: e.target.value
+                      }
+                    })}
+                  ></input>
+                </td>
+              </tr>
+            </table>
+
+           
+          
+          </div>
+
+          <div style={{width:'47.5%', float: 'left', marginLeft: '2.5%'}}>
+            <Form.Group
+              controlId="AboutMessage"
+              style={{
+                marginTop: '10px',
+                fontWeight: 'bolder',
+                color: 'white',
+              }}
+            >
+              <Form.Label>Medication</Form.Label>
+              <Form.Control
+                style={{ borderRadius: '10px' }}
+                as="textarea"
+                rows="12"
+                type="text"
+                value={aboutMeObject.message_day || ""}
+                onChange={(e) => {
+                  console.log(e.target.value)
+                  e.stopPropagation();
+                  setAboutMeObject({
+                    ...aboutMeObject,
+                    message_day: e.target.value
+                  }
+                    
+                  );
+                }}
+              />
+            </Form.Group>
+            <Form.Group controlId="AboutMessageCard">
+              <Form.Label
+                style={{
+                  marginTop: '10px',
+                  fontWeight: 'bolder',
+                  color: 'white',
+                }}
+              >
+                Medication Schedule
+              </Form.Label>
+              <Form.Control
+                style={{ borderRadius: '10px' }}
+                as="textarea"
+                rows="12"
+                type="text"
+                value={aboutMeObject.message_card || ''}
+                onChange={(e) => {
+                  console.log(e.target.value)
+                  e.stopPropagation();
+                  setAboutMeObject({
+                    ...aboutMeObject,
+                    message_card: e.target.value
+                  }
+                    
+                  );
+                }}
+              />
+            </Form.Group>
+          </div>
+
+          
+          <table style={{ marginLeft: '20px', width: '100%', paddingTop: '40px'}}>
+              <tr style={{ margin: '20px' }}>
+                <th className={classes.formGroupTitle}>What motivates you?</th>
+                <th className={classes.formGroupTitle}>
+                  What’s important to you?
+                </th>
+                <th className={classes.formGroupTitle}>What makes you happy?</th>
+              </tr>
+              <tr style={{ margin: '20px' }}>
+                <td>
+                  <input className={classes.formGroupItem}
+                    value={motivation0 || ''}
+                    onChange={(e) => {
+                      //motivationArrayTemp = motivationArray
+                      // motivationArrayTemp[0] = e.target.value
+                      // console.log(motivationArrayTemp)
+                      // setMotivationArray(motivationArrayTemp)
+                      setMotivation0(e.target.value)
+                    }}
+                  ></input>
+                </td>
+                <td>
+                  <input className={classes.formGroupItem}
+                    value={feelings0 || ''}
+                    onChange={(e) => {
+                      //motivationArrayTemp = motivationArray
+                      // motivationArrayTemp[0] = e.target.value
+                      // console.log(motivationArrayTemp)
+                      // setMotivationArray(motivationArrayTemp)
+                      setFeelings0(e.target.value)
+                    }}
+                  ></input>
+                </td>
+                <td>
+                  <input className={classes.formGroupItem}
+                    value={happy0 || ''}
+                    onChange={(e) => {
+                      //motivationArrayTemp = motivationArray
+                      // motivationArrayTemp[0] = e.target.value
+                      // console.log(motivationArrayTemp)
+                      // setMotivationArray(motivationArrayTemp)
+                      setHappy0(e.target.value)
+                    }}
+                  ></input>
+                </td>
+              </tr>
+              <tr style={{ margin: '20px' }}>
+                <td>
+                  <input className={classes.formGroupItem}
+                    value={motivation1 || ''}
+                    onChange={(e) => {
+                      setMotivation1(e.target.value)
+                    }}
+                  ></input>
+                </td>
+                <td>
+                  <input className={classes.formGroupItem}
+                    value={feelings1 || ''}
+                    onChange={(e) => {
+                      setFeelings1(e.target.value)
+                    }}
+                  ></input>
+                </td>
+                <td>
+                  <input className={classes.formGroupItem}
+                    value={happy1 || ''}
+                    onChange={(e) => {
+                      setHappy1(e.target.value)
+                    }}
+                  ></input>
+                </td>
+              </tr>
+              <tr style={{ margin: '20px' }}>
+                <td>
+                  <input className={classes.formGroupItem}
+                    value={motivation2 || ''}
+                    onChange={(e) => {
+                      setMotivation2(e.target.value)
+                    }}
+                  ></input>
+                </td>
+                <td>
+                  <input className={classes.formGroupItem}
+                    value={feelings2 || ''}
+                    onChange={(e) => {
+                      setFeelings2(e.target.value)
+                    }}
+                  ></input>
+                </td>
+                <td>
+                  <input className={classes.formGroupItem}
+                    value={happy2 || ''}
+                    onChange={(e) => {
+                      setHappy2(e.target.value)
+                    }}
+                  ></input>
+                </td>
+              </tr>
+              <tr style={{ margin: '20px' }}>
+                <td>
+                  <input className={classes.formGroupItem}
+                    value={motivation3 || ''}
+                    onChange={(e) => {
+                      setMotivation3(e.target.value)
+                    }}
+                  ></input>
+                </td>
+                <td>
+                  <input className={classes.formGroupItem}
+                    value={feelings3 || ''}
+                    onChange={(e) => {
+                      setFeelings3(e.target.value)
+                    }}
+                  ></input>
+                </td>
+                <td>
+                  <input className={classes.formGroupItem}
+                    value={happy3 || ''}
+                    onChange={(e) => {
+                      setHappy3(e.target.value)
+                    }}
+                  ></input>
+                </td>
+              </tr>
+              <tr style={{ margin: '20px' }}>
+                <td>
+                  <input className={classes.formGroupItem}
+                    value={motivation4 || ''}
+                    onChange={(e) => {
+                      setMotivation4(e.target.value)
+                    }}
+                  ></input>
+                </td>
+                <td>
+                  <input className={classes.formGroupItem}
+                    value={feelings4 || ''}
+                    onChange={(e) => {
+                      setFeelings4(e.target.value)
+                    }}
+                  ></input>
+                </td>
+                <td>
+                  <input className={classes.formGroupItem}
+                    value={happy4 || ''}
+                    onChange={(e) => {
+                      setHappy4(e.target.value)
+                    }}
+                  ></input>
+                </td>
+              </tr>
+            </table>
+          
+
+
         </div>
-        <div
+        {/* <div
           style={{
             width: '29%',
             float: 'left',
@@ -837,6 +1277,19 @@ export default function AboutModal(props) {
               }}
             />
           </Form.Group>
+          
+        </div> */}
+        <div
+          style={{
+            width: '29%',
+            float: 'left',
+            //margin: '25px',
+            paddingRight: '10%',
+            //border: 'solid',
+            // height: '2000px'
+          }}
+        >
+          
           <Form.Group
             controlId="AboutMessage"
             style={{
@@ -845,7 +1298,7 @@ export default function AboutModal(props) {
               color: 'white',
             }}
           >
-            <Form.Label style={{ width: '100%' }}>
+            <Form.Label style={{ width: '100%', }}>
               Important people in life
             </Form.Label>
             <table style={{ width: '100%' }}>
@@ -918,238 +1371,10 @@ export default function AboutModal(props) {
             </table>
           </Form.Group>
         </div>
-        <div
-          style={{
-            width: '29%',
-            float: 'left',
-            margin: '25px',
-            paddingRight: '10%',
-          }}
-        >
-          <Form.Group
-            controlId="MajorEvents"
-            style={{
-              marginTop: '10px',
-              fontWeight: 'bolder',
-              color: 'white',
-            }}
-          >
-            <Form.Label>Time Settings</Form.Label>
-            <Form.Control
-              style={{ borderRadius: '10px' }}
-              type="text"
-              rows="4"
-              type="text"
-              //placeholder="(GMT-08:00) Pacific Time"
-              value={aboutMeObject.timeSettings.timeZone || ''}
-              onChange={(e) => {
-                e.stopPropagation();
-                setAboutMeObject((prevState) => ({
-                  ...prevState,
-                  message_card: e.target.value,
-                  timeSettings: {
-                    ...prevState.timeSettings,
-                  },
-                }));
-              }}
-            />
-          </Form.Group>
-          <table>
-            <tr>
-              <td>
-                <p
-                  style={{
-                    marginRight: '20px',
-                    marginTop: '10px',
-                    color: 'white',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Morning
-                </p>
-              </td>
-              <td>
-                <input
-                  style={{
-                    width: '90px',
-                    padding: '3px 0',
-                    borderRadius: '10px',
-                    border: '1px solid #889AB5',
-                  }}
-                  value={aboutMeObject.timeSettings.morning || ''}
-                  onChange = {(e) => setAboutMeObject({
-                    ...aboutMeObject,
-                    timeSettings: {
-                      ...aboutMeObject.timeSettings,
-                      morning: e.target.value
-                    }
-                  })}
-                ></input>
-              </td>
-              <td>
-                <p
-                  style={{
-                    marginRight: '20px',
-                    marginLeft: '20px',
-                    marginTop: '10px',
-                    color: 'white',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Afternoon
-                </p>
-              </td>
-              <td>
-                <input
-                  style={{
-                    width: '90px',
-                    padding: '3px 0',
-                    borderRadius: '10px',
-                    border: '1px solid #889AB5',
-                  }}
-                  value={aboutMeObject.timeSettings.afternoon || ''}
-                  onChange = {(e) => setAboutMeObject({
-                    ...aboutMeObject,
-                    timeSettings: {
-                      ...aboutMeObject.timeSettings,
-                      afternoon: e.target.value
-                    }
-                  })}
-                ></input>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <p
-                  style={{
-                    marginRight: '20px',
-                    marginTop: '10px',
-                    color: 'white',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Evening
-                </p>
-              </td>
-              <td>
-                <input
-                  style={{
-                    width: '90px',
-                    padding: '3px 0',
-                    borderRadius: '10px',
-                    border: '1px solid #889AB5',
-                  }}
-                  value={aboutMeObject.timeSettings.evening || ''}
-                  onChange = {(e) => setAboutMeObject({
-                    ...aboutMeObject,
-                    timeSettings: {
-                      ...aboutMeObject.timeSettings,
-                      evening: e.target.value
-                    }
-                  })}
-                ></input>
-              </td>
-              <td>
-                <p
-                  style={{
-                    marginRight: '20px',
-                    marginLeft: '20px',
-                    marginTop: '10px',
-                    color: 'white',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Night
-                </p>
-              </td>
-              <td>
-                <input
-                  style={{
-                    width: '90px',
-                    padding: '3px 0',
-                    borderRadius: '10px',
-                    border: '1px solid #889AB5',
-                  }}
-                  value={aboutMeObject.timeSettings.night || ''}
-                  onChange = {(e) => setAboutMeObject({
-                    ...aboutMeObject,
-                    timeSettings: {
-                      ...aboutMeObject.timeSettings,
-                      night: e.target.value
-                    }
-                  })}
-                ></input>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <p
-                  style={{
-                    marginRight: '20px',
-                    // marginTop: '10px',
-                    color: 'white',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Day Start
-                </p>
-              </td>
-              <td>
-                <input
-                  style={{
-                    width: '90px',
-                    padding: '3px 0',
-                    borderRadius: '10px',
-                    border: '1px solid #889AB5',
-                  }}
-                  value={aboutMeObject.timeSettings.dayStart || ''}
-                  onChange = {(e) => setAboutMeObject({
-                    ...aboutMeObject,
-                    timeSettings: {
-                      ...aboutMeObject.timeSettings,
-                      dayStart: e.target.value
-                    }
-                  })}
-                ></input>
-              </td>
-              <td>
-                <p
-                  style={{
-                    marginRight: '20px',
-                    marginLeft: '20px',
-                    // marginTop: '10px',
-                    color: 'white',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Day End
-                </p>
-              </td>
-              <td>
-                <input
-                  style={{
-                    width: '90px',
-                    padding: '3px 0',
-                    borderRadius: '10px',
-                    border: '1px solid #889AB5',
-                  }}
-                  value={aboutMeObject.timeSettings.dayEnd || ''}
-                  onChange = {(e) => setAboutMeObject({
-                    ...aboutMeObject,
-                    timeSettings: {
-                      ...aboutMeObject.timeSettings,
-                      dayEnd: e.target.value
-                    }
-                  })}
-                ></input>
-              </td>
-            </tr>
-          </table>
-        </div>
         <div></div>
         {/* <hr style={{ border: '1px solid white' }} /> */}
-        <div>
-          <table style={{ marginLeft: '20px', width: '100%' }}>
+        {/* <div >
+          <table style={{ marginLeft: '20px', width: '66%' }}>
             <tr style={{ margin: '20px' }}>
               <th className={classes.formGroupTitle}>What motivates you?</th>
               <th className={classes.formGroupTitle}>
@@ -1300,8 +1525,8 @@ export default function AboutModal(props) {
               </td>
             </tr>
           </table>
-        </div>
-        <div style={{ width: '100%', float: 'left' }}>
+        </div> */}
+        <div style={{ width: '100%', float: 'left',}}>
           <div style={{ marginLeft: '40%' }}>
             <Row>
               <Button

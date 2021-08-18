@@ -69,8 +69,10 @@ const EditIcon = ({routine, task, step}) => {
   }
 
   console.log('task', task)
+  console.log('In EditActionIcon', routine, task)
 
   useEffect(() => {
+    
 
     axios.get('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/actionsTasks/' + task.toString())
     .then((response) => {
@@ -113,6 +115,7 @@ const EditIcon = ({routine, task, step}) => {
           console.log("item",itemToChange)
           // Convert start_day_and_time to day and time
           const startDate = new Date(itemToChange.at_datetime_started);
+          console.log('editATS startdate',startDate, itemToChange.at_datetime_started)
           const startDay = convertDateToDayString(startDate);
           const startTime = convertDateToTimeString(startDate);
           itemToChange.start_day = startDay;
