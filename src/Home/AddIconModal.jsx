@@ -4,7 +4,7 @@ import { Form, Row, Col } from 'react-bootstrap';
 import ButtonMaterialUI from '@material-ui/core/Button';
 import axios from 'axios';
 
-const BASE_URL = "https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/" 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 export default class AddIconModal extends Component {
   constructor(props) {

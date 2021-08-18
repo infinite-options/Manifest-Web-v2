@@ -34,7 +34,7 @@ import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 
-
+const BASE_URL = process.env.REACT_APP_BASE_URL
 
 const useStyles = makeStyles({
     table: {
@@ -114,9 +114,9 @@ export default function Firebasev2(props)  {
 
     useEffect(() => {
         setHG([])
-        console.log("in useEffect Firebasev2", currentUser)
+        console.log("in useEffect Firebasev2", BASE_URL)
      //   console.log(currentUser)
-        axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getHistory/" + currentUser)
+        axios.get(BASE_URL +  "getHistory/" + currentUser)
         .then((response) =>{
             for(var i=0; i <response.data.result.length; i++){
             // for(var i=response.data.result.length - 1; i > -1; i--){
@@ -135,7 +135,7 @@ export default function Firebasev2(props)  {
         setTAData([])
         setPatientData([])
 
-        axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/listAllTAForCopy")
+        axios.get(BASE_URL + "listAllTAForCopy")
         .then(response => {
             setTAData(response.data.result)
             
@@ -144,7 +144,7 @@ export default function Firebasev2(props)  {
             console.log(error);
         });
 
-        axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/listAllUsersForCopy")
+        axios.get(BASE_URL + "listAllUsersForCopy")
         .then(response => {
             setPatientData(response.data.result)
             
@@ -154,7 +154,7 @@ export default function Firebasev2(props)  {
         });
 
         setGR([])
-        axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/" + currentUser)
+        axios.get(BASE_URL + "getgoalsandroutines/" + currentUser)
         .then(response => {
             // setGR(response.data.result)
             for(var i = 0; i < response.data.result.length; i++) {
@@ -376,7 +376,7 @@ export default function Firebasev2(props)  {
                         console.log(myObj)
 
                         axios
-                            .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/copyGR', myObj)
+                            .post(BASE_URL + 'copyGR', myObj)
                             .then(response => {
                                 console.log(response.data)
                                 toggleCopyModalConfirm(false)
@@ -921,7 +921,7 @@ export default function Firebasev2(props)  {
                         console.log(myObj)
 
                         axios
-                            .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/copyGR', myObj)
+                            .post(BASE_URL + 'copyGR', myObj)
                             .then(response => {
                                 console.log(response.data)
                                 toggleCopyModalConfirm(false)
@@ -1446,7 +1446,7 @@ export default function Firebasev2(props)  {
                                     let body = {goal_routine_id: r.id}
 
                                     axios
-                                        .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/deleteGR', body)
+                                        .post(BASE_URL + 'deleteGR', body)
                                         .then(response => {
                                             console.log('deleting')
                                             console.log(response.data)

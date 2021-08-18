@@ -12,6 +12,8 @@ import Facebook from '../manifest/LoginAssets/Facebook.svg';
 import Google from '../manifest/LoginAssets/Google.svg';
 import Apple from '../manifest/LoginAssets/Apple.svg';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 function SocialLogin(props) {
   const Auth = useContext(AuthContext);
   const history = useHistory();
@@ -82,8 +84,8 @@ function SocialLogin(props) {
   const _socialLoginAttempt = (email, accessToken, socialId, platform) => {
     axios
       .get(
-        'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/loginSocialTA/' +
-          email
+        BASE_URL + 'loginSocialTA/' +
+        email
       )
 
       .then((res) => {
@@ -131,7 +133,7 @@ function SocialLogin(props) {
   const handleSocialSignUpDone = () => {
     axios
       .post(
-        'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/addNewSocialTA',
+        BASE_URL + 'addNewSocialTA',
         {
           email_id: newEmail,
           first_name: newFName,

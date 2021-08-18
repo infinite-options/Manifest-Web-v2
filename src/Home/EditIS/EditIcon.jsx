@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from 'axios';
 import EditISContext from './EditISContext';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const convertDateToDayString = (dateObject) => {
   // console.log(dateObject)
   const year = dateObject.getFullYear();
@@ -69,7 +71,7 @@ const EditIcon = ({routine, task, step}) => {
   console.log('stepIs',step)
   useEffect(() => {
 
-    axios.get('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/instructionsSteps/' + step.toString())
+    axios.get(BASE_URL + 'instructionsSteps/' + step.toString())
     .then((response) => {
       console.log("steps", response)
       for(var i=0; i <response.data.result.length; i++){

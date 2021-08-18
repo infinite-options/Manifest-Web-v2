@@ -30,6 +30,7 @@ import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const useStyles = makeStyles({
     table: {
@@ -76,7 +77,7 @@ const VerticalRoutine = ({userID}) => {
     }
 
     useEffect(() => {
-        axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getHistory/" + currentUser)
+        axios.get(BASE_URL + "getHistory/" + currentUser)
         .then((response) =>{
             for(var i=0; i <response.data.result.length; i++){
                 historyGot.push(response.data.result[i]);

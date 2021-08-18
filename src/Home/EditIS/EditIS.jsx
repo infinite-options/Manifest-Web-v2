@@ -5,6 +5,8 @@ import axios from 'axios';
 import AddIconModal from '../AddIconModal';
 import UploadImage from '../UploadImage';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const EditIS = (props) => {
   const editingISContext = useContext(EditISContext);
 
@@ -60,7 +62,7 @@ const EditIS = (props) => {
    if (object.is_id != undefined){
      console.log("update IS")
     axios
-    .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateIS', formData)
+    .post(BASE_URL + 'updateIS', formData)
     .then((response) => {
       console.log(response);
       const gr_array_index = editingISContext.editingIS.gr_array.findIndex((elt) => elt.id === editingISContext.editingIS.id)
@@ -82,7 +84,7 @@ const EditIS = (props) => {
   }else{
     console.log("add IS")
     axios
-    .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/addIS', formData)
+    .post(BASE_URL + 'addIS', formData)
     .then((response) => {
       console.log(response);
       const gr_array_index = editingISContext.editingIS.gr_array.findIndex((elt) => elt.id === editingISContext.editingIS.id)

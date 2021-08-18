@@ -3,6 +3,8 @@ import { Button, Modal } from 'react-bootstrap';
 import { Form, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 export default class UploadImage extends Component {
   constructor(props) {
     super(props);
@@ -58,7 +60,7 @@ export default class UploadImage extends Component {
   };
 
   onHandleShowClick = () => {
-    let url = "https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/" 
+    let url = BASE_URL 
     + 'getImages/';
     let imageList = [];
     axios

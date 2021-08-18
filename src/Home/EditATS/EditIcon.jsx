@@ -5,6 +5,9 @@ import axios from 'axios';
 
 import EditATSContext from './EditATSContext';
 import { containerSizesSelector } from '@material-ui/data-grid';
+
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const convertDateToDayString = (dateObject) => {
   // console.log(dateObject)
   const year = dateObject.getFullYear();
@@ -72,7 +75,7 @@ const EditIcon = ({routine, task, step}) => {
 
   useEffect(() => {
 
-    axios.get('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/actionsTasks/' + task.toString())
+    axios.get(BASE_URL + 'actionsTasks/' + task.toString())
     .then((response) => {
       console.log("actionAT",response )
       for(var i=0; i <response.data.result.length; i++){

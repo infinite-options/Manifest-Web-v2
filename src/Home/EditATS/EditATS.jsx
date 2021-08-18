@@ -6,6 +6,8 @@ import axios from 'axios';
 import AddIconModal from '../AddIconModal';
 import UploadImage from '../UploadImage';
 import { propTypes } from 'react-bootstrap/esm/Image';
+
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 const convertDateToDayString = (dateObject) => {
   // console.log(dateObject)
   const year = dateObject.getFullYear();
@@ -137,7 +139,7 @@ const EditATS = (props) => {
   if (object.id != undefined) {
     console.log("update AT")
     axios
-    .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateAT', formData)
+    .post(BASE_URL + 'updateAT', formData)
     .then((response) => {
       console.log(response);
       const gr_array_index = editingATSContext.editingATS.gr_array.findIndex((elt) => elt.id === editingATSContext.editingATS.id)
@@ -158,7 +160,7 @@ const EditATS = (props) => {
   }else{
     console.log("add AT")
     axios
-    .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/addAT', formData)
+    .post(BASE_URL + 'addAT', formData)
     .then((response) => {
       console.log(response);
       const gr_array_index = editingATSContext.editingATS.gr_array.findIndex((elt) => elt.id === editingATSContext.editingATS.id)

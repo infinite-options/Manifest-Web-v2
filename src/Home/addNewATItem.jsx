@@ -9,6 +9,8 @@ import AddIconModal from './AddIconModal';
 import UploadImage from './UploadImage';
 import axios from 'axios';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 export default class AddNewATItem extends Component {
   constructor(props) {
     super(props);
@@ -144,7 +146,7 @@ export default class AddNewATItem extends Component {
   };
 
   addNewDoc = () => {
-    let url = this.props.BASE_URL + 'addAT';
+    let url = BASE_URL + 'addAT';
 
     if (this.props.ATArray.length > 0) {
       this.setState({

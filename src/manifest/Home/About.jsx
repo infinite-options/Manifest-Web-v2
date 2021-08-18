@@ -25,12 +25,14 @@ import MiniNavigation from '../miniNavigation'
 import LoginContext from '../../LoginContext'
 import { useHistory, Redirect } from 'react-router-dom';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const useStyles = makeStyles({
   table: {
     width: 100,
   },
   formGroupTitle: {
-    margin: '20px 0',
+    marginLeft: '3rem',
     color: 'white',
   },
   formGroupItem: {
@@ -38,7 +40,8 @@ const useStyles = makeStyles({
     border: '1px solid #889AB5',
     width: '250px',
     height: '38px',
-    margin: '5px 0',
+    marginRight: '2rem',
+    marginTop:'1rem'
   },
 });
 
@@ -106,6 +109,8 @@ export default function AboutModal(props) {
   const [happy3 , setHappy3] = useState('')
   const [happy4 , setHappy4] = useState('')
 
+  const[listPeople, setListPeople] = useState([])
+
   const loginContext = useContext(LoginContext);
   const userID = loginContext.loginState.curUser;
   //const userID = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1];
@@ -117,10 +122,26 @@ export default function AboutModal(props) {
   //     userID = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
   //     console.log('userID', userID)
   //   }
+       console.log('userID', userID)
+
+  useEffect(()=> {
+      axios
+        .get(
+          BASE_URL + 'listPeople/' + userID )
+          .then((response) => {
+          console.log("listPeople",response.data.result.result);
+          setListPeople(response.data.result.result)
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+  }, []);
+    
+
 
   function grabFireBaseAboutMeData() {
     let url =
-      'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/aboutme/';
+      BASE_URL + 'aboutme/';
     console.log(userID)
     axios
       .get(url + userID) //this.props.theCurrentUserId)
@@ -163,7 +184,7 @@ export default function AboutModal(props) {
       console.log('check userID')
       console.log(userID)
     axios
-      .get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/motivation/" + userID)
+      .get(BASE_URL + "motivation/" + userID)
       .then((response) => {
         console.log('motivation')
         console.log(JSON.parse(response.data.result[0].options))
@@ -196,7 +217,7 @@ export default function AboutModal(props) {
         console.log('Error getting user details', err);
       });
     axios
-      .get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/important/" + userID)
+      .get(BASE_URL + "important/" + userID)
       .then((response) => {
         console.log('feelings')
         //console.log(JSON.parse(response.data.result[0].options))
@@ -227,7 +248,7 @@ export default function AboutModal(props) {
         console.log('Error getting user details', err);
       });
     axios
-      .get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/happy/" + userID)
+      .get(BASE_URL + "happy/" + userID)
       .then((response) => {
         console.log('motivation')
         console.log(JSON.parse(response.data.result[0].options))
@@ -313,7 +334,7 @@ export default function AboutModal(props) {
 
     grabFireBaseAboutMeData()
 
-    axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/usersOfTA/" + document.cookie.split('; ').find(row => row.startsWith('ta_email=')).split('=')[1])
+    axios.get(BASE_URL + "usersOfTA/" + document.cookie.split('; ').find(row => row.startsWith('ta_email=')).split('=')[1])
       .then((response) =>{
           console.log(response);
           if (response.result !== false){
@@ -427,7 +448,7 @@ export default function AboutModal(props) {
       console.log(value);
     }
     axios
-      .post(url, formData)
+      .post(BASE_URL + "updateAboutMe", formData)
       .then((response) => {
         console.log(response);
         // this.hideAboutForm();
@@ -454,7 +475,7 @@ export default function AboutModal(props) {
     console.log(motivationJSON)
 
     axios
-      .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateMotivation', motivationJSON)
+      .post(BASE_URL + 'updateMotivation', motivationJSON)
       .then(response => {
         console.log(response)
       })
@@ -467,7 +488,7 @@ export default function AboutModal(props) {
     console.log(importantJSON)
   
     axios
-      .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateImportant', importantJSON)
+      .post(BASE_URL + 'updateImportant', importantJSON)
       .then(response => {
         console.log(response)
       })
@@ -480,7 +501,7 @@ export default function AboutModal(props) {
     console.log(happyJSON)
   
     axios
-      .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateHappy', happyJSON)
+      .post(BASE_URL + 'updateHappy', happyJSON)
       .then(response => {
         console.log(response)
       })
@@ -773,159 +794,6 @@ export default function AboutModal(props) {
               </Col>
             </Row>
           </Form.Group>
-        </div>
-        <div
-          style={{
-            width: '29%',
-            float: 'left',
-            margin: '25px',
-            paddingRight: '10%',
-          }}
-        >
-          <Form.Group
-            controlId="AboutMessage"
-            style={{
-              marginTop: '10px',
-              fontWeight: 'bolder',
-              color: 'white',
-            }}
-          >
-            <Form.Label>Medication</Form.Label>
-            <Form.Control
-              style={{ borderRadius: '10px' }}
-              as="textarea"
-              rows="4"
-              type="text"
-              value={aboutMeObject.message_day || ""}
-              onChange={(e) => {
-                console.log(e.target.value)
-                e.stopPropagation();
-                setAboutMeObject({
-                  ...aboutMeObject,
-                  message_day: e.target.value
-                }
-                  
-                );
-              }}
-            />
-          </Form.Group>
-          <Form.Group controlId="AboutMessageCard">
-            <Form.Label
-              style={{
-                marginTop: '10px',
-                fontWeight: 'bolder',
-                color: 'white',
-              }}
-            >
-              Medication Schedule
-            </Form.Label>
-            <Form.Control
-              style={{ borderRadius: '10px' }}
-              as="textarea"
-              rows="4"
-              type="text"
-              value={aboutMeObject.message_card || ''}
-              onChange={(e) => {
-                console.log(e.target.value)
-                e.stopPropagation();
-                setAboutMeObject({
-                  ...aboutMeObject,
-                  message_card: e.target.value
-                }
-                  
-                );
-              }}
-            />
-          </Form.Group>
-          <Form.Group
-            controlId="AboutMessage"
-            style={{
-              marginTop: '10px',
-              fontWeight: 'bolder',
-              color: 'white',
-            }}
-          >
-            <Form.Label style={{ width: '100%' }}>
-              Important people in life
-            </Form.Label>
-            <table style={{ width: '100%' }}>
-              <tr>
-                <div
-                  style={{
-                    height: '77px',
-                    width: '77px',
-                    borderRadius: '10px',
-                    backgroundColor: 'white',
-                    float: 'left',
-                  }}
-                ></div>
-                <div
-                  style={{
-                    width: '300px',
-                    borderRadius: '10px',
-                    backgroundColor: '#BBC7D7',
-                    float: 'left',
-                    marginLeft: '20px',
-                    textAlign: 'center',
-                    marginTop: '10px',
-                  }}
-                >
-                  <p style={{ color: 'white', paddingTop: '10px' }}>Name</p>
-                </div>
-              </tr>
-              <tr style={{ width: '100%' }}>
-                <div
-                  style={{
-                    height: '77px',
-                    width: '77px',
-                    borderRadius: '10px',
-                    backgroundColor: 'white',
-                    float: 'left',
-                    marginTop: '20px',
-                  }}
-                ></div>
-                <div
-                  style={{
-                    width: '300px',
-                    marginTop: '30px',
-                    borderRadius: '10px',
-                    backgroundColor: '#BBC7D7',
-                    float: 'left',
-                    marginLeft: '20px',
-                    textAlign: 'center',
-                  }}
-                >
-                  <p style={{ color: 'white', paddingTop: '10px' }}>Name</p>
-                </div>
-              </tr>
-              <tr style={{ width: '100%' }}>
-                <div
-                  style={{
-                    width: '380px',
-                    marginTop: '20px',
-                    border: '2px solid white',
-                    borderRadius: '10px',
-                    float: 'left',
-                    marginLeft: '20px',
-                    textAlign: 'center',
-                  }}
-                >
-                  <p style={{ color: 'white', paddingTop: '10px' }}>
-                    Add Person
-                  </p>
-                </div>
-              </tr>
-            </table>
-          </Form.Group>
-        </div>
-        <div
-          style={{
-            width: '29%',
-            float: 'left',
-            margin: '25px',
-            paddingRight: '10%',
-          }}
-        >
           <Form.Group
             controlId="MajorEvents"
             style={{
@@ -1145,19 +1013,17 @@ export default function AboutModal(props) {
               </td>
             </tr>
           </table>
-        </div>
-        <div></div>
-        {/* <hr style={{ border: '1px solid white' }} /> */}
-        <div>
-          <table style={{ marginLeft: '20px', width: '100%' }}>
-            <tr style={{ margin: '20px' }}>
+
+          <div>
+          <table style={{ margin:'2rem', width: '150%' }}>
+            <tr style={{ marginLeft: '3rem ' }}>
               <th className={classes.formGroupTitle}>What motivates you?</th>
               <th className={classes.formGroupTitle}>
                 What’s important to you?
               </th>
               <th className={classes.formGroupTitle}>What makes you happy?</th>
             </tr>
-            <tr style={{ margin: '20px' }}>
+            <tr style={{ paddingRight: '20px' }}>
               <td>
                 <input className={classes.formGroupItem}
                   value={motivation0 || ''}
@@ -1301,6 +1167,144 @@ export default function AboutModal(props) {
             </tr>
           </table>
         </div>
+        </div>
+        <div
+          style={{
+            width: '20%',
+            float: 'left',
+            margin: '25px',
+          }}
+        >
+          <Form.Group
+            controlId="AboutMessage"
+            style={{
+              marginTop: '10px',
+              fontWeight: 'bolder',
+              color: 'white',
+            }}
+          >
+            <Form.Label>Medication</Form.Label>
+            <Form.Control
+              style={{ borderRadius: '10px' }}
+              as="textarea"
+              rows="4"
+              type="text"
+              value={aboutMeObject.message_day || ""}
+              onChange={(e) => {
+                console.log(e.target.value)
+                e.stopPropagation();
+                setAboutMeObject({
+                  ...aboutMeObject,
+                  message_day: e.target.value
+                }
+                  
+                );
+              }}
+            />
+          </Form.Group>
+          <Form.Group controlId="AboutMessageCard">
+            <Form.Label
+              style={{
+                marginTop: '10px',
+                fontWeight: 'bolder',
+                color: 'white',
+              }}
+            >
+              Medication Schedule
+            </Form.Label>
+            <Form.Control
+              style={{ borderRadius: '10px' }}
+              as="textarea"
+              rows="4"
+              type="text"
+              value={aboutMeObject.message_card || ''}
+              onChange={(e) => {
+                console.log(e.target.value)
+                e.stopPropagation();
+                setAboutMeObject({
+                  ...aboutMeObject,
+                  message_card: e.target.value
+                }
+                  
+                );
+              }}
+            />
+          </Form.Group>
+         
+        </div>
+        <div
+          style={{
+            width: '29%',
+            float: 'right',
+            margin: '25px',
+            paddingRight:'5%'
+          }}
+        >
+
+        <Form.Group
+            controlId="AboutMessage"
+            style={{
+              marginTop: '10px',
+              fontWeight: 'bolder',
+              color: 'white',
+            }}
+          >
+            <Form.Label style={{ width: '100%' }}>
+              Important people in life
+            </Form.Label>
+            <div>
+            {listPeople.map((e) => {
+              return(
+                <div style={{display:'flex', justifyContent:'space-evenly'}}>
+                
+                <div  >
+                  <img style={{height:'5rem', width:'5rem', backgroundColor:'#ffffff', borderRadius:'10px'}} src={e.pic ? e.pic : ''}/>
+                </div>
+                
+                <div
+                  style={{
+                    width: '300px',
+                    borderRadius: '10px',
+                    backgroundColor: '#BBC7D7',
+                    float: 'left',
+                    marginLeft: '20px',
+                    textAlign: 'center',
+                    marginTop: '10px',
+                  }}
+                >
+                  <p style={{ color: 'white', paddingTop: '10px' }}>{e.name}</p>
+                </div>
+
+                </div>
+            
+            )
+          })
+          }
+              <tr style={{ width: '100%' }}>
+                <div
+                  style={{
+                    width: '380px',
+                    marginTop: '20px',
+                    border: '2px solid white',
+                    borderRadius: '10px',
+                    float: 'left',
+                    marginLeft: '20px',
+                    textAlign: 'center',
+                  }}
+                >
+
+                  <p style={{ color: 'white', paddingTop: '10px' }}>
+                    Add Person
+                  </p>
+                </div>
+              </tr>
+              </div>
+          </Form.Group>          
+         
+        </div>
+        <div></div>
+        {/* <hr style={{ border: '1px solid white' }} /> */}
+       
         <div style={{ width: '100%', float: 'left' }}>
           <div style={{ marginLeft: '40%' }}>
             <Row>

@@ -15,6 +15,9 @@ import LoginContext from '../LoginContext';
 import axios from 'axios'
 import { CompareSharp } from '@material-ui/icons';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
+
 /* Custom Hook to make styles */
 const useStyles = makeStyles({
   /* navigationContainer */
@@ -81,6 +84,8 @@ export function Navigation() {
   const loginContext = useContext(LoginContext);
   const listOfUsers = loginContext.loginState.usersOfTA;
   var selectedUser = loginContext.loginState.curUser;
+  const currentUser = loginContext.loginState.curUser;
+
   // const selectedUser = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
   // const [selectedUser, setSelectedUser] = useState('')
   const [showNewUser, toggleNewUser] = useState(false);
@@ -193,8 +198,9 @@ export function Navigation() {
   }
 
   const taListRendered = () => {
-    console.log('ta list')
-    console.log(taList)
+    console.log('ta list', taList)
+   // console.log(taList)
+    taList.sort((a,b) => a.ta_first_name.localeCompare(b.ta_first_name))
     const elements = taList.map((ta) => (
       <option
         key={ta.ta_unique_id}
@@ -215,7 +221,7 @@ export function Navigation() {
     if (!taListCreated) {
       console.log('in getTAList: '+selectedUser)
       axios
-        .get(API_URL+'listAllTA/'+selectedUser)
+        .get(BASE_URL+'listAllTA/'+selectedUser)
         .then(response=>{
           console.log(response.data)
           //taList = response.data.result
@@ -326,12 +332,13 @@ export function Navigation() {
                 //   ta_people_id: taID,
                 //   user_id: selectedUser
                 // }
+                console.log("TA", taID, currentUser)
 
                 axios
-                  .post(API_URL+'anotherTAAccess',
+                  .post(BASE_URL+'anotherTAAccess',
                     {
                       ta_people_id: taID,
-                      user_id: selectedUser
+                      user_id: currentUser
                     }
                   )
                   .then(response => {
@@ -450,7 +457,7 @@ export function Navigation() {
     console.log("body", body)
       axios
         .post(
-          'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/addNewUser' , body)
+          BASE_URL + 'addNewUser' , body)
           .then((response) => {
           console.log(response.data);
           loginContext.setLoginState({
@@ -657,7 +664,7 @@ export function Navigation() {
                     style={{float: 'right'}}
                     onChange = {e => {
                       if (e.target.value != null){
-                        console.log(JSON.parse(e.target.value))
+                        console.log("Another",JSON.parse(e.target.value))
                         setTAName(JSON.parse(e.target.value).ta_first_name + ' ' + JSON.parse(e.target.value).ta_last_name)
                         setTAID(JSON.parse(e.target.value).ta_unique_id)
                         toggleGiveAccess(true)

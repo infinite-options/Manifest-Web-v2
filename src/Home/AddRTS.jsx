@@ -3,6 +3,8 @@ import { Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import moment from "moment";
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const AddRTS = () => {
 
   const updateRTS = (e) => {
@@ -64,7 +66,7 @@ const AddRTS = () => {
   if (object.id != '') {
     console.log('updateGR')
     axios
-    .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateGR', formData)
+    .post(BASE_URL + 'updateGR', formData)
     .then((_) => {
       const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
       const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
@@ -84,7 +86,7 @@ const AddRTS = () => {
   } else {
     console.log('addGR')
     axios
-    .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/addGR', formData)
+    .post(BASE_URL + 'addGR', formData)
     .then((_) => {
       console.log(_)
       const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)

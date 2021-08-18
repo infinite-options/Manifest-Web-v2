@@ -40,6 +40,7 @@ import {
   } from 'react-bootstrap';
 import { wait } from '@testing-library/dom';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const useStyles = makeStyles({
     table: {
@@ -123,7 +124,7 @@ export default function MainPage(props) {
     
     
     useEffect(() => {
-        axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getHistory/" + currentUser)
+        axios.get(BASE_URL + "getHistory/" + currentUser)
         .then((response) =>{
             console.log(response);
             for(var i=0; i <response.data.result.length; i++){
@@ -142,7 +143,7 @@ export default function MainPage(props) {
             console.log(error);
         });
 
-        axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/usersOfTA/" + document.cookie.split('; ').find(row => row.startsWith('ta_email=')).split('=')[1])
+        axios.get(BASE_URL + "usersOfTA/" + document.cookie.split('; ').find(row => row.startsWith('ta_email=')).split('=')[1])
       .then((response) =>{
           console.log(response);
           if (response.result !== false){

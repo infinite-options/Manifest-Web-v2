@@ -6,6 +6,8 @@ import DayRoutines from '../Home/DayRoutines';
 import {Row, Col} from 'react-bootstrap';
 import FirebaseV2 from '../Home/Firebasev2';
   
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const MainPage = ({ ...props})=> {
 //    const { profile, setProfile } = useContext(AuthContext);
 //    console.log(profile);
@@ -239,7 +241,7 @@ const MainPage = ({ ...props})=> {
   });
   
   function GrabFireBaseRoutinesGoalsData() {
-      let url = stateValue.BASE_URL + 'getgoalsandroutines/';
+      let url = BASE_URL + 'getgoalsandroutines/';
   
       let routine = [];
       let routine_ids = [];

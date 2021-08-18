@@ -170,7 +170,8 @@ const AddNewGRItem = (props) => {
       }, [stateValue.triggerValue]);
     }
 
-    let url = props.BASE_URL + 'getgoalsandroutines/';
+    let url =  process.env.REACT_APP_BASE_URL;
+    + 'getgoalsandroutines/';
 
     useEffect(() => {
       axios

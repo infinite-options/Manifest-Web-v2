@@ -22,6 +22,9 @@ import UploadImage from './UploadImage';
 import axios from 'axios';
 import { Switch } from 'react-router';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
+
 export default class CopyGR extends Component {
   constructor(props) {
     super(props);
@@ -41,7 +44,7 @@ export default class CopyGR extends Component {
   }
 
   newInputSubmit = () => {
-    let url = this.props.BASE_URL + 'copyGR';
+    let url = BASE_URL + 'copyGR';
 
     let body = {
       user_id: this.state.currentUserCandidateId,
@@ -80,7 +83,7 @@ export default class CopyGR extends Component {
   };
 
   listAllTAs = () => {
-    axios.get(this.props.BASE_URL + 'listAllTAForCopy').then((response) => {
+    axios.get(BASE_URL + 'listAllTAForCopy').then((response) => {
       if (response.data.result.length !== 0) {
         response.data.result.forEach((d, i) => {
           this.state.advisorIdAndNames[i] = {
@@ -96,7 +99,7 @@ export default class CopyGR extends Component {
   };
 
   listAllUsers = () => {
-    axios.get(this.props.BASE_URL + 'listAllUsersForCopy').then((response) => {
+    axios.get(BASE_URL + 'listAllUsersForCopy').then((response) => {
       if (response.data.result.length !== 0) {
         response.data.result.forEach((d, i) => {
           this.state.userNames[i] = {

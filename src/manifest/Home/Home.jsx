@@ -33,6 +33,8 @@ import axios from "axios";
 /*Use states to define variables */
 
 /* Custom Hook to make styles */
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const useStyles = makeStyles({
   buttonSelection: {
     width:"100%",
@@ -85,7 +87,7 @@ export default function Home() {
 
   useEffect(() =>{
     
-    axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/100-000027")
+    axios.get(BASE_URL + "getgoalsandroutines/100-000027")
       .then((response) => {
         for(var i =0; i< response.data.result.length; i++){
           console.log("routine",response.data.result[i]);

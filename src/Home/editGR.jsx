@@ -13,6 +13,9 @@ import AddIconModal from './AddIconModal';
 import UploadImage from './UploadImage';
 import axios from 'axios';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
+
 export default class editGR extends Component {
   constructor(props) {
     super(props);
@@ -315,7 +318,7 @@ export default class editGR extends Component {
         'Sun, 23 Feb 2020 00:08:43 GMT';
     }
 
-    let url = this.props.BASE_URL + 'updateGR';
+    let url = BASE_URL + 'updateGR';
 
     let body = temp;
 

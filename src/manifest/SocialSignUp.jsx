@@ -20,6 +20,8 @@ import axios from 'axios';
 import { useState, useContext } from 'react';
 import SocialLogin from './SocialLogin';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 /* Custom Hook to make styles */
 const useStyles = makeStyles({
   textFieldBackgorund: {
@@ -78,7 +80,7 @@ export default function SocialSignUp({ ...props }) {
   const handleSocialSignUpDone = () => {
     axios
       .post(
-        'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/addNewSocialTA',
+        BASE_URL + 'addNewSocialTA',
         {
           email_id: props.newEmail,
           first_name: newFName,

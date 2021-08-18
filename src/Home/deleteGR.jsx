@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import userContext from '../Home/userContext';
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const deleteGR = (props) => {
   const submitRequest = () => {
@@ -21,7 +22,7 @@ const deleteGR = (props) => {
   as possible based on past experience, if not included 
   causes alarms and excessive rendering */
   function TempdeleteArrPortion() {
-    let url = props.BASE_URL + 'deleteGR';
+    let url = BASE_URL + 'deleteGR';
 
     let items = [props.Array];
     let i = props.deleteIndex;

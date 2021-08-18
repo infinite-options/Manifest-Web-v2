@@ -21,6 +21,8 @@ import SocialLogin from '../components/LogIn/SocialLogin';
 
 import LoginContext from 'LoginContext';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 /* Custom Hook to make styles */
 const useStyles = makeStyles({
   textFieldBackgorund: {
@@ -58,7 +60,7 @@ export default function Login() {
     console.log('event', event, email, password);
     axios
       .get(
-        'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev//api/v2/loginTA/' +
+        BASE_URL + 'loginTA/' +
           email.toString() +
           '/' +
           password.toString()
@@ -107,7 +109,7 @@ export default function Login() {
       console.log(e, at, rt, first_name, last_name);
       axios
         .get(
-          'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/loginSocialTA/' +
+          BASE_URL + 'loginSocialTA/' +
             e
         ) //, {
         // username: e,  1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com

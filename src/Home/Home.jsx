@@ -51,18 +51,13 @@ import EditIS from './EditIS/EditIS';
 import LoginContext from '../LoginContext';
 import AddNewATItem from './addNewATItem';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-/* Navigation Bar component function */
 
 export default function Home(props) {
 
-
-  // const [userID, setUserID] = useState("");
   const loginContext = useContext(LoginContext);
- 
-
   var selectedUser = loginContext.loginState.curUser;
-
 
   if (document.cookie
     .split(";")
@@ -120,7 +115,7 @@ export default function Home(props) {
     useEffect(() => {
       console.log('home line 94')
       console.log(document.cookie.split('; ').find(row => row.startsWith('ta_email=')).split('=')[1]);
-      axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/usersOfTA/" + document.cookie.split('; ').find(row => row.startsWith('ta_email=')).split('=')[1])
+      axios.get(BASE_URL + "usersOfTA/" + document.cookie.split('; ').find(row => row.startsWith('ta_email=')).split('=')[1])
       .then((response) =>{
           console.log(response);
           if (response.result !== false){
@@ -1130,7 +1125,7 @@ export default function Home(props) {
   causes alarms and excessive rendering */
 
   function GrabFireBaseRoutinesGoalsData() {
-    let url = stateValue.BASE_URL + 'getgoalsandroutines/';
+    let url = BASE_URL + 'getgoalsandroutines/';
 
     let routine = [];
     let routine_ids = [];

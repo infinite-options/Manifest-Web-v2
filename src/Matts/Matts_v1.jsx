@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import DayRoutines from '../Home/DayRoutines';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
   
 export function MainPage() {
 //    const { profile, setProfile } = useContext(AuthContext);
@@ -14,7 +15,7 @@ export function MainPage() {
     const currentDate = new Date("06/20/2021");
 
     useEffect(() => {
-        axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getHistory/" + currentUser)
+        axios.get(BASE_URL + "getHistory/" + currentUser)
         .then((response) =>{
             for(var i=0; i <response.data.result.length; i++){
                // console.log(response.data.result[i]);
