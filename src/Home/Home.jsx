@@ -38,10 +38,9 @@ import DayRoutines from './DayRoutines.jsx';
 import WeekRoutines from './WeekRoutines.jsx';
 import userContext from './userContext';
 
-import { Navigation } from "./navigation";
+import { Navigation } from './navigation';
 import EditRTSContext from './EditRTS/EditRTSContext';
 import EditRTS from './EditRTS/EditRTS';
-
 
 import EditATSContext from './EditATS/EditATSContext';
 import EditATS from './EditATS/EditATS';
@@ -52,30 +51,33 @@ import LoginContext from '../LoginContext';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-
 export default function Home(props) {
-
   const loginContext = useContext(LoginContext);
   var selectedUser = loginContext.loginState.curUser;
 
-  if (document.cookie
-    .split(";")
-    .some(item => item.trim().startsWith("ta_uid="))
-    ) {
-      selectedUser = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
-    }
+  if (
+    document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
+  ) {
+    selectedUser = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('ta_uid='))
+      .split('=')[1];
+  }
 
-    var userID = ''
+  var userID = '';
   if (
     document.cookie
-      .split(";")
-      .some(item => item.trim().startsWith("patient_uid="))
+      .split(';')
+      .some((item) => item.trim().startsWith('patient_uid='))
   ) {
-    console.log('in there')
-    userID = document.cookie.split('; ').find(row => row.startsWith('patient_uid=')).split('=')[1]
+    console.log('in there');
+    userID = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_uid='))
+      .split('=')[1];
     // document.cookie = 'patient_name=test'
   } else {
-    console.log('in here', console.log(loginContext.loginState))
+    console.log('in here', console.log(loginContext.loginState));
     userID = loginContext.loginState.curUser;
     // document.cookie = 'patient_name=test'
   }
@@ -83,7 +85,7 @@ export default function Home(props) {
   //const userID = loginContext.loginState.curUser;
   //const userID = document.cookie.split('; ').find(row => row.startsWith('patient_uid=')).split('=')[1]
   console.log(props.location.state);
-  console.log('Home',userID)
+  console.log('Home', userID);
   //console.log('Home cookie', document.cookie.split('; ').find(row => row.startsWith('patient_uid=')).split('=')[1])
 
   // GetUserID(props.location.state);
@@ -109,43 +111,56 @@ export default function Home(props) {
   }
 
   // const [userID, setUserID] = useState(" ");
-  
+
   // function GetUserID(e){
-    useEffect(() => {
-      console.log('home line 94')
-      console.log(document.cookie.split('; ').find(row => row.startsWith('ta_email=')).split('=')[1]);
-      axios.get(BASE_URL + "usersOfTA/" + document.cookie.split('; ').find(row => row.startsWith('ta_email=')).split('=')[1])
-      .then((response) =>{
-          console.log(response);
-          if (response.result !== false){
-            const usersOfTA = response.data.result;
-            const curUserID = usersOfTA[0].user_unique_id;
-            loginContext.setLoginState({
-              ...loginContext.loginState,
-              usersOfTA: response.data.result,
-              curUser: curUserID
-            })
-            console.log(curUserID);
-            // setUserID(curUserID);
-            // console.log(userID);
-            GrabFireBaseRoutinesGoalsData();
-            // return userID;
-          }
-          else{console.log("No User Found");}
+  useEffect(() => {
+    console.log('home line 94');
+    console.log(
+      document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('ta_email='))
+        .split('=')[1]
+    );
+    axios
+      .get(
+        BASE_URL +
+          'usersOfTA/' +
+          document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('ta_email='))
+            .split('=')[1]
+      )
+      .then((response) => {
+        console.log(response);
+        if (response.result !== false) {
+          const usersOfTA = response.data.result;
+          const curUserID = usersOfTA[0].user_unique_id;
+          loginContext.setLoginState({
+            ...loginContext.loginState,
+            usersOfTA: response.data.result,
+            curUser: curUserID,
+          });
+          console.log(curUserID);
+          // setUserID(curUserID);
+          // console.log(userID);
+          GrabFireBaseRoutinesGoalsData();
+          // return userID;
+        } else {
+          console.log('No User Found');
+        }
       })
       .catch((error) => {
-          console.log(error);
+        console.log(error);
       });
-    },[loginContext.loginState.reload])
-  // } 
-
+  }, [loginContext.loginState.reload]);
+  // }
 
   /*----------------------------Use states to define variables----------------------------*/
-  const [routineID, setRoutineID] = useState('')
-  const [actionID, setActionID] = useState('')
-  const [updategetHistoryOnClick, setUpdateGetHistoryOnClick] = useState(false)
+  const [routineID, setRoutineID] = useState('');
+  const [actionID, setActionID] = useState('');
+  const [updategetHistoryOnClick, setUpdateGetHistoryOnClick] = useState(false);
 
-  const [hightlight, setHightlight] = useState('')
+  const [hightlight, setHightlight] = useState('');
   const [stateValue, setStateValue] = useState({
     itemToEdit: {
       title: '',
@@ -361,7 +376,7 @@ export default function Home(props) {
     editing: false,
     type: '',
     id: '',
-    user_id:userID,
+    user_id: userID,
     gr_array: [],
     newItem: {
       audio: '',
@@ -383,13 +398,13 @@ export default function Home(props) {
       repeat_ends_on: '',
       repeat_occurences: '',
       repeat_week_days: {
-        "0": "",
-        "1": "",
-        "2": "",
-        "3": "",
-        "4": "",
-        "5": "",
-        "6": ""
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
       },
       location: '',
       is_available: false,
@@ -418,7 +433,7 @@ export default function Home(props) {
           is_set: false,
           message: '',
           time: '',
-        }
+        },
       },
       user_notifications: {
         before: {
@@ -438,10 +453,10 @@ export default function Home(props) {
           is_set: false,
           message: '',
           time: '',
-        }
+        },
       },
     },
-  }
+  };
 
   const newRTSState = {
     editing: true,
@@ -469,19 +484,19 @@ export default function Home(props) {
       repeat_ends_on: '',
       repeat_occurences: '',
       repeat_week_days: {
-        "0": "",
-        "1": "",
-        "2": "",
-        "3": "",
-        "4": "",
-        "5": "",
-        "6": ""
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
       },
       location: '',
       is_available: false,
       is_persistent: true,
       is_complete: false,
-      is_in_progress:false,
+      is_in_progress: false,
       is_displayed_today: true,
       is_timed: false,
       is_sublist_available: true,
@@ -505,7 +520,7 @@ export default function Home(props) {
           is_set: false,
           message: '',
           time: '',
-        }
+        },
       },
       user_notifications: {
         before: {
@@ -525,10 +540,10 @@ export default function Home(props) {
           is_set: false,
           message: '',
           time: '',
-        }
+        },
       },
     },
-  }
+  };
 
   const newEditingATSState = {
     editing: true,
@@ -556,9 +571,9 @@ export default function Home(props) {
       is_displayed_today: true,
       is_timed: false,
       is_sublist_available: true,
-      photo: '',     
+      photo: '',
     },
-  }
+  };
 
   const initialEditingATSState = {
     editing: false,
@@ -586,9 +601,9 @@ export default function Home(props) {
       is_displayed_today: true,
       is_timed: false,
       is_sublist_available: true,
-      photo: '',     
+      photo: '',
     },
-  }
+  };
   const initialEditingISState = {
     editing: false,
     type: '',
@@ -602,9 +617,9 @@ export default function Home(props) {
       is_available: false,
       is_complete: true,
       is_timed: false,
-      photo: '',     
+      photo: '',
     },
-  }
+  };
 
   const newEditingISState = {
     editing: true,
@@ -619,13 +634,12 @@ export default function Home(props) {
       is_available: false,
       is_complete: true,
       is_timed: false,
-      photo: '',     
+      photo: '',
     },
-  }
-  const [editingRTS, setEditingRTS] = useState(initialEditingRTSState)
-  const [editingATS, setEditingATS] = useState(initialEditingATSState)
-  const [editingIS, setEditingIS] = useState(initialEditingISState)
-
+  };
+  const [editingRTS, setEditingRTS] = useState(initialEditingRTSState);
+  const [editingATS, setEditingATS] = useState(initialEditingATSState);
+  const [editingIS, setEditingIS] = useState(initialEditingISState);
 
   // console.log(calendarView);
   /*----------------------------Custom Hook to make styles----------------------------*/
@@ -640,7 +654,7 @@ export default function Home(props) {
       color: '#FFFFFF',
       backgroundColor: '#bbc8d7',
       marginLeft: '.5%',
-      marginRight: '.5%'
+      marginRight: '.5%',
     },
     buttonContainer: {
       flex: 1,
@@ -744,8 +758,6 @@ export default function Home(props) {
       // );
     }
   };
-
-
 
   /*-----------------------------handleModalClicked:-----------------------------*/
   /* this will toggle show hide of the firebase modal currently */
@@ -1007,20 +1019,18 @@ export default function Home(props) {
     // let startWeek = startObject.startOf('week');
     return (
       <div
-        style={
-          {
-            width: '100%'
-            // display: 'auto',
-            // borderRadius: '20px',
-            // backgroundColor: 'white',
-            // width: '100%',
-            // marginLeft: '10px',
-            // paddingTop: '20px',
-            // border: '1px black solid',
-            // boxShadow:
-            //   '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)',
-          }
-        }
+        style={{
+          width: '100%',
+          // display: 'auto',
+          // borderRadius: '20px',
+          // backgroundColor: 'white',
+          // width: '100%',
+          // marginLeft: '10px',
+          // paddingTop: '20px',
+          // border: '1px black solid',
+          // boxShadow:
+          //   '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)',
+        }}
       >
         {/* <Container style={{ float: 'right' }}>
           <Container>
@@ -1089,7 +1099,7 @@ export default function Home(props) {
             routines={stateValue.routines}
             dateContext={stateValue.dateContext}
             BASE_URL={stateValue.BASE_URL}
-            highLight = {hightlight}
+            highLight={hightlight}
           />
         </Row>
         {/* </Container> */}
@@ -1100,8 +1110,7 @@ export default function Home(props) {
   function showCalendarView(props) {
     // if (this.state.calendarView === 'Month') return this.calendarAbstracted();
     if (stateValue.calendarView === 'Day') return dayViewAbstracted();
-    else if (stateValue.calendarView === 'Week') 
-      return weekViewAbstracted();
+    else if (stateValue.calendarView === 'Week') return weekViewAbstracted();
   }
 
   //   props.hidden = props.hidden !== null ? props.hidden : false;
@@ -1135,25 +1144,33 @@ export default function Home(props) {
     // console.log('base url id ', userID);
 
     useEffect(() => {
-      console.log("Before gar");
+      console.log('Before gar');
       console.log(userID);
       axios
         .get(url + userID)
         .then((response) => {
           if (response.data.result && response.data.result.length !== 0) {
             let x = response.data.result;
-            console.log("response",x);
+            console.log('response', x);
             x.sort((a, b) => {
               // console.log(a);
               // console.log(b);
-              let datetimeA = new Date(a['gr_start_day_and_time']);
-              let datetimeB = new Date(b['gr_start_day_and_time']);
+              let datetimeA = new Date(
+                a['gr_start_day_and_time'].replace(/-/g, '/')
+              );
+
+              let datetimeB = new Date(
+                b['gr_start_day_and_time'].replace(/-/g, '/')
+              );
+
               let timeA =
                 new Date(datetimeA).getHours() * 60 +
                 new Date(datetimeA).getMinutes();
+
               let timeB =
                 new Date(datetimeB).getHours() * 60 +
                 new Date(datetimeB).getMinutes();
+
               return timeA - timeB;
             });
 
@@ -1171,7 +1188,7 @@ export default function Home(props) {
               gr.id = x[i].gr_unique_id;
 
               gr.is_available = x[i].is_available.toLowerCase() === 'true';
-              
+
               gr.is_complete = x[i].is_complete.toLowerCase() === 'true';
               gr.is_displayed_today =
                 x[i].is_displayed_today.toLowerCase() === 'true';
@@ -1347,7 +1364,8 @@ export default function Home(props) {
               gr.title = x[i].gr_title;
               // console.log('X', x);
               // console.log(gr.title, gr.is_sublist_available);
-              var goalDate = new Date(gr.end_day_and_time);
+              var goalDate = new Date(gr.end_day_and_time.replace(/-/g, '/'));
+              console.log(goalDate);
               //For Today Goals and Routines
               let startOfDay = moment(goalDate);
               let endOfDay = moment(goalDate);
@@ -1374,8 +1392,8 @@ export default function Home(props) {
               let endDate = new Date(endDay.format('MM/DD/YYYY'));
               startDate.setHours(0, 0, 0);
               endDate.setHours(23, 59, 59);
-              // console.log(startDate);
-              // console.log(endDate);
+              //console.log(startDate);
+              //console.log(endDate);
 
               //For Months Goals and Routines
               let startMonth = moment(goalDate);
@@ -1474,7 +1492,6 @@ export default function Home(props) {
                 //   goal.push(gr);
                 // }
               }
-            
             }
 
             setStateValue((prevState) => {
@@ -1491,11 +1508,11 @@ export default function Home(props) {
             setEditingRTS({
               ...editingRTS,
               gr_array: gr_array,
-            })
+            });
             setEditingATS({
               ...editingATS,
               gr_array: gr_array,
-            })
+            });
           } else {
             setStateValue((prevState) => {
               return {
@@ -1516,7 +1533,7 @@ export default function Home(props) {
         .catch((error) => {
           console.log('Error in getting goals and routines ' + error);
         });
-    }, [userID,  editingRTS.editing, editingATS.editing, editingIS.editing]);
+    }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
 
   const updateFBGR = () => {
@@ -1527,222 +1544,243 @@ export default function Home(props) {
     // }, []);
   };
 
-  function ToggleShowAbout(){
-    history.push("/about")
+  function ToggleShowAbout() {
+    history.push('/about');
   }
   // if (loginContext.loginState.loggedIn == false) {
   //   history.push('/')
   // }
 
   if (
-    document.cookie
-      .split(";")
-      .some(item => item.trim().startsWith("ta_uid="))
-  ) {} else {
-    history.push('/')
+    document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
+  ) {
+  } else {
+    history.push('/');
   }
 
   let startWeek = '';
   /*----------------------------return()----------------------------*/
-  if(stateValue.dateContext != undefined){
-  let startObject = stateValue.dateContext;
-  startWeek = startObject.startOf('week');
+  if (stateValue.dateContext != undefined) {
+    let startObject = stateValue.dateContext;
+    startWeek = startObject.startOf('week');
   }
-  console.log('stateValue', stateValue)
-  
+  console.log('stateValue', stateValue);
+
   return (
     // console.log('home routines', stateValue.routines),
     /*----------------------------button
         selection----------------------------*/
     <div>
       {/* <Navigation userID= {stateValue.currentUserId}/> */}
-      <div style={{height: '3px'}}></div>
+      <div style={{ height: '3px' }}></div>
       <EditRTSContext.Provider
         value={{
           editingRTS: editingRTS,
           setEditingRTS: setEditingRTS,
         }}
       >
-      <EditATSContext.Provider
-        value={{
-          editingATS: editingATS,
-          setEditingATS: setEditingATS
-        }}
-      >
-         <EditISContext.Provider
-        value={{
-          editingIS: editingIS,
-          setEditingIS: setEditingIS
-        }}
-      >
-      <userContext.Provider
-        value={
-          (stateValue.itemToEdit,
-          stateValue.routines,
-          stateValue.originalGoalsAndRoutineArr,
-          stateValue.showRoutineModal,
-          stateValue.itemToEdit.is_available ,
-          stateValue.itemToEdit.is_complete,
-          stateValue.addNewGRModalShow,
-          stateValue.dateContext,
-          stateValue.closeRoutine,
-          GrabFireBaseRoutinesGoalsData(),
-          stateValue.BASE_URL)
-        }
-      >
-        
-        <Box backgroundColor="#bbc8d7">
-          <div style={{width: '30%', float: 'left'}}>
-            <Button className={classes.buttonSelection} id="one" onClick={()=> history.push("/history") }>
-              History
-            </Button>
-            <Button className={classes.buttonSelection} id="one" onClick={ToggleShowAbout}>
-              About
-            </Button>
-            <Button className={classes.buttonSelection} id="one">
-              Events
-            </Button>
-            <Button className={classes.buttonSelection} onClick={()=> history.push("/main") } id="one">
-              Goals
-            </Button>
-            <Button
-              className={classes.buttonSelection}
-              onClick={toggleShowRoutine}
-              id="one"
+        <EditATSContext.Provider
+          value={{
+            editingATS: editingATS,
+            setEditingATS: setEditingATS,
+          }}
+        >
+          <EditISContext.Provider
+            value={{
+              editingIS: editingIS,
+              setEditingIS: setEditingIS,
+            }}
+          >
+            <userContext.Provider
+              value={
+                (stateValue.itemToEdit,
+                stateValue.routines,
+                stateValue.originalGoalsAndRoutineArr,
+                stateValue.showRoutineModal,
+                stateValue.itemToEdit.is_available,
+                stateValue.itemToEdit.is_complete,
+                stateValue.addNewGRModalShow,
+                stateValue.dateContext,
+                stateValue.closeRoutine,
+                GrabFireBaseRoutinesGoalsData(),
+                stateValue.BASE_URL)
+              }
             >
-              Routines
-            </Button>
+              <Box backgroundColor="#bbc8d7">
+                <div style={{ width: '30%', float: 'left' }}>
+                  <Button
+                    className={classes.buttonSelection}
+                    id="one"
+                    onClick={() => history.push('/history')}
+                  >
+                    History
+                  </Button>
+                  <Button
+                    className={classes.buttonSelection}
+                    id="one"
+                    onClick={ToggleShowAbout}
+                  >
+                    About
+                  </Button>
+                  <Button className={classes.buttonSelection} id="one">
+                    Events
+                  </Button>
+                  <Button
+                    className={classes.buttonSelection}
+                    onClick={() => history.push('/main')}
+                    id="one"
+                  >
+                    Goals
+                  </Button>
+                  <Button
+                    className={classes.buttonSelection}
+                    onClick={toggleShowRoutine}
+                    id="one"
+                  >
+                    Routines
+                  </Button>
 
-            
-            
-            {stateValue.showRoutineModal ? (
-              <Button 
-                className={classes.buttonSelection}
-                style={{width: '20%', marginLeft: '2.5%', marginRight: '2.5%'}} 
-                id="one"
-                onClick={() => {
-                  // e.stopPropagation()
-                  console.log('Clicked add RTS')
-                  //console.log(editingRTS)
-                  setEditingRTS(newRTSState)
-                  //console.log(editingRTS)
-                }}
-              >
-                Add Routine +
-              </Button>
-            ) : (
-              <div style = {{width: '20%', marginLeft: '2.5%', marginRight: '2.5%'}}>
+                  {stateValue.showRoutineModal ? (
+                    <Button
+                      className={classes.buttonSelection}
+                      style={{
+                        width: '20%',
+                        marginLeft: '2.5%',
+                        marginRight: '2.5%',
+                      }}
+                      id="one"
+                      onClick={() => {
+                        // e.stopPropagation()
+                        console.log('Clicked add RTS');
+                        //console.log(editingRTS)
+                        setEditingRTS(newRTSState);
+                        //console.log(editingRTS)
+                      }}
+                    >
+                      Add Routine +
+                    </Button>
+                  ) : (
+                    <div
+                      style={{
+                        width: '20%',
+                        marginLeft: '2.5%',
+                        marginRight: '2.5%',
+                      }}
+                    ></div>
+                  )}
 
-              </div>
-            )}
-
-            <div style={{flex:'1'}}>
-                {userID != '' && (
-                  <FirebaseV2
-                  theCurrentUserID={userID}
-                  sethighLight = {setHightlight}
-                  highLight = {hightlight}
-                  setATS = {setEditingATS}
-                  newATS = {newEditingATSState}
-                  rID = {routineID}
-                  setrID = {setRoutineID}
-                  newIS = {newEditingISState}
-                  setIS = {setEditingIS}
-                  aID = {actionID}
-                  setaID = {setActionID}
-                  editRTS = { editingRTS.editing}
-                  editATS = {editingATS.editing}
-                  editIS = {editingIS.editing}
-                  updateGetHistory = {updategetHistoryOnClick}
-                  />
-                )}
-              </div>
-              {/* <div style={{flex:'2'}}
+                  <div style={{ flex: '1' }}>
+                    {userID != '' && (
+                      <FirebaseV2
+                        theCurrentUserID={userID}
+                        sethighLight={setHightlight}
+                        highLight={hightlight}
+                        setATS={setEditingATS}
+                        newATS={newEditingATSState}
+                        rID={routineID}
+                        setrID={setRoutineID}
+                        newIS={newEditingISState}
+                        setIS={setEditingIS}
+                        aID={actionID}
+                        setaID={setActionID}
+                        editRTS={editingRTS.editing}
+                        editATS={editingATS.editing}
+                        editIS={editingIS.editing}
+                        updateGetHistory={updategetHistoryOnClick}
+                      />
+                    )}
+                  </div>
+                  {/* <div style={{flex:'2'}}
               >
                {editingIS.editing ? <EditIS/> : editingATS.editing ? <EditATS/> : editingRTS.editing ? <EditRTS /> : showCalendarView()}
            
               </div> */}
-          </div>
-          <div style={{width: '70%', float: 'left'}}>
-          {editingRTS.editing
-          ?
-          (
-          null
-          )
-          :
-
-          (<Box
-              bgcolor="#889AB5"
-              className={classes.dateContainer}
-              style={{width: '100%'}}
-              //style={{ width: '100%', marginTop:'1rem' }}
-              // flex
-            >
-              <Container style={{width: '100%'}}>
-                <Row style={{ marginTop: '0px', width: '100%' }}>
-                  <Col style={{width: '10%'}}>
-                    <div>
-                      <FontAwesomeIcon
-                        // style={{ marginLeft: "50%" }}
-
-                        icon={faChevronLeft}
-                        size="2x"
-                        onClick={(e) => {
-                          prevWeek();
-                        }}
-                      />
-                    </div>
-                  </Col>
-                  <Col
-                    md="auto"
-                    style={{ textAlign: 'center', width: '80%' }}
-                    className="bigfancytext"
-                  >
-                    <p> Week of {startWeek.format('D MMMM YYYY')} </p>
-                    <p  
-                      style={{ marginBottom: '0', height: '19.5px' }}
-                      className="normalfancytext"
+                </div>
+                <div style={{ width: '70%', float: 'left' }}>
+                  {editingRTS.editing ? null : (
+                    <Box
+                      bgcolor="#889AB5"
+                      className={classes.dateContainer}
+                      style={{ width: '100%' }}
+                      //style={{ width: '100%', marginTop:'1rem' }}
+                      // flex
                     >
-                      {stateValue.currentUserTimeZone}
-                    </p>
-                  </Col>
-                  <Col style={{width: '10%', textAlign: 'right'}}>
-                    <FontAwesomeIcon
-                      // style={{ marginLeft: "50%" }}
-                      style={{ float: 'right' }}
-                      icon={faChevronRight}
-                      size="2x"
-                      className="X"
-                      onClick={(e) => {
-                        nextWeek();
-                      }}
-                    />
-                  </Col>
-                </Row>
-              </Container>
-              
-            </Box>)}
+                      <Container style={{ width: '100%' }}>
+                        <Row style={{ marginTop: '0px', width: '100%' }}>
+                          <Col style={{ width: '10%' }}>
+                            <div>
+                              <FontAwesomeIcon
+                                // style={{ marginLeft: "50%" }}
 
-            <div style={{width: '100%'}}
-              >
-               {editingIS.editing ? <EditIS  actionID= {actionID} CurrentId={userID}
-                 updateGetHistory = {updategetHistoryOnClick}
-                 setUpdateGetHistory = {setUpdateGetHistoryOnClick} /> : 
-               editingATS.editing ? <EditATS routineID ={routineID}  CurrentId={userID} 
-               updateGetHistory = {updategetHistoryOnClick}
-               setUpdateGetHistory = {setUpdateGetHistoryOnClick} /> :
-                editingRTS.editing ? <EditRTS CurrentId={userID} ta_ID={selectedUser}  
-                updateGetHistory = {updategetHistoryOnClick}
-                 setUpdateGetHistory = {setUpdateGetHistoryOnClick} /> :
-                  showCalendarView()}
-           
-              </div>
-          </div>
-          
-        </Box>
-        {/* {console.log('Home showRoutineModal', stateValue.showRoutineModal)} */}
-        {/* ----------------------------... Navigation--------------------------- */}
-        {/* <div>
+                                icon={faChevronLeft}
+                                size="2x"
+                                onClick={(e) => {
+                                  prevWeek();
+                                }}
+                              />
+                            </div>
+                          </Col>
+                          <Col
+                            md="auto"
+                            style={{ textAlign: 'center', width: '80%' }}
+                            className="bigfancytext"
+                          >
+                            <p> Week of {startWeek.format('D MMMM YYYY')} </p>
+                            <p
+                              style={{ marginBottom: '0', height: '19.5px' }}
+                              className="normalfancytext"
+                            >
+                              {stateValue.currentUserTimeZone}
+                            </p>
+                          </Col>
+                          <Col style={{ width: '10%', textAlign: 'right' }}>
+                            <FontAwesomeIcon
+                              // style={{ marginLeft: "50%" }}
+                              style={{ float: 'right' }}
+                              icon={faChevronRight}
+                              size="2x"
+                              className="X"
+                              onClick={(e) => {
+                                nextWeek();
+                              }}
+                            />
+                          </Col>
+                        </Row>
+                      </Container>
+                    </Box>
+                  )}
+
+                  <div style={{ width: '100%' }}>
+                    {editingIS.editing ? (
+                      <EditIS
+                        actionID={actionID}
+                        CurrentId={userID}
+                        updateGetHistory={updategetHistoryOnClick}
+                        setUpdateGetHistory={setUpdateGetHistoryOnClick}
+                      />
+                    ) : editingATS.editing ? (
+                      <EditATS
+                        routineID={routineID}
+                        CurrentId={userID}
+                        updateGetHistory={updategetHistoryOnClick}
+                        setUpdateGetHistory={setUpdateGetHistoryOnClick}
+                      />
+                    ) : editingRTS.editing ? (
+                      <EditRTS
+                        CurrentId={userID}
+                        ta_ID={selectedUser}
+                        updateGetHistory={updategetHistoryOnClick}
+                        setUpdateGetHistory={setUpdateGetHistoryOnClick}
+                      />
+                    ) : (
+                      showCalendarView()
+                    )}
+                  </div>
+                </div>
+              </Box>
+              {/* {console.log('Home showRoutineModal', stateValue.showRoutineModal)} */}
+              {/* ----------------------------... Navigation--------------------------- */}
+              {/* <div>
     //   <userContext.Provider>
     //     value=
     //     {{
@@ -1751,11 +1789,10 @@ export default function Home(props) {
     //     }}
     //   </userContext.Provider>
     // </div> */}
-        {/* ---------------------------- Navigation--------------------------- */}
-        
-      </userContext.Provider>
-      </EditISContext.Provider>
-      </EditATSContext.Provider>
+              {/* ---------------------------- Navigation--------------------------- */}
+            </userContext.Provider>
+          </EditISContext.Provider>
+        </EditATSContext.Provider>
       </EditRTSContext.Provider>
     </div>
   );

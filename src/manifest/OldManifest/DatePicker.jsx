@@ -67,6 +67,7 @@ export default class DatePicker extends React.Component {
     return (
       <form>
         <TextField
+          style={{ backgroundColor: '#ffffff' }}
           id={this.props.id}
           type="datetime-local"
           onChange={this.handleChange}

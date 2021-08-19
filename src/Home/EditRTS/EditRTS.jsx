@@ -7,29 +7,31 @@ import AddIconModal from '../AddIconModal';
 import UploadImage from '../UploadImage';
 
 const EditRTS = (props) => {
-
-
   const editingRTSContext = useContext(EditRTSContext);
 
-  const [photo, setPhoto] = useState(editingRTSContext.editingRTS.newItem.gr_photo)
-  const [showUploadImage, toggleUploadImage] = useState(false)
-  const [image, setImage] = useState(null)
-  const [imageName, setImageName] = useState('')
-  const [imageURL, setImageURL] = useState('')
+  const [photo, setPhoto] = useState(
+    editingRTSContext.editingRTS.newItem.gr_photo
+  );
+  const [showUploadImage, toggleUploadImage] = useState(false);
+  const [image, setImage] = useState(null);
+  const [imageName, setImageName] = useState('');
+  const [imageURL, setImageURL] = useState('');
 
-
-  console.log("Repeat",editingRTSContext.editingRTS.newItem.repeat)
+  console.log('Repeat', editingRTSContext.editingRTS.newItem.repeat);
   const updateRTS = (e) => {
     editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing
     props.setUpdateGetHistory(!props.updateGetHistory)
     e.stopPropagation()
     let object = {...editingRTSContext.editingRTS.newItem};
-  //  console.log("time", props.routineID.start_day)
+    console.log("updaterts object", object)
     // Get start_day_and_time
     const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
-    const start_day_and_time_string = new Date(start_day_and_time_simple_string).toString();
-    const convertedStartTime =  moment(start_day_and_time_string).format('LTS')
-    object.start_day_and_time = `${object.start_day}` + ' ' + convertedStartTime; //start_day_and_time_string;
+    //const start_day_and_time_string = new Date(start_day_and_time_simple_string).toString();
+    const convertedStartTime = moment(start_day_and_time_simple_string).format(
+      'LTS'
+    );
+    object.start_day_and_time =
+      `${object.start_day}` + ' ' + convertedStartTime; //start_day_and_time_string;
     delete object.start_day;
     delete object.start_time;
     object.title = object.gr_title;
@@ -43,12 +45,18 @@ const EditRTS = (props) => {
     //object.id = Number(object.id);
     delete object.location;
     delete object.notification;
-    object.is_available = "True"
+    object.is_available = 'True';
     // Get end_day_and_time
     const end_day_and_time_simple_string = `${object.end_day} ${object.end_time}:00`;
-    const end_day_and_time_string = new Date(end_day_and_time_simple_string).toString();
-    const convertedEndTime =  moment(end_day_and_time_string).format('LTS')
-    object.end_day_and_time = `${object.end_day}`+' '+convertedEndTime;
+
+    console.log('end day', object.end_day);
+    console.log('end time', object.end_time);
+    //const end_day_and_time_string = new Date(end_day_and_time_simple_string).toString();
+    const convertedEndTime = moment(end_day_and_time_simple_string).format(
+      'LTS'
+    );
+    console.log('convertedEndTime', convertedEndTime);
+    object.end_day_and_time = `${object.end_day}` + ' ' + convertedEndTime;
     delete object.end_day;
     delete object.end_time;
     // Get expected_completion_time
@@ -59,11 +67,18 @@ const EditRTS = (props) => {
     object.expected_completion_time = `${numMins}:00`;
     delete object.numMins;
     object.id = editingRTSContext.editingRTS.id;
-    object.user_id = props. CurrentId // editingRTSContext.editingRTS.currentUserId;
+    object.user_id = props.CurrentId; // editingRTSContext.editingRTS.currentUserId;
     object.ta_people_id = props.ta_ID;
+    delete object.photo
+    // if (image != null) {
+    //   console.log('trying to upload',image)
+    //   object.photo = image
+    //   object.photo_url = null
+    // }
+    
     console.log("obj",object);
     let formData = new FormData();
-    Object.entries(object).forEach(entry => {
+    Object.entries(object).forEach((entry) => {
       // if (typeof entry[1].name == 'string'){
       if (typeof entry[1] == 'string'){
           formData.append(entry[0], entry[1]);
@@ -76,82 +91,90 @@ const EditRTS = (props) => {
       else{
           formData.append(entry[0], entry[1]);
       }
-  });
-  for(var pair of formData.entries()) {
-    console.log(pair[0]+ ', '+ pair[1]);
-  }
-  console.log('object.id') 
-  console.log(object.id)
-  if (object.id != '') {
-    console.log('updateGR')
-    axios
-    .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateGR', formData)
-    .then((_) => {
-      console.log('editrts', _)
-      const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
-      const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
-      new_gr_array[gr_array_index] = object;
-      editingRTSContext.setEditingRTS({
-        ...editingRTSContext.editingRTS,
-        gr_array: new_gr_array,
-        editing: false
+    });
+    console.log('image', image)
+    formData.append('photo', image)
+
+    console.log('formData')
+    for(var pair of formData.entries()) {
+      console.log(pair[0]+ ', '+ pair[1]);
+    }
+    console.log('object.id') 
+    console.log(object.id)
+    if (object.id != '') {
+      console.log('updateGR')
+      axios
+      .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateGR', formData)
+      .then((_) => {
+        console.log('editrts', _)
+        const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
+        const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
+        new_gr_array[gr_array_index] = object;
+        editingRTSContext.setEditingRTS({
+          ...editingRTSContext.editingRTS,
+          gr_array: new_gr_array,
+          editing: false
+        })
       })
-    })
-    .catch((err) => {
-      if(err.response) {
-        console.log(err.response);
-      }
-      console.log(err)
-    })
-  } else {
-    console.log('addGR')
-    axios
-    .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/addGR', formData)
-    .then((_) => {
-      console.log(_)
-      const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
-      const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
-   //   new_gr_array[gr_array_index] = object;
-      editingRTSContext.setEditingRTS({
-        ...editingRTSContext.editingRTS,
-      //  gr_array: new_gr_array,
-        editing: false
+      .catch((err) => {
+        if(err.response) {
+          console.log(err.response);
+        }
+        console.log(err)
       })
-    })
-    .catch((err) => {
-      if(err.response) {
-        console.log(err.response);
-      }
-      console.log(err)
-    })
-  }
-  // editingRTSContext.setEditingRTS({
-  //   ...editingRTSContext.editingRTS,
-  //   editing: false
-  // })
-  }
+    } else {
+      console.log('addGR')
+      axios
+      .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/addGR', formData)
+      .then((_) => {
+        console.log(_)
+        const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
+        const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
+    //   new_gr_array[gr_array_index] = object;
+        editingRTSContext.setEditingRTS({
+          ...editingRTSContext.editingRTS,
+        //  gr_array: new_gr_array,
+          editing: false
+        })
+      })
+      .catch((err) => {
+        if(err.response) {
+          console.log(err.response);
+        }
+      });
+    }
+    // editingRTSContext.setEditingRTS({
+    //   ...editingRTSContext.editingRTS,
+    //   editing: false
+    // })
+  };
 
   const uploadImageModal = () => {
     return (
-      <Modal show={showUploadImage} onHide={() => {toggleUploadImage(false)}}>
+      <Modal
+        show={showUploadImage}
+        onHide={() => {
+          toggleUploadImage(false);
+        }}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Upload Image</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
           <div>Upload Image</div>
-          <input type="file" 
-            onChange={
-              (e) => {
-                if (e.target.files[0]) {
-                  const image1 = e.target.files[0];
-                  console.log(image1.name);
-                  setImage(image1)
-                }
+          <input
+            type="file"
+            onChange={(e) => {
+              if (e.target.files[0]) {
+                const image1 = e.target.files[0];
+                console.log(image1.name);
+                setImage(image1);
               }
-            }
+            }}
           />
-          <Button variant="dark" 
+          <Button
+            variant="dark"
             onClick={() => {
               if (image === null) {
                 alert('Please select an image to upload');
@@ -160,17 +183,22 @@ const EditRTS = (props) => {
               const salt = Math.floor(Math.random() * 9999999999);
               let image_name = image.name;
               image_name = image_name + salt.toString();
-              setImageName(image_name)
+              setImageName(image_name);
               setImageURL(URL.createObjectURL(image))
-
+              editingRTSContext.setEditingRTS({
+                ...editingRTSContext.editingRTS,
+                newItem: {
+                  ...editingRTSContext.editingRTS.newItem,
+                  photo: image,
+                  photo_url: ''
+                }
+              });
             }}
           >
             Upload
           </Button>
           <img
-            src={
-              imageURL || 'http://via.placeholder.com/400x300'
-            }
+            src={imageURL || 'http://via.placeholder.com/400x300'}
             alt="Uploaded images"
             height="300"
             width="400"
@@ -178,25 +206,27 @@ const EditRTS = (props) => {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="secondary" 
+          <Button
+            variant="secondary"
             onClick={() => {
-              toggleUploadImage(false)
+              toggleUploadImage(false);
             }}
           >
             Close
           </Button>
-          <Button variant="primary" 
+          <Button
+            variant="primary"
             onClick={() => {
-              setPhoto(imageURL)
-              toggleUploadImage(false)
+              setPhoto(imageURL);
+              toggleUploadImage(false);
             }}
           >
             Confirm
           </Button>
         </Modal.Footer>
       </Modal>
-    )
-  }
+    );
+  };
 
   return (
     <div
@@ -206,7 +236,7 @@ const EditRTS = (props) => {
         //marginRight: '3rem',
         width: '90%',
         backgroundColor: '#F57045',
-        color: '#ffffff'
+        color: '#ffffff',
       }}
     >
       {uploadImageModal()}
@@ -214,12 +244,14 @@ const EditRTS = (props) => {
         style={{
           paddingLeft: '1rem',
           paddingTop: '1rem',
-          
-          width: '100%'
+
+          width: '100%',
         }}
       >
-        <Col style={{ float: 'left', width: '30%'}}>
-        <div style={{fontWeight: 'bold', fontSize: '20px'}}>Routine Name </div>
+        <Col style={{ float: 'left', width: '30%' }}>
+          <div style={{ fontWeight: 'bold', fontSize: '20px' }}>
+            Routine Name{' '}
+          </div>
           <input
             style={{
               borderRadius: '10px',
@@ -227,7 +259,7 @@ const EditRTS = (props) => {
               width: '100%',
               marginTop: '20px',
               fontSize: '12px',
-              fontWeight: 'bold'
+              fontWeight: 'bold',
             }}
             value={editingRTSContext.editingRTS.newItem.gr_title}
             onChange={(e) => {
@@ -235,44 +267,63 @@ const EditRTS = (props) => {
                 ...editingRTSContext.editingRTS,
                 newItem: {
                   ...editingRTSContext.editingRTS.newItem,
-                  gr_title: e.target.value
-                  
-                }
-              })
+                  gr_title: e.target.value,
+                },
+              });
             }}
           />
 
-        <div style={{fontWeight: 'bold', fontSize: '20px', marginTop: '20px', marginBottom: '20px'}}>Change Icon</div>
-          
+          <div
+            style={{
+              fontWeight: 'bold',
+              fontSize: '20px',
+              marginTop: '20px',
+              marginBottom: '20px',
+            }}
+          >
+            Change Icon
+          </div>
+
           <Row>
-            <Col style={{width: '100%', float: 'left', fontSize: '14px',textAlign:'center', textDecoration: 'underline'}}>
-              <div onClick={() => {
-                toggleUploadImage(!showUploadImage)
-              }}>Add icon to library</div>
+            <Col
+              style={{
+                width: '100%',
+                float: 'left',
+                fontSize: '14px',
+                textAlign: 'center',
+                textDecoration: 'underline',
+              }}
+            >
+              <div
+                onClick={() => {
+                  toggleUploadImage(!showUploadImage);
+                }}
+              >
+                Add icon to library
+              </div>
               <AddIconModal
-              photoUrl = {photo}
-              setPhotoUrl = {setPhoto}
-            //  BASE_URL={props.BASE_URL}
-            //  parentFunction={setPhotoURLFunction}
-            />
+                photoUrl={photo}
+                setPhotoUrl={setPhoto}
+                //  BASE_URL={props.BASE_URL}
+                //  parentFunction={setPhotoURLFunction}
+              />
               {/* <div>Use icon from library</div> */}
               {/* <div>User's library</div> */}
               <UploadImage
-            //  BASE_URL={props.BASE_URL}
-            //  parentFunction={setPhotoURLFunction}
-            photoUrl = {photo}
-            setPhotoUrl = {setPhoto}
-              currentUserId={ editingRTSContext.editingRTS.currentUserId}
-            />
+                //  BASE_URL={props.BASE_URL}
+                //  parentFunction={setPhotoURLFunction}
+                photoUrl={photo}
+                setPhotoUrl={setPhoto}
+                currentUserId={editingRTSContext.editingRTS.currentUserId}
+              />
             </Col>
-            <Col style={{ float: 'right'}}>
-          
-              <img alt='icon' src={photo} style={{width: "100%"}}/>
+            <Col style={{ float: 'right' }}>
+              <img alt="icon" src={photo} style={{ width: '100%' }} />
             </Col>
           </Row>
-          
-          <div style={{fontWeight: 'bold', fontSize: '20px'}}>Start Time</div>
-            <Container>
+
+          <div style={{ fontWeight: 'bold', fontSize: '20px' }}>Start Time</div>
+          <Container>
             <Row>
               <Col
                 sm={7}
@@ -288,24 +339,22 @@ const EditRTS = (props) => {
                     border: 'none',
                     height: '26px',
                     fontSize: '12px',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
                   }}
-                  type='date'
+                  type="date"
                   value={editingRTSContext.editingRTS.newItem.start_day}
                   onChange={(e) => {
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {
                         ...editingRTSContext.editingRTS.newItem,
-                        start_day: e.target.value
-                      }
-                    })
+                        start_day: e.target.value,
+                      },
+                    });
                   }}
                 />
               </Col>
-              <Col
-                sm={5}
-              >
+              <Col sm={5}>
                 <input
                   style={{
                     width: '100%',
@@ -313,48 +362,56 @@ const EditRTS = (props) => {
                     border: 'none',
                     height: '26px',
                     fontSize: '12px',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
                   }}
-                  type='time'
+                  type="time"
                   value={editingRTSContext.editingRTS.newItem.start_time}
                   onChange={(e) => {
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {
                         ...editingRTSContext.editingRTS.newItem,
-                        start_time: e.target.value
-                      }
-                    })
+                        start_time: e.target.value,
+                      },
+                    });
                   }}
                 />
               </Col>
             </Row>
-            </Container>
-            <div style={{fontWeight: 'bold', fontSize: '20px', marginTop: '10px'}}>This Takes Me</div>
-            <div>
-              <input
-                type='number'
-                style={{
-                  borderRadius: '10px',
-                  border: 'none',
-                  fontSize: '12px',
-                  fontWeight: 'bold'
-                }}
-                value={editingRTSContext.editingRTS.newItem.numMins}
-                onChange={(e) => {
-                  editingRTSContext.setEditingRTS({
-                    ...editingRTSContext.editingRTS,
-                    newItem: {
-                      ...editingRTSContext.editingRTS.newItem,
-                      numMins: e.target.value
-                    }
-                  })
-                }}
-              />
-              <span style={{fontSize: '20px'}}> Minutes </span>
-            </div>
-            <div style={{fontWeight: 'bold', fontSize: '20px', marginTop: '10px'}}>End Time</div>
-            <Container>
+          </Container>
+          <div
+            style={{ fontWeight: 'bold', fontSize: '20px', marginTop: '10px' }}
+          >
+            This Takes Me
+          </div>
+          <div>
+            <input
+              type="number"
+              style={{
+                borderRadius: '10px',
+                border: 'none',
+                fontSize: '12px',
+                fontWeight: 'bold',
+              }}
+              value={editingRTSContext.editingRTS.newItem.numMins}
+              onChange={(e) => {
+                editingRTSContext.setEditingRTS({
+                  ...editingRTSContext.editingRTS,
+                  newItem: {
+                    ...editingRTSContext.editingRTS.newItem,
+                    numMins: e.target.value,
+                  },
+                });
+              }}
+            />
+            <span style={{ fontSize: '20px' }}> Minutes </span>
+          </div>
+          <div
+            style={{ fontWeight: 'bold', fontSize: '20px', marginTop: '10px' }}
+          >
+            End Time
+          </div>
+          <Container>
             <Row>
               <Col
                 sm={7}
@@ -370,24 +427,22 @@ const EditRTS = (props) => {
                     border: 'none',
                     height: '26px',
                     fontSize: '12px',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
                   }}
-                  type='date'
+                  type="date"
                   value={editingRTSContext.editingRTS.newItem.end_day}
                   onChange={(e) => {
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {
                         ...editingRTSContext.editingRTS.newItem,
-                        end_day: e.target.value
-                      }
-                    })
+                        end_day: e.target.value,
+                      },
+                    });
                   }}
                 />
               </Col>
-              <Col
-                sm={5}
-              >
+              <Col sm={5}>
                 <input
                   style={{
                     width: '100%',
@@ -395,69 +450,95 @@ const EditRTS = (props) => {
                     border: 'none',
                     height: '26px',
                     fontSize: '12px',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
                   }}
-                  type='time'
+                  type="time"
                   value={editingRTSContext.editingRTS.newItem.end_time}
                   onChange={(e) => {
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {
                         ...editingRTSContext.editingRTS.newItem,
-                        end_time: e.target.value
-                      }
-                    })
+                        end_time: e.target.value,
+                      },
+                    });
                   }}
                 />
               </Col>
             </Row>
-            </Container>
-           
+          </Container>
         </Col>
 
-        <div style={{float: 'left', backgroundColor: 'white', width: '2px', height: '500px', marginLeft:"2.4%", marginRight:"2.4%"}}/>
-        
-        <Col style={{ float: 'left', width: '30%'}}>
-          <Row style={{fontWeight: 'bold', fontSize: '20px'}}>Repeating Options</Row>
+        <div
+          style={{
+            float: 'left',
+            backgroundColor: 'white',
+            width: '2px',
+            height: '500px',
+            marginLeft: '2.4%',
+            marginRight: '2.4%',
+          }}
+        />
 
-            <Row
-              style={{
-                padding: '10px 0 0 0',
-              }}
-            >
-              <Col style={{ margin: '10px 0',}}>
-              <Row style={{marginBottom: '20px', verticalAlign: 'middle', }}>
-                  <div style={{width: '20%', float: 'left', }}></div>
-                  <div style={{width: '80%', float: 'left'}}>
-                    <div style={{width: '100%'}}
-                      onClick={()=>{
-                      
-                        editingRTSContext.setEditingRTS({
-                          ...editingRTSContext.editingRTS,
-                          newItem: {
-                            ...editingRTSContext.editingRTS.newItem,
-                            repeat: !editingRTSContext.editingRTS.newItem.repeat,
-                            repeat_type: ''
-                          }
-                        })
-                        
+        <Col style={{ float: 'left', width: '30%' }}>
+          <Row style={{ fontWeight: 'bold', fontSize: '20px' }}>
+            Repeating Options
+          </Row>
+
+          <Row
+            style={{
+              padding: '10px 0 0 0',
+            }}
+          >
+            <Col style={{ margin: '10px 0' }}>
+              <Row style={{ marginBottom: '20px', verticalAlign: 'middle' }}>
+                <div style={{ width: '20%', float: 'left' }}></div>
+                <div style={{ width: '80%', float: 'left' }}>
+                  <div
+                    style={{ width: '100%' }}
+                    onClick={() => {
+                      editingRTSContext.setEditingRTS({
+                        ...editingRTSContext.editingRTS,
+                        newItem: {
+                          ...editingRTSContext.editingRTS.newItem,
+                          repeat: !editingRTSContext.editingRTS.newItem.repeat,
+                          repeat_type: '',
+                        },
+                      });
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      style={{
+                        width: '10%',
+                        height: '20px',
+                        borderRadius: '10px',
+                        float: 'left',
+                      }}
+                      checked={
+                        editingRTSContext.editingRTS.newItem.repeat ===
+                          'False' ||
+                        editingRTSContext.editingRTS.newItem.repeat === false
+                      }
+                    />
+                    <div
+                      style={{
+                        marginLeft: '2%',
+                        minWidth: '82%',
+                        float: 'left',
                       }}
                     >
-                      <input
-                        type='radio'
-                        style={{width: '10%', height: '20px',
-                            borderRadius: '10px',
-                            float: 'left'}}
-                        checked = {editingRTSContext.editingRTS.newItem.repeat=== 'False' || editingRTSContext.editingRTS.newItem.repeat=== false}
-                      />
-                      <div style={{marginLeft:'2%', minWidth: '82%', float: 'left'}}>Does not repeat</div>
-                      
+                      Does not repeat
                     </div>
                   </div>
-                  
-                  {/* Does not repeat */}
-                  {console.log('repeat value =', editingRTSContext.editingRTS.newItem.repeat)}
-                  {/* {editingRTSContext.editingRTS.newItem.repeat == 'False' ? (
+                </div>
+
+                {/* Does not repeat */}
+                {console.log(
+                  'repeat value =',
+                  editingRTSContext.editingRTS.newItem.repeat
+                )}
+                {/* {editingRTSContext.editingRTS.newItem.repeat == 'False' ? (
                     <input
                     name='repeating'
                     id='repeating'
@@ -497,8 +578,8 @@ const EditRTS = (props) => {
                     }}
                   />
                   )} */}
-                  
-                  {/* <input
+
+                {/* <input
                     name='repeating'
                     type='checkbox'
                     defaultChecked={editingRTSContext.editingRTS.newItem.repeat}
@@ -513,14 +594,26 @@ const EditRTS = (props) => {
                       })
                     }}
                   /> */}
-                </Row>
-                <Row style={{verticalAlign: 'middle'}}>
-                <div style={{float: 'left', marginRight: '8px', display: 'inline-block'}}>
+              </Row>
+              <Row style={{ verticalAlign: 'middle' }}>
+                <div
+                  style={{
+                    float: 'left',
+                    marginRight: '8px',
+                    display: 'inline-block',
+                  }}
+                >
                   Repeat Every
                 </div>
-                <div style={{float: 'left', marginRight: '8px', display: 'inline-block'}}>
-                <input
-                    type='number'
+                <div
+                  style={{
+                    float: 'left',
+                    marginRight: '8px',
+                    display: 'inline-block',
+                  }}
+                >
+                  <input
+                    type="number"
                     style={{
                       width: '60px',
                       margin: '0px 0',
@@ -528,7 +621,7 @@ const EditRTS = (props) => {
                       border: 'none',
                       float: 'left',
                       fontSize: '12px',
-                      fontWeight: 'bold'
+                      fontWeight: 'bold',
                     }}
                     value={editingRTSContext.editingRTS.newItem.repeat_every}
                     onChange={(e) => {
@@ -536,180 +629,233 @@ const EditRTS = (props) => {
                         ...editingRTSContext.editingRTS,
                         newItem: {
                           ...editingRTSContext.editingRTS.newItem,
-                          repeat_every: e.target.value
-                        }
-                      })
+                          repeat_every: e.target.value,
+                        },
+                      });
                     }}
                   />
-
                 </div>
-                
-                <div style={{float: 'left', marginRight: '8px', display: 'inline-block'}}>Days</div>
-                </Row>
-                
-                
-                <Row style={{marginTop: '20px', verticalAlign: 'middle', }}>
-                    <div style={{float: 'left', width: '20%'}}> Ends </div>
-                    <div style={{float: 'left', width: '80%', }}>
-                    
-                    <div style={{verticalAlign: 'middle', width: '100%', height: '30%', marginBottom: '3%'}}>
-                      
-                      
-                      <input
 
-                        name='repeatingEnd'
-                        type='radio'
-                        style={{width: '10%', height: '20px',
-                        borderRadius: '10px',
-                        float: 'left'}}
-                        value='On'
-                        checked={editingRTSContext.editingRTS.newItem.repeat_type === 'On'}
-                        onChange={(e) => {
-                          editingRTSContext.setEditingRTS({
-                            ...editingRTSContext.editingRTS,
-                            newItem: {
-                              ...editingRTSContext.editingRTS.newItem,
-                              repeat_type: e.target.value,
-                              repeat: 'True'
-                            }
-                          })
-                        }}
-                      />
-                      
-                      <div style={{float: 'left', marginLeft:'2%', marginRight: '2%', width: '16%'}}>
-                      On
-                      </div>
+                <div
+                  style={{
+                    float: 'left',
+                    marginRight: '8px',
+                    display: 'inline-block',
+                  }}
+                >
+                  Days
+                </div>
+              </Row>
 
-                      <input
-                        style={{
-                          borderRadius: '10px',
-                          border: 'none',
-                          width: '70%',
-                          float: 'left',
-                          height: '26px',
-                          fontSize: '12px',
-                          fontWeight: 'bold'
-                        }}
-                        type='date'
-                        value={editingRTSContext.editingRTS.newItem.repeat_ends_on}
-                        onChange={(e) => {
-                          editingRTSContext.setEditingRTS({
-                            ...editingRTSContext.editingRTS,
-                            newItem: {
-                              ...editingRTSContext.editingRTS.newItem,
-                              repeat_ends_on: e.target.value
-                            }
-                          })
-                        }}
-                      />
-                      </div>
-                      
-                      <div style={{verticalAlign: 'middle', width: '100%', height: '30%', marginBottom: '3%'}}>
-                        <input
-                          style={{
-                            borderRadius: '10px',
-                            border: 'none',
-                            marginRight: '2%',
-                            float: 'left',
-                            width: '10%', height: '20px',
-                            fontSize: '12px',
-                            fontWeight: 'bold'
-                          }}
-                          name='repeatingEnd'
-                          type='radio'
-
-                          value='Occur'
-                          checked={editingRTSContext.editingRTS.newItem.repeat_type === 'Occur'}
-                          onChange={(e) => {
-                            editingRTSContext.setEditingRTS({
-                              ...editingRTSContext.editingRTS,
-                              newItem: {
-                                ...editingRTSContext.editingRTS.newItem,
-                                repeat_type: e.target.value,
-                                repeat: 'True'
-                              }
-                            })
-                          }}
-                        />
-                        <div style={{float: 'left', width: '20%'}}>After</div>
-                        <input
-                          style={{
-                            width: '20%',
-                            borderRadius: '10px',
-                            border: 'none',
-                            marginLeft:'2%', 
-                            float: 'left',
-                            fontSize: '12px',
-                            fontWeight: 'bold'
-                          }}
-                          type='number'
-                          value={editingRTSContext.editingRTS.newItem.repeat_occurences}
-                          onChange={(e) => {
-                            editingRTSContext.setEditingRTS({
-                              ...editingRTSContext.editingRTS,
-                              newItem: {
-                                ...editingRTSContext.editingRTS.newItem,
-                                repeat_occurences: e.target.value
-                              }
-                            })
-                          }}
-                        />
-                        <div style={{marginLeft: '2%', width:'44%', float: 'left'}}>Occurences</div>
-                      
-                      </div>
-                      <div style={{verticalAlign: 'middle', width: '100%', height: '30%', marginBottom: '3%'}}>
-                        <input
-                          style={{
-                            borderRadius: '10px',
-                            
-                          }}
-                          name='repeatingEnd'
-                          type='radio'
-                          style={{width: '10%', height: '20px', marginRight: '2%', float: 'left'}}
-                          value='Never'
-                          checked={editingRTSContext.editingRTS.newItem.repeat_type === 'Never'}
-                          onChange={(e) => {
-                            editingRTSContext.setEditingRTS({
-                              ...editingRTSContext.editingRTS,
-                              newItem: {
-                                ...editingRTSContext.editingRTS.newItem,
-                                repeat_type: e.target.value,
-                                repeat: 'True'
-                              }
-                            })
-                          }}
-                        />
-                        <div style={{float: 'left', width: '88%'}}>
-                          Never Ends
-                        </div>
-                      
-                      </div>
-                      
-                    </div>
-                    <div style={{marginTop: '40px'}}>
-                    <div style={{fontWeight: 'bold', fontSize: '20px'}}>Location</div>
+              <Row style={{ marginTop: '20px', verticalAlign: 'middle' }}>
+                <div style={{ float: 'left', width: '20%' }}> Ends </div>
+                <div style={{ float: 'left', width: '80%' }}>
+                  <div
+                    style={{
+                      verticalAlign: 'middle',
+                      width: '100%',
+                      height: '30%',
+                      marginBottom: '3%',
+                    }}
+                  >
                     <input
+                      name="repeatingEnd"
+                      type="radio"
                       style={{
-                        margin: '5px 0',
+                        width: '10%',
+                        height: '20px',
                         borderRadius: '10px',
-                        border: 'none',
-                        width: '100%',
-                        fontSize: '12px',
-                        fontWeight: 'bold'
+                        float: 'left',
                       }}
-                      value={editingRTSContext.editingRTS.newItem.location}
+                      value="On"
+                      checked={
+                        editingRTSContext.editingRTS.newItem.repeat_type ===
+                        'On'
+                      }
                       onChange={(e) => {
                         editingRTSContext.setEditingRTS({
                           ...editingRTSContext.editingRTS,
                           newItem: {
                             ...editingRTSContext.editingRTS.newItem,
-                            location: e.target.value
-                          }
-                        })
+                            repeat_type: e.target.value,
+                            repeat: 'True',
+                          },
+                        });
                       }}
                     />
-                    <span> Available to User </span>
-                    {/* <input
+
+                    <div
+                      style={{
+                        float: 'left',
+                        marginLeft: '2%',
+                        marginRight: '2%',
+                        width: '16%',
+                      }}
+                    >
+                      On
+                    </div>
+
+                    <input
+                      style={{
+                        borderRadius: '10px',
+                        border: 'none',
+                        width: '70%',
+                        float: 'left',
+                        height: '26px',
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                      }}
+                      type="date"
+                      value={
+                        editingRTSContext.editingRTS.newItem.repeat_ends_on
+                      }
+                      onChange={(e) => {
+                        editingRTSContext.setEditingRTS({
+                          ...editingRTSContext.editingRTS,
+                          newItem: {
+                            ...editingRTSContext.editingRTS.newItem,
+                            repeat_ends_on: e.target.value,
+                          },
+                        });
+                      }}
+                    />
+                  </div>
+
+                  <div
+                    style={{
+                      verticalAlign: 'middle',
+                      width: '100%',
+                      height: '30%',
+                      marginBottom: '3%',
+                    }}
+                  >
+                    <input
+                      style={{
+                        borderRadius: '10px',
+                        border: 'none',
+                        marginRight: '2%',
+                        float: 'left',
+                        width: '10%',
+                        height: '20px',
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                      }}
+                      name="repeatingEnd"
+                      type="radio"
+                      value="Occur"
+                      checked={
+                        editingRTSContext.editingRTS.newItem.repeat_type ===
+                        'Occur'
+                      }
+                      onChange={(e) => {
+                        editingRTSContext.setEditingRTS({
+                          ...editingRTSContext.editingRTS,
+                          newItem: {
+                            ...editingRTSContext.editingRTS.newItem,
+                            repeat_type: e.target.value,
+                            repeat: 'True',
+                          },
+                        });
+                      }}
+                    />
+                    <div style={{ float: 'left', width: '20%' }}>After</div>
+                    <input
+                      style={{
+                        width: '20%',
+                        borderRadius: '10px',
+                        border: 'none',
+                        marginLeft: '2%',
+                        float: 'left',
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                      }}
+                      type="number"
+                      value={
+                        editingRTSContext.editingRTS.newItem.repeat_occurences
+                      }
+                      onChange={(e) => {
+                        editingRTSContext.setEditingRTS({
+                          ...editingRTSContext.editingRTS,
+                          newItem: {
+                            ...editingRTSContext.editingRTS.newItem,
+                            repeat_occurences: e.target.value,
+                          },
+                        });
+                      }}
+                    />
+                    <div
+                      style={{ marginLeft: '2%', width: '44%', float: 'left' }}
+                    >
+                      Occurences
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      verticalAlign: 'middle',
+                      width: '100%',
+                      height: '30%',
+                      marginBottom: '3%',
+                    }}
+                  >
+                    <input
+                      style={{
+                        borderRadius: '10px',
+                      }}
+                      name="repeatingEnd"
+                      type="radio"
+                      style={{
+                        width: '10%',
+                        height: '20px',
+                        marginRight: '2%',
+                        float: 'left',
+                      }}
+                      value="Never"
+                      checked={
+                        editingRTSContext.editingRTS.newItem.repeat_type ===
+                        'Never'
+                      }
+                      onChange={(e) => {
+                        editingRTSContext.setEditingRTS({
+                          ...editingRTSContext.editingRTS,
+                          newItem: {
+                            ...editingRTSContext.editingRTS.newItem,
+                            repeat_type: e.target.value,
+                            repeat: 'True',
+                          },
+                        });
+                      }}
+                    />
+                    <div style={{ float: 'left', width: '88%' }}>
+                      Never Ends
+                    </div>
+                  </div>
+                </div>
+                <div style={{ marginTop: '40px' }}>
+                  <div style={{ fontWeight: 'bold', fontSize: '20px' }}>
+                    Location
+                  </div>
+                  <input
+                    style={{
+                      margin: '5px 0',
+                      borderRadius: '10px',
+                      border: 'none',
+                      width: '100%',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                    }}
+                    value={editingRTSContext.editingRTS.newItem.location}
+                    onChange={(e) => {
+                      editingRTSContext.setEditingRTS({
+                        ...editingRTSContext.editingRTS,
+                        newItem: {
+                          ...editingRTSContext.editingRTS.newItem,
+                          location: e.target.value,
+                        },
+                      });
+                    }}
+                  />
+                  <span> Available to User </span>
+                  {/* <input
                       type='checkbox'
                       style={{width: '20px', height: '20px'}}
                       checked={editingRTSContext.editingRTS.newItem.is_available}
@@ -723,572 +869,647 @@ const EditRTS = (props) => {
                         })
                       }}
                     /> */}
-                    {editingRTSContext.editingRTS.newItem.is_available == 'True' ? (
-                      <input
-                        type='checkbox'
-                        style={{width:'20px', height: '20px'}}
-                        defaultChecked = 'true'
-                        onChange={(e) => {
-                          editingRTSContext.setEditingRTS({
-                            ...editingRTSContext.editingRTS,
-                            newItem: {
-                              ...editingRTSContext.editingRTS.newItem,
-                              is_available: e.target.checked
-                            }
-                          })
-                        }}
-                      />
-                    ) : (
-                      <input
-                        type='checkbox'
-                        style={{width:'20px', height: '20px'}}
-                        
-                        onChange={(e) => {
-                          editingRTSContext.setEditingRTS({
-                            ...editingRTSContext.editingRTS,
-                            newItem: {
-                              ...editingRTSContext.editingRTS.newItem,
-                              is_available: e.target.checked
-                            }
-                          })
-                        }}
-                      />
-                    )}
-                    </div>
-            
-            
-                  </Row>
-                  
-              </Col>
-             
-              
-            </Row>
-            
+                  {editingRTSContext.editingRTS.newItem.is_available ==
+                  'True' ? (
+                    <input
+                      type="checkbox"
+                      style={{ width: '20px', height: '20px' }}
+                      defaultChecked="true"
+                      onChange={(e) => {
+                        editingRTSContext.setEditingRTS({
+                          ...editingRTSContext.editingRTS,
+                          newItem: {
+                            ...editingRTSContext.editingRTS.newItem,
+                            is_available: e.target.checked,
+                          },
+                        });
+                      }}
+                    />
+                  ) : (
+                    <input
+                      type="checkbox"
+                      style={{ width: '20px', height: '20px' }}
+                      onChange={(e) => {
+                        editingRTSContext.setEditingRTS({
+                          ...editingRTSContext.editingRTS,
+                          newItem: {
+                            ...editingRTSContext.editingRTS.newItem,
+                            is_available: e.target.checked,
+                          },
+                        });
+                      }}
+                    />
+                  )}
+                </div>
+              </Row>
+            </Col>
+          </Row>
         </Col>
 
-        <div style={{float: 'left', backgroundColor: 'white', width: '2px', height: '500px', marginLeft:"2.4%", marginRight:"2.4%"}}/>
+        <div
+          style={{
+            float: 'left',
+            backgroundColor: 'white',
+            width: '2px',
+            height: '500px',
+            marginLeft: '2.4%',
+            marginRight: '2.4%',
+          }}
+        />
 
-        <Col style={{ float: 'left', width: '29%'}}>
-          <Row style={{fontWeight: 'bold', fontSize: '20px'}}>Notification</Row>
-            
-            <Row
-              style={{
-                padding: '10px 0 0 0',
-              }}
-            >
-              <Row >
-                <div
+        <Col style={{ float: 'left', width: '29%' }}>
+          <Row style={{ fontWeight: 'bold', fontSize: '20px' }}>
+            Notification
+          </Row>
+
+          <Row
+            style={{
+              padding: '10px 0 0 0',
+            }}
+          >
+            <Row>
+              <div
+                style={{
+                  margin: '10px 0',
+                  marginLeft: '20px',
+                }}
+              >
+                <input
+                  type="number"
                   style={{
-                    margin: '10px 0',
-                    marginLeft: '20px'
+                    width: '60px',
+                    borderRadius: '10px',
+                    border: 'none',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
                   }}
-                >
-                  <input
-                    type='number'
-                    style={{
-                      width: '60px',
-                      borderRadius: '10px',
-                      border: 'none',
-                      fontSize: '12px',
-                      fontWeight: 'bold'
-                    }}
-                    value={editingRTSContext.editingRTS.newItem.ta_notifications.before.time}
-                    onChange={(e) => {
-                      editingRTSContext.setEditingRTS({
-                        ...editingRTSContext.editingRTS,
-                        newItem: {
-                          ...editingRTSContext.editingRTS.newItem,
-                          ta_notifications: {
-                            ...editingRTSContext.editingRTS.newItem.ta_notifications,
-                            before: {
-                              ...editingRTSContext.editingRTS.newItem.ta_notifications.before,
-                              time: e.target.value
-                            }
+                  value={
+                    editingRTSContext.editingRTS.newItem.ta_notifications.before
+                      .time
+                  }
+                  onChange={(e) => {
+                    editingRTSContext.setEditingRTS({
+                      ...editingRTSContext.editingRTS,
+                      newItem: {
+                        ...editingRTSContext.editingRTS.newItem,
+                        ta_notifications: {
+                          ...editingRTSContext.editingRTS.newItem
+                            .ta_notifications,
+                          before: {
+                            ...editingRTSContext.editingRTS.newItem
+                              .ta_notifications.before,
+                            time: e.target.value,
                           },
-                          user_notifications: {
-                            ...editingRTSContext.editingRTS.newItem.user_notifications,
-                            before: {
-                              ...editingRTSContext.editingRTS.newItem.user_notifications.before,
-                              time: e.target.value
-                            }
+                        },
+                        user_notifications: {
+                          ...editingRTSContext.editingRTS.newItem
+                            .user_notifications,
+                          before: {
+                            ...editingRTSContext.editingRTS.newItem
+                              .user_notifications.before,
+                            time: e.target.value,
                           },
-                        }
-                      })
-                    }}
-                  />
-                  &nbsp;
-                  Mins Before Start Time
-                </div>
-                <div
-                  style={{
-                    margin: '10px 0',
-                    marginLeft: '20px'
+                        },
+                      },
+                    });
                   }}
-                >
-                  User
-                  &nbsp;
-                  <input
-                    type='checkbox'
-                    style={{width: '20px', height: '20px'}}
-                    checked={editingRTSContext.editingRTS.newItem.user_notifications.before.is_enabled}
-                    onChange={(e) => {
-                      editingRTSContext.setEditingRTS({
-                        ...editingRTSContext.editingRTS,
-                        newItem: {
-                          ...editingRTSContext.editingRTS.newItem,
-                          user_notifications: {
-                            ...editingRTSContext.editingRTS.newItem.user_notifications,
-                            before: {
-                              ...editingRTSContext.editingRTS.newItem.user_notifications.before,
-                              is_enabled: e.target.checked,
-                              is_set: e.target.checked
-                            }
-                          }
-                        }
-                      })
-                    }}
-                  />
-                  &nbsp;
-                  <input
-                    style={{
-                      borderRadius: '10px',
-                      border: 'none',
-                      fontSize: '12px',
-                      fontWeight: 'bold'
-                    }}
-                    value={editingRTSContext.editingRTS.newItem.user_notifications.before.message}
-                    onChange={(e) => {
-                      editingRTSContext.setEditingRTS({
-                        ...editingRTSContext.editingRTS,
-                        newItem: {
-                          ...editingRTSContext.editingRTS.newItem,
-                          user_notifications: {
-                            ...editingRTSContext.editingRTS.newItem.user_notifications,
-                            before: {
-                              ...editingRTSContext.editingRTS.newItem.user_notifications.before,
-                              message: e.target.value
-                            }
-                          }
-                        }
-                      })
-                    }}
-                  />
-                  </div>
-                <div
-                  style={{
-                    margin: '10px 0',
-                    marginLeft: '20px'
-                  }}
-                >
-                  TA
-                  &nbsp;&nbsp;&nbsp;&nbsp;
-                  <input
-                    type='checkbox'
-                    style={{width: '20px', height: '20px'}}
-                    checked={editingRTSContext.editingRTS.newItem.ta_notifications.before.is_enabled}
-                    onChange={(e) => {
-                      editingRTSContext.setEditingRTS({
-                        ...editingRTSContext.editingRTS,
-                        newItem: {
-                          ...editingRTSContext.editingRTS.newItem,
-                          ta_notifications: {
-                            ...editingRTSContext.editingRTS.newItem.ta_notifications,
-                            before: {
-                              ...editingRTSContext.editingRTS.newItem.ta_notifications.before,
-                              is_enabled: e.target.checked,
-                              is_set: e.target.checked
-                            }
-                          }
-                        }
-                      })
-                    }}
-                  />
-                  &nbsp;
-                  <input
-                    style={{
-                      borderRadius: '10px',
-                      border: 'none',
-                      fontSize: '12px',
-                      fontWeight: 'bold'
-                    }}
-                    value={editingRTSContext.editingRTS.newItem.ta_notifications.before.message}
-                    onChange={(e) => {
-                      editingRTSContext.setEditingRTS({
-                        ...editingRTSContext.editingRTS,
-                        newItem: {
-                          ...editingRTSContext.editingRTS.newItem,
-                          ta_notifications: {
-                            ...editingRTSContext.editingRTS.newItem.ta_notifications,
-                            before: {
-                              ...editingRTSContext.editingRTS.newItem.ta_notifications.before,
-                              message: e.target.value
-                            }
-                          }
-                        }
-                      })
-                    }}
-                  />
-                </div>
-              </Row>
-              <Row >
-                <div
-                  style={{
-                    margin: '10px 0',
-                    marginLeft: '20px'
-                  }}
-                >
-                  <input
-                    type='number'
-                    style={{
-                      width: '60px',
-                      borderRadius: '10px',
-                      border: 'none',
-                      fontSize: '12px',
-                      fontWeight: 'bold'
-                    }}
-                    value={editingRTSContext.editingRTS.newItem.ta_notifications.during.time}
-                    onChange={(e) => {
-                      editingRTSContext.setEditingRTS({
-                        ...editingRTSContext.editingRTS,
-                        newItem: {
-                          ...editingRTSContext.editingRTS.newItem,
-                          ta_notifications: {
-                            ...editingRTSContext.editingRTS.newItem.ta_notifications,
-                            during: {
-                              ...editingRTSContext.editingRTS.newItem.ta_notifications.during,
-                              time: e.target.value
-                            }
+                />
+                &nbsp; Mins Before Start Time
+              </div>
+              <div
+                style={{
+                  margin: '10px 0',
+                  marginLeft: '20px',
+                }}
+              >
+                User &nbsp;
+                <input
+                  type="checkbox"
+                  style={{ width: '20px', height: '20px' }}
+                  checked={
+                    editingRTSContext.editingRTS.newItem.user_notifications
+                      .before.is_enabled
+                  }
+                  onChange={(e) => {
+                    editingRTSContext.setEditingRTS({
+                      ...editingRTSContext.editingRTS,
+                      newItem: {
+                        ...editingRTSContext.editingRTS.newItem,
+                        user_notifications: {
+                          ...editingRTSContext.editingRTS.newItem
+                            .user_notifications,
+                          before: {
+                            ...editingRTSContext.editingRTS.newItem
+                              .user_notifications.before,
+                            is_enabled: e.target.checked,
+                            is_set: e.target.checked,
                           },
-                          user_notifications: {
-                            ...editingRTSContext.editingRTS.newItem.user_notifications,
-                            during: {
-                              ...editingRTSContext.editingRTS.newItem.user_notifications.during,
-                              time: e.target.value
-                            }
+                        },
+                      },
+                    });
+                  }}
+                />
+                &nbsp;
+                <input
+                  style={{
+                    borderRadius: '10px',
+                    border: 'none',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                  }}
+                  value={
+                    editingRTSContext.editingRTS.newItem.user_notifications
+                      .before.message
+                  }
+                  onChange={(e) => {
+                    editingRTSContext.setEditingRTS({
+                      ...editingRTSContext.editingRTS,
+                      newItem: {
+                        ...editingRTSContext.editingRTS.newItem,
+                        user_notifications: {
+                          ...editingRTSContext.editingRTS.newItem
+                            .user_notifications,
+                          before: {
+                            ...editingRTSContext.editingRTS.newItem
+                              .user_notifications.before,
+                            message: e.target.value,
                           },
-                        }
-                      })
-                    }}
-                  />
-                  &nbsp;
-                  Mins After Start Time
-                </div>
-                <div
-                  style={{
-                    margin: '10px 0',
-                    marginLeft: '20px'
+                        },
+                      },
+                    });
                   }}
-                >
-                  User
-                  &nbsp;
-                  <input
-                    type='checkbox'
-                    style={{width: '20px', height: '20px'}}
-                    checked={editingRTSContext.editingRTS.newItem.user_notifications.during.is_enabled}
-                    onChange={(e) => {
-                      editingRTSContext.setEditingRTS({
-                        ...editingRTSContext.editingRTS,
-                        newItem: {
-                          ...editingRTSContext.editingRTS.newItem,
-                          user_notifications: {
-                            ...editingRTSContext.editingRTS.newItem.user_notifications,
-                            during: {
-                              ...editingRTSContext.editingRTS.newItem.user_notifications.during,
-                              is_enabled: e.target.checked,
-                              is_set: e.target.checked
-                            }
-                          }
-                        }
-                      })
-                    }}
-                  />
-                  &nbsp;
-                  <input
-                    style={{
-                      borderRadius: '10px',
-                      border: 'none',
-                      fontSize: '12px',
-                      fontWeight: 'bold'
-                    }}
-                    value={editingRTSContext.editingRTS.newItem.user_notifications.during.message}
-                    onChange={(e) => {
-                      editingRTSContext.setEditingRTS({
-                        ...editingRTSContext.editingRTS,
-                        newItem: {
-                          ...editingRTSContext.editingRTS.newItem,
-                          user_notifications: {
-                            ...editingRTSContext.editingRTS.newItem.user_notifications,
-                            during: {
-                              ...editingRTSContext.editingRTS.newItem.user_notifications.during,
-                              message: e.target.value
-                            }
-                          }
-                        }
-                      })
-                    }}
-                  />
-                </div>
-                <div
-                  style={{
-                    margin: '10px 0',
-                    marginLeft: '20px'
-                  }}
-                >
-                  TA
-                  &nbsp;&nbsp;&nbsp;&nbsp;
-                  <input
-                    type='checkbox'
-                    style={{width: '20px', height: '20px'}}
-                    checked={editingRTSContext.editingRTS.newItem.ta_notifications.during.is_enabled}
-                    onChange={(e) => {
-                      editingRTSContext.setEditingRTS({
-                        ...editingRTSContext.editingRTS,
-                        newItem: {
-                          ...editingRTSContext.editingRTS.newItem,
-                          ta_notifications: {
-                            ...editingRTSContext.editingRTS.newItem.ta_notifications,
-                            during: {
-                              ...editingRTSContext.editingRTS.newItem.ta_notifications.during,
-                              is_enabled: e.target.checked,
-                              is_set: e.target.checked
-                            }
-                          }
-                        }
-                      })
-                    }}
-                  />
-                  &nbsp;
-                  <input
-                    style={{
-                      borderRadius: '10px',
-                      border: 'none',
-                      fontSize: '12px',
-                      fontWeight: 'bold'
-                    }}
-                    value={editingRTSContext.editingRTS.newItem.ta_notifications.during.message}
-                    onChange={(e) => {
-                      editingRTSContext.setEditingRTS({
-                        ...editingRTSContext.editingRTS,
-                        newItem: {
-                          ...editingRTSContext.editingRTS.newItem,
-                          ta_notifications: {
-                            ...editingRTSContext.editingRTS.newItem.ta_notifications,
-                            during: {
-                              ...editingRTSContext.editingRTS.newItem.ta_notifications.during,
-                              message: e.target.value
-                            }
-                          }
-                        }
-                      })
-                    }}
-                  />
-                </div>
-              </Row>
-              <Row >
-                <div
-                  style={{
-                    margin: '10px 0',
-                    marginLeft: '20px'
-                  }}
-                >
-                  <input
-                    type='number'
-                    style={{
-                      width: '60px',
-                      borderRadius: '10px',
-                      border: 'none',
-                      fontSize: '12px',
-                      fontWeight: 'bold'
-                    }}
-                    value={editingRTSContext.editingRTS.newItem.ta_notifications.after.time}
-                    onChange={(e) => {
-                      editingRTSContext.setEditingRTS({
-                        ...editingRTSContext.editingRTS,
-                        newItem: {
-                          ...editingRTSContext.editingRTS.newItem,
-                          ta_notifications: {
-                            ...editingRTSContext.editingRTS.newItem.ta_notifications,
-                            after: {
-                              ...editingRTSContext.editingRTS.newItem.ta_notifications.after,
-                              time: e.target.value
-                            }
+                />
+              </div>
+              <div
+                style={{
+                  margin: '10px 0',
+                  marginLeft: '20px',
+                }}
+              >
+                TA &nbsp;&nbsp;&nbsp;&nbsp;
+                <input
+                  type="checkbox"
+                  style={{ width: '20px', height: '20px' }}
+                  checked={
+                    editingRTSContext.editingRTS.newItem.ta_notifications.before
+                      .is_enabled
+                  }
+                  onChange={(e) => {
+                    editingRTSContext.setEditingRTS({
+                      ...editingRTSContext.editingRTS,
+                      newItem: {
+                        ...editingRTSContext.editingRTS.newItem,
+                        ta_notifications: {
+                          ...editingRTSContext.editingRTS.newItem
+                            .ta_notifications,
+                          before: {
+                            ...editingRTSContext.editingRTS.newItem
+                              .ta_notifications.before,
+                            is_enabled: e.target.checked,
+                            is_set: e.target.checked,
                           },
-                          user_notifications: {
-                            ...editingRTSContext.editingRTS.newItem.user_notifications,
-                            after: {
-                              ...editingRTSContext.editingRTS.newItem.user_notifications.after,
-                              time: e.target.value
-                            }
+                        },
+                      },
+                    });
+                  }}
+                />
+                &nbsp;
+                <input
+                  style={{
+                    borderRadius: '10px',
+                    border: 'none',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                  }}
+                  value={
+                    editingRTSContext.editingRTS.newItem.ta_notifications.before
+                      .message
+                  }
+                  onChange={(e) => {
+                    editingRTSContext.setEditingRTS({
+                      ...editingRTSContext.editingRTS,
+                      newItem: {
+                        ...editingRTSContext.editingRTS.newItem,
+                        ta_notifications: {
+                          ...editingRTSContext.editingRTS.newItem
+                            .ta_notifications,
+                          before: {
+                            ...editingRTSContext.editingRTS.newItem
+                              .ta_notifications.before,
+                            message: e.target.value,
                           },
-                        }
-                      })
-                    }}
-                  />
-                  &nbsp;
-                  Mins After End Time
-                </div>
-                <div
-                  style={{
-                    margin: '10px 0',
-                    marginLeft: '20px',
-                    verticalAlign: 'middle'
+                        },
+                      },
+                    });
                   }}
-                >
-                  User
-                  &nbsp;
-                  <input
-                    type='checkbox'
-                    style={{width: '20px', height: '20px'}}
-                    checked={editingRTSContext.editingRTS.newItem.user_notifications.after.is_enabled}
-                    onChange={(e) => {
-                      editingRTSContext.setEditingRTS({
-                        ...editingRTSContext.editingRTS,
-                        newItem: {
-                          ...editingRTSContext.editingRTS.newItem,
-                          user_notifications: {
-                            ...editingRTSContext.editingRTS.newItem.user_notifications,
-                            after: {
-                              ...editingRTSContext.editingRTS.newItem.user_notifications.after,
-                              is_enabled: e.target.checked,
-                              is_set: e.target.checked
-                            }
-                          }
-                        }
-                      })
-                    }}
-                  />
-                  &nbsp;
-                  <input
-                    style={{
-                      borderRadius: '10px',
-                      border: 'none',
-                      fontSize: '12px',
-                      fontWeight: 'bold'
-                    }}
-                    value={editingRTSContext.editingRTS.newItem.user_notifications.after.message}
-                    onChange={(e) => {
-                      editingRTSContext.setEditingRTS({
-                        ...editingRTSContext.editingRTS,
-                        newItem: {
-                          ...editingRTSContext.editingRTS.newItem,
-                          user_notifications: {
-                            ...editingRTSContext.editingRTS.newItem.user_notifications,
-                            after: {
-                              ...editingRTSContext.editingRTS.newItem.user_notifications.after,
-                              message: e.target.value
-                            }
-                          }
-                        }
-                      })
-                    }}
-                  />
-                </div>
-                <div
-                  style={{
-                    margin: '10px 0',
-                    marginLeft: '20px'
-                  }}
-                >
-                  TA
-                  &nbsp;&nbsp;&nbsp;&nbsp;
-                  <input
-                    type='checkbox'
-                    style={{width: '20px', height: '20px'}}
-                    checked={editingRTSContext.editingRTS.newItem.ta_notifications.after.is_enabled}
-                    onChange={(e) => {
-                      editingRTSContext.setEditingRTS({
-                        ...editingRTSContext.editingRTS,
-                        newItem: {
-                          ...editingRTSContext.editingRTS.newItem,
-                          ta_notifications: {
-                            ...editingRTSContext.editingRTS.newItem.ta_notifications,
-                            after: {
-                              ...editingRTSContext.editingRTS.newItem.ta_notifications.after,
-                              is_enabled: e.target.checked,
-                              is_set: e.target.checked
-                            }
-                          }
-                        }
-                      })
-                    }}
-                  />
-                  &nbsp;
-                  <input
-                    style={{
-                      borderRadius: '10px',
-                      border: 'none',
-                      fontSize: '12px',
-                      fontWeight: 'bold'
-                    }}
-                    value={editingRTSContext.editingRTS.newItem.ta_notifications.after.message}
-                    onChange={(e) => {
-                      editingRTSContext.setEditingRTS({
-                        ...editingRTSContext.editingRTS,
-                        newItem: {
-                          ...editingRTSContext.editingRTS.newItem,
-                          ta_notifications: {
-                            ...editingRTSContext.editingRTS.newItem.ta_notifications,
-                            after: {
-                              ...editingRTSContext.editingRTS.newItem.ta_notifications.after,
-                              message: e.target.value
-                            }
-                          }
-                        }
-                      })
-                    }}
-                  />
-                </div>
-              </Row>
+                />
+              </div>
             </Row>
-            
+            <Row>
+              <div
+                style={{
+                  margin: '10px 0',
+                  marginLeft: '20px',
+                }}
+              >
+                <input
+                  type="number"
+                  style={{
+                    width: '60px',
+                    borderRadius: '10px',
+                    border: 'none',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                  }}
+                  value={
+                    editingRTSContext.editingRTS.newItem.ta_notifications.during
+                      .time
+                  }
+                  onChange={(e) => {
+                    editingRTSContext.setEditingRTS({
+                      ...editingRTSContext.editingRTS,
+                      newItem: {
+                        ...editingRTSContext.editingRTS.newItem,
+                        ta_notifications: {
+                          ...editingRTSContext.editingRTS.newItem
+                            .ta_notifications,
+                          during: {
+                            ...editingRTSContext.editingRTS.newItem
+                              .ta_notifications.during,
+                            time: e.target.value,
+                          },
+                        },
+                        user_notifications: {
+                          ...editingRTSContext.editingRTS.newItem
+                            .user_notifications,
+                          during: {
+                            ...editingRTSContext.editingRTS.newItem
+                              .user_notifications.during,
+                            time: e.target.value,
+                          },
+                        },
+                      },
+                    });
+                  }}
+                />
+                &nbsp; Mins After Start Time
+              </div>
+              <div
+                style={{
+                  margin: '10px 0',
+                  marginLeft: '20px',
+                }}
+              >
+                User &nbsp;
+                <input
+                  type="checkbox"
+                  style={{ width: '20px', height: '20px' }}
+                  checked={
+                    editingRTSContext.editingRTS.newItem.user_notifications
+                      .during.is_enabled
+                  }
+                  onChange={(e) => {
+                    editingRTSContext.setEditingRTS({
+                      ...editingRTSContext.editingRTS,
+                      newItem: {
+                        ...editingRTSContext.editingRTS.newItem,
+                        user_notifications: {
+                          ...editingRTSContext.editingRTS.newItem
+                            .user_notifications,
+                          during: {
+                            ...editingRTSContext.editingRTS.newItem
+                              .user_notifications.during,
+                            is_enabled: e.target.checked,
+                            is_set: e.target.checked,
+                          },
+                        },
+                      },
+                    });
+                  }}
+                />
+                &nbsp;
+                <input
+                  style={{
+                    borderRadius: '10px',
+                    border: 'none',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                  }}
+                  value={
+                    editingRTSContext.editingRTS.newItem.user_notifications
+                      .during.message
+                  }
+                  onChange={(e) => {
+                    editingRTSContext.setEditingRTS({
+                      ...editingRTSContext.editingRTS,
+                      newItem: {
+                        ...editingRTSContext.editingRTS.newItem,
+                        user_notifications: {
+                          ...editingRTSContext.editingRTS.newItem
+                            .user_notifications,
+                          during: {
+                            ...editingRTSContext.editingRTS.newItem
+                              .user_notifications.during,
+                            message: e.target.value,
+                          },
+                        },
+                      },
+                    });
+                  }}
+                />
+              </div>
+              <div
+                style={{
+                  margin: '10px 0',
+                  marginLeft: '20px',
+                }}
+              >
+                TA &nbsp;&nbsp;&nbsp;&nbsp;
+                <input
+                  type="checkbox"
+                  style={{ width: '20px', height: '20px' }}
+                  checked={
+                    editingRTSContext.editingRTS.newItem.ta_notifications.during
+                      .is_enabled
+                  }
+                  onChange={(e) => {
+                    editingRTSContext.setEditingRTS({
+                      ...editingRTSContext.editingRTS,
+                      newItem: {
+                        ...editingRTSContext.editingRTS.newItem,
+                        ta_notifications: {
+                          ...editingRTSContext.editingRTS.newItem
+                            .ta_notifications,
+                          during: {
+                            ...editingRTSContext.editingRTS.newItem
+                              .ta_notifications.during,
+                            is_enabled: e.target.checked,
+                            is_set: e.target.checked,
+                          },
+                        },
+                      },
+                    });
+                  }}
+                />
+                &nbsp;
+                <input
+                  style={{
+                    borderRadius: '10px',
+                    border: 'none',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                  }}
+                  value={
+                    editingRTSContext.editingRTS.newItem.ta_notifications.during
+                      .message
+                  }
+                  onChange={(e) => {
+                    editingRTSContext.setEditingRTS({
+                      ...editingRTSContext.editingRTS,
+                      newItem: {
+                        ...editingRTSContext.editingRTS.newItem,
+                        ta_notifications: {
+                          ...editingRTSContext.editingRTS.newItem
+                            .ta_notifications,
+                          during: {
+                            ...editingRTSContext.editingRTS.newItem
+                              .ta_notifications.during,
+                            message: e.target.value,
+                          },
+                        },
+                      },
+                    });
+                  }}
+                />
+              </div>
+            </Row>
+            <Row>
+              <div
+                style={{
+                  margin: '10px 0',
+                  marginLeft: '20px',
+                }}
+              >
+                <input
+                  type="number"
+                  style={{
+                    width: '60px',
+                    borderRadius: '10px',
+                    border: 'none',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                  }}
+                  value={
+                    editingRTSContext.editingRTS.newItem.ta_notifications.after
+                      .time
+                  }
+                  onChange={(e) => {
+                    editingRTSContext.setEditingRTS({
+                      ...editingRTSContext.editingRTS,
+                      newItem: {
+                        ...editingRTSContext.editingRTS.newItem,
+                        ta_notifications: {
+                          ...editingRTSContext.editingRTS.newItem
+                            .ta_notifications,
+                          after: {
+                            ...editingRTSContext.editingRTS.newItem
+                              .ta_notifications.after,
+                            time: e.target.value,
+                          },
+                        },
+                        user_notifications: {
+                          ...editingRTSContext.editingRTS.newItem
+                            .user_notifications,
+                          after: {
+                            ...editingRTSContext.editingRTS.newItem
+                              .user_notifications.after,
+                            time: e.target.value,
+                          },
+                        },
+                      },
+                    });
+                  }}
+                />
+                &nbsp; Mins After End Time
+              </div>
+              <div
+                style={{
+                  margin: '10px 0',
+                  marginLeft: '20px',
+                  verticalAlign: 'middle',
+                }}
+              >
+                User &nbsp;
+                <input
+                  type="checkbox"
+                  style={{ width: '20px', height: '20px' }}
+                  checked={
+                    editingRTSContext.editingRTS.newItem.user_notifications
+                      .after.is_enabled
+                  }
+                  onChange={(e) => {
+                    editingRTSContext.setEditingRTS({
+                      ...editingRTSContext.editingRTS,
+                      newItem: {
+                        ...editingRTSContext.editingRTS.newItem,
+                        user_notifications: {
+                          ...editingRTSContext.editingRTS.newItem
+                            .user_notifications,
+                          after: {
+                            ...editingRTSContext.editingRTS.newItem
+                              .user_notifications.after,
+                            is_enabled: e.target.checked,
+                            is_set: e.target.checked,
+                          },
+                        },
+                      },
+                    });
+                  }}
+                />
+                &nbsp;
+                <input
+                  style={{
+                    borderRadius: '10px',
+                    border: 'none',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                  }}
+                  value={
+                    editingRTSContext.editingRTS.newItem.user_notifications
+                      .after.message
+                  }
+                  onChange={(e) => {
+                    editingRTSContext.setEditingRTS({
+                      ...editingRTSContext.editingRTS,
+                      newItem: {
+                        ...editingRTSContext.editingRTS.newItem,
+                        user_notifications: {
+                          ...editingRTSContext.editingRTS.newItem
+                            .user_notifications,
+                          after: {
+                            ...editingRTSContext.editingRTS.newItem
+                              .user_notifications.after,
+                            message: e.target.value,
+                          },
+                        },
+                      },
+                    });
+                  }}
+                />
+              </div>
+              <div
+                style={{
+                  margin: '10px 0',
+                  marginLeft: '20px',
+                }}
+              >
+                TA &nbsp;&nbsp;&nbsp;&nbsp;
+                <input
+                  type="checkbox"
+                  style={{ width: '20px', height: '20px' }}
+                  checked={
+                    editingRTSContext.editingRTS.newItem.ta_notifications.after
+                      .is_enabled
+                  }
+                  onChange={(e) => {
+                    editingRTSContext.setEditingRTS({
+                      ...editingRTSContext.editingRTS,
+                      newItem: {
+                        ...editingRTSContext.editingRTS.newItem,
+                        ta_notifications: {
+                          ...editingRTSContext.editingRTS.newItem
+                            .ta_notifications,
+                          after: {
+                            ...editingRTSContext.editingRTS.newItem
+                              .ta_notifications.after,
+                            is_enabled: e.target.checked,
+                            is_set: e.target.checked,
+                          },
+                        },
+                      },
+                    });
+                  }}
+                />
+                &nbsp;
+                <input
+                  style={{
+                    borderRadius: '10px',
+                    border: 'none',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                  }}
+                  value={
+                    editingRTSContext.editingRTS.newItem.ta_notifications.after
+                      .message
+                  }
+                  onChange={(e) => {
+                    editingRTSContext.setEditingRTS({
+                      ...editingRTSContext.editingRTS,
+                      newItem: {
+                        ...editingRTSContext.editingRTS.newItem,
+                        ta_notifications: {
+                          ...editingRTSContext.editingRTS.newItem
+                            .ta_notifications,
+                          after: {
+                            ...editingRTSContext.editingRTS.newItem
+                              .ta_notifications.after,
+                            message: e.target.value,
+                          },
+                        },
+                      },
+                    });
+                  }}
+                />
+              </div>
+            </Row>
+          </Row>
         </Col>
-        
       </Container>
       <div
-              style={{
-                textAlign: 'center',
-                marginTop: '20px',
-                paddingBottom: '20px'
-              }}
-            >
-              <button
-                style={{
-                  width: '150px',
-                  padding: '0',
-                  margin: '0 20px',
-                  backgroundColor: 'inherit',
-                  border: '3px white solid',
-                  borderRadius: '30px',
-                  color: '#ffffff',
-                  textAlign: 'center',
-                }}
-                onClick={()=>{
-                  editingRTSContext.setEditingRTS({
-                    ...editingRTSContext.editingRTS,
-                    editing: false
-                  })
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                style={{
-                  width: '150px',
-                  padding: '0',
-                  margin: '0 20px',
-                  backgroundColor: 'inherit',
-                  border: '3px white solid',
-                  borderRadius: '30px',
-                  color: '#ffffff',
-                  textAlign: 'center',
-                }}
-                onClick={updateRTS}
-              >
-                Save Changes
-              </button>
-            </div>
+        style={{
+          textAlign: 'center',
+          marginTop: '20px',
+          paddingBottom: '20px',
+        }}
+      >
+        <button
+          style={{
+            width: '150px',
+            padding: '0',
+            margin: '0 20px',
+            backgroundColor: 'inherit',
+            border: '3px white solid',
+            borderRadius: '30px',
+            color: '#ffffff',
+            textAlign: 'center',
+          }}
+          onClick={() => {
+            editingRTSContext.setEditingRTS({
+              ...editingRTSContext.editingRTS,
+              editing: false,
+            });
+          }}
+        >
+          Cancel
+        </button>
+        <button
+          style={{
+            width: '150px',
+            padding: '0',
+            margin: '0 20px',
+            backgroundColor: 'inherit',
+            border: '3px white solid',
+            borderRadius: '30px',
+            color: '#ffffff',
+            textAlign: 'center',
+          }}
+          onClick={updateRTS}
+        >
+          Save Changes
+        </button>
+      </div>
     </div>
-  )
-}
+  );
+};
 
 export default EditRTS;
