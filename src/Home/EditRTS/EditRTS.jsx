@@ -24,7 +24,7 @@ const EditRTS = (props) => {
     props.setUpdateGetHistory(!props.updateGetHistory)
     e.stopPropagation()
     let object = {...editingRTSContext.editingRTS.newItem};
-  //  console.log("time", props.routineID.start_day)
+    console.log("updaterts object", object)
     // Get start_day_and_time
     const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
     const start_day_and_time_string = new Date(start_day_and_time_simple_string).toString();
@@ -61,6 +61,13 @@ const EditRTS = (props) => {
     object.id = editingRTSContext.editingRTS.id;
     object.user_id = props. CurrentId // editingRTSContext.editingRTS.currentUserId;
     object.ta_people_id = props.ta_ID;
+    delete object.photo
+    // if (image != null) {
+    //   console.log('trying to upload',image)
+    //   object.photo = image
+    //   object.photo_url = null
+    // }
+    
     console.log("obj",object);
     let formData = new FormData();
     Object.entries(object).forEach(entry => {
@@ -76,7 +83,11 @@ const EditRTS = (props) => {
       else{
           formData.append(entry[0], entry[1]);
       }
-  });
+    });
+  console.log('image', image)
+  formData.append('photo', image)
+
+  console.log('formData')
   for(var pair of formData.entries()) {
     console.log(pair[0]+ ', '+ pair[1]);
   }
@@ -162,7 +173,14 @@ const EditRTS = (props) => {
               image_name = image_name + salt.toString();
               setImageName(image_name)
               setImageURL(URL.createObjectURL(image))
-
+              editingRTSContext.setEditingRTS({
+                ...editingRTSContext.editingRTS,
+                newItem: {
+                  ...editingRTSContext.editingRTS.newItem,
+                  photo: image,
+                  photo_url: ''
+                }
+              })
             }}
           >
             Upload
