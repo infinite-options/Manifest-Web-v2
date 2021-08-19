@@ -19,12 +19,11 @@ const EditRTS = (props) => {
 
   console.log('Repeat', editingRTSContext.editingRTS.newItem.repeat);
   const updateRTS = (e) => {
-    editingRTSContext.editingRTS.editing =
-      !editingRTSContext.editingRTS.editing;
-    props.setUpdateGetHistory(!props.updateGetHistory);
-    e.stopPropagation();
-    let object = { ...editingRTSContext.editingRTS.newItem };
-    //  console.log("time", props.routineID.start_day)
+    editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing
+    props.setUpdateGetHistory(!props.updateGetHistory)
+    e.stopPropagation()
+    let object = {...editingRTSContext.editingRTS.newItem};
+    console.log("updaterts object", object)
     // Get start_day_and_time
     const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
     //const start_day_and_time_string = new Date(start_day_and_time_simple_string).toString();
@@ -69,78 +68,79 @@ const EditRTS = (props) => {
     object.id = editingRTSContext.editingRTS.id;
     object.user_id = props.CurrentId; // editingRTSContext.editingRTS.currentUserId;
     object.ta_people_id = props.ta_ID;
-    console.log('obj', object);
+    delete object.photo
+    // if (image != null) {
+    //   console.log('trying to upload',image)
+    //   object.photo = image
+    //   object.photo_url = null
+    // }
+    
+    console.log("obj",object);
     let formData = new FormData();
     Object.entries(object).forEach((entry) => {
       // if (typeof entry[1].name == 'string'){
-      if (typeof entry[1] == 'string') {
-        formData.append(entry[0], entry[1]);
-      } else if (entry[1] instanceof Object) {
-        entry[1] = JSON.stringify(entry[1]);
-        formData.append(entry[0], entry[1]);
-      } else {
-        formData.append(entry[0], entry[1]);
+      if (typeof entry[1] == 'string'){
+          formData.append(entry[0], entry[1]);
+      }
+      else if (entry[1] instanceof Object) {
+          entry[1] = JSON.stringify(entry[1])
+          formData.append(entry[0], entry[1]);
+      }
+      
+      else{
+          formData.append(entry[0], entry[1]);
       }
     });
-    for (var pair of formData.entries()) {
-      console.log(pair[0] + ', ' + pair[1]);
+    console.log('image', image)
+    formData.append('photo', image)
+
+    console.log('formData')
+    for(var pair of formData.entries()) {
+      console.log(pair[0]+ ', '+ pair[1]);
     }
-    console.log('object.id');
-    console.log(object.id);
+    console.log('object.id') 
+    console.log(object.id)
     if (object.id != '') {
-      console.log('updateGR');
+      console.log('updateGR')
       axios
-        .post(
-          'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateGR',
-          formData
-        )
-        .then((_) => {
-          console.log('editrts', _);
-          const gr_array_index =
-            editingRTSContext.editingRTS.gr_array.findIndex(
-              (elt) => elt.id === editingRTSContext.editingRTS.id
-            );
-          const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
-          new_gr_array[gr_array_index] = object;
-          editingRTSContext.setEditingRTS({
-            ...editingRTSContext.editingRTS,
-            gr_array: new_gr_array,
-            editing: false,
-          });
+      .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateGR', formData)
+      .then((_) => {
+        console.log('editrts', _)
+        const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
+        const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
+        new_gr_array[gr_array_index] = object;
+        editingRTSContext.setEditingRTS({
+          ...editingRTSContext.editingRTS,
+          gr_array: new_gr_array,
+          editing: false
         })
-        .catch((err) => {
-          if (err.response) {
-            console.log(err.response);
-          }
-          console.log(err);
-        });
+      })
+      .catch((err) => {
+        if(err.response) {
+          console.log(err.response);
+        }
+        console.log(err)
+      })
     } else {
-      console.log('addGR');
+      console.log('addGR')
       axios
-        .post(
-          'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/addGR',
-          formData
-        )
-        .then((_) => {
-          console.log(_);
-          const gr_array_index =
-            editingRTSContext.editingRTS.gr_array.findIndex(
-              (elt) => elt.id === editingRTSContext.editingRTS.id
-            );
-          const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
-          //   new_gr_array[gr_array_index] = object;
-          editingRTSContext.setEditingRTS({
-            ...editingRTSContext.editingRTS,
-            //  gr_array: new_gr_array,
-            editing: false,
-          });
+      .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/addGR', formData)
+      .then((_) => {
+        console.log(_)
+        const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
+        const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
+    //   new_gr_array[gr_array_index] = object;
+        editingRTSContext.setEditingRTS({
+          ...editingRTSContext.editingRTS,
+        //  gr_array: new_gr_array,
+          editing: false
         })
-        .catch((err) => {
-          if (err.response) {
-            console.log(err.response);
-          }
-          console.log(err);
-        });
+      })
+      .catch((err) => {
+        if(err.response) {
+          console.log(err.response);
+        }
+      });
     }
     // editingRTSContext.setEditingRTS({
     //   ...editingRTSContext.editingRTS,
@@ -183,7 +183,15 @@ const EditRTS = (props) => {
               let image_name = image.name;
               image_name = image_name + salt.toString();
               setImageName(image_name);
-              setImageURL(URL.createObjectURL(image));
+              setImageURL(URL.createObjectURL(image))
+              editingRTSContext.setEditingRTS({
+                ...editingRTSContext.editingRTS,
+                newItem: {
+                  ...editingRTSContext.editingRTS.newItem,
+                  photo: image,
+                  photo_url: ''
+                }
+              });
             }}
           >
             Upload
