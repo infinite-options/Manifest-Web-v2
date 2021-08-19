@@ -18,7 +18,7 @@ export default class DatePicker extends React.Component {
   }
 
   formatDefaultTime = () => {
-    const dateObject = new Date(this.props.day_and_time);
+    const dateObject = new Date(this.props.day_and_time.replace(/-/g, '/'));
     console.log('dateObject', dateObject);
     let year = dateObject.getFullYear().toString();
     let month = (dateObject.getMonth() + 1).toString();
