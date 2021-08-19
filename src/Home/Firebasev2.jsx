@@ -24,12 +24,9 @@ import {
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-//import DeleteAT from "../manifest/OldManifest";
-import DeleteGR from "../manifest/OldManifest/deleteGR.jsx";
 import EditIcon from "./EditRTS/EditIcon.jsx";
 import EditActionIcon from "./EditATS/EditIcon.jsx"
 import EditStepsIcon from "./EditIS/EditIcon.jsx"
-import CopyIcon from "../manifest/OldManifest/CopyIcon.jsx";
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
@@ -166,7 +163,7 @@ export default function Firebasev2(props)  {
         });
         
         
-    },[props.theCurrentUserID, called,props.updateGetHistory])
+    },[props.theCurrentUserID, called,props.editRTS, props.editATS])
 
 
     const copyPicker = () => {
@@ -1643,18 +1640,7 @@ export default function Firebasev2(props)  {
                     </div>
 
                     <div style={{flex:'1'}} >
-                    <DeleteGR
-                        //   BASE_URL={this.props.BASE_URL}
-                        //     deleteIndex={this.findIndexByID(tempID)}
-                        //     Array={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                        //     // Path={firebase
-                        //     //   .firestore()
-                        //     //   .collection("users")
-                        //     //   .doc(this.props.theCurrentUserID)}
-                        //     // refresh={this.grabFireBaseRoutinesGoalsData}
-                        //     theCurrentUserId={this.props.theCurrentUserID}
-                        //     theCurrentTAID={this.props.theCurrentTAID}
-                        />
+                  
                         </div>
                 </div>
                     <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
@@ -1801,18 +1787,6 @@ export default function Firebasev2(props)  {
                 <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
                     <div style={{flex:'1'}}>
 
-                <CopyIcon
-                    //   openCopyModal={() => {
-                    //     this.setState({
-                    //     showCopyModal: true,
-                    //     indexEditing: this.findIndexByID(tempID),
-
-                    //     })
-                    //   }}
-                    //   indexEditing={this.state.indexEditing}
-                    //     i={this.findIndexByID(tempID)} //index to edit
-                    //   showModal={this.state.showCopyModal}
-                    />
                     </div>
 
                     <div style={{flex:'1', marginLeft:'1rem'}}>
@@ -1852,18 +1826,7 @@ export default function Firebasev2(props)  {
                     </div>
 
                     <div style={{flex:'1'}} >
-                    <DeleteGR
-                        //   BASE_URL={this.props.BASE_URL}
-                        //     deleteIndex={this.findIndexByID(tempID)}
-                        //     Array={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                        //     // Path={firebase
-                        //     //   .firestore()
-                        //     //   .collection("users")
-                        //     //   .doc(this.props.theCurrentUserID)}
-                        //     // refresh={this.grabFireBaseRoutinesGoalsData}
-                        //     theCurrentUserId={this.props.theCurrentUserID}
-                        //     theCurrentTAID={this.props.theCurrentTAID}
-                        />
+           
                         </div>
                 </div>
                     <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>

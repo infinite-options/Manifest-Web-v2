@@ -49,7 +49,6 @@ import EditATS from './EditATS/EditATS';
 import EditISContext from './EditIS/EditISContext';
 import EditIS from './EditIS/EditIS';
 import LoginContext from '../LoginContext';
-import AddNewATItem from './addNewATItem';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 

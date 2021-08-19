@@ -12,7 +12,6 @@ import Google from '../manifest/LoginAssets/Google.svg';
 import Apple from '../manifest/LoginAssets/Apple.svg';
 import SignUpImage from '../manifest/LoginAssets/SignUp.svg';
 import Cookies from 'js-cookie';
-import { AuthContext } from '../auth/AuthContext';
 
 import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
 import { GoogleLogin } from 'react-google-login';
@@ -35,7 +34,6 @@ const useStyles = makeStyles({
 
 /* Navigation Bar component function */
 export default function Login() {
-  const Auth = useContext(AuthContext);
 
   const classes = useStyles();
   const history = useHistory();

@@ -12,13 +12,9 @@ import Google from '../manifest/LoginAssets/Google.svg';
 import Apple from '../manifest/LoginAssets/Apple.svg';
 import SignUpImage from '../manifest/LoginAssets/SignUp.svg';
 import Cookies from 'js-cookie';
-import { AuthContext } from '../auth/AuthContext';
-
 import { GoogleLogin } from 'react-google-login';
 import axios from 'axios';
 import { useState, useContext } from 'react';
-import SocialLogin from '../components/LogIn/SocialLogin';
-
 import LoginContext from 'LoginContext';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -36,7 +32,6 @@ const useStyles = makeStyles({
 
 /* Navigation Bar component function */
 export default function Login() {
-  const Auth = useContext(AuthContext);
   const loginContext = useContext(LoginContext);
 
   const classes = useStyles();
@@ -245,7 +240,6 @@ export default function Login() {
             ></Button>
           </Box>
           <Box>
-            {/* <SocialLogin/> */}
 
             <GoogleLogin
               clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"

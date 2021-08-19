@@ -217,6 +217,7 @@ export function Navigation() {
     return elements
   }
 
+  
   const getTAList = () => {
     if (!taListCreated) {
       console.log('in getTAList: '+selectedUser)
@@ -268,6 +269,7 @@ export function Navigation() {
     //   return null
     // }
   }
+
 
   const giveAccessModal = () => {
     if (showGiveAccess) {
@@ -672,7 +674,7 @@ export function Navigation() {
                     }}
                   >
                     {/* Give another Advisor Access */}
-                    <option value={null}>
+                    <option value = "" selected disabled hidden>
                       Give another Advisor Access
                     </option>
                     {/* <option>

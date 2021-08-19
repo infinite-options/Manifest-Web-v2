@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Button, Modal, Row, Col } from "react-bootstrap";
-import { storage } from "./firebase";
 import TimeField from "react-simple-timefield";
 import TimezonePicker from 'react-bootstrap-timezone-picker';
 import 'react-bootstrap-timezone-picker/dist/react-bootstrap-timezone-picker.min.css';

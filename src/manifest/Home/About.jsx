@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import SettingPage from '../OldManifest/SettingPage';
+import SettingPage from '../Home/SettingPage';
 import {
   Form,
   Row,
@@ -24,6 +25,7 @@ import { Input, TextField } from '@material-ui/core';
 import MiniNavigation from '../miniNavigation'
 import LoginContext from '../../LoginContext'
 import { useHistory, Redirect } from 'react-router-dom';
+import AddIconModal from '../../Home/AddIconModal';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -56,7 +58,11 @@ export default function AboutModal(props) {
   const [showTimeModal, setShowTimeModal] = useState(false);
   const [saveButtonEnabled, setSaveButtonEnabled] = useState(false);
   const [enableDropDown, setEnableDropDown] = useState(false);
+  const [addPerson, setAddPerson] = useState(false);
+  const [addPersonName, setAddPersonName] = useState('');
+  const [ta_user_id, setTa_user_id] = useState('');
   const [url, setUrl] = useState('');
+  const [photo, setPhoto] = useState('')
   //aboutMeObject states
   const [aboutMeObject, setAboutMeObject] = useState({
     birth_date: new Date(),
@@ -81,15 +87,7 @@ export default function AboutModal(props) {
 
   const history = useHistory();
 
-  if (
-    document.cookie
-      .split(";")
-      .some(item => item.trim().startsWith("ta_uid="))
-  ) {
-    console.log(document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1])
-  } else {
-    history.push('/')
-  }
+ 
 
   const [motivation0 , setMotivation0] = useState('')
   const [motivation1 , setMotivation1] = useState('')
@@ -135,7 +133,7 @@ export default function AboutModal(props) {
         .catch((error) => {
           console.log(error);
         });
-  }, []);
+  }, [firstName]);
     
 
 
@@ -508,10 +506,6 @@ export default function AboutModal(props) {
 
   }
 
-
-
-
-
   function startTimePicker() {
     return (
       <DatePicker
@@ -541,6 +535,55 @@ export default function AboutModal(props) {
 
   // grabFireBaseAboutMeData()
   console.log(aboutMeObject)
+
+  var selectedTAid = ""
+  function AddPerson(){
+    if (
+      document.cookie
+        .split(";")
+        .some(item => item.trim().startsWith("ta_uid="))
+    ) {
+      selectedTAid = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
+    } else {
+    }
+
+    let body = {
+      user_id : userID,
+      ta_people_id: selectedTAid,
+      people_name: addPersonName,
+      people_relationship: "",
+      people_phone_number:"",
+      people_important:"True",
+      people_have_pic:'False',
+      people_pic: "",
+      photo_url:photo,
+    }
+    console.log("addPerson", body)
+    let formData = new FormData();
+    Object.entries(body).forEach(entry => {
+      // if (typeof entry[1].name == 'string'){
+      if (typeof entry[1] == 'string'){
+          formData.append(entry[0], entry[1]);
+      }
+      else if (entry[1] instanceof Object) {
+          entry[1] = JSON.stringify(entry[1])
+          formData.append(entry[0], entry[1]);
+      }
+      
+      else{
+          formData.append(entry[0], entry[1]);
+      }
+  });
+    axios
+    .post(
+      BASE_URL + 'updatePeople' , formData)
+      .then((response) => {
+      console.log(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  } 
 
   return (
     <div>
@@ -1255,7 +1298,7 @@ export default function AboutModal(props) {
             <div>
             {listPeople.map((e) => {
               return(
-                <div style={{display:'flex', justifyContent:'space-evenly'}}>
+                <div style={{display:'flex', justifyContent:'space-evenly', marginTop:'1rem'}}>
                 
                 <div  >
                   <img style={{height:'5rem', width:'5rem', backgroundColor:'#ffffff', borderRadius:'10px'}} src={e.pic ? e.pic : ''}/>
@@ -1264,12 +1307,14 @@ export default function AboutModal(props) {
                 <div
                   style={{
                     width: '300px',
+                    height:'3rem',
                     borderRadius: '10px',
+                    borderColor: '#BBC7D7',
                     backgroundColor: '#BBC7D7',
                     float: 'left',
                     marginLeft: '20px',
                     textAlign: 'center',
-                    marginTop: '10px',
+                    marginTop: '1rem',
                   }}
                 >
                   <p style={{ color: 'white', paddingTop: '10px' }}>{e.name}</p>
@@ -1280,6 +1325,68 @@ export default function AboutModal(props) {
             )
           })
           }
+             <Box hidden={!addPerson}>
+             <div style={{display:'flex'}}>  
+             <img style={{height:'5rem', width:'5rem',marginTop:'1rem',marginRight:'1rem', backgroundColor:'#ffffff', borderRadius:'10px'}} src={photo}/> 
+             <input 
+                style={{
+                  width: '300px',
+                  height:'3rem',
+                  borderRadius: '10px',
+                  borderColor: '#BBC7D7',
+                  backgroundColor: '#BBC7D7',
+                  float: 'left',
+                  marginLeft: '20px',
+                  textAlign: 'center',
+                  marginTop: '2rem',
+                }}
+             onChange = {(e) => {
+                setAddPersonName(e.target.value)
+             }} /> 
+             </div> 
+            <p> Change Image</p>
+            <div> Upload Image from Computer </div> 
+            <AddIconModal
+              photoUrl = {photo}
+              setPhotoUrl = {setPhoto}
+            />
+            <div> User's Library </div>     
+            <Row>
+              <Button
+                style={{
+                  color: 'white',
+                  backgroundColor: '#889AB5',
+                  border: '2px solid white',
+                  borderRadius: '20px',
+                  margin: '25px',
+                  padding: '10px 20px ',
+                }}
+                type="submit"
+                onClick={(e) => {
+                  AddPerson();
+                }}
+              >
+                Save Person
+              </Button>
+
+              <Button
+                variant="secondary"
+                style={{
+                  color: 'white',
+                  backgroundColor: '#889AB5',
+                  border: '2px solid white',
+                  margin: '25px',
+                  borderRadius: '20px',
+                  padding: '10px 20px ',
+                }}
+                onClick={(e)=> {
+                  setAddPerson(!addPerson)
+                }}
+              >
+                Cancel
+              </Button>
+            </Row>
+          </Box>   
               <tr style={{ width: '100%' }}>
                 <div
                   style={{
@@ -1293,16 +1400,21 @@ export default function AboutModal(props) {
                   }}
                 >
 
-                  <p style={{ color: 'white', paddingTop: '10px' }}>
-                    Add Person
-                  </p>
+                  <Button 
+                  style={{ color: 'white', paddingTop: '10px', backgroundColor:'#889AB5', borderColor:'#889AB5'}}
+                  onClick ={ (e) => {
+                      setAddPerson(!addPerson)
+                  }}>
+                    Add Person +
+                  </Button>
                 </div>
               </tr>
               </div>
-          </Form.Group>          
-         
+          </Form.Group>   
+           
+          
+
         </div>
-        <div></div>
         {/* <hr style={{ border: '1px solid white' }} /> */}
        
         <div style={{ width: '100%', float: 'left' }}>

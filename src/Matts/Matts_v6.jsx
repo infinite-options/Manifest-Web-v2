@@ -1,7 +1,6 @@
 import React, {useEffect, useState, useContext} from 'react';
 //import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import DayRoutines from '../Home/DayRoutines';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -20,9 +19,6 @@ import {
     faChevronRight,
   } from '@fortawesome/free-solid-svg-icons';
 import Moment from 'moment';
-import { Navigation } from '../Home/navigation';
-import Firebasev2 from "../manifest/OldManifest/Firebasev2";
-import {faList} from "@fortawesome/free-solid-svg-icons";
 import VerticalRoutine from './verticalRoutine_v2';
 import LoginContext from '../LoginContext';
 

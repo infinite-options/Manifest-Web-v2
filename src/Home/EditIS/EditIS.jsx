@@ -35,7 +35,7 @@ const EditIS = (props) => {
     let numMins = object.numMins % 60;
     if(numMins < 10)
       numMins = '0' + numMins
-    object.expected_completion_time = `${numHours}:${numMins}:00`;
+    object.expected_completion_time = `${numMins}:00`;
     delete object.numMins;
     object.is_id = object.is_unique_id;
     object.at_id = props.actionID;

@@ -6,7 +6,7 @@ import axios from 'axios';
 import { Grid, Button } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
-import { AuthContext } from '../auth/AuthContext';
+//import { AuthContext } from '../auth/AuthContext';
 import { withRouter } from 'react-router';
 import Facebook from '../manifest/LoginAssets/Facebook.svg';
 import Google from '../manifest/LoginAssets/Google.svg';
@@ -15,7 +15,7 @@ import Apple from '../manifest/LoginAssets/Apple.svg';
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 function SocialLogin(props) {
-  const Auth = useContext(AuthContext);
+  // const Auth = useContext(AuthContext);
   const history = useHistory();
   const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
   const [newEmail, setNewEmail] = useState('');
@@ -43,7 +43,7 @@ function SocialLogin(props) {
     // Successful Log in with Apple, set cookies, context, redirect
     if (urlParams.has('id')) {
       let customerId = urlParams.get('id');
-      Auth.setIsAuth(true);
+      //  Auth.setIsAuth(true);
       Cookies.set('login-session', 'good');
       Cookies.set('customer_uid', customerId);
       props.history.push('/admin');
@@ -53,7 +53,7 @@ function SocialLogin(props) {
     else if (urlParams.has('media')) {
       console.log(urlParams.get('media'));
     }
-  }, [Auth, props]);
+  }, [props]);// [Auth, props]);
 
   const responseGoogle = (response) => {
     console.log('response', response.profileObj.email);
