@@ -149,10 +149,12 @@ export default function Firebasev2(props) {
   useEffect(() => {
     setHG([]);
     console.log('in useEffect Firebasev2', BASE_URL);
+    console.log('here: useEffect firebase');
     //   console.log(currentUser)
     axios
       .get(BASE_URL + 'getHistory/' + currentUser)
       .then((response) => {
+        console.log('response from firebase get: ', response);
         for (var i = 0; i < response.data.result.length; i++) {
           // for(var i=response.data.result.length - 1; i > -1; i--){
 
@@ -1620,6 +1622,7 @@ export default function Firebasev2(props) {
               >
                 <div>
                   <EditIcon
+                    onClick = {() => console.log('here: clicking update')}
                     routine={r}
                     task={null}
                     step={currentUser}

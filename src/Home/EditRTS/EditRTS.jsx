@@ -19,8 +19,15 @@ const EditRTS = (props) => {
 
   console.log('Repeat', editingRTSContext.editingRTS.newItem.repeat);
   const updateRTS = (e) => {
-    editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing;
-    props.setUpdateGetHistory(!props.updateGetHistory)
+    console.log('here: entering updateRTS function');
+    editingRTSContext.setEditingRTS(
+      {
+        ...editingRTSContext.editingRTS,
+        editing: true,
+      }
+    );
+    // editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing;
+    // props.setUpdateGetHistory(!props.updateGetHistory);
     e.stopPropagation()
     let object = {...editingRTSContext.editingRTS.newItem};
     console.log("updaterts object", object)
@@ -103,7 +110,8 @@ const EditRTS = (props) => {
     console.log('object.id') 
     console.log(object.id)
     if (object.id != '') {
-      console.log('updateGR')
+      console.log('updateGR');
+      console.log('here: About to post changes to db');
       axios
       .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateGR', formData)
       .then((_) => {
@@ -111,11 +119,13 @@ const EditRTS = (props) => {
         const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
         const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
         new_gr_array[gr_array_index] = object;
+        console.log('here: Changes made to db');
         editingRTSContext.setEditingRTS({
           ...editingRTSContext.editingRTS,
           gr_array: new_gr_array,
           editing: false
-        })
+        });
+        props.setUpdateGetHistory(!props.updateGetHistory);
       })
       .catch((err) => {
         if(err.response) {
@@ -132,11 +142,13 @@ const EditRTS = (props) => {
         const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
         const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
     //   new_gr_array[gr_array_index] = object;
+        console.log('here 1');
         editingRTSContext.setEditingRTS({
           ...editingRTSContext.editingRTS,
         //  gr_array: new_gr_array,
           editing: false
         })
+        props.setUpdateGetHistory(!props.updateGetHistory);
       })
       .catch((err) => {
         if(err.response) {
@@ -144,10 +156,6 @@ const EditRTS = (props) => {
         }
       });
     }
-    // editingRTSContext.setEditingRTS({
-    //   ...editingRTSContext.editingRTS,
-    //   editing: false
-    // })
   };
 
   const uploadImageModal = () => {
@@ -167,6 +175,7 @@ const EditRTS = (props) => {
           <input
             type="file"
             onChange={(e) => {
+              console.log('here: selecting image');
               if (e.target.files[0]) {
                 const image1 = e.target.files[0];
                 // console.log(image1.name);
@@ -178,6 +187,7 @@ const EditRTS = (props) => {
           <Button
             variant="dark"
             onClick={() => {
+              console.log('here: uploading image');
               if (image === null) {
                 alert('Please select an image to upload');
                 return;
@@ -220,6 +230,7 @@ const EditRTS = (props) => {
           <Button
             variant="primary"
             onClick={() => {
+              console.log('here: Confirming changes');
               setPhoto(imageURL);
               toggleUploadImage(false);
             }}
@@ -1487,10 +1498,10 @@ const EditRTS = (props) => {
             textAlign: 'center',
           }}
           onClick={() => {
-            editingRTSContext.setEditingRTS({
-              ...editingRTSContext.editingRTS,
-              editing: false,
-            });
+            // editingRTSContext.setEditingRTS({
+            //   ...editingRTSContext.editingRTS,
+            //   editing: false,
+            // });
           }}
         >
           Cancel
