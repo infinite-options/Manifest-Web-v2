@@ -1335,16 +1335,7 @@ export default function Firebasev2(props)  {
                         ) : (
                             <div
                             >
-                                 <FontAwesomeIcon
-                                title="Unavailable to the user"
-                                style={{ color: "#000000" }}
-                                onClick={(e) => {
-                                e.stopPropagation();
-                                alert("Item Is NOT Availble to the user");
-                                }}
-                                icon={faUserAltSlash}
-                                size="small"
-                            />
+                   
                             </div>
                         )}
                         </div>
@@ -1493,16 +1484,7 @@ export default function Firebasev2(props)  {
                         ) : (
                             <div
                             >
-                            <FontAwesomeIcon
-                                title="Unavailable to the user"
-                                style={{ color: "#000000" }}
-                                onClick={(e) => {
-                                e.stopPropagation();
-                                alert("Item Is NOT Availble to the user");
-                                }}
-                                icon={faUserAltSlash}
-                                size="small"
-                            />
+                       
                             </div>
                         )}
                     </div>
