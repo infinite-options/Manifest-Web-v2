@@ -1130,7 +1130,7 @@ export default function Firebasev2(props)  {
     }
 
     function formatDateTime(str) {
-        let newTime = new Date(str).toLocaleTimeString();
+        let newTime = new Date(str.replace(/-/g, '/')).toLocaleTimeString();
         newTime = newTime.substring(0, 5) + " " + newTime.slice(-2);
         return newTime;
       }
