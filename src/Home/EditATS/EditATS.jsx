@@ -68,7 +68,7 @@ const EditATS = (props) => {
         ...editingATSContext.editingATS,
         newItem: {
           ...editingATSContext.editingATS.newItem,
-          start_day: startDay.replace(/-/g, '/'),
+          start_day: startDay,
           end_day: endDay,
           at_available_start_time: convertDateToTimeString(
             new Date(props.routineID.startTime.replace(/-/g, '/'))
@@ -79,7 +79,7 @@ const EditATS = (props) => {
         },
       });
     }
-  }, []);
+  }, [props.routineID.startTime]);
 
   console.log(
     'action start_day',
@@ -133,10 +133,10 @@ const EditATS = (props) => {
     object.title = object.at_title;
     object.gr_id = props.routineID.id;
     delete object.at_title;
-    const numHours = object.numMins / 60;
+    const numHours = object.numMins > 60 ? object.numMins / 60: '00';
     let numMins = object.numMins % 60;
     if (numMins < 10) numMins = '0' + numMins;
-    object.expected_completion_time = `${numMins}:00`;
+    object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
     object.id = editingATSContext.editingATS.newItem.at_unique_id;
     console.log('obj', object);
@@ -403,20 +403,37 @@ const EditATS = (props) => {
 
           <div style={{ display: 'flex', marginTop: '1rem' }}>
             <div style={{ fontSize: '12px' }}> Available to User </div>
-            <input
-              style={{ marginLeft: '1rem' }}
-              type="checkbox"
-              checked={editingATSContext.editingATS.newItem.is_available}
-              onChange={(e) => {
-                editingATSContext.setEditingATS({
-                  ...editingATSContext.editingATS,
-                  newItem: {
-                    ...editingATSContext.editingATS.newItem,
-                    is_available: e.target.checked,
-                  },
-                });
-              }}
-            />
+            {editingATSContext.editingATS.newItem.is_available ==
+                  'True' ? (
+                    <input
+                      type="checkbox"
+                      style={{ width: '20px', height: '20px' }}
+                      defaultChecked="true"
+                      onChange={(e) => {
+                        editingATSContext.setEditingATS({
+                          ...editingATSContext.editingATS,
+                          newItem: {
+                            ...editingATSContext.editingATS.newItem,
+                            is_available: e.target.checked,
+                          },
+                        });
+                      }}
+                    />
+                  ) : (
+                    <input
+                      type="checkbox"
+                      style={{ width: '20px', height: '20px' }}
+                      onChange={(e) => {
+                        editingATSContext.setEditingATS({
+                          ...editingATSContext.editingATS,
+                          newItem: {
+                            ...editingATSContext.editingATS.newItem,
+                            is_available: e.target.checked,
+                          },
+                        });
+                      }}
+                    />
+                  )}
           </div>
 
           <Row

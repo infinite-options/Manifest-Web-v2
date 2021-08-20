@@ -45,8 +45,8 @@ const convertDateToTimeString = (dateObject) => {
 
 const convertTimeLengthToMins = (timeString) => {
   const timeUnits = timeString.split(':');
-  const hours = parseInt(timeUnits[0],10);
-  const minutes = parseInt(timeUnits[1],10);
+  const hours = parseInt(timeUnits[0]);
+  const minutes = parseInt(timeUnits[1]);
   const numMins =  60 * hours + minutes;
   return ('' + numMins);
 }

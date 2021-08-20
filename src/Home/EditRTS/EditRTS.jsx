@@ -6,6 +6,8 @@ import axios from 'axios';
 import AddIconModal from '../AddIconModal';
 import UploadImage from '../UploadImage';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const EditRTS = (props) => {
   const editingRTSContext = useContext(EditRTSContext);
 
@@ -52,7 +54,7 @@ const EditRTS = (props) => {
     //object.id = Number(object.id);
     delete object.location;
     delete object.notification;
-    object.is_available = 'True';
+   // object.is_available = 'True';
     // Get end_day_and_time
     const end_day_and_time_simple_string = `${object.end_day} ${object.end_time}:00`;
 
@@ -67,11 +69,11 @@ const EditRTS = (props) => {
     delete object.end_day;
     delete object.end_time;
     // Get expected_completion_time
-    const numHours = object.numMins / 60;
+    const numHours = object.numMins > 60 ? object.numMins / 60: '00';
     let numMins = object.numMins % 60;
     if(numMins < 10)
       numMins = '0' + numMins
-    object.expected_completion_time = `${numMins}:00`;
+      object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
     object.id = editingRTSContext.editingRTS.id;
     object.user_id = props.CurrentId; // editingRTSContext.editingRTS.currentUserId;
@@ -113,7 +115,7 @@ const EditRTS = (props) => {
       console.log('updateGR');
       console.log('here: About to post changes to db');
       axios
-      .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateGR', formData)
+      .post(BASE_URL + 'updateGR', formData)
       .then((_) => {
         console.log('editrts', _)
         const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
@@ -136,7 +138,7 @@ const EditRTS = (props) => {
     } else {
       console.log('addGR')
       axios
-      .post('https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/addGR', formData)
+      .post(BASE_URL + 'addGR', formData)
       .then((_) => {
         console.log(_)
         const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
@@ -1497,10 +1499,10 @@ const EditRTS = (props) => {
             textAlign: 'center',
           }}
           onClick={() => {
-            // editingRTSContext.setEditingRTS({
-            //   ...editingRTSContext.editingRTS,
-            //   editing: false,
-            // });
+            editingRTSContext.setEditingRTS({
+              ...editingRTSContext.editingRTS,
+              editing: false,
+            });
           }}
         >
           Cancel

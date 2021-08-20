@@ -163,7 +163,7 @@ export default function Firebasev2(props)  {
             console.log(error);
         });
         
-    },[props.theCurrentUserID, called,props.editRTS, props.editATS])
+    },[props.theCurrentUserID, called,props.editRTS, props.editATS, props.editIS])
 
     const copyPicker = () => {
         // console.log('in FireBase, showCopyModal', showCopyModal)
@@ -1328,16 +1328,23 @@ export default function Firebasev2(props)  {
                             style={{ color: "#ffffff" }}
                             size="small"
                             onClick = {()=> {
-                                // sendRoutineToParent(r.name);
-                              //  clickHandle(r.name)
-                                // setLoading(!isLoading);
+                              
                             }}
                             />
                         </div>
                         ) : (
                             <div
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShowATModal: false})}}>
                             >
+                                 <FontAwesomeIcon
+                                title="Unavailable to the user"
+                                style={{ color: "#000000" }}
+                                onClick={(e) => {
+                                e.stopPropagation();
+                                alert("Item Is NOT Availble to the user");
+                                }}
+                                icon={faUserAltSlash}
+                                size="small"
+                            />
                             </div>
                         )}
                         </div>
@@ -1485,19 +1492,17 @@ export default function Firebasev2(props)  {
                         </div>
                         ) : (
                             <div
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShowATModal: false})}}>
                             >
-                                <FontAwesomeIcon
-                                    icon={faList}
-                                    //title="SubList Available"
-                                    style={{ color: "#ffffff", opacity: '0' }}
-                                    size="small"
-                                    // onClick = {()=> {
-                                    //     // sendRoutineToParent(r.name);
-                                    //     clickHandle(r.name)
-                                    //     // setLoading(!isLoading);
-                                    // }}
-                                />
+                            <FontAwesomeIcon
+                                title="Unavailable to the user"
+                                style={{ color: "#000000" }}
+                                onClick={(e) => {
+                                e.stopPropagation();
+                                alert("Item Is NOT Availble to the user");
+                                }}
+                                icon={faUserAltSlash}
+                                size="small"
+                            />
                             </div>
                         )}
                     </div>
@@ -1810,7 +1815,7 @@ export default function Firebasev2(props)  {
                     <div style={{ marginLeft:'1rem'}}>
 
                     <Row >
-                        {i.is_available ? (
+                        {(i.is_available == "True") ? (
                             <div >
                             <FontAwesomeIcon
                                 title="Available to the user"

@@ -6,6 +6,9 @@ import EditRTSContext from './EditRTSContext';
 import DayRoutines from 'Home/DayRoutines';
 import { Step } from '@material-ui/core';
 import moment from 'moment';
+
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const convertDateToDayString = (dateObject) => {
   // console.log(dateObject)
   const year = dateObject.getFullYear();
@@ -45,8 +48,8 @@ const convertDateToTimeString = (dateObject) => {
 
 const convertTimeLengthToMins = (timeString) => {
   const timeUnits = timeString.split(':');
-  const hours = parseInt(timeUnits[0], 10);
-  const minutes = parseInt(timeUnits[1], 10);
+  const hours = parseInt(timeUnits[0]);
+  const minutes = parseInt(timeUnits[1]);
   const numMins = 60 * hours + minutes;
   return '' + numMins;
 };
@@ -76,7 +79,7 @@ const EditIcon = ({ routine, task, step }) => {
     console.log('getting new data editicon');
     axios
       .get(
-        'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/' +
+        BASE_URL + 'getgoalsandroutines/' +
           step
       )
       .then((response) => {
@@ -121,7 +124,7 @@ const EditIcon = ({ routine, task, step }) => {
 
           axios
             .get(
-              'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getgoalsandroutines/' +
+              BASE_URL + 'getgoalsandroutines/' +
                 step
             )
             .then((response) => {
