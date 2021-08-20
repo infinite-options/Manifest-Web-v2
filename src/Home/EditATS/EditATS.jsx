@@ -79,7 +79,7 @@ const EditATS = (props) => {
         },
       });
     }
-  }, []);
+  }, [editingATSContext.editingATS.newItem.start_day]);
 
   console.log(
     'action start_day',
@@ -258,7 +258,8 @@ const EditATS = (props) => {
                 />
               </Col>
               <Col>
-                <img alt="icon" src={photo} />
+                <img alt="icon" src={photo}      height="100"
+            width="100"/>
               </Col>
             </Row>
           </div>

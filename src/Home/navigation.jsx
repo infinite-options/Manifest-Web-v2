@@ -18,6 +18,7 @@ import { CompareSharp } from '@material-ui/icons';
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 
+
 /* Custom Hook to make styles */
 const useStyles = makeStyles({
   /* navigationContainer */
@@ -77,6 +78,7 @@ const useStyles = makeStyles({
 
 /* Navigation Bar component function */
 export function Navigation() {
+
   const history = useHistory();
 
   const classes = useStyles();
@@ -111,6 +113,7 @@ export function Navigation() {
 
   const API_URL = 'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/'
 
+
   if (document.cookie
     .split(";")
     .some(item => item.trim().startsWith("ta_uid="))
@@ -120,10 +123,6 @@ export function Navigation() {
 
   console.log('User list', listOfUsers)
   console.log('Cur user', selectedUser)
-
-  function googleLogIn(){
-    
-  }
 
   const userListRendered = () => {
       if (document.cookie
@@ -674,7 +673,7 @@ export function Navigation() {
                     }}
                   >
                     {/* Give another Advisor Access */}
-                    <option value = "" selected disabled hidden>
+                    <option value = 'null' selected>
                       Give another Advisor Access
                     </option>
                     {/* <option>

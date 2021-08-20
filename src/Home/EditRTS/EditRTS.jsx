@@ -130,10 +130,10 @@ const EditRTS = (props) => {
         console.log(_)
         const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
         const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
-    //   new_gr_array[gr_array_index] = object;
+       new_gr_array[gr_array_index] = object;
         editingRTSContext.setEditingRTS({
           ...editingRTSContext.editingRTS,
-        //  gr_array: new_gr_array,
+          gr_array: new_gr_array,
           editing: false
         })
       })
@@ -1439,8 +1439,7 @@ const EditRTS = (props) => {
                     fontWeight: 'bold',
                   }}
                   value={
-                    editingRTSContext.editingRTS.newItem.ta_notifications.after
-                      .message
+                    editingRTSContext.editingRTS.newItem.ta_notifications.after.message
                   }
                   onChange={(e) => {
                     editingRTSContext.setEditingRTS({

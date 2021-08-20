@@ -28,7 +28,7 @@ const EditIcon = () => {
             this.props.openEditModal();
           }}
           icon={faEdit}
-          size="lg"
+          size="small"
         />
       </div>
     );

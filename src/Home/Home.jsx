@@ -417,7 +417,7 @@ export default function Home(props) {
       photo_url: '',
       ta_notifications: {
         before: {
-          is_enabled: false,
+          is_enabled: true,
           is_set: false,
           message: '',
           time: '',
@@ -565,7 +565,7 @@ export default function Home(props) {
       // When making API call, convert numMins to expected_completion_time
       numMins: '',
       location: '',
-      is_available: false,
+      is_available: true,
       is_persistent: true,
       is_complete: true,
       is_displayed_today: true,
@@ -614,7 +614,7 @@ export default function Home(props) {
       audio: '',
       // When making API call, convert numMins to expected_completion_time
       numMins: '',
-      is_available: false,
+      is_available: true,
       is_complete: true,
       is_timed: false,
       photo: '',
@@ -631,7 +631,7 @@ export default function Home(props) {
       audio: '',
       // When making API call, convert numMins to expected_completion_time
       numMins: '',
-      is_available: false,
+      is_available: true,
       is_complete: true,
       is_timed: false,
       photo: '',

@@ -109,7 +109,6 @@ const EditIS = (props) => {
   return (
     <div
       style={{
-        marginTop: '1rem',
         marginLeft: '5rem',
         marginRight: '3rem',
         width: '50%',
@@ -118,9 +117,7 @@ const EditIS = (props) => {
       }}
     >
       <Container
-        style={{
-          padding: '2rem',
-        }}
+      style={{padding:'2rem'}}
       >
         <Row>
           <Col md={4}>
@@ -172,7 +169,8 @@ const EditIS = (props) => {
             />
               </Col>
               <Col style={{width: '66%'}}>
-                <img alt='icon'src={photo}/>
+                <img alt='icon'src={photo}      height="100"
+            width="100"/>
               </Col>
             </Row>
             </div>
