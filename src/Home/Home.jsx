@@ -1144,11 +1144,12 @@ export default function Home(props) {
     // console.log('base url id ', userID);
 
     useEffect(() => {
-      console.log('Before gar');
+      console.log('here: Change made to editing, re-render triggered. About to get user information');
       console.log(userID);
       axios
         .get(url + userID)
         .then((response) => {
+          console.log('here: Obtained user information');
           if (response.data.result && response.data.result.length !== 0) {
             let x = response.data.result;
             console.log('response', x);
@@ -1535,6 +1536,8 @@ export default function Home(props) {
         });
     }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
+
+  useEffect(() => console.log('here: 4'), [editingRTS.editing.item]);
 
   const updateFBGR = () => {
     GrabFireBaseRoutinesGoalsData();

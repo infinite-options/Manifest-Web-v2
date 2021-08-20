@@ -1459,6 +1459,7 @@ export default function Firebasev2(props)  {
 
                    <div>
                   <EditIcon
+                    onClick = {() => console.log('here: clicking update')}
                     routine={r}
                     task={null}
                     step={currentUser} 

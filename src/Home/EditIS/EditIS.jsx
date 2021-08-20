@@ -1,20 +1,27 @@
 import React, { useContext, useState } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Modal, Button } from 'react-bootstrap';
 import EditISContext from './EditISContext';
 import axios from 'axios';
 import AddIconModal from '../AddIconModal';
 import UploadImage from '../UploadImage';
+import { useEffect } from 'react';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const EditIS = (props) => {
   const editingISContext = useContext(EditISContext);
 
-  const [photo, setPhoto] = useState(editingISContext.editingIS.newItem.is_photo)
+  const [photo, setPhoto] = useState(editingISContext.editingIS.newItem.is_photo);
+  const [showUploadImage, setShowUploadImage] = useState(false);
+  const [image, setImage] = useState(null);
+  const [imageName, setImageName] = useState('');
+  const [imageURL, setImageURL] = useState('');
 
   const updateIS = (e) => {
-    e.stopPropagation()
+    e.stopPropagation();
+    editingISContext.editingIS.editing = !editingISContext.editingIS.editing
     let object = {...editingISContext.editingIS.newItem}
+    console.log('object initial: ', object);
     props.setUpdateGetHistory(!props.updateGetHistory)
     object.start_day_and_time = `${object.start_day} ${object.start_time}:00`;
     delete object.start_day;
@@ -43,68 +50,159 @@ const EditIS = (props) => {
     object.is_sequence = 0;
     object.is_in_progress = "False";
     object.icon_type='';
-    console.log(object);
+    // object.photo = image;
+    console.log('object = ', object);
+    delete object.photo;
     let formData = new FormData();
+    // delete object.at_id;
     Object.entries(object).forEach(entry => {
       if (typeof entry[1] == 'string'){
-      
           formData.append(entry[0], entry[1]);
       }
       else if (entry[1] instanceof Object) {
           entry[1] = JSON.stringify(entry[1])
           formData.append(entry[0], entry[1]);
       }
-      
       else{
           formData.append(entry[0], entry[1]);
       }
-  });
-   if (object.is_id != undefined){
-     console.log("update IS")
-    axios
-    .post(BASE_URL + 'updateIS', formData)
-    .then((response) => {
-      console.log(response);
-      const gr_array_index = editingISContext.editingIS.gr_array.findIndex((elt) => elt.id === editingISContext.editingIS.id)
-      const new_gr_array = [...editingISContext.editingIS.gr_array];
-      new_gr_array[gr_array_index] = object;
-      editingISContext.setEditingIS({
-        ...editingISContext.editingIS,
-        gr_array: new_gr_array,
-        editing: false
+    });
+    console.log('object: ', object);
+    console.log('image: ', image);
+    console.log('photo: ', photo);
+    formData.append('photo', image);
+    console.log('===================formData: for IS=======================');
+    // console.log('formData: ', formData.entries());
+    for(var pair of formData.entries()) {
+      console.log('formData: ', pair);
+    }
+    console.log('obj.is_id: ', object.is_id)
+    if (object.is_id != undefined){
+      console.log("update IS with URL: ", BASE_URL + 'updateIS');
+      axios
+      .post(BASE_URL + 'updateIS', formData)
+      .then((response) => {
+        console.log('successful post: ', response);
+        const gr_array_index = editingISContext.editingIS.gr_array.findIndex((elt) => elt.id === editingISContext.editingIS.id)
+        const new_gr_array = [...editingISContext.editingIS.gr_array];
+        new_gr_array[gr_array_index] = object;
+        editingISContext.setEditingIS({
+          ...editingISContext.editingIS,
+          gr_array: new_gr_array,
+          editing: false
+        })
       })
-    })
-    .catch((err) => {
-      if(err.response) {
-        console.log(err.response);
-      }
-      console.log(err)
-    })
-  
-  }else{
-    console.log("add IS")
-    axios
-    .post(BASE_URL + 'addIS', formData)
-    .then((response) => {
-      console.log(response);
-      const gr_array_index = editingISContext.editingIS.gr_array.findIndex((elt) => elt.id === editingISContext.editingIS.id)
-      const new_gr_array = [...editingISContext.editingIS.gr_array];
-      new_gr_array[gr_array_index] = object;
-      editingISContext.setEditingIS({
-        ...editingISContext.editingIS,
-        gr_array: new_gr_array,
-        editing: false
+      .catch((err) => {
+        if(err.response) {
+          console.log(err.response);
+        }
+        console.log('unsuccessful post: ', err)
       })
-    })
-    .catch((err) => {
-      if(err.response) {
-        console.log(err.response);
-      }
-      console.log(err)
-    })
+    
+    }else{
+      console.log("add IS")
+      axios
+      .post(BASE_URL + 'addIS', formData)
+      .then((response) => {
+        console.log(response);
+        const gr_array_index = editingISContext.editingIS.gr_array.findIndex((elt) => elt.id === editingISContext.editingIS.id)
+        const new_gr_array = [...editingISContext.editingIS.gr_array];
+        new_gr_array[gr_array_index] = object;
+        editingISContext.setEditingIS({
+          ...editingISContext.editingIS,
+          gr_array: new_gr_array,
+          editing: false
+        })
+      })
+      .catch((err) => {
+        if(err.response) {
+          console.log(err.response);
+        }
+        console.log(err)
+      })
+    }
   }
-}
 
+  useEffect(() => console.log('showUploadImage: ', showUploadImage), [showUploadImage])
+
+  const uploadImageModal = () => {
+    return (
+      <Modal
+        show={showUploadImage}
+        onHide={() => {
+          setShowUploadImage(false);
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Upload Image</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <div>Upload Image</div>
+          <input
+            type="file"
+            onChange={(e) => {
+              if (e.target.files[0]) {
+                const image1 = e.target.files[0];
+                setImage(image1);
+              }
+            }}
+          />
+          <Button
+            variant="dark"
+            onClick={() => {
+              if (image === null) {
+                alert('Please select an image to upload');
+                return;
+              }
+              const salt = Math.floor(Math.random() * 9999999999);
+              let image_name = image.name;
+              image_name = image_name + salt.toString();
+              setImageName(image_name);
+              setImageURL(URL.createObjectURL(image));
+              console.log('URL: ', URL.createObjectURL(image));
+              editingISContext.setEditingIS({
+                ...editingISContext.editingIS,
+                newItem: {
+                  ...editingISContext.editingIS.newItem,
+                  photo: image,
+                  photo_url: ''
+                }
+              });
+            }}
+          >
+            Upload
+          </Button>
+          <img
+            src={imageURL || 'http://via.placeholder.com/400x300'}
+            alt="Uploaded images"
+            height="300"
+            width="400"
+          />
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setShowUploadImage(false);
+            }}
+          >
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              setPhoto(imageURL);
+              setShowUploadImage(false);
+            }}
+          >
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  };
 
   return (
     <div
@@ -116,6 +214,7 @@ const EditIS = (props) => {
         color: '#ffffff'
       }}
     >
+      {uploadImageModal()}
       <Container
       style={{padding:'2rem'}}
       >
@@ -151,7 +250,12 @@ const EditIS = (props) => {
             <div style={{textAlign:'left', marginTop:'1rem'}}>
             <Row>
             <Col style={{fontSize:'14px', textDecoration:'underline'}}>
-            <div style={{ marginLeft:'1rem', marginBottom:'8px'}}>Add icon to library</div>
+            <div
+              style={{ marginLeft:'1rem', marginBottom:'8px'}}
+              onClick = {() => setShowUploadImage(!showUploadImage)}
+            >
+              Add icon to library
+            </div>
               <AddIconModal
               photoUrl = {photo}
               setPhotoUrl = {setPhoto}
