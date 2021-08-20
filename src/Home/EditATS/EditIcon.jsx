@@ -113,7 +113,9 @@ const EditIcon = ({ routine, task, step }) => {
           console.log('item', itemToChange);
           // Convert start_day_and_time to day and time
 
-          const startDate = new Date(itemToChange.at_datetime_started);
+          const startDate = new Date(
+            itemToChange.at_datetime_started.replace(/-/g, '/')
+          );
           const startDay = convertDateToDayString(startDate);
           itemToChange.start_day = startDay;
           console.log('chan', startDay);

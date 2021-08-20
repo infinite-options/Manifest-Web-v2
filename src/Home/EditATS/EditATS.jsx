@@ -68,7 +68,7 @@ const EditATS = (props) => {
         ...editingATSContext.editingATS,
         newItem: {
           ...editingATSContext.editingATS.newItem,
-          start_day: startDay,
+          start_day: startDay.replace(/-/g, '/'),
           end_day: endDay,
           at_available_start_time: convertDateToTimeString(
             new Date(props.routineID.startTime.replace(/-/g, '/'))
@@ -79,7 +79,7 @@ const EditATS = (props) => {
         },
       });
     }
-  }, [editingATSContext.editingATS.newItem.start_day]);
+  }, []);
 
   console.log(
     'action start_day',
@@ -258,8 +258,7 @@ const EditATS = (props) => {
                 />
               </Col>
               <Col>
-                <img alt="icon" src={photo}      height="100"
-            width="100"/>
+                <img alt="icon" src={photo} height="100" width="100" />
               </Col>
             </Row>
           </div>
