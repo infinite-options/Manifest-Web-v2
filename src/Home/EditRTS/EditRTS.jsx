@@ -19,7 +19,7 @@ const EditRTS = (props) => {
 
   console.log('Repeat', editingRTSContext.editingRTS.newItem.repeat);
   const updateRTS = (e) => {
-    editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing
+    editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing;
     props.setUpdateGetHistory(!props.updateGetHistory)
     e.stopPropagation()
     let object = {...editingRTSContext.editingRTS.newItem};
@@ -69,6 +69,7 @@ const EditRTS = (props) => {
     object.id = editingRTSContext.editingRTS.id;
     object.user_id = props.CurrentId; // editingRTSContext.editingRTS.currentUserId;
     object.ta_people_id = props.ta_ID;
+    object.photo = image;
     delete object.photo
     // if (image != null) {
     //   console.log('trying to upload',image)
@@ -92,12 +93,12 @@ const EditRTS = (props) => {
           formData.append(entry[0], entry[1]);
       }
     });
-    console.log('image', image)
-    formData.append('photo', image)
+    console.log('photo: ', image);
+    formData.append('photo', image);
 
-    console.log('formData')
+    console.log('===================formData: for RTS=======================');
     for(var pair of formData.entries()) {
-      console.log(pair[0]+ ', '+ pair[1]);
+      console.log('formData: ', pair);
     }
     console.log('object.id') 
     console.log(object.id)
@@ -168,7 +169,8 @@ const EditRTS = (props) => {
             onChange={(e) => {
               if (e.target.files[0]) {
                 const image1 = e.target.files[0];
-                console.log(image1.name);
+                // console.log(image1.name);
+                console.log('image1 = ', image1);
                 setImage(image1);
               }
             }}
@@ -185,6 +187,7 @@ const EditRTS = (props) => {
               image_name = image_name + salt.toString();
               setImageName(image_name);
               setImageURL(URL.createObjectURL(image))
+              console.log('URL: ', URL.createObjectURL(image));
               editingRTSContext.setEditingRTS({
                 ...editingRTSContext.editingRTS,
                 newItem: {

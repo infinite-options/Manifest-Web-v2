@@ -1282,7 +1282,6 @@ export default function Firebasev2(props) {
 
   //when clicking the subroutines button
   function clickHandle(name) {
-    console.log(rows);
     var newRows = [];
     //take out duplicates of rows (copy into newRows)
     const map = new Map();
@@ -1293,18 +1292,14 @@ export default function Firebasev2(props) {
       }
     }
     //if clicked on, change show of things underneath
-    console.log('click.' + name);
-    console.log(newRows);
     for (var r = 0; r < newRows.length; r++) {
       if (rows[r].under == name) {
         //console.log("got " + rows[r].name);
         newRows[r].show = !rows[r].show;
-        console.log(rows[r].name + ' -> ' + newRows[r].show);
         //also close instructions of routines clicked on. 2 levels deep
         for (var i = 0; i < newRows.length; i++) {
           if (rows[i].under == rows[r].name && rows[i].show) {
             newRows[i].show = !rows[i].show;
-            console.log(rows[i].name + ' -> ' + newRows[i].show);
           }
         }
       }
@@ -1900,6 +1895,7 @@ export default function Firebasev2(props) {
   }
 
   function displayInstructions(i, a) {
+      console.log('i = ', i);
     return (
       <div style={{ backgroundColor: '#dae5f5', marginBottom: '0px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
