@@ -100,7 +100,6 @@ const EditIcon = ({routine, task, step}) => {
         icon={faEdit}
         onClick={(e) => {
           e.stopPropagation();
-          e.stopPropagation();
           console.log("steps",arrSteps)
 
         //  const itemToChange = routine;

@@ -614,7 +614,7 @@ export default function Home(props) {
       audio: '',
       // When making API call, convert numMins to expected_completion_time
       numMins: '',
-      is_available: true,
+      is_available: false,
       is_complete: true,
       is_timed: false,
       photo: '',

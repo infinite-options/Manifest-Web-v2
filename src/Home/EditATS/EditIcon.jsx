@@ -106,7 +106,7 @@ const EditIcon = ({ routine, task, step }) => {
           console.log(routine.id);
           var itemToChange;
           for (var j = 0; j < arrAction.length; j++) {
-            if (routine.id === arrAction[j].at_unique_id) {
+            if (routine.at_unique_id === arrAction[j].at_unique_id) {
               itemToChange = arrAction[j];
             }
           }

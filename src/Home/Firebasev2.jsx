@@ -81,6 +81,9 @@ export default function Firebasev2(props)  {
 
     const [listOfBlocks, setlistOfBlocks] = useState([]);
     const [historyGot, setHG] = useState([]);
+    const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
+    const [getActions, setActions] = useState('');
+    const [getActionsEndPoint, setGetActionsEndPoint] = useState([]);
     const [iconColor, setIconColor] = useState()
     //NOTE This gives you routines within 7 days of current date. Change currentDate to change that
     const [currentDate, setCurDate] = useState(new Date(Date.now()))
@@ -110,24 +113,51 @@ export default function Firebasev2(props)  {
     }
 
     useEffect(() => {
-        setHG([])
-        console.log("in useEffect Firebasev2", BASE_URL)
-     //   console.log(currentUser)
+     
       axios
-      .get(BASE_URL +  "getHistory/" + currentUser)
-        .then((response) =>{
+      .get(BASE_URL + "getgoalsandroutines/" + currentUser)
+      .then((response) =>{
             for(var i=0; i <response.data.result.length; i++){
             // for(var i=response.data.result.length - 1; i > -1; i--){
                 
-                historyGot.push(response.data.result[i]);
+                getGoalsEndPoint.push(response.data.result[i]);
             }
-            console.log("historyGot",historyGot);
-            cleanData(historyGot, currentDate);
+           // console.log("historyGot",historyGot);
+           console.log("getGoalsFire", getGoalsEndPoint)
+           makeDisplays()
+          //  cleanData(historyGot, currentDate);
         })
         .catch((error) => {
             console.log(error);
         });
 
+    },[])
+
+    function  actions(action) {
+     
+        axios
+        .get(BASE_URL + "actionsTasks/" + action)
+        .then((response) =>{
+              for(var i=0; i <response.data.result.length; i++){
+              // for(var i=response.data.result.length - 1; i > -1; i--){
+                  getActionsEndPoint.push(response.data.result[i]);
+              }
+             // console.log("historyGot",historyGot);
+             console.log("getActionsFire", getActionsEndPoint)
+             makeDisplays()
+            //  cleanData(historyGot, currentDate);
+          })
+          .catch((error) => {
+              console.log(error);
+          });
+  
+
+    }
+
+    useEffect(() => {
+
+
+        setHG([])
         setTAData([])
         setPatientData([])
 
@@ -157,13 +187,17 @@ export default function Firebasev2(props)  {
             // setGR(response.data.result)
             for(var i = 0; i < response.data.result.length; i++) {
                 GR.push(response.data.result[i])
+                
+
             }
+                 //    makeDisplays(getGoalsEndPoint);
+
             })
         .catch((error) => {
             console.log(error);
         });
         
-    },[props.theCurrentUserID, called,props.editRTS, props.editATS, props.editIS])
+    },[ called])
 
     const copyPicker = () => {
         // console.log('in FireBase, showCopyModal', showCopyModal)
@@ -941,153 +975,153 @@ export default function Firebasev2(props)  {
     //This clean data is from History Page - it creates "rows" of routines actions and instructions
 
      //-------- clean historyGot - just dates we want, just info we want, and structure vertical to horizontal   --------
-     function cleanData(historyGot, useDate){
+    //  function cleanData(historyGot, useDate){
         
-        //go through at find historyGots that are within 7 days of useDate
-        console.log("date:" + useDate);
-        const temp = [];
-        for(var i=0; i <historyGot.length; i++){
-        // for(var i=historyGot.length - 1; i > -1; i--){
-            var historyDate = new Date(historyGot[i].date);
-            console.log('cleanData',historyGot[i].id ,historyDate, useDate, useDate.getTime() - 604800000)
-            if ((historyDate.getTime() >= useDate.getTime() - 604800000)    //filter for within 7 datets
-            // && historyDate.getTime() - 20000 <= useDate.getTime()){                 // 7: 604800000    2: 172800000
-            ){
-                temp.push(historyGot[i]);
-            }
-        }
-        console.log('temp',temp)
-        //now temp has data we want
-    // move temp to inRange with no repeats
-        const tempR = temp.reverse()
-        console.log('tempR', tempR)
+    //     //go through at find historyGots that are within 7 days of useDate
+    //     console.log("date:" + useDate);
+    //     const temp = [];
+    //     for(var i=0; i <historyGot.length; i++){
+    //     // for(var i=historyGot.length - 1; i > -1; i--){
+    //         var historyDate = new Date(historyGot[i].date);
+    //         console.log('cleanData',historyGot[i].id ,historyDate, useDate, useDate.getTime() - 604800000)
+    //         if ((historyDate.getTime() >= useDate.getTime() - 604800000)    //filter for within 7 datets
+    //         // && historyDate.getTime() - 20000 <= useDate.getTime()){                 // 7: 604800000    2: 172800000
+    //         ){
+    //             temp.push(historyGot[i]);
+    //         }
+    //     }
+    //     console.log('temp',temp)
+    //     //now temp has data we want
+    // // move temp to inRange with no repeats
+    //     const tempR = temp.reverse()
+    //     console.log('tempR', tempR)
 
-        const map = new Map();
+    //     const map = new Map();
         
-        // for (const item of temp){
-        //     if(!map.has(item.date)){
-        //         map.set(item.date, true);
-        //         inRange.push({
-        //             date: item.date,
-        //             details: item.details
-        //         })
-        //     }
-        // }
+    //     // for (const item of temp){
+    //     //     if(!map.has(item.date)){
+    //     //         map.set(item.date, true);
+    //     //         inRange.push({
+    //     //             date: item.date,
+    //     //             details: item.details
+    //     //         })
+    //     //     }
+    //     // }
 
-        for (const item of tempR){
-            if(!map.has(item.date)){
-                map.set(item.date, true);
-                inRange.push({
-                    date: item.date,
-                    details: item.details
-                })
-            }
-        }
+    //     for (const item of tempR){
+    //         if(!map.has(item.date)){
+    //             map.set(item.date, true);
+    //             inRange.push({
+    //                 date: item.date,
+    //                 details: item.details
+    //             })
+    //         }
+    //     }
 
-        function custom_sort(a, b) {
-            return (new Date(a.start_day_and_time).getHours() + (new Date(a.start_day_and_time).getMinutes() / 60))
-             - (new Date(b.start_day_and_time).getHours() + (new Date(b.start_day_and_time).getMinutes() / 60));
+    //     function custom_sort(a, b) {
+    //         return (new Date(a.start_day_and_time).getHours() + (new Date(a.start_day_and_time).getMinutes() / 60))
+    //          - (new Date(b.start_day_and_time).getHours() + (new Date(b.start_day_and_time).getMinutes() / 60));
 
-        }
+    //     }
 
-        console.log('inRange', inRange)
-        //bigList will hold new data format sidewase
-        var bigList = [];       
-        for (var d = 0; d < inRange.length; d++){
-            const obj = JSON.parse(inRange[d].details)
-            console.log("obj",obj);
+    //     console.log('inRange', inRange)
+    //     //bigList will hold new data format sidewase
+    //     var bigList = [];       
+    //     for (var d = 0; d < inRange.length; d++){
+    //         const obj = JSON.parse(inRange[d].details)
+    //         console.log("obj",obj);
             
-            //sort obj by time of day
-            obj.sort(custom_sort);
+    //         //sort obj by time of day
+    //         obj.sort(custom_sort);
             
-            for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
-             //   if(obj[r].routine !== undefined){
-                if(obj[r].title){
-                    // console.log("gere");
-                    var isNewR = true;
-                    for (var s=0; s<bigList.length; s++){       //check through and see if this is a new routine
-                        if (bigList[s].type == "Routine" && bigList[s].id == obj[r].routine){
-                            bigList[s].days[d] = obj[r].status;   //if already there- just update that day status
-                           // bigList[s].id = obj[r].routine;
-                            isNewR = false;
-                            break;
-                        }
-                    }
-                    if (isNewR){ //if new, make object and put in bigList
-                        var currentR = {type: "Routine", title: obj[r].title, under: "", days: [], tBox: {}, 
-                        show: true, photo: obj[r].photo, startTime: obj[r].start_day_and_time, is_available: obj[r].is_available,
-                        endTime: obj[r].end_day_and_time, is_sublist_available: obj[r].is_sublist_available, id: obj[r].routine}; 
-                        currentR.days[d] = obj[r].status;
-                        bigList.push(currentR);
-                    }
+    //         for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
+    //          //   if(obj[r].routine !== undefined){
+    //             if(obj[r].title){
+    //                 // console.log("gere");
+    //                 var isNewR = true;
+    //                 for (var s=0; s<bigList.length; s++){       //check through and see if this is a new routine
+    //                     if (bigList[s].type == "Routine" && bigList[s].id == obj[r].routine){
+    //                         bigList[s].days[d] = obj[r].status;   //if already there- just update that day status
+    //                        // bigList[s].id = obj[r].routine;
+    //                         isNewR = false;
+    //                         break;
+    //                     }
+    //                 }
+    //                 if (isNewR){ //if new, make object and put in bigList
+    //                     var currentR = {type: "Routine", title: obj[r].title, under: "", days: [], tBox: {}, 
+    //                     show: true, photo: obj[r].photo, startTime: obj[r].start_day_and_time, is_available: obj[r].is_available,
+    //                     endTime: obj[r].end_day_and_time, is_sublist_available: obj[r].is_sublist_available, id: obj[r].routine}; 
+    //                     currentR.days[d] = obj[r].status;
+    //                     bigList.push(currentR);
+    //                 }
 
-                    if(obj[r].actions!= undefined){
-                        var actions = obj[r].actions;
-                        for (var a=0; a < actions.length; a++){         //FOR ACTIONS
-                            if(actions[a].title){
-                                var isNewA = true;
-                                for (var s=0; s<bigList.length; s++){
-                                    if(bigList[s].type == "Action" && bigList[s].id == actions[a].action){
-                                        bigList[s].days[d] = actions[a].status;
-                                        isNewA = false;
-                                        break;
-                                    }
-                                }
-                                if(isNewA){
-                                    var currentA = {type: "Action", title: actions[a].title, under: obj[r].title, days:[], tBox: {}, show: false,
-                                    photo: actions[a].photo, is_sublist_available: actions[a].is_sublist_available,
-                                    is_available: actions[a].is_available, id: actions[a].action};
-                                    currentA.days[d] = actions[a].status;
-                                    bigList.push(currentA);
-                                }
-                                if(actions[a].instructions != undefined){
-                                    var insts = actions[a].instructions;
-                                    for(var i=0; i < insts.length; i++){        //FOR INSTRUCTIONS
-                                        if (insts[i].title){
-                                            var isNewI = true;
-                                            for(var s=0; s<bigList.length; s++){
-                                                if (bigList[s].type == "Instruction" && bigList[s].id == insts[i].instruction){
-                                                    bigList[s].days[d] = insts[i].status;
-                                                    isNewI = false;
-                                                    break;
-                                                }
-                                            }
-                                            if(isNewI){
-                                                var currentI = {type: "Instruction", title: insts[i].title, under: actions[a].title, days:[], tBox: {},
-                                                show: false, photo: insts[i].photo, is_available: insts[i].is_available, id: insts[i].instruction};
-                                                currentI.days[d] = insts[i].status;
-                                                bigList.push(currentI);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-              //  }
-            }
-            }
-        }
+    //                 if(obj[r].actions!= undefined){
+    //                     var actions = obj[r].actions;
+    //                     for (var a=0; a < actions.length; a++){         //FOR ACTIONS
+    //                         if(actions[a].title){
+    //                             var isNewA = true;
+    //                             for (var s=0; s<bigList.length; s++){
+    //                                 if(bigList[s].type == "Action" && bigList[s].id == actions[a].action){
+    //                                     bigList[s].days[d] = actions[a].status;
+    //                                     isNewA = false;
+    //                                     break;
+    //                                 }
+    //                             }
+    //                             if(isNewA){
+    //                                 var currentA = {type: "Action", title: actions[a].title, under: obj[r].title, days:[], tBox: {}, show: false,
+    //                                 photo: actions[a].photo, is_sublist_available: actions[a].is_sublist_available,
+    //                                 is_available: actions[a].is_available, id: actions[a].action};
+    //                                 currentA.days[d] = actions[a].status;
+    //                                 bigList.push(currentA);
+    //                             }
+    //                             if(actions[a].instructions != undefined){
+    //                                 var insts = actions[a].instructions;
+    //                                 for(var i=0; i < insts.length; i++){        //FOR INSTRUCTIONS
+    //                                     if (insts[i].title){
+    //                                         var isNewI = true;
+    //                                         for(var s=0; s<bigList.length; s++){
+    //                                             if (bigList[s].type == "Instruction" && bigList[s].id == insts[i].instruction){
+    //                                                 bigList[s].days[d] = insts[i].status;
+    //                                                 isNewI = false;
+    //                                                 break;
+    //                                             }
+    //                                         }
+    //                                         if(isNewI){
+    //                                             var currentI = {type: "Instruction", title: insts[i].title, under: actions[a].title, days:[], tBox: {},
+    //                                             show: false, photo: insts[i].photo, is_available: insts[i].is_available, id: insts[i].instruction};
+    //                                             currentI.days[d] = insts[i].status;
+    //                                             bigList.push(currentI);
+    //                                         }
+    //                                     }
+    //                                 }
+    //                             }
+    //                         }
+    //                     }
+    //                 }
+    //           //  }
+    //         }
+    //         }
+    //     }
         
-        setRows([]);
-        console.log("ROWS" + rows);
-        console.log('biglist',bigList);
-        // bigList = addCircles(bigList);
-        // console.log(bigList);
-       // bigList = addNames(bigList, routines);
-        // console.log(bigList);
-        for (var i=0; i< bigList.length; i++){
-            rows.push(createData(bigList[i].title, bigList[i].days[6], bigList[i].days[5], bigList[i].days[4], bigList[i].days[3],
-                 bigList[i].days[2], bigList[i].days[1], bigList[i].days[0], bigList[i].show, bigList[i].under, bigList[i].photo,
-                 bigList[i].startTime, bigList[i].endTime, bigList[i].is_sublist_available, bigList[i].type, bigList[i].id, bigList[i].is_available));
-        }
-        // console.log(tempRows);
-        // setRows(tempRows);
-        console.log('rows',rows);
-        // console.log("GERE");
-        makeDisplays(onlyAllowed(rows));
-        return(true);
-    }
+    //     setRows([]);
+    //     console.log("ROWS" + rows);
+    //     console.log('biglist',bigList);
+    //     // bigList = addCircles(bigList);
+    //     // console.log(bigList);
+    //    // bigList = addNames(bigList, routines);
+    //     // console.log(bigList);
+    //     for (var i=0; i< bigList.length; i++){
+    //         rows.push(createData(bigList[i].title, bigList[i].days[6], bigList[i].days[5], bigList[i].days[4], bigList[i].days[3],
+    //              bigList[i].days[2], bigList[i].days[1], bigList[i].days[0], bigList[i].show, bigList[i].under, bigList[i].photo,
+    //              bigList[i].startTime, bigList[i].endTime, bigList[i].is_sublist_available, bigList[i].type, bigList[i].id, bigList[i].is_available));
+    //     }
+    //     // console.log(tempRows);
+    //     // setRows(tempRows);
+    //     console.log('rows',rows);
+    //     // console.log("GERE");
+    //     makeDisplays(onlyAllowed(rows));
+    //     return(true);
+    // }
 
 
 
@@ -1104,30 +1138,38 @@ export default function Firebasev2(props)  {
     }
 
     //makes listOfBlocks with list of displays routiens and such
-    function makeDisplays(onlyAllowed){     //add displays to tempRows
-        console.log(onlyAllowed);
+    function makeDisplays() {
+        console.log("fire Temp",getGoalsEndPoint.length);
         var tempRows = [];
         console.log("empty", tempRows);
         var routine;
         var action;
-        for (var i=0; i <onlyAllowed.length; i++){
-            if (onlyAllowed[i].type == "Routine"){
+        for (var i=0; i <getGoalsEndPoint.length; i++){
+        //    if (onlyAllowed[i].type == "Routine"){
                 // console.log("allow", onlyAllowed[i])
-                tempRows.push(displayRoutines(onlyAllowed[i]));
-                console.log("current Temp" , tempRows);
-                routine = onlyAllowed[i];
-                // console.log("only", onlyAllowed[i]);
-            }
-            else if (onlyAllowed[i].type == "Action"){
-                tempRows.push(displayActions(onlyAllowed[i], routine));
-                action = onlyAllowed[i];
-            }
-            else {tempRows.push(displayInstructions(onlyAllowed[i], action))}
-        }
+                tempRows.push(displayRoutines(getGoalsEndPoint[i]));
+         //       routine = onlyAllowed[i];
+                 console.log("only", getGoalsEndPoint[i]);
+
+                 if (getGoalsEndPoint[i].is_sublist_available === 'True' ){
+                     for(var j=0; j<getActionsEndPoint.length; j++){
+                         tempRows.push(displayActions(getActionsEndPoint[j]))
+                         console.log("only", getActionsEndPoint[j]);
+
+                     }
+                 }
+         //   }
+        //     else if (onlyAllowed[i].type == "Action"){
+        //         tempRows.push(displayActions(onlyAllowed[i], routine));
+        //         action = onlyAllowed[i];
+        //     }
+        //     else {tempRows.push(displayInstructions(onlyAllowed[i], action))}
+         }
         console.log('tempRows',tempRows);
         setlistOfBlocks(tempRows);
-        console.log(listOfBlocks);
-    }
+      //  console.log(listOfBlocks);
+    //}
+}
 
     function formatDateTime(str) {
         let newTime = new Date(str.replace(/-/g, '/')).toLocaleTimeString();
@@ -1167,7 +1209,7 @@ export default function Firebasev2(props)  {
         }
         // console.log(childIn);
         setRows(newRows);    //update rows with newRows
-        makeDisplays(onlyAllowed(newRows));
+     //   makeDisplays(onlyAllowed(newRows));
     }
 
 
@@ -1218,7 +1260,7 @@ export default function Firebasev2(props)  {
                                 alert("Item Is Availble to the user");
                                 }}
                                 icon={faUser}
-                                size="small"
+                                size="sm"
                             />
                         </div>
                     )
@@ -1234,7 +1276,7 @@ export default function Firebasev2(props)  {
                             alert("Item Is NOT Availble to the user" + r.is_available);
                             }}
                             icon={faUserAltSlash}
-                            size="small"
+                            size="sm"
                         />
                         </div>
                     )
@@ -1257,15 +1299,16 @@ export default function Firebasev2(props)  {
 
     
     function displayRoutines(r){
-        console.log('displayroutines', r)
         const ret = getIsAvailableFromGR(r)
-        if (ret != 'E') {
+        console.log('displayroutines', r, ret)
+     //   if (ret == 'E') {
         return(
             <ListGroup.Item
-            
+                key={r.gr_unique_id}
                 style={{  backgroundColor:'#BBC7D7' , marginTop: '1px'}}
                 onClick={() => {
-                    props.sethighLight(r["gr_title"])
+                  //  props.sethighLight(r["gr_title"])
+                  console.log("ListGroup", r["gr_title"])
                   }}
             >
                 <div style={{ display:'flex', justifyContent:'space-between' }}>
@@ -1274,7 +1317,7 @@ export default function Firebasev2(props)  {
                 zIndex:'50%'}}>
                 <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
                 <div style={{ marginLeft:'1rem'}} >
-                {r["startTime"] && r["endTime"] ? (
+                { r.gr_start_day_and_time && r.gr_end_day_and_time  ? (
                     <div
                     style={{
                         fontSize: "8px",
@@ -1283,13 +1326,13 @@ export default function Firebasev2(props)  {
                     >
                     {
                         formatDateTime(
-                        r["startTime"]  
+                        r.gr_start_day_and_time  
                         )}
                         -
                     {
                         formatDateTime(
-                        r["endTime"]
-                        )}
+                            r.gr_end_day_and_time  
+                            )}
                     </div>
                 ) : (
                     <Col> </Col>
@@ -1298,7 +1341,7 @@ export default function Firebasev2(props)  {
                 </div>
 
                 <div style={{color:'#ffffff', size:'24px', textDecoration:'underline', fontWeight:'bold', marginLeft: "10px",}}>
-                {r["name"]}
+                {r["gr_title"]}
                 </div>
                     
                     {/* ({date}) */}
@@ -1309,7 +1352,7 @@ export default function Firebasev2(props)  {
 
                 <Col xs={7} style={{ paddingRight: "1rem"  ,marginTop:'0.5rem'}}>
                         <img
-                        src={r["photo"]}
+                        src={r.gr_photo}
                         alt="Routines"
                         className="center"
                         height="28px"
@@ -1326,7 +1369,7 @@ export default function Firebasev2(props)  {
                             icon={faList}
                             title="SubList Available"
                             style={{ color: "#ffffff" }}
-                            size="small"
+                            size="sm"
                             onClick = {()=> {
                               
                             }}
@@ -1380,33 +1423,60 @@ export default function Firebasev2(props)  {
                         // console.log("On click1");
                         console.log(r.id, r.name)
                         // copiedRoutineID = r.id
-                        setCRN(r.name)
-                        setCRID(r.id)
+                        setCRN(r.gr_title)
+                        setCRID(r.gr_unique_id)
                         setTAToCopyTo({})
                         setPatientToCopyTo({})
                         // console.log('test', r.name)
-                        toggleCopyModal([!showCopyModal[0], r.id])
+                        toggleCopyModal([!showCopyModal[0], r.gr_unique_id])
                         // toggleCopyModal2([!showCopyModal2[0], r.id])
                         //toggleCopyPicker(!showCopyPicker)
                         
                         
                     }}
                     icon={faCopy}
-                    size="md"
+                    size="sm"
                     />
 
                     </div>
 
                     <div style={{flex:'1', marginLeft:'1rem'}}>
                     
-                    <Row >
+                    <div >
 
-                        {console.log('firebase 426',r)}
-                        {console.log('firebase 427',r.name, r.is_available)}
-                        
-                        {ret}
-                        
-                        </Row>
+<div >
+    {(r.is_available == "True") ? (
+        <div >
+        <FontAwesomeIcon
+            title="Available to the user"
+            style={{
+            color: "#ffffff",
+            }}
+            onClick={(e) => {
+            e.stopPropagation();
+            alert("Item Is Availble to the user");
+            }}
+            icon={faUser}
+            size="sm"
+        />
+        </div>
+    ) : (
+        <div>
+        <FontAwesomeIcon
+            title="Unavailable to the user"
+            style={{ color: "#000000" }}
+            onClick={(e) => {
+            e.stopPropagation();
+            alert("Item Is NOT Availble to the user");
+            }}
+            icon={faUserAltSlash}
+            size="sm"
+        />
+        </div>
+    )}
+    
+    </div>
+</div>
                     </div>
 
                     <div style={{flex:'1'}} >
@@ -1437,7 +1507,7 @@ export default function Firebasev2(props)  {
                                     e.stopPropagation();
                                     console.log(r)
                                     
-                                    let body = {goal_routine_id: r.id}
+                                    let body = {goal_routine_id: r.gr_unique_id}
 
                                     axios
                                         .post(BASE_URL + 'deleteGR', body)
@@ -1448,7 +1518,7 @@ export default function Firebasev2(props)  {
                                         })
                                 }}
                                 icon={faTrashAlt}
-                                size="md"
+                                size="sm"
                             />
                         </div>
                     {/* </div> */}
@@ -1473,11 +1543,13 @@ export default function Firebasev2(props)  {
                             icon={faList}
                             title="SubList Available"
                             style={{ color: "#ffffff" }}
-                            size="small"
+                            size="sm"
                             onClick = {()=> {
                                 // sendRoutineToParent(r.name);
-                                clickHandle(r.name)
+                             //   clickHandle(r.gr_title)
                                 // setLoading(!isLoading);
+                                setActions(r.gr_unique_id)
+                                actions(r.gr_unique_id);
                             }}
                             />
                         </div>
@@ -1509,10 +1581,11 @@ export default function Firebasev2(props)  {
                 </div>
             </ListGroup.Item>
         )
-        }
+    //    }
     }
 
-    function displayActions(a, r){
+    function displayActions(a){
+        console.log("displayActions", a)
         return(
             <div
             
@@ -1549,7 +1622,7 @@ export default function Firebasev2(props)  {
                 </div>
 
                 <div style={{color:'#ffffff', size:'24px', textDecoration:'underline', fontWeight:'bold', marginLeft: "10px",}}>
-                {a["name"]}
+                {a["at_title"]}
 
                 </div>
                     
@@ -1561,7 +1634,7 @@ export default function Firebasev2(props)  {
 
                 <Col xs={7} style={{ paddingRight: "1rem"  ,marginTop:'0.5rem'}}>
                         <img
-                        src={a["photo"]}
+                        src={a["at_photo"]}
                         alt="Routines"
                         className="center"
                         height="28px"
@@ -1576,7 +1649,7 @@ export default function Firebasev2(props)  {
                             icon={faList}
                             title="SubList Available"
                             style={{ color: "#ffffff" }}
-                            size="small"
+                            size="sm"
                             onClick = {()=> {
                                 // sendRoutineToParent(a.number);
                                 // setLoading(!isLoading);
@@ -1611,7 +1684,7 @@ export default function Firebasev2(props)  {
                                 alert("Item Is Availble to the user");
                                 }}
                                 icon={faUser}
-                                size="small"
+                                size="sm"
                             />
                             </div>
                         ) : (
@@ -1624,7 +1697,7 @@ export default function Firebasev2(props)  {
                                 alert("Item Is NOT Availble to the user");
                                 }}
                                 icon={faUserAltSlash}
-                                size="small"
+                                size="sm"
                             />
                             </div>
                         )}
@@ -1645,9 +1718,9 @@ export default function Firebasev2(props)  {
                                 // style ={{ color:  "#000000" }}
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    console.log(r)
+                                   // console.log(r)
                                     
-                                    let body = {at_id: a.id}
+                                    let body = {at_id: a.at_unique_id}
 
                                     axios
                                         .post(BASE_URL + 'deleteAT', body)
@@ -1658,7 +1731,7 @@ export default function Firebasev2(props)  {
                                         })
                                 }}
                                 icon={faTrashAlt}
-                                size="md"
+                                size="sm"
                             />
                         </div>
                 </div>
@@ -1667,46 +1740,37 @@ export default function Firebasev2(props)  {
                     <div>
                     <EditActionIcon
                     routine={a}
-                    task={r.id}
-                    step={null}  
+                    task={getActions}
+               //     step={null}  
                   />
 
                     </div>
 
                     <div>
-             
-
-                               {/* {(a.is_sublist_available === "True") ? ( */}
-                                <div>
-                                {(a.is_sublist_available === "True") ? (
+                     <div>
+                         {(a.is_sublist_available === "True") ? (
                             <div>
                             <FontAwesomeIcon
                             icon={faList}
                             title="SubList Available"
                             style={{ color: "#ffffff" }}
-                            size="small"
+                            size="sm"
                             onClick = {()=> {
                                 // sendRoutineToParent(a.number);
                                 // setLoading(!isLoading);
-                                clickHandle(a.name)
+                           //     clickHandle(a.name)
+                                console.log("ActionTest", a)
                             }}
                             />
                         </div>
                         ) : (
-                            <FontAwesomeIcon
-                                    icon={faList}
-                                    title="SubList Not Available"
-                                    style={{ color: "#d1dceb"}}
-                                    size="small"
-                                    />) 
+                            <div>
+                            </div>    
+                           
+                            ) 
                                     }
                         </div>
-                        {/* ) : (
-                            <div
-                            // onClick={(e)=>{ e.stopPropagation(); this.setState({iconShowATModal: false})}}>
-                            >
-                            </div>
-                        )} */}
+                   
                     </div>
 
                     <div>
@@ -1721,7 +1785,7 @@ export default function Firebasev2(props)  {
                     onClick = {(e)=> {
                           e.target.style.color = "#000000"
                           props.setIS(props.newIS)
-                          props.setaID(a['id'])
+                          props.setaID(a['at_unique_id'])
                     }}/>
                     </div>
                     </div>
@@ -1809,7 +1873,7 @@ export default function Firebasev2(props)  {
                                 alert("Item Is Availble to the user");
                                 }}
                                 icon={faUser}
-                                size="small"
+                                size="sm"
                             />{" "}
                             </div>
                         ) : (
@@ -1822,7 +1886,7 @@ export default function Firebasev2(props)  {
                                 alert("Item Is NOT Availble to the user");
                                 }}
                                 icon={faUserAltSlash}
-                                size="small"
+                                size="sm"
                             />
                             </div>
                         )}
@@ -1867,7 +1931,7 @@ export default function Firebasev2(props)  {
                             icon={faBookmark}
                             title="Must Do"
                             style={{ color: "#ffffff" }}
-                            size="small"
+                            size="sm"
                         />
                     </div>
 
@@ -1885,6 +1949,7 @@ export default function Firebasev2(props)  {
 
     return(
         <row>
+                {/* {makeDisplays()} */}
                 {console.log('FBGR',GR)}
                 {copyPicker()}
                 {copyModal()}
