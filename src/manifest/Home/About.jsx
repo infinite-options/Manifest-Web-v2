@@ -15,8 +15,8 @@ import {
   ModalBody,
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faImage, faTemperatureHigh } from '@fortawesome/free-solid-svg-icons';
-
+import { faImage, faTemperatureHigh,faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import PhoneInput from 'react-phone-number-input';
@@ -26,12 +26,12 @@ import MiniNavigation from '../miniNavigation'
 import LoginContext from '../../LoginContext'
 import { useHistory, Redirect } from 'react-router-dom';
 import AddIconModal from '../../Home/AddIconModal';
-
+import UploadImage from '../../Home/UploadImage';
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const useStyles = makeStyles({
   table: {
-    width: 100,
+    //width: 200,
   },
   formGroupTitle: {
     marginLeft: '3rem',
@@ -40,7 +40,7 @@ const useStyles = makeStyles({
   formGroupItem: {
     borderRadius: '10px',
     border: '1px solid #889AB5',
-    width: '250px',
+    width: '300px',
     height: '38px',
     marginRight: '2rem',
     marginTop:'1rem'
@@ -57,12 +57,16 @@ export default function AboutModal(props) {
   const [lastName, setLastName] = useState('');
   const [showTimeModal, setShowTimeModal] = useState(false);
   const [saveButtonEnabled, setSaveButtonEnabled] = useState(false);
-  const [enableDropDown, setEnableDropDown] = useState(false);
   const [addPerson, setAddPerson] = useState(false);
   const [addPersonName, setAddPersonName] = useState('');
   const [ta_user_id, setTa_user_id] = useState('');
   const [url, setUrl] = useState('');
   const [photo, setPhoto] = useState('')
+  const [showConfirmed, toggleConfirmed] = useState(false);
+  const [called, toggleCalled] = useState(false)
+  const [saveConfirm, toggleSave] = useState(false);
+  const [editPerson, setPerson] =useState(false)
+  const [taObject, setTaObject] = useState({})
   //aboutMeObject states
   const [aboutMeObject, setAboutMeObject] = useState({
     birth_date: new Date(),
@@ -121,6 +125,8 @@ export default function AboutModal(props) {
   //     console.log('userID', userID)
   //   }
        console.log('userID', userID)
+       console.log('ta_user_id', ta_user_id)
+       console.log('taObject', taObject)
 
   useEffect(()=> {
       axios
@@ -525,40 +531,86 @@ export default function AboutModal(props) {
     );
   }
 
-  function ToggleShowEditRoutine() {
-    // history.push('/main');
-  }
-
-  function ToggleShowAbout() {
-    // history.push('/about');
-  }
-
   // grabFireBaseAboutMeData()
   console.log(aboutMeObject)
 
   var selectedTAid = ""
   function AddPerson(){
-    if (
+    /* if (
       document.cookie
         .split(";")
         .some(item => item.trim().startsWith("ta_uid="))
     ) {
       selectedTAid = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
     } else {
+    } */
+    
+    
+    let body = {
+      user_id : userID,
+      //ta_people_id: selectedTAid,
+      name: addPersonName,
+      relationship: "",
+      important:"TRUE",
+      picture: "",
+      photo_url:photo,
     }
+    console.log("addPerson", body)
+    let formData = new FormData();
+    Object.entries(body).forEach(entry => {
+      // if (typeof entry[1].name == 'string'){
+      if (typeof entry[1] == 'string'){
+          formData.append(entry[0], entry[1]);
+      }
+      else if (entry[1] instanceof Object) {
+          entry[1] = JSON.stringify(entry[1])
+          formData.append(entry[0], entry[1]);
+      }
+      
+      else{
+          formData.append(entry[0], entry[1]);
+      }
+  });
+    axios
+    .post(BASE_URL + 'addPeople' , formData)
+      .then((response) => {
+      console.log('addPeople',response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  } 
+
+  function UpdatePerson(){
+    /* if (
+      document.cookie
+        .split(";")
+        .some(item => item.trim().startsWith("ta_uid="))
+    ) {
+      selectedTAid = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
+    } else {
+    } */
 
     let body = {
       user_id : userID,
-      ta_people_id: selectedTAid,
-      people_name: addPersonName,
-      people_relationship: "",
-      people_phone_number:"",
+      ta_id:'',
+      ta_people_id: ta_user_id,
+      people_name: taObject.name,
+      people_relationship: taObject.relationship,
+      people_phone_number: taObject.phone_number,
+      people_employer:taObject.employer,
+      people_email: taObject.email,
       people_important:"True",
       people_have_pic:'False',
       people_pic: "",
       photo_url:photo,
     }
-    console.log("addPerson", body)
+    console.log("updatePerson", body)
+    if (taObject.phone_number === 'undefined') {
+      body.phone_number = '';
+    } else {
+      body.phone_number = taObject.phone_number;
+    }
     let formData = new FormData();
     Object.entries(body).forEach(entry => {
       // if (typeof entry[1].name == 'string'){
@@ -585,8 +637,372 @@ export default function AboutModal(props) {
     });
   } 
 
+  const editPersonModal = (taObject) => {
+    if (editPerson) {
+      return (
+        <div
+          style={{
+            height: "100%",
+            width: "100%",
+            zIndex: "101",
+            left: "0",
+            top: "0",
+            overflow: "auto",
+            position: "fixed",
+            display: "grid",
+            backgroundColor: 'rgba(255, 255, 255, 0.5)'
+          }}
+        >
+          <div
+            style={{
+              position: "relative",
+              justifySelf: "center",
+              alignSelf: "center",
+              display: "block",
+              backgroundColor: "#889AB5",
+              width: "400px",
+              // height: "100px",
+              color: "white",
+              padding: "40px"
+            }}
+          >
+            <div style={{textAlign: 'center', marginBottom: '20px'}}>Person Info {taObject.ta_people_id}</div>
+            <Form.Group>
+            <Row>
+              <Col style={{ paddingRight: '10px' }}>
+                <FormLabel
+                  style={{
+                    marginTop: '10px',
+                    marginLeft: '10px',
+                    fontWeight: 'bolder',
+                    color: 'white',
+                  }}
+                >
+                   Name
+                </FormLabel>
+                <Form.Control
+                  type="text"
+                  placeholder="First Last"
+                  value={taObject.name}
+                  onChange={(e) => {
+                    console.log(e.target.value)
+                    setTaObject({
+                      ...taObject,
+                      name: e.target.value,
+                    })
+                  }}
+                />
+              </Col>
+            </Row>
+           
+            <br />
+            <div style={{ fontWeight: 'bold', marginTop: '10px' }}>
+              Change Icon
+            </div>
+            <div style={{ textAlign: 'left', float:'left', marginTop: '1rem',width:'100%' }}>
+            <Row >
+              <Col style={{ textDecoration:'underline', paddingLeft:'0', marginLeft:'0', width:'70%'}}>
+              <div style={{ marginBottom: '8px',  fontSize: '14px', }}>
+                  Add icon to library
+              </div>
+              <div style={{ paddingLeft:'0', marginLeft:'-1rem'}}>
+                <UploadImage 
+                  photoUrl={photo}
+                  setPhotoUrl={setPhoto}
+                  currentUserId={props.CurrentId} /> 
+              </div>
+              <div style={{ paddingLeft:'0', marginLeft:'-1rem'}}>
+                <AddIconModal
+                  photoUrl = {photo}
+                  setPhotoUrl = {setPhoto}
+                />
+              </div>
+              
+              </Col>
+              <Col>
+                <div  style={{ marginLeft: '1rem' }}>
+                <img style={{height:'5rem', width:'5rem',backgroundColor:'#ffffff', borderRadius:'10px'}} src={photo}/> 
+              </div> 
+              </Col>
+            </Row>
+            </div>
+            
+            <br />
+            <Row>
+              <Col style={{ paddingRight: '10px' }}>
+                <label
+                  style={{
+                    marginTop: '10px',
+                    marginRight: '20px',
+                    fontWeight: 'bolder',
+                    color: 'white',
+                  }}
+                >
+                  Relationship
+                </label>
+                <Form.Control
+                  type="text"
+                  value={taObject.relationship}
+                  placeholder="Enter relationship"
+                  onChange={(e) => {
+                    console.log(e.target.value)
+                    setTaObject({
+                      ...taObject,
+                      relationship: e.target.value,
+                    })
+                  }}
+                  
+                />
+                </Col>
+            </Row>
+            <br />
+            <Row>
+              <Col style={{ paddingRight: '10px' }}>
+                <label
+                  style={{
+                    marginTop: '10px',
+                    fontWeight: 'bolder',
+                    color: 'white',
+                  }}
+                >
+                  Phone Number
+                </label>
+                <Form.Control
+                  type="phone"
+                  value={taObject.phone_number}
+                  placeholder="Enter phone number"
+                  onChange={(e) => {
+                    console.log(e.target.value)
+                    setTaObject({
+                      ...taObject,
+                      phone_number: e.target.value,
+                    })
+                  }}
+                  
+                />
+               
+              </Col>
+            </Row>
+            <br />
+            <Row>
+              <Col style={{ paddingRight: '10px' }}>
+                <label
+                  style={{
+                    marginTop: '10px',
+                    fontWeight: 'bolder',
+                    color: 'white',
+                  }}
+                >
+                  Email Address
+                </label>
+                <Form.Control
+                  type="email"
+                  placeholder="Email Address"
+                  value={taObject.email}
+                  onChange={(e) => {
+                    console.log(e.target.value)
+                    setTaObject({
+                      ...taObject,
+                      email: e.target.value,
+                    })
+                  }}
+                />
+               
+              </Col>
+            </Row>
+            <br />
+            <Row>
+              <Col style={{ paddingRight: '10px' }}>
+                <label
+                  style={{
+                    marginTop: '10px',
+                    fontWeight: 'bolder',
+                    color: 'white',
+                  }}
+                >
+                  Employer
+                </label>
+                <Form.Control
+                  type="text"
+                  placeholder="Employer"
+                  value={taObject.employer}
+                  onChange={(e) => {
+                    console.log(e.target.value)
+                    setTaObject({
+                      ...taObject,
+                      employer: e.target.value,
+                    })
+                  }}
+                />
+               
+              </Col>
+            </Row>
+          </Form.Group>
+            <div>
+              <button style = {{
+                backgroundColor: "#FF6B4A",
+                color: 'white',
+                border: 'solid',
+                borderWidth: '2px',
+                borderRadius: '25px',
+                width: '30%',
+                marginLeft: "5%",
+                marginRight: "10%"
+              }}
+              onClick = {() => {
+                setPerson(false)
+              }}
+              >
+                Cancel
+              </button>
+              <button style = {{
+                backgroundColor: "#51CC4E",
+                color: 'white',
+                border: 'solid',
+                borderWidth: '2px',
+                borderRadius: '25px',
+                width: '40%',
+                marginLeft: "10%",
+                marginRight: "5%"
+              }}
+              onClick = {() => {
+                UpdatePerson();
+                toggleConfirmed(true)
+                setPerson(false)
+              }}
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )
+    } else {
+      return null
+    }
+  }
+  
+
+  const confirmedModal = () => {
+    if (showConfirmed) {
+      return (
+        <div
+          style={{
+            height: "100%",
+            width: "100%",
+            zIndex: "101",
+            left: "0",
+            top: "0",
+            overflow: "auto",
+            position: "fixed",
+            display: "grid",
+            backgroundColor: 'rgba(255, 255, 255, 0.5)'
+          }}
+        >
+          <div
+            style={{
+              position: "relative",
+              justifySelf: "center",
+              alignSelf: "center",
+              display: "block",
+              backgroundColor: "#889AB5",
+              width: "400px",
+              // height: "100px",
+              color: "white",
+              padding: "40px"
+            }}
+          >
+            <div style={{textAlign: 'center', marginBottom: '20px'}}>Changes saved</div>
+            <div style={{textAlign: 'center', marginBottom: '20px'}}>User's about me changes have been saved.</div>
+            <div style={{textAlign: 'center'}}>
+              <button style = {{
+                backgroundColor: "#889AB5",
+                color: 'white',
+                border: 'solid',
+                borderWidth: '2px',
+                borderRadius: '25px',
+                width: '30%',
+                marginLeft: "10%",
+                marginRight: "10%"
+              }}
+              onClick = {() => {
+                toggleConfirmed(false)
+              }}
+              >
+                Okay
+              </button>
+            </div>
+          </div>
+        </div>
+      )
+    } else {
+      return null
+    }
+  }
+  const confirmSaveModal = () => {
+    if (saveConfirm) {
+      return (
+        <div
+          style={{
+            height: "100%",
+            width: "100%",
+            zIndex: "101",
+            left: "0",
+            top: "0",
+            overflow: "auto",
+            position: "fixed",
+            display: "grid",
+            backgroundColor: 'rgba(255, 255, 255, 0.5)'
+          }}
+        >
+          <div
+            style={{
+              position: "relative",
+              justifySelf: "center",
+              alignSelf: "center",
+              display: "block",
+              backgroundColor: "#889AB5",
+              width: "400px",
+              // height: "100px",
+              color: "white",
+              padding: "40px"
+            }}
+          >
+            <div style={{textAlign: 'center', marginBottom: '20px'}}>Save Person</div>
+            <div style={{textAlign: 'center', marginBottom: '20px'}}>Person added to the important people list.</div>
+            <div style={{textAlign: 'center'}}>
+              <button style = {{
+                backgroundColor: "#889AB5",
+                color: 'white',
+                border: 'solid',
+                borderWidth: '2px',
+                borderRadius: '25px',
+                width: '30%',
+                marginLeft: "10%",
+                marginRight: "10%"
+              }}
+              onClick = {() => {
+                toggleSave(false)
+              }}
+              >
+                Okay
+              </button>
+            </div>
+          </div>
+        </div>
+      )
+    } else {
+      return null
+    }
+  }
+
+
+
   return (
     <div>
+      {editPersonModal(taObject)}
+      {confirmedModal()}
+      {confirmSaveModal()}
       <div style={{height: '3px'}}></div>
       <div backgroundColor="#bbc8d7">
         <MiniNavigation/>
@@ -1226,11 +1642,11 @@ export default function AboutModal(props) {
               color: 'white',
             }}
           >
-            <Form.Label>Medication</Form.Label>
+            <Form.Label>Family Contacts</Form.Label>
             <Form.Control
               style={{ borderRadius: '10px' }}
               as="textarea"
-              rows="4"
+              rows="9"
               type="text"
               value={aboutMeObject.message_day || ""}
               onChange={(e) => {
@@ -1253,12 +1669,12 @@ export default function AboutModal(props) {
                 color: 'white',
               }}
             >
-              Medication Schedule
+             Current Medication 
             </Form.Label>
             <Form.Control
               style={{ borderRadius: '10px' }}
               as="textarea"
-              rows="4"
+              rows="9"
               type="text"
               value={aboutMeObject.message_card || ''}
               onChange={(e) => {
@@ -1273,7 +1689,34 @@ export default function AboutModal(props) {
               }}
             />
           </Form.Group>
-         
+          <Form.Group controlId="AboutMessageCard">
+            <Form.Label
+              style={{
+                marginTop: '10px',
+                fontWeight: 'bolder',
+                color: 'white',
+              }}
+            >
+              Medicine Schedule
+            </Form.Label>
+            <Form.Control
+              style={{ borderRadius: '10px' }}
+              as="textarea"
+              rows="9"
+              type="text"
+              value={aboutMeObject.major_events || ''}
+              onChange={(e) => {
+                console.log(e.target.value)
+                e.stopPropagation();
+                setAboutMeObject({
+                  ...aboutMeObject,
+                  major_events: e.target.value
+                }
+                  
+                );
+              }}
+            />
+          </Form.Group>
         </div>
         <div
           style={{
@@ -1296,12 +1739,12 @@ export default function AboutModal(props) {
               Important people in life
             </Form.Label>
             <div>
-            {listPeople.map((e) => {
+            {listPeople.map((lp) => {
               return(
                 <div style={{display:'flex', justifyContent:'space-evenly', marginTop:'1rem'}}>
                 
                 <div  >
-                  <img style={{height:'5rem', width:'5rem', backgroundColor:'#ffffff', borderRadius:'10px'}} src={e.pic ? e.pic : ''}/>
+                  <img style={{height:'5rem', width:'5rem', backgroundColor:'#ffffff', borderRadius:'10px'}} src={lp.pic ? lp.pic : ''}/>
                 </div>
                 
                 <div
@@ -1317,32 +1760,88 @@ export default function AboutModal(props) {
                     marginTop: '1rem',
                   }}
                 >
-                  <p style={{ color: 'white', paddingTop: '10px' }}>{e.name}</p>
+                  <p style={{ color: 'white', paddingTop: '10px' }}>{lp.name}</p>
                 </div>
+                <div style={{ display:'flex', flexDirection:'row', marginTop: '1rem',}}>
+                <FontAwesomeIcon
+                  title="Edit Person"
+                  style={{
+                  color: "#ffffff",
+                  margin: '0.5rem'
+                  }}
+                  icon={faEdit}
+                  size="small"
+                  onClick={(e) => {
+                    setPerson(true);
+                    setTa_user_id(lp.ta_people_id);
+                    setTaObject(lp);
+                    setAddPersonName(lp.people_name)
+                  }}
+               />
+                <FontAwesomeIcon
+                  title="Delete Person"
+                  style={{
+                  color: "#ffffff",
+                  margin: '0.5rem'
+                  }}
+                  icon={faTrashAlt}
+                  size="small"
+                  onClick={(e) => {
+                    console.log(lp)
+                    let body = {
+                      user_id: userID, 
+                      ta_people_id: lp.ta_people_id,
+                    }
+                    console.log(body)
+                    axios
+                        .post(BASE_URL + 'deletePeople', body)
+                        .then(response => {
+                            console.log('deleting')
+                            console.log(response.data)
+                            toggleCalled(!called)
+                    })
 
+                    
+                  }}
+                  />
+                </div>
+                      
                 </div>
             
             )
           })
           }
              <Box hidden={!addPerson}>
-             <div style={{display:'flex'}}>  
-             <img style={{height:'5rem', width:'5rem',marginTop:'1rem',marginRight:'1rem', backgroundColor:'#ffffff', borderRadius:'10px'}} src={photo}/> 
-             <input 
+             <div style={{display:'flex', justifyContent:'space-evenly', marginTop:'1rem'}}> 
+             <div>
+             <img style={{height:'5rem', width:'5rem',backgroundColor:'#ffffff', borderRadius:'10px'}} src={photo}/> 
+              </div> 
+             <div style={{
+                  float: 'left',
+                  marginLeft: '20px',
+                  textAlign: 'center',
+                  marginTop: '1rem',
+                  marginRight:'4rem'
+                }}>
+             <input
                 style={{
-                  width: '300px',
+                  width: '280px',
                   height:'3rem',
                   borderRadius: '10px',
                   borderColor: '#BBC7D7',
                   backgroundColor: '#BBC7D7',
-                  float: 'left',
-                  marginLeft: '20px',
-                  textAlign: 'center',
-                  marginTop: '2rem',
-                }}
-             onChange = {(e) => {
+               
+                }} 
+                onChange = {(e) => {
                 setAddPersonName(e.target.value)
-             }} /> 
+             }} />
+             </div>
+             
+            
+            <div style={{ display:'flex', flexDirection:'row', marginTop: '1rem',}}>
+                
+                </div>
+                        
              </div> 
             <p> Change Image</p>
             <div> Upload Image from Computer </div> 
@@ -1364,6 +1863,8 @@ export default function AboutModal(props) {
                 type="submit"
                 onClick={(e) => {
                   AddPerson();
+                  toggleSave(true);
+                  setAddPerson(!addPerson)
                 }}
               >
                 Save Person
@@ -1433,6 +1934,7 @@ export default function AboutModal(props) {
                 onClick={(e) => {
                   e.stopPropagation();
                   newInputSubmit();
+                  toggleConfirmed(true);
                 }}
               >
                 Save Changes

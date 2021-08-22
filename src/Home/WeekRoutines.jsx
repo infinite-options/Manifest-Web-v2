@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import moment from 'moment';
+import moment, { weekdays } from 'moment';
 import { Container, Row, Col } from 'react-bootstrap';
 import './Home.css';
 import { BorderColor } from '@material-ui/icons';
@@ -501,8 +501,9 @@ export default class WeekRoutines extends Component {
                         float: 'left',
                         borderRadius: '10px',
                         background:
-                          curDate2.format('D') === today.getDate().toString()
-                            ? '#FF6B4A'
+                        curDate2.format('D') === today.getDate().toString() & curDate2.format('M') === (today.getMonth()+1).toString()
+                        ? '#FF6B4A'
+                      
                             : arr[i].is_complete
                             ? '#BBC7D7'
                             : 'lightslategray',
@@ -785,7 +786,7 @@ export default class WeekRoutines extends Component {
       var arr = [];
       for (let j = 0; j < 24; ++j) {
         arr.push(
-          <Container key={'weekRoutine' + i + j}>
+          <Container key={'weekRoutine' + i + j} >
             <Row style={{ position: 'relative' }}>
               <Col
                 style={{
@@ -795,7 +796,8 @@ export default class WeekRoutines extends Component {
                   height: '50px',
                   color: 'white',
                   borderBottom: '2px solid #b1b3b6',
-                  // width: '100%',
+                  margin:'0px',
+                  width: '100%',
                 }}
               >
                 {this.getRoutineItemFromDic(i, j, dic)}
@@ -827,7 +829,7 @@ export default class WeekRoutines extends Component {
               textAlign: 'center',
               height: this.state.pxPerHour,
               color:
-                curDate.format('D') === today.getDate().toString()
+                curDate.format('D') === today.getDate().toString() & curDate.format('M') === (today.getMonth()+1).toString()
                   ? '#FF6B4A'
                   : '',
             }}
@@ -840,7 +842,37 @@ export default class WeekRoutines extends Component {
     }
     return arr;
   };
-
+  weekdaysDisplay =()=>{
+    let arr = [];
+    let startObject = this.props.dateContext.clone();
+    let startDay = startObject.startOf('week');
+    let curDate = startDay.clone();
+    let today = new Date();
+    //console.log('Curdate',curDate.format('D'))
+    //console.log('curdate today.toString()',today.getDate().toString())
+    
+      
+    for (let i = 0; i < 7; i++) {
+      arr.push(
+        <Col key={'day' + i}>
+          <Col
+            style={{
+              textAlign: 'center',
+              fontWeight: 'bold',
+              color:
+              curDate.format('D') === today.getDate().toString() & curDate.format('dddd') === moment(today).format('dddd') & curDate.format('M') === (today.getMonth()+1).toString()
+                  ? '#FF6B4A'
+                  : '',
+            }}
+          >
+            {curDate.format('dddd')}
+          </Col>
+        </Col>
+      );
+      curDate.add(1, 'day');
+    }
+    return arr;
+    };
   render() {
     let today = '';
     switch (new Date().getDay()) {
@@ -866,7 +898,10 @@ export default class WeekRoutines extends Component {
         today = 'Saturday';
     }
     var dayIndex = 0;
-    let weekdays = moment.weekdays().map((day) => {
+    /* let weekdays = moment.weekdays().map((day) => {
+      
+      console.log(day);
+      console.log(today)
       return (
         <>
           <Col
@@ -883,19 +918,20 @@ export default class WeekRoutines extends Component {
           </Col>
         </>
       );
-    });
+    }); */
+  
+
     return (
-      <Container>
-        <Row style={{ marginLeft: '9rem' }}>
+      <Container style={{ margin: '0rem' }}>
+        <Row style={{ marginLeft: '9rem', marginRight:'-7rem'  }}>
           <Row
             style={{
               overflowX: 'hidden',
               overflowY: 'visible',
-
               width: '100%',
             }}
           >
-            {weekdays}
+            {this.weekdaysDisplay()}
           </Row>
 
           <Row style={{ width: '100%', fontWeight: 'bold' }}>
@@ -907,6 +943,8 @@ export default class WeekRoutines extends Component {
           noGutters={true}
           // style={{ overflowY: 'scroll', maxHeight: '1350px' }}
           className="d-flex justify-content-end"
+          style={{ marginRight: '-7rem' }}
+          
         >
           <Col>
             <Container style={{ margin: '0', padding: '0', width: '10px' }}>

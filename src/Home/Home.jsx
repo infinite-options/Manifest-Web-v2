@@ -28,6 +28,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronLeft,
   faChevronRight,
+  faCalendar,
   faImage,
 } from '@fortawesome/free-solid-svg-icons';
 import DatePicker from 'react-datepicker';
@@ -876,6 +877,34 @@ export default function Home(props) {
     });
     console.log('prevWeek');
   };
+  const curWeek = () => {
+    let dateContext = Object.assign({}, stateValue.dateContext);
+    let today = new Date();
+    dateContext = moment(dateContext);
+
+    
+    {(0 <= today.getDate().toString()- dateContext.format('D')) && (today.getDate().toString()- dateContext.format('D') <=6) && ((today.getMonth()+1).toString()- dateContext.format('M')===0)
+    ?( setStateValue((prevState) => {
+      return {
+        ...prevState,
+        dateContext: dateContext,
+        dayEvents: [],
+      };
+      // updateEventsArray();
+    }))
+    :( setStateValue((prevState) => {
+      return {
+        ...prevState,
+        dateContext: moment(today),
+        dayEvents: [],
+      };
+      // updateEventsArray();
+    }))
+                            }
+   
+   
+    console.log('curWeek');
+  };
 
   const getDate = () => {
     stateValue.dateContext.format('dddd');
@@ -1568,7 +1597,11 @@ export default function Home(props) {
     startWeek = startObject.startOf('week');
   }
   console.log('stateValue', stateValue);
-
+  let curDate = startWeek.clone();
+  let today = new Date();
+  console.log('curDate',curDate.format('D'))
+  console.log('curdate today.toString()',today.getDate().toString())
+  console.log('curdate- today', today.getDate().toString()-curDate.format('D'))
   return (
     // console.log('home routines', stateValue.routines),
     /*----------------------------button
@@ -1609,6 +1642,7 @@ export default function Home(props) {
                 stateValue.BASE_URL)
               }
             >
+              
               <Box backgroundColor="#bbc8d7">
                 <div style={{ width: '30%', float: 'left' }}>
                   <Button
@@ -1705,16 +1739,14 @@ export default function Home(props) {
                       bgcolor="#889AB5"
                       className={classes.dateContainer}
                       style={{ width: '100%' }}
-                      //style={{ width: '100%', marginTop:'1rem' }}
                       // flex
                     >
-                      <Container style={{ width: '100%' }}>
-                        <Row style={{ marginTop: '0px', width: '100%' }}>
-                          <Col style={{ width: '10%' }}>
-                            <div>
+                      <Container style={{ marginRight: '-10rem',width: '100%' }}>
+                        <Row style={{ margin: '0px', width: '100%' }}>
+                          <Col style={{ width: '10%', paddingTop:'1rem', marginLeft:'9rem' }}>
+                            <div >
                               <FontAwesomeIcon
-                                // style={{ marginLeft: "50%" }}
-
+                                style={{ cursor:'pointer'  }}
                                 icon={faChevronLeft}
                                 size="2x"
                                 onClick={(e) => {
@@ -1725,27 +1757,37 @@ export default function Home(props) {
                           </Col>
                           <Col
                             md="auto"
-                            style={{ textAlign: 'center', width: '80%' }}
+                            style={{ textAlign: 'center',  width: '70%' }}
                             className="bigfancytext"
                           >
-                            <p> Week of {startWeek.format('D MMMM YYYY')} </p>
-                            <p
-                              style={{ marginBottom: '0', height: '19.5px' }}
-                              className="normalfancytext"
-                            >
+                            {(0 <= today.getDate().toString()- curDate.format('D')) && (today.getDate().toString()- curDate.format('D') <=6) && ((today.getMonth()+1).toString()- curDate.format('M')===0)
+                            ?<p style={{font: 'normal normal bold 28px SF Pro', paddingBottom:'0px'}}>Today</p>
+                            :<p style={{font: 'normal normal bold 28px SF Pro', paddingBottom:'0px'}}>Week of {startWeek.format('D MMMM YYYY')} </p>
+                            }
+                              <p style={{font: 'normal normal bold 20px SF Pro', paddingBottom:'0px'}} className="normalfancytext">
                               {stateValue.currentUserTimeZone}
                             </p>
                           </Col>
-                          <Col style={{ width: '10%', textAlign: 'right' }}>
+                          <Col style={{ width: '10%', textAlign: 'right', paddingTop:'1rem' }}>
                             <FontAwesomeIcon
                               // style={{ marginLeft: "50%" }}
-                              style={{ float: 'right' }}
+                              style={{ float: 'right', cursor:'pointer'  }}
                               icon={faChevronRight}
                               size="2x"
                               className="X"
                               onClick={(e) => {
                                 nextWeek();
                               }}
+                            />
+                          </Col>
+                          <Col style={{ width: '10%', textAlign: 'right', paddingTop:'1rem', marginRight:'-10rem' }}>
+                            <FontAwesomeIcon
+                              // style={{ marginLeft: "50%" }}
+                              style={{ float: 'right', cursor:'pointer'  }}
+                              icon={faCalendar}
+                              size="2x"
+                              className="X"
+                              onClick={(e) => {curWeek(); }}
                             />
                           </Col>
                         </Row>
