@@ -81,9 +81,12 @@ export default function Firebasev2(props)  {
 
     const [listOfBlocks, setlistOfBlocks] = useState([]);
     const [historyGot, setHG] = useState([]);
+    const [toggleActions, setToggleActions] = useState(false);
     const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
     const [getActions, setActions] = useState('');
     const [getActionsEndPoint, setGetActionsEndPoint] = useState([]);
+    const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
+
     const [iconColor, setIconColor] = useState()
     //NOTE This gives you routines within 7 days of current date. Change currentDate to change that
     const [currentDate, setCurDate] = useState(new Date(Date.now()))
@@ -133,26 +136,7 @@ export default function Firebasev2(props)  {
 
     },[])
 
-    function  actions(action) {
-     
-        axios
-        .get(BASE_URL + "actionsTasks/" + action)
-        .then((response) =>{
-              for(var i=0; i <response.data.result.length; i++){
-              // for(var i=response.data.result.length - 1; i > -1; i--){
-                  getActionsEndPoint.push(response.data.result[i]);
-              }
-             // console.log("historyGot",historyGot);
-             console.log("getActionsFire", getActionsEndPoint)
-             makeDisplays()
-            //  cleanData(historyGot, currentDate);
-          })
-          .catch((error) => {
-              console.log(error);
-          });
-  
-
-    }
+ 
 
     useEffect(() => {
 
@@ -1137,38 +1121,58 @@ export default function Firebasev2(props)  {
         return(newRows);
     }
 
+
+
     //makes listOfBlocks with list of displays routiens and such
     function makeDisplays() {
+     
         console.log("fire Temp",getGoalsEndPoint.length);
         var tempRows = [];
-        console.log("empty", tempRows);
+        var tempID = [];
+        var tempIsID = [];
+        console.log("only 0.1.0", tempRows, tempID);
         var routine;
         var action;
         for (var i=0; i <getGoalsEndPoint.length; i++){
-        //    if (onlyAllowed[i].type == "Routine"){
-                // console.log("allow", onlyAllowed[i])
+      
                 tempRows.push(displayRoutines(getGoalsEndPoint[i]));
-         //       routine = onlyAllowed[i];
-                 console.log("only", getGoalsEndPoint[i]);
+    
+                     for(var j=0; j<getActionsEndPoint.length ; j++){
+                         if(getGoalsEndPoint[i].gr_unique_id === getActionsEndPoint[j].goal_routine_id){
+                            if(tempID.includes(getActionsEndPoint[j].at_unique_id) === false ){
+                                tempRows.push(displayActions(getActionsEndPoint[j]))
+                                tempID.push(getActionsEndPoint[j].at_unique_id)
+                                console.log("only", tempID)
 
-                 if (getGoalsEndPoint[i].is_sublist_available === 'True' ){
-                     for(var j=0; j<getActionsEndPoint.length; j++){
-                         tempRows.push(displayActions(getActionsEndPoint[j]))
-                         console.log("only", getActionsEndPoint[j]);
-
+                                for(var k=0; k<getStepsEndPoint.length; k++){
+                                    if(getActionsEndPoint[j].at_unique_id === getStepsEndPoint[k].at_id){
+                                       if(tempIsID.includes(getStepsEndPoint[k].is_unique_id) === false ){
+                                           tempRows.push(displayInstructions(getStepsEndPoint[k]))
+                                           tempIsID.push(getStepsEndPoint[k].is_unique_id)
+                                           console.log("only", tempIsID)
+                                       }
+                                        else{
+                                         
+                                            tempRows.pop(displayInstructions(getStepsEndPoint[k]))
+                                            tempIsID.pop(getStepsEndPoint[k].is_unique_id) 
+                                    //        console.log("only1", tempIsID)
+                                           
+                                        }
+                                }
+                            
+                            }
+                            }
+                             else{
+                              tempRows.pop(displayActions(getActionsEndPoint[j]))
+                              tempID.pop(getActionsEndPoint[j].at_unique_id) 
+                                 console.log("only1", tempID)
+                             }
                      }
+                 
                  }
-         //   }
-        //     else if (onlyAllowed[i].type == "Action"){
-        //         tempRows.push(displayActions(onlyAllowed[i], routine));
-        //         action = onlyAllowed[i];
-        //     }
-        //     else {tempRows.push(displayInstructions(onlyAllowed[i], action))}
          }
-        console.log('tempRows',tempRows);
+        console.log('tempRows',tempRows, tempID);
         setlistOfBlocks(tempRows);
-      //  console.log(listOfBlocks);
-    //}
 }
 
     function formatDateTime(str) {
@@ -1205,13 +1209,11 @@ export default function Firebasev2(props)  {
                     }
                 }
             }
-
         }
         // console.log(childIn);
         setRows(newRows);    //update rows with newRows
      //   makeDisplays(onlyAllowed(newRows));
     }
-
 
     //no need to use GR here - "is_avalible" is part of "r" and comes from getHistory
     //this was causing an error of not showing routines on the left side of home when
@@ -1544,12 +1546,33 @@ export default function Firebasev2(props)  {
                             title="SubList Available"
                             style={{ color: "#ffffff" }}
                             size="sm"
-                            onClick = {()=> {
+                            onClick = {(e)=> {
+                                e.stopPropagation();
+
                                 // sendRoutineToParent(r.name);
                              //   clickHandle(r.gr_title)
                                 // setLoading(!isLoading);
                                 setActions(r.gr_unique_id)
-                                actions(r.gr_unique_id);
+     
+                                    axios
+                                    .get(BASE_URL + "actionsTasks/" + r.gr_unique_id)
+                                    .then((response) =>{
+                                        for(var i=0; i <response.data.result.length; i++){
+                                          // for(var i=response.data.result.length - 1; i > -1; i--){
+                                              getActionsEndPoint.push(response.data.result[i]);
+                                          }
+                                         // console.log("historyGot",historyGot);
+                                         console.log("getActionsFire", getActionsEndPoint)
+                                        //  cleanData(historyGot, currentDate);
+                                      })
+                                      .catch((error) => {
+                                          console.log(error);
+                                      });
+
+
+                                      makeDisplays()
+
+
                             }}
                             />
                         </div>
@@ -1588,7 +1611,7 @@ export default function Firebasev2(props)  {
         console.log("displayActions", a)
         return(
             <div
-            
+            key={a.at_unique_id}
                 style={{  backgroundColor:'#d1dceb' , marginBottom:'0px'}}
             >
                 
@@ -1759,7 +1782,24 @@ export default function Firebasev2(props)  {
                                 // sendRoutineToParent(a.number);
                                 // setLoading(!isLoading);
                            //     clickHandle(a.name)
-                                console.log("ActionTest", a)
+                                
+                           axios
+                           .get(BASE_URL + "instructionsSteps/" + a.at_unique_id)
+                           .then((response) =>{
+                               for(var i=0; i <response.data.result.length; i++){
+                                 // for(var i=response.data.result.length - 1; i > -1; i--){
+                                     getStepsEndPoint.push(response.data.result[i]);
+                                 }
+                                // console.log("historyGot",historyGot);
+                                console.log("getStepsFire",  getStepsEndPoint)
+                               //  cleanData(historyGot, currentDate);
+                             })
+                             .catch((error) => {
+                                 console.log(error);
+                             });
+
+
+                             makeDisplays()
                             }}
                             />
                         </div>
@@ -1796,10 +1836,11 @@ export default function Firebasev2(props)  {
         )
     }
 
-    function displayInstructions(i, a){
+    function displayInstructions(i){
+        console.log("displaySteps", i)
         return(
             <div
-            
+                key = {i.is_unique_id}
                 style={{ backgroundColor:'#dae5f5' , marginBottom:'0px'}}
             >
                 
@@ -1833,7 +1874,7 @@ export default function Firebasev2(props)  {
                 </div>
 
                 <div style={{color:'#ffffff', size:'24px', textDecoration:'underline', fontWeight:'bold', marginLeft: "10px",}}>
-                {i["name"]}
+                {i["is_title"]}
                 </div>
                     
                 </div>
@@ -1843,7 +1884,7 @@ export default function Firebasev2(props)  {
 
                 <Col xs={7} style={{ paddingRight: "1rem"  ,marginTop:'0.5rem'}}>
                         <img
-                        src={i["photo"]}
+                        src={i["is_photo"]}
                         alt="Routines"
                         className="center"
                         height="28px"
@@ -1938,7 +1979,7 @@ export default function Firebasev2(props)  {
                     <EditStepsIcon
                         routine={i}
                         task={null}
-                        step={a.id}  
+                        step={''}  
                     />
                     </div>
                 </div>
