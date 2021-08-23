@@ -724,7 +724,7 @@ export default class WeekRoutines extends Component {
     for (let i = 0; i < 24; ++i) {
       // if (i < 12) {
       arr.push(
-        <Row key={'weekEvent' + i}>
+        <Row key={'weekEvent' + i} style={{marginLeft:"3rem"}}>
           <Col
             style={{
               // borderTop: '1px solid lavender',
@@ -923,7 +923,7 @@ export default class WeekRoutines extends Component {
 
     return (
       <Container style={{ margin: '0rem' }}>
-        <Row style={{ marginLeft: '9rem', marginRight:'-7rem'  }}>
+        <Row style={{ marginLeft: '3rem', marginRight:'-1rem'  }}>
           <Row
             style={{
               overflowX: 'hidden',
@@ -943,11 +943,11 @@ export default class WeekRoutines extends Component {
           noGutters={true}
           // style={{ overflowY: 'scroll', maxHeight: '1350px' }}
           className="d-flex justify-content-end"
-          style={{ marginRight: '-7rem' }}
+          style={{ marginLeft:'-5rem', marginRight: '0rem' }}
           
         >
           <Col>
-            <Container style={{ margin: '0', padding: '0', width: '10px' }}>
+            <Container style={{ margin: '0', padding: '0', width: '6px' }}>
               {this.timeDisplay()}
             </Container>
           </Col>

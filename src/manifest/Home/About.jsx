@@ -40,7 +40,7 @@ const useStyles = makeStyles({
   formGroupItem: {
     borderRadius: '10px',
     border: '1px solid #889AB5',
-    width: '300px',
+    width: '250px',
     height: '38px',
     marginRight: '2rem',
     marginTop:'1rem'
@@ -1447,7 +1447,7 @@ export default function AboutModal(props) {
           </table>
 
           <div>
-          <table style={{ margin:'2rem', width: '150%' }}>
+          <table style={{ width: '150%' }}>
             <tr style={{ marginLeft: '3rem ' }}>
               <th className={classes.formGroupTitle}>What motivates you?</th>
               <th className={classes.formGroupTitle}>
