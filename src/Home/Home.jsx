@@ -1743,7 +1743,7 @@ export default function Home(props) {
                     >
                       <Container style={{ marginRight: '-10rem',width: '100%' }}>
                         <Row style={{ margin: '0px', width: '100%' }}>
-                          <Col style={{ width: '10%', paddingTop:'1rem', marginLeft:'9rem' }}>
+                          <Col style={{ width: '10%', paddingTop:'1rem', marginLeft:'7rem' }}>
                             <div >
                               <FontAwesomeIcon
                                 style={{ cursor:'pointer'  }}
@@ -1761,7 +1761,7 @@ export default function Home(props) {
                             className="bigfancytext"
                           >
                             {(0 <= today.getDate().toString()- curDate.format('D')) && (today.getDate().toString()- curDate.format('D') <=6) && ((today.getMonth()+1).toString()- curDate.format('M')===0)
-                            ?<p style={{font: 'normal normal bold 28px SF Pro', paddingBottom:'0px'}}>Today</p>
+                            ?<p style={{font: 'normal normal bold 28px SF Pro', paddingBottom:'0px'}}>This week</p>
                             :<p style={{font: 'normal normal bold 28px SF Pro', paddingBottom:'0px'}}>Week of {startWeek.format('D MMMM YYYY')} </p>
                             }
                               <p style={{font: 'normal normal bold 20px SF Pro', paddingBottom:'0px'}} className="normalfancytext">
@@ -1780,7 +1780,7 @@ export default function Home(props) {
                               }}
                             />
                           </Col>
-                          <Col style={{ width: '10%', textAlign: 'right', paddingTop:'1rem', marginRight:'-10rem' }}>
+                          <Col style={{ width: '10%', textAlign: 'right', paddingTop:'1rem', marginRight:'1rem' }}>
                             <FontAwesomeIcon
                               // style={{ marginLeft: "50%" }}
                               style={{ float: 'right', cursor:'pointer'  }}
