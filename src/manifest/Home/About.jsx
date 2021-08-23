@@ -112,7 +112,7 @@ export default function AboutModal(props) {
   const [happy4 , setHappy4] = useState('')
 
   const[listPeople, setListPeople] = useState([])
-
+  const[people, togglePeople] = useState(false)
   const loginContext = useContext(LoginContext);
   const userID = loginContext.loginState.curUser;
   //const userID = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1];
@@ -139,7 +139,7 @@ export default function AboutModal(props) {
         .catch((error) => {
           console.log(error);
         });
-  }, [firstName]);
+  }, [firstName,called,people]);
     
 
 
@@ -512,40 +512,13 @@ export default function AboutModal(props) {
 
   }
 
-  function startTimePicker() {
-    return (
-      <DatePicker
-        className="form-control"
-        type="text"
-        placeholder="Enter Birth Date"
-        selected={aboutMeObject.birth_date}
-        onChange={(date) => {
-          console.log(date)
-          setAboutMeObject({
-            ...aboutMeObject,
-            birth_date: date
-          })
-        }}
-        dateFormat="MMMM d, yyyy"
-      />
-    );
-  }
 
   // grabFireBaseAboutMeData()
   console.log(aboutMeObject)
 
   var selectedTAid = ""
   function AddPerson(){
-    /* if (
-      document.cookie
-        .split(";")
-        .some(item => item.trim().startsWith("ta_uid="))
-    ) {
-      selectedTAid = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
-    } else {
-    } */
-    
-    
+   
     let body = {
       user_id : userID,
       //ta_people_id: selectedTAid,
@@ -666,7 +639,7 @@ export default function AboutModal(props) {
               padding: "40px"
             }}
           >
-            <div style={{textAlign: 'center', marginBottom: '20px'}}>Person Info {taObject.ta_people_id}</div>
+            <div style={{textAlign: 'center', marginBottom: '20px'}}>Person Info </div>
             <Form.Group>
             <Row>
               <Col style={{ paddingRight: '10px' }}>
@@ -1738,7 +1711,7 @@ export default function AboutModal(props) {
             <Form.Label style={{ width: '100%' }}>
               Important people in life
             </Form.Label>
-            <div>
+            <div id="divToReload">
             {listPeople.map((lp) => {
               return(
                 <div style={{display:'flex', justifyContent:'space-evenly', marginTop:'1rem'}}>
@@ -1767,7 +1740,8 @@ export default function AboutModal(props) {
                   title="Edit Person"
                   style={{
                   color: "#ffffff",
-                  margin: '0.5rem'
+                  margin: '0.5rem',
+                  cursor:'pointer'
                   }}
                   icon={faEdit}
                   size="small"
@@ -1780,19 +1754,25 @@ export default function AboutModal(props) {
                />
                 <FontAwesomeIcon
                   title="Delete Person"
+                  onMouseOver={(event) => {
+                    event.target.style.color = '#48D6D2';
+                    }}
+                    onMouseOut={(event) => {
+                    event.target.style.color = '#FFFFFF';
+                    }}
                   style={{
                   color: "#ffffff",
-                  margin: '0.5rem'
+                  margin: '0.5rem',
+                  cursor:'pointer'
                   }}
                   icon={faTrashAlt}
                   size="small"
                   onClick={(e) => {
-                    console.log(lp)
+                    e.stopPropagation();
                     let body = {
                       user_id: userID, 
                       ta_people_id: lp.ta_people_id,
                     }
-                    console.log(body)
                     axios
                         .post(BASE_URL + 'deletePeople', body)
                         .then(response => {
@@ -1800,8 +1780,6 @@ export default function AboutModal(props) {
                             console.log(response.data)
                             toggleCalled(!called)
                     })
-
-                    
                   }}
                   />
                 </div>
@@ -1864,6 +1842,7 @@ export default function AboutModal(props) {
                 onClick={(e) => {
                   AddPerson();
                   toggleSave(true);
+                  togglePeople(!people);
                   setAddPerson(!addPerson)
                 }}
               >
