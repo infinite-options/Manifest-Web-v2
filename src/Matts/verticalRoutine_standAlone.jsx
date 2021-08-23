@@ -75,7 +75,7 @@ const VerticalRoutine = ({userID}) => {
     function createData(name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, is_available){    //rows structure
         return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, is_available}
     }
-
+    console.log('here standalone');
     useEffect(() => {
         axios.get(BASE_URL + "getHistory/" + currentUser)
         .then((response) =>{
