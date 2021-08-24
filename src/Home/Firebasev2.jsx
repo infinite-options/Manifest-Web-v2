@@ -135,8 +135,7 @@ export default function Firebasev2(props)  {
         .catch((error) => {
             console.log(error);
         });
-
-    },[props.updateGetHistory]);
+    },[props.updateGetHistory, called, props.theCurrentUserID]);
 
     useEffect(() => {
         console.log('log[3] getGoalsEndPoint =', getGoalsEndPoint);

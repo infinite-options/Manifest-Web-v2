@@ -90,7 +90,6 @@ const EditATS = (props) => {
   const updateATS = (e) => {
     e.stopPropagation();
     let object = { ...editingATSContext.editingATS.newItem };
-    props.setUpdateGetHistory(!props.updateGetHistory);
     const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
     const start_day_and_time_string = new Date(
       start_day_and_time_simple_string
@@ -156,6 +155,7 @@ const EditATS = (props) => {
       axios
         .post(BASE_URL + 'updateAT', formData)
         .then((response) => {
+          console.log('log[0]');
           console.log(response);
           const gr_array_index =
             editingATSContext.editingATS.gr_array.findIndex(
@@ -168,6 +168,7 @@ const EditATS = (props) => {
             gr_array: new_gr_array,
             editing: false,
           });
+          props.setUpdateGetHistory(!props.updateGetHistory);
         })
         .catch((err) => {
           if (err.response) {
@@ -192,6 +193,7 @@ const EditATS = (props) => {
             gr_array: new_gr_array,
             editing: false,
           });
+          props.setUpdateGetHistory(!props.updateGetHistory);
         })
         .catch((err) => {
           if (err.response) {
