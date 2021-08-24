@@ -131,7 +131,7 @@ const EditATS = (props) => {
     delete object.location;
     delete object.start_day_and_time;
     object.title = object.at_title;
-    object.gr_id = props.routineID.id;
+    object.gr_id = props.routineID.gr_unique_id;
     delete object.at_title;
     const numHours = object.numMins > 60 ? object.numMins / 60: '00';
     let numMins = object.numMins % 60;
