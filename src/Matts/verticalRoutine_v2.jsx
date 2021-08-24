@@ -104,13 +104,14 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent, allRows}) =>
             
                 style={{ height:'6rem', width:'100%', backgroundColor:'#BBC7D7' , marginBottom:'0px', marginTop: '2px'}}
             >
-                
                 <div style={{ display:'flex', justifyContent:'space-between' }}>
                 <div flex='1' style={{marginLeft:'1rem', marginTop:'1rem', height:'4.5rem', borderRadius:'10px',width:'100%', display:'flex', justifyContent:'space-between', backgroundColor:'#FF6B4A', boxShadow:
                     "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
                 zIndex:'50%'}} onClick = {()=> {
-                    sendRoutineToParent(r.number);
-                    setLoading(!isLoading);
+                    if (r.is_sublist_available === "True") {
+                        sendRoutineToParent(r.number);
+                        setLoading(!isLoading);
+                    }
                 }}>
                 <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
                 <div style={{ marginLeft:'1rem'}} >
@@ -212,8 +213,11 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent, allRows}) =>
                     "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
                 zIndex:'50%'}}
                 onClick = {()=> {
-                    sendRoutineToParent(a.number);
-                    setLoading(!isLoading);
+                    if (a.is_sublist_available === "True") {
+                        console.log('here ac');
+                        sendRoutineToParent(a.number);
+                        setLoading(!isLoading);
+                    }
                 }}>
                 <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
                 <div style={{ marginLeft:'1rem'}} >

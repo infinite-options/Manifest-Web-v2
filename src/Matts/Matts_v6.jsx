@@ -72,7 +72,7 @@ export default function MainPage(props) {
 //    console.log(props.location.routines);
 //    console.log(props.routines);
 
-
+    console.log('here test');
     //----Change these commented lines to get userID from state being passed in/
     //const currentUser = props.location.state; //matts testing 72
     // const currentUser = "100-000072";
@@ -409,7 +409,6 @@ export default function MainPage(props) {
         }
         //if clicked on, change show of things underneath
         console.log("click." + number);
-        console.log(newRows);
         for (var r =0; r < newRows.length; r++){
             if (rows[r].under == number){
                 //console.log("got " + rows[r].name);
@@ -423,9 +422,10 @@ export default function MainPage(props) {
                     }
                 }
             }
-
+            
         }
-        console.log(childIn);
+        console.log('click.result: childIn = ', childIn);
+        console.log('click.newRows = ', newRows);
         setRows(newRows);    //update rows with newRows
         setChildIn("");
     }
