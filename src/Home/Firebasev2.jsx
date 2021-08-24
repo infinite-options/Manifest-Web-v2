@@ -83,6 +83,7 @@ export default function Firebasev2(props)  {
     const [historyGot, setHG] = useState([]);
     const [toggleActions, setToggleActions] = useState(false);
     const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
+
     const [getActions, setActions] = useState('');
     useEffect(() => {
         console.log("getAction", getActions)
@@ -121,18 +122,27 @@ export default function Firebasev2(props)  {
     function createData(name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, id, is_available){    //rows structure
         return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, id, is_available}
     }
+    useEffect(() => {
+        setGetGoalsEndPoint([])
+        setGetActionsEndPoint([])
+        setGetStepsEndPoint([])
+    },[ props.theCurrentUserID])
+
+    console.log("historyFire", props.updateGetHistory)
 
     useEffect(() => {
      
       axios
       .get(BASE_URL + "getgoalsandroutines/" + currentUser)
       .then((response) =>{
+
+            
             for(var i=0; i <response.data.result.length; i++){
             // for(var i=response.data.result.length - 1; i > -1; i--){
                 
                 getGoalsEndPoint.push(response.data.result[i]);
             }
-           // console.log("historyGot",historyGot);
+           console.log("historyFire",getGoalsEndPoint);
            
            makeDisplays()
           //  cleanData(historyGot, currentDate);
@@ -141,16 +151,16 @@ export default function Firebasev2(props)  {
             console.log(error);
         });
 
-    },[props.updateGetHistory])
+    },[props.updateGetHistory, called, props.theCurrentUserID])
 
 
     useEffect(() => {
         makeDisplays()
-    }, [getActionsEndPoint])
+    }, [getActionsEndPoint,getStepsEndPoint, props.updateGetHistory, called, props.theCurrentUserID])
 
     useEffect(() => {
         makeActionDisplays()
-    }, [getStepsEndPoint])
+    }, [getStepsEndPoint,  getActionsEndPoint ,  props.updateGetHistory, called, props.theCurrentUserID])
 
     useEffect(() => {
 
@@ -1146,13 +1156,16 @@ export default function Firebasev2(props)  {
         console.log("only 0.1.0", tempRows, tempID);
         var routine;
         var action;
-
+    //    setGetGoalsEndPoint([])
         const uniqueObjects = [...new Map(getGoalsEndPoint.map(item => [item.gr_unique_id, item])).values()]
-        console.log("unique obj", uniqueObjects)
+        console.log("unique obj", uniqueObjects, getGoalsEndPoint)
 
+        console.log("unique obj", uniqueObjects, getGoalsEndPoint)
+
+     
         for (var i=0; i <uniqueObjects.length; i++){
       
-                tempRows.push(displayRoutines(getGoalsEndPoint[i]));
+                tempRows.push(displayRoutines(uniqueObjects[i]));
 
     
                      for(var j=0; j<getActionsEndPoint.length ; j++){
@@ -1204,7 +1217,7 @@ function makeActionDisplays() {
     var routine;
     var action;
     const uniqueObjects = [...new Map(getGoalsEndPoint.map(item => [item.gr_unique_id, item])).values()]
-    console.log("unique obj", uniqueObjects)
+    console.log("unique obj", uniqueObjects, getGoalsEndPoint)
     for (var i=0; i <uniqueObjects.length; i++){
   
             tempRows.push(displayRoutines(getGoalsEndPoint[i]));
@@ -1621,7 +1634,6 @@ function makeActionDisplays() {
                                 if (getActionsEndPoint.length != 0) { 
                                     //do stuff
                                     setGetActionsEndPoint([])
-
                                     return 
                                 }
 
@@ -1827,6 +1839,7 @@ function makeActionDisplays() {
                                             console.log('deleting')
                                             console.log(response.data)
                                             toggleCalled(!called)
+                                            props.setUpdateGetHistory(!props.updateGetHistory)
                                         })
                                 }}
                                 icon={faTrashAlt}
@@ -1855,7 +1868,7 @@ function makeActionDisplays() {
                             style={{ color: "#ffffff" }}
                             size="sm"
                             onClick = {()=> {
-                                console.log('length',getStepsEndPoint.length )
+                                console.log('lengthSteps',getStepsEndPoint.length )
                                 if (getStepsEndPoint.length != 0) { 
                                     //do stuff
                                     setGetStepsEndPoint([])
@@ -1882,8 +1895,6 @@ function makeActionDisplays() {
                              .catch((error) => {
                                  console.log(error);
                              });
-
-
                              makeActionDisplays()
                             }}
                             />
@@ -1891,7 +1902,6 @@ function makeActionDisplays() {
                         ) : (
                             <div>
                             </div>    
-                           
                             ) 
                                     }
                         </div>
@@ -2035,14 +2045,15 @@ function makeActionDisplays() {
                                     e.stopPropagation();
                                   //  console.log(r)
                                     
-                                    let body = {is_id: i.id}
-
+                                    let body = {is_id: i.is_unique_id}
+                                    console.log("deleteIS", body )
                                     axios
                                         .post(BASE_URL + 'deleteIS', body)
                                         .then(response => {
                                             console.log('deleting')
                                             console.log(response.data)
                                             toggleCalled(!called)
+                                            props.setUpdateGetHistory(!props.updateGetHistory)
                                         })
                                 }}
                                 icon={faTrashAlt}

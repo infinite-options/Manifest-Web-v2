@@ -1724,6 +1724,7 @@ export default function Home(props) {
                         editATS={editingATS.editing}
                         editIS={editingIS.editing}
                         updateGetHistory={updategetHistoryOnClick}
+                        setUpdateGetHistory = {setUpdateGetHistoryOnClick}
                       />
                     )}
                   </div>

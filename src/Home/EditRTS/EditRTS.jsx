@@ -32,6 +32,7 @@ const EditRTS = (props) => {
     // props.setUpdateGetHistory(!props.updateGetHistory);
     e.stopPropagation()
     let object = {...editingRTSContext.editingRTS.newItem};
+    props.setUpdateGetHistory(!props.updateGetHistory);
     console.log("updaterts object", object)
     // Get start_day_and_time
     const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
@@ -127,7 +128,6 @@ const EditRTS = (props) => {
           gr_array: new_gr_array,
           editing: false
         });
-        props.setUpdateGetHistory(!props.updateGetHistory);
       })
       .catch((err) => {
         if(err.response) {
@@ -150,7 +150,6 @@ const EditRTS = (props) => {
           gr_array: new_gr_array,
           editing: false
         })
-        props.setUpdateGetHistory(!props.updateGetHistory);
       })
       .catch((err) => {
         if(err.response) {
