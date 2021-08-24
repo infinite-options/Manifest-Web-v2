@@ -84,13 +84,7 @@ export default function Firebasev2(props)  {
     const [toggleActions, setToggleActions] = useState(false);
     const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
     const [getActions, setActions] = useState('');
-    useEffect(() => {
-        console.log("getAction", getActions)
-     }, [getActions])
      const [getSteps, setSteps] = useState('');
-     useEffect(() => {
-         console.log("getStep", getSteps)
-      }, [getSteps])
     const [getActionsEndPoint, setGetActionsEndPoint] = useState([]);
     const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
 
@@ -123,37 +117,35 @@ export default function Firebasev2(props)  {
     }
 
     useEffect(() => {
-     
-      axios
-      .get(BASE_URL + "getgoalsandroutines/" + currentUser)
-      .then((response) =>{
+        axios
+        .get(BASE_URL + "getgoalsandroutines/" + currentUser)
+        .then((response) =>{
+            const temp = [];
             for(var i=0; i <response.data.result.length; i++){
-            // for(var i=response.data.result.length - 1; i > -1; i--){
-                
-                getGoalsEndPoint.push(response.data.result[i]);
+                temp.push(response.data.result[i]);
             }
-           // console.log("historyGot",historyGot);
-           
-           makeDisplays()
-          //  cleanData(historyGot, currentDate);
+            console.log('temp: ', temp);
+            setGetGoalsEndPoint(temp);
+            makeDisplays();
         })
         .catch((error) => {
             console.log(error);
         });
 
-    },[props.updateGetHistory])
+    },[props.updateGetHistory]);
+
+    useEffect(() => makeDisplays(), [getGoalsEndPoint]);
 
 
     useEffect(() => {
-        makeDisplays()
+        makeDisplays();
     }, [getActionsEndPoint])
 
     useEffect(() => {
         makeActionDisplays()
-    }, [getStepsEndPoint])
+    }, [getStepsEndPoint]);
 
     useEffect(() => {
-
 
         setHG([])
         setTAData([])
@@ -195,7 +187,7 @@ export default function Firebasev2(props)  {
             console.log(error);
         });
         
-    },[props.currentUser, called])
+    },[props.currentUser, called, props.updateGetHistory])
 
     const copyPicker = () => {
         // console.log('in FireBase, showCopyModal', showCopyModal)
