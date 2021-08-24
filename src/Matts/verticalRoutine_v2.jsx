@@ -213,8 +213,11 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent, allRows}) =>
                     "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
                 zIndex:'50%'}}
                 onClick = {()=> {
-                    sendRoutineToParent(a.number);
-                    setLoading(!isLoading);
+                    if (a.is_sublist_available === "True") {
+                        console.log('here ac');
+                        sendRoutineToParent(a.number);
+                        setLoading(!isLoading);
+                    }
                 }}>
                 <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
                 <div style={{ marginLeft:'1rem'}} >
