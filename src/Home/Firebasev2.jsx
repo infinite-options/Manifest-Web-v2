@@ -116,6 +116,8 @@ export default function Firebasev2(props)  {
         return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, id, is_available}
     }
 
+    console.log('firebase props: ', props);
+
     useEffect(() => {
         axios
         .get(BASE_URL + "getgoalsandroutines/" + currentUser)
@@ -1578,6 +1580,7 @@ function makeActionDisplays() {
                                             console.log('deleting')
                                             console.log(response.data)
                                             toggleCalled(!called)
+                                            props.setUpdateGetHistory(!props.updateGetHistory);
                                         })
                                 }}
                                 icon={faTrashAlt}
