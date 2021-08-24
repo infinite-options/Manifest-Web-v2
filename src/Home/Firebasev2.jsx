@@ -30,6 +30,7 @@ import EditStepsIcon from "./EditIS/EditIcon.jsx"
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
+import { Footer } from 'rsuite';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL
 
@@ -119,6 +120,7 @@ export default function Firebasev2(props)  {
     console.log('firebase props: ', props);
 
     useEffect(() => {
+        console.log('log[1] updateGetHistory change');
         axios
         .get(BASE_URL + "getgoalsandroutines/" + currentUser)
         .then((response) =>{
@@ -126,7 +128,7 @@ export default function Firebasev2(props)  {
             for(var i=0; i <response.data.result.length; i++){
                 temp.push(response.data.result[i]);
             }
-            console.log('temp: ', temp);
+            console.log('log[2] temp: ', temp);
             setGetGoalsEndPoint(temp);
             makeDisplays();
         })
@@ -136,19 +138,23 @@ export default function Firebasev2(props)  {
 
     },[props.updateGetHistory]);
 
-    useEffect(() => makeDisplays(), [getGoalsEndPoint]);
+    useEffect(() => {
+        console.log('log[3] getGoalsEndPoint =', getGoalsEndPoint);
+        makeDisplays()
+    }, [getGoalsEndPoint]);
 
 
     useEffect(() => {
-        makeDisplays();
+        makeActionDisplays();
     }, [getActionsEndPoint])
 
     useEffect(() => {
+        console.log('log(3): getStepsEndPoint = ', getStepsEndPoint);
         makeActionDisplays()
     }, [getStepsEndPoint]);
 
     useEffect(() => {
-
+        console.log('updateGetHistory useEffect 2');
         setHG([])
         setTAData([])
         setPatientData([])
@@ -1611,6 +1617,7 @@ function makeActionDisplays() {
                             style={{ color: "#ffffff" }}
                             size="sm"
                             onClick = {()=> {
+                                console.log('log(-2): r.gr_uid = ', r.gr_unique_id);
                                 console.log("length", getActionsEndPoint.length)
 
                                 if (getActionsEndPoint.length != 0) { 
@@ -1816,13 +1823,29 @@ function makeActionDisplays() {
                                     
                                     let body = {at_id: a.at_unique_id}
 
-                                    axios
-                                        .post(BASE_URL + 'deleteAT', body)
-                                        .then(response => {
-                                            console.log('deleting')
-                                            console.log(response.data)
-                                            toggleCalled(!called)
-                                        })
+                                    const foo = async () => {
+                                        await axios
+                                            .post(BASE_URL + 'deleteAT', body)
+                                            .then(response => {
+                                                console.log(response.data)
+                                                // toggleCalled(!called);
+                                            });
+                                        await axios
+                                        .get(BASE_URL + "actionsTasks/" + a.goal_routine_id)
+                                        .then((response) =>{
+                                            const temp = []
+                                            for(var i=0; i <response.data.result.length; i++){
+                                                temp.push(response.data.result[i]);
+                                            }
+                                            setGetActionsEndPoint(temp);
+                                          })
+                                          .catch((error) => {
+                                              console.log(error);
+                                          });
+                                    };
+
+                                    foo();
+
                                 }}
                                 icon={faTrashAlt}
                                 size="sm"
@@ -2029,16 +2052,33 @@ function makeActionDisplays() {
                                 onClick={(e) => {
                                     e.stopPropagation();
                                   //  console.log(r)
-                                    
-                                    let body = {is_id: i.id}
+                                    const foo = async () => {
+                                        console.log('i = ', i);
+                                        let body = {is_id: i.id}
+    
+                                        await axios
+                                            .post(BASE_URL + 'deleteIS', body)
+                                            .then(response => {
+                                                console.log('deleting')
+                                                console.log(response.data)
+                                                toggleCalled(!called)
+                                                props.setUpdateGetHistory(!props.updateGetHistory);
+                                            });
+                                        await axios
+                                            .get(BASE_URL + "instructionsSteps/" + i.at__id)
+                                            .then((response) =>{
+                                                const temp = []
+                                                for(var i=0; i <response.data.result.length; i++){
+                                                    temp.push(response.data.result[i]);
+                                                }
+                                                setGetStepsEndPoint(temp)
+                                            })
+                                            .catch((error) => {
+                                                console.log(error);
+                                            });
+                                    };
 
-                                    axios
-                                        .post(BASE_URL + 'deleteIS', body)
-                                        .then(response => {
-                                            console.log('deleting')
-                                            console.log(response.data)
-                                            toggleCalled(!called)
-                                        })
+                                    foo();
                                 }}
                                 icon={faTrashAlt}
                                 size="md"
