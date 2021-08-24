@@ -45,7 +45,7 @@ const EditIS = (props) => {
       object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
     object.is_id = object.is_unique_id;
-    object.at_id = props.actionID;
+    object.at_id = props.actionID.at_unique_id;
     delete object.is_unique_id;
     object.is_sequence = 0;
     object.is_in_progress = "False";

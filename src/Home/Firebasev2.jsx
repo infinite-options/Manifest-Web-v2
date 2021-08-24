@@ -84,6 +84,13 @@ export default function Firebasev2(props)  {
     const [toggleActions, setToggleActions] = useState(false);
     const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
     const [getActions, setActions] = useState('');
+    useEffect(() => {
+        console.log("getAction", getActions)
+     }, [getActions])
+     const [getSteps, setSteps] = useState('');
+     useEffect(() => {
+         console.log("getStep", getSteps)
+      }, [getSteps])
     const [getActionsEndPoint, setGetActionsEndPoint] = useState([]);
     const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
 
@@ -126,7 +133,7 @@ export default function Firebasev2(props)  {
                 getGoalsEndPoint.push(response.data.result[i]);
             }
            // console.log("historyGot",historyGot);
-           console.log("getGoalsFire", getGoalsEndPoint)
+           
            makeDisplays()
           //  cleanData(historyGot, currentDate);
         })
@@ -134,9 +141,16 @@ export default function Firebasev2(props)  {
             console.log(error);
         });
 
-    },[])
+    },[props.updateGetHistory])
 
- 
+
+    useEffect(() => {
+        makeDisplays()
+    }, [getActionsEndPoint])
+
+    useEffect(() => {
+        makeActionDisplays()
+    }, [getStepsEndPoint])
 
     useEffect(() => {
 
@@ -181,7 +195,7 @@ export default function Firebasev2(props)  {
             console.log(error);
         });
         
-    },[ called])
+    },[props.currentUser, called])
 
     const copyPicker = () => {
         // console.log('in FireBase, showCopyModal', showCopyModal)
@@ -322,7 +336,6 @@ export default function Firebasev2(props)  {
                             }}
                         >
                             <option value='-1'>Select</option>
-
                            {allTAData.map((ta) => (
                                <option value={JSON.stringify({
                                    name: ta.name,
@@ -1133,9 +1146,14 @@ export default function Firebasev2(props)  {
         console.log("only 0.1.0", tempRows, tempID);
         var routine;
         var action;
-        for (var i=0; i <getGoalsEndPoint.length; i++){
+
+        const uniqueObjects = [...new Map(getGoalsEndPoint.map(item => [item.gr_unique_id, item])).values()]
+        console.log("unique obj", uniqueObjects)
+
+        for (var i=0; i <uniqueObjects.length; i++){
       
                 tempRows.push(displayRoutines(getGoalsEndPoint[i]));
+
     
                      for(var j=0; j<getActionsEndPoint.length ; j++){
                          if(getGoalsEndPoint[i].gr_unique_id === getActionsEndPoint[j].goal_routine_id){
@@ -1144,35 +1162,88 @@ export default function Firebasev2(props)  {
                                 tempID.push(getActionsEndPoint[j].at_unique_id)
                                 console.log("only", tempID)
 
-                                for(var k=0; k<getStepsEndPoint.length; k++){
-                                    if(getActionsEndPoint[j].at_unique_id === getStepsEndPoint[k].at_id){
-                                       if(tempIsID.includes(getStepsEndPoint[k].is_unique_id) === false ){
-                                           tempRows.push(displayInstructions(getStepsEndPoint[k]))
-                                           tempIsID.push(getStepsEndPoint[k].is_unique_id)
-                                           console.log("only", tempIsID)
-                                       }
-                                        else{
+                            //     for(var k=0; k<getStepsEndPoint.length; k++){
+                            //         if(getActionsEndPoint[j].at_unique_id === getStepsEndPoint[k].at_id){
+                            //            if(tempIsID.includes(getStepsEndPoint[k].is_unique_id) === false ){
+                            //                tempRows.push(displayInstructions(getStepsEndPoint[k]))
+                            //                tempIsID.push(getStepsEndPoint[k].is_unique_id)
+                            //                console.log("only", tempIsID)
+                            //            }
+                            //             else{
                                          
-                                            tempRows.pop(displayInstructions(getStepsEndPoint[k]))
-                                            tempIsID.pop(getStepsEndPoint[k].is_unique_id) 
-                                    //        console.log("only1", tempIsID)
-                                           
-                                        }
-                                }
+                            //                 tempRows.pop(displayInstructions(getStepsEndPoint[k]))
+                            //                 tempIsID.pop(getStepsEndPoint[k].is_unique_id) 
+                            //         //        console.log("only1", tempIsID)
+                            //             }
+                            //     }
                             
-                            }
+                            // }
                             }
                              else{
-                              tempRows.pop(displayActions(getActionsEndPoint[j]))
+                              tempRows.pop()
                               tempID.pop(getActionsEndPoint[j].at_unique_id) 
                                  console.log("only1", tempID)
                              }
                      }
-                 
                  }
          }
+       
+     //   console.log("filter", getGoalsEndPoint)
+         
         console.log('tempRows',tempRows, tempID);
         setlistOfBlocks(tempRows);
+}
+
+function makeActionDisplays() {
+     
+    console.log("fire Temp",getGoalsEndPoint.length);
+    var tempRows = [];
+    var tempID = [];
+    var tempIsID = [];
+    console.log("only 0.1.0", tempRows, tempID);
+    var routine;
+    var action;
+    const uniqueObjects = [...new Map(getGoalsEndPoint.map(item => [item.gr_unique_id, item])).values()]
+    console.log("unique obj", uniqueObjects)
+    for (var i=0; i <uniqueObjects.length; i++){
+  
+            tempRows.push(displayRoutines(getGoalsEndPoint[i]));
+
+                 for(var j=0; j<getActionsEndPoint.length ; j++){
+                     if(getGoalsEndPoint[i].gr_unique_id === getActionsEndPoint[j].goal_routine_id){
+                        if(tempID.includes(getActionsEndPoint[j].at_unique_id) === false ){
+                            tempRows.push(displayActions(getActionsEndPoint[j]))
+                            tempID.push(getActionsEndPoint[j].at_unique_id)
+                            console.log("only", tempID)
+
+                            for(var k=0; k<getStepsEndPoint.length; k++){
+                                if(getActionsEndPoint[j].at_unique_id === getStepsEndPoint[k].at_id){
+                                   if(tempIsID.includes(getStepsEndPoint[k].is_unique_id) === false ){
+                                       tempRows.push(displayInstructions(getStepsEndPoint[k]))
+                                       tempIsID.push(getStepsEndPoint[k].is_unique_id)
+                                       console.log("only", tempIsID)
+                                   }
+                                    else{
+                                     
+                                        tempRows.pop()
+                                        tempIsID.pop(getStepsEndPoint[k].is_unique_id) 
+                                    }
+                            }
+                        
+                        }
+                        }
+                         else{
+                       //   tempRows.pop(displayActions(getActionsEndPoint[j]))
+                       //   tempID.pop(getActionsEndPoint[j].at_unique_id) 
+                             console.log("only1", tempID)
+                         }
+                 }
+             
+             }
+
+     }
+    console.log('tempRows',tempRows, tempID);
+    setlistOfBlocks(tempRows);
 }
 
     function formatDateTime(str) {
@@ -1398,7 +1469,6 @@ export default function Firebasev2(props)  {
                     //     this.setState({
                     //     showCopyModal: true,
                     //     indexEditing: this.findIndexByID(tempID),
-
                     //     })
                     //   }}
                     //   indexEditing={this.state.indexEditing}
@@ -1433,7 +1503,6 @@ export default function Firebasev2(props)  {
                         toggleCopyModal([!showCopyModal[0], r.gr_unique_id])
                         // toggleCopyModal2([!showCopyModal2[0], r.id])
                         //toggleCopyPicker(!showCopyPicker)
-                        
                         
                     }}
                     icon={faCopy}
@@ -1546,33 +1615,40 @@ export default function Firebasev2(props)  {
                             title="SubList Available"
                             style={{ color: "#ffffff" }}
                             size="sm"
-                            onClick = {(e)=> {
-                                e.stopPropagation();
+                            onClick = {()=> {
+                                console.log("length", getActionsEndPoint.length)
+
+                                if (getActionsEndPoint.length != 0) { 
+                                    //do stuff
+                                    setGetActionsEndPoint([])
+
+                                    return 
+                                }
 
                                 // sendRoutineToParent(r.name);
                              //   clickHandle(r.gr_title)
                                 // setLoading(!isLoading);
                                 setActions(r.gr_unique_id)
+
+                                console.log("routine", getActions)
      
                                     axios
                                     .get(BASE_URL + "actionsTasks/" + r.gr_unique_id)
                                     .then((response) =>{
+                                        const temp = []
                                         for(var i=0; i <response.data.result.length; i++){
                                           // for(var i=response.data.result.length - 1; i > -1; i--){
-                                              getActionsEndPoint.push(response.data.result[i]);
+                                              temp.push(response.data.result[i]);
                                           }
+                                          setGetActionsEndPoint(temp)
                                          // console.log("historyGot",historyGot);
-                                         console.log("getActionsFire", getActionsEndPoint)
+                                         console.log("getActionsFire", getActionsEndPoint, temp)
                                         //  cleanData(historyGot, currentDate);
                                       })
                                       .catch((error) => {
                                           console.log(error);
                                       });
-
-
                                       makeDisplays()
-
-
                             }}
                             />
                         </div>
@@ -1764,7 +1840,7 @@ export default function Firebasev2(props)  {
                     <EditActionIcon
                     routine={a}
                     task={getActions}
-               //     step={null}  
+                    step={null}  
                   />
 
                     </div>
@@ -1779,17 +1855,26 @@ export default function Firebasev2(props)  {
                             style={{ color: "#ffffff" }}
                             size="sm"
                             onClick = {()=> {
+                                console.log('length',getStepsEndPoint.length )
+                                if (getStepsEndPoint.length != 0) { 
+                                    //do stuff
+                                    setGetStepsEndPoint([])
+
+                                    return 
+                                }
                                 // sendRoutineToParent(a.number);
                                 // setLoading(!isLoading);
                            //     clickHandle(a.name)
-                                
+                           setSteps(a.at_unique_id)
                            axios
                            .get(BASE_URL + "instructionsSteps/" + a.at_unique_id)
                            .then((response) =>{
+                            const temp = []
                                for(var i=0; i <response.data.result.length; i++){
                                  // for(var i=response.data.result.length - 1; i > -1; i--){
-                                     getStepsEndPoint.push(response.data.result[i]);
+                                     temp.push(response.data.result[i]);
                                  }
+                                 setGetStepsEndPoint(temp)
                                 // console.log("historyGot",historyGot);
                                 console.log("getStepsFire",  getStepsEndPoint)
                                //  cleanData(historyGot, currentDate);
@@ -1799,7 +1884,7 @@ export default function Firebasev2(props)  {
                              });
 
 
-                             makeDisplays()
+                             makeActionDisplays()
                             }}
                             />
                         </div>
@@ -1825,7 +1910,7 @@ export default function Firebasev2(props)  {
                     onClick = {(e)=> {
                           e.target.style.color = "#000000"
                           props.setIS(props.newIS)
-                          props.setaID(a['at_unique_id'])
+                          props.setaID(a)
                     }}/>
                     </div>
                     </div>
@@ -1975,11 +2060,10 @@ export default function Firebasev2(props)  {
                             size="sm"
                         />
                     </div>
-
                     <EditStepsIcon
                         routine={i}
                         task={null}
-                        step={''}  
+                        step={getSteps}  
                     />
                     </div>
                 </div>

@@ -49,8 +49,8 @@ const convertDateToTimeString = (dateObject) => {
 const EditATS = (props) => {
   const editingATSContext = useContext(EditATSContext);
   console.log('Props', props.routineID);
-  const startTime = new Date(props.routineID.startTime);
-  const endTime = new Date(props.routineID.endTime);
+  const startTime =  new Date(props.routineID.gr_start_day_and_time);
+  const endTime = new Date(props.routineID.gr_end_day_and_time);
   const startDay = convertDateToDayString(startTime);
   const endDay = convertDateToDayString(endTime);
   console.log('action startTime', startTime);
@@ -71,15 +71,15 @@ const EditATS = (props) => {
           start_day: startDay,
           end_day: endDay,
           at_available_start_time: convertDateToTimeString(
-            new Date(props.routineID.startTime.replace(/-/g, '/'))
+            new Date(props.routineID.gr_start_day_and_time.replace(/-/g, '/') )
           ),
           at_available_end_time: convertDateToTimeString(
-            new Date(props.routineID.endTime.replace(/-/g, '/'))
+            new Date(props.routineID.gr_end_day_and_time.replace(/-/g, '/'))
           ),
         },
       });
     }
-  }, [props.routineID.startTime]);
+  }, []);
 
   console.log(
     'action start_day',
@@ -131,7 +131,7 @@ const EditATS = (props) => {
     delete object.location;
     delete object.start_day_and_time;
     object.title = object.at_title;
-    object.gr_id = props.routineID.id;
+    object.gr_id = props.routineID.gr_unique_id;
     delete object.at_title;
     const numHours = object.numMins > 60 ? object.numMins / 60: '00';
     let numMins = object.numMins % 60;

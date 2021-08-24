@@ -48,7 +48,7 @@ const convertTimeLengthToMins = (timeString) => {
   const hours = parseInt(timeUnits[0]);
   const minutes = parseInt(timeUnits[1]);
   const numMins =  60 * hours + minutes;
-  return ('' + numMins);
+  return '' + numMins;
 }
 
 const EditIcon = ({routine, task, step}) => {
@@ -105,11 +105,12 @@ const EditIcon = ({routine, task, step}) => {
         //  const itemToChange = routine;
           var itemToChange;
           for(var j=0;j<arrSteps.length;j++){
-          if (routine.id === arrSteps[j].is_unique_id){
+          if (routine.is_unique_id === arrSteps[j].is_unique_id){
             itemToChange = arrSteps[j];
-            console.log("steps",itemToChange)
+            console.log("stepsTime",itemToChange)
           }
           }
+          console.log("TimeStep", itemToChange.is_expected_completion_time)
           const expectedCompletionTime = itemToChange.is_expected_completion_time ? itemToChange.is_expected_completion_time : '00:00:00';
           const numMins = convertTimeLengthToMins(expectedCompletionTime)
           itemToChange.numMins = numMins;
