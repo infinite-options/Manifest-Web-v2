@@ -408,9 +408,9 @@ export default function Home(props) {
         6: '',
       },
       location: '',
-      is_available: false,
+      is_available: true,
       is_persistent: true,
-      is_complete: true,
+      is_complete: false,
       is_displayed_today: true,
       is_timed: false,
       is_sublist_available: true,
@@ -494,7 +494,7 @@ export default function Home(props) {
         6: '',
       },
       location: '',
-      is_available: false,
+      is_available: true,
       is_persistent: true,
       is_complete: false,
       is_in_progress: false,
@@ -596,7 +596,7 @@ export default function Home(props) {
       // When making API call, convert numMins to expected_completion_time
       numMins: '',
       location: '',
-      is_available: false,
+      is_available: true,
       is_persistent: true,
       is_complete: false,
       is_displayed_today: true,
@@ -615,8 +615,8 @@ export default function Home(props) {
       audio: '',
       // When making API call, convert numMins to expected_completion_time
       numMins: '',
-      is_available: false,
-      is_complete: true,
+      is_available: true,
+      is_complete: false,
       is_timed: false,
       photo: '',
     },
@@ -633,7 +633,7 @@ export default function Home(props) {
       // When making API call, convert numMins to expected_completion_time
       numMins: '',
       is_available: true,
-      is_complete: true,
+      is_complete: false,
       is_timed: false,
       photo: '',
     },
@@ -1724,7 +1724,7 @@ export default function Home(props) {
                         editATS={editingATS.editing}
                         editIS={editingIS.editing}
                         updateGetHistory={updategetHistoryOnClick}
-                        setUpdateGetHistory = {setUpdateGetHistoryOnClick}
+                        setUpdateGetHistory={setUpdateGetHistoryOnClick}
                       />
                     )}
                   </div>

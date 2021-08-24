@@ -30,6 +30,7 @@ import EditStepsIcon from "./EditIS/EditIcon.jsx"
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
+import { Footer } from 'rsuite';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL
 
@@ -85,13 +86,7 @@ export default function Firebasev2(props)  {
     const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
 
     const [getActions, setActions] = useState('');
-    useEffect(() => {
-        console.log("getAction", getActions)
-     }, [getActions])
      const [getSteps, setSteps] = useState('');
-     useEffect(() => {
-         console.log("getStep", getSteps)
-      }, [getSteps])
     const [getActionsEndPoint, setGetActionsEndPoint] = useState([]);
     const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
 
@@ -130,22 +125,20 @@ export default function Firebasev2(props)  {
 
     console.log("historyFire", props.updateGetHistory)
 
-    useEffect(() => {
-     
-      axios
-      .get(BASE_URL + "getgoalsandroutines/" + currentUser)
-      .then((response) =>{
+    console.log('firebase props: ', props);
 
-            
+    useEffect(() => {
+        console.log('log[1] updateGetHistory change');
+        axios
+        .get(BASE_URL + "getgoalsandroutines/" + currentUser)
+        .then((response) =>{
+            const temp = [];
             for(var i=0; i <response.data.result.length; i++){
-            // for(var i=response.data.result.length - 1; i > -1; i--){
-                
-                getGoalsEndPoint.push(response.data.result[i]);
+                temp.push(response.data.result[i]);
             }
-           console.log("historyFire",getGoalsEndPoint);
-           
-           makeDisplays()
-          //  cleanData(historyGot, currentDate);
+            console.log('log[2] temp: ', temp);
+            setGetGoalsEndPoint(temp);
+            makeDisplays();
         })
         .catch((error) => {
             console.log(error);
@@ -155,16 +148,18 @@ export default function Firebasev2(props)  {
 
 
     useEffect(() => {
+        console.log('log[3] getGoalsEndPoint =', getGoalsEndPoint);
         makeDisplays()
-    }, [getActionsEndPoint,getStepsEndPoint, props.updateGetHistory, called, props.theCurrentUserID])
+    }, [getActionsEndPoint,getStepsEndPoint, getGoalsEndPoint, called, props.theCurrentUserID])
+
 
     useEffect(() => {
+        console.log('log(3): getStepsEndPoint = ', getStepsEndPoint);
         makeActionDisplays()
     }, [getStepsEndPoint,  getActionsEndPoint ,  props.updateGetHistory, called, props.theCurrentUserID])
 
     useEffect(() => {
-
-
+        console.log('updateGetHistory useEffect 2');
         setHG([])
         setTAData([])
         setPatientData([])
@@ -205,7 +200,7 @@ export default function Firebasev2(props)  {
             console.log(error);
         });
         
-    },[props.currentUser, called])
+    },[props.currentUser, called, props.updateGetHistory])
 
     const copyPicker = () => {
         // console.log('in FireBase, showCopyModal', showCopyModal)
@@ -1599,6 +1594,7 @@ function makeActionDisplays() {
                                             console.log('deleting')
                                             console.log(response.data)
                                             toggleCalled(!called)
+                                            props.setUpdateGetHistory(!props.updateGetHistory);
                                         })
                                 }}
                                 icon={faTrashAlt}
@@ -1629,6 +1625,7 @@ function makeActionDisplays() {
                             style={{ color: "#ffffff" }}
                             size="sm"
                             onClick = {()=> {
+                                console.log('log(-2): r.gr_uid = ', r.gr_unique_id);
                                 console.log("length", getActionsEndPoint.length)
 
                                 if (getActionsEndPoint.length != 0) { 
@@ -1833,14 +1830,29 @@ function makeActionDisplays() {
                                     
                                     let body = {at_id: a.at_unique_id}
 
-                                    axios
-                                        .post(BASE_URL + 'deleteAT', body)
-                                        .then(response => {
-                                            console.log('deleting')
-                                            console.log(response.data)
-                                            toggleCalled(!called)
-                                            props.setUpdateGetHistory(!props.updateGetHistory)
-                                        })
+                                    const foo = async () => {
+                                        await axios
+                                            .post(BASE_URL + 'deleteAT', body)
+                                            .then(response => {
+                                                console.log(response.data)
+                                                // toggleCalled(!called);
+                                            });
+                                        await axios
+                                        .get(BASE_URL + "actionsTasks/" + a.goal_routine_id)
+                                        .then((response) =>{
+                                            const temp = []
+                                            for(var i=0; i <response.data.result.length; i++){
+                                                temp.push(response.data.result[i]);
+                                            }
+                                            setGetActionsEndPoint(temp);
+                                          })
+                                          .catch((error) => {
+                                              console.log(error);
+                                          });
+                                    };
+
+                                    foo();
+
                                 }}
                                 icon={faTrashAlt}
                                 size="sm"
@@ -2044,17 +2056,33 @@ function makeActionDisplays() {
                                 onClick={(e) => {
                                     e.stopPropagation();
                                   //  console.log(r)
-                                    
-                                    let body = {is_id: i.is_unique_id}
-                                    console.log("deleteIS", body )
-                                    axios
-                                        .post(BASE_URL + 'deleteIS', body)
-                                        .then(response => {
-                                            console.log('deleting')
-                                            console.log(response.data)
-                                            toggleCalled(!called)
-                                            props.setUpdateGetHistory(!props.updateGetHistory)
-                                        })
+                                    const foo = async () => {
+                                        console.log('i = ', i);
+                                        let body = {is_id: i.is_unique_id}
+    
+                                        await axios
+                                            .post(BASE_URL + 'deleteIS', body)
+                                            .then(response => {
+                                                console.log('deleting')
+                                                console.log(response.data)
+                                                toggleCalled(!called)
+                                                props.setUpdateGetHistory(!props.updateGetHistory);
+                                            });
+                                        await axios
+                                            .get(BASE_URL + "instructionsSteps/" + i.at__id)
+                                            .then((response) =>{
+                                                const temp = []
+                                                for(var i=0; i <response.data.result.length; i++){
+                                                    temp.push(response.data.result[i]);
+                                                }
+                                                setGetStepsEndPoint(temp)
+                                            })
+                                            .catch((error) => {
+                                                console.log(error);
+                                            });
+                                    };
+
+                                    foo();
                                 }}
                                 icon={faTrashAlt}
                                 size="md"
