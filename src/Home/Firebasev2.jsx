@@ -1519,7 +1519,7 @@ function makeActionDisplays() {
 
                     </div>
 
-                    <div style={{flex:'1', marginLeft:'1rem'}}>
+                    <div style={{flex:'1'}}>
                     
                     <div >
 
@@ -1527,6 +1527,7 @@ function makeActionDisplays() {
     {(r.is_available == "True") ? (
         <div >
         <FontAwesomeIcon
+
             title="Available to the user"
             style={{
             color: "#ffffff",
@@ -1559,19 +1560,7 @@ function makeActionDisplays() {
                     </div>
 
                     <div style={{flex:'1'}} >
-                    {/* <DeleteGR
-                          BASE_URL={this.props.BASE_URL}
-                            // deleteIndex={this.findIndexByID(tempID)}
-                            // Array={this.props.originalGoalsAndRoutineArr} //Holds the raw data for all the is in the single action
-                            // // Path={firebase
-                            // //   .firestore()
-                            // //   .collection("users")
-                            // //   .doc(this.props.theCurrentUserID)}
-                            // // refresh={this.grabFireBaseRoutinesGoalsData}
-                            // theCurrentUserId={this.props.theCurrentUserID}
-                            // theCurrentTAID={this.props.theCurrentTAID}
-                        /> */}
-                        {/* <div style={{ marginLeft: '5px' }}> */}
+               
                             <FontAwesomeIcon
                                 title="Delete Item 1"
                                 onMouseOver={(event) => {
@@ -1622,6 +1611,15 @@ function makeActionDisplays() {
                             <FontAwesomeIcon
                             icon={faList}
                             title="SubList Available"
+                            onMouseOver={(e) => {
+                        
+                                e.target.style.color = "#48D6D2";
+                            }}
+                            onMouseOut={(e) => {
+                                
+        
+                                e.target.style.color = "#FFFFFF";
+                            }}
                             style={{ color: "#ffffff" }}
                             size="sm"
                             onClick = {()=> {
@@ -1634,9 +1632,6 @@ function makeActionDisplays() {
                                     return 
                                 }
 
-                                // sendRoutineToParent(r.name);
-                             //   clickHandle(r.gr_title)
-                                // setLoading(!isLoading);
                                 setActions(r.gr_unique_id)
 
                                 console.log("routine", getActions)
@@ -1662,13 +1657,14 @@ function makeActionDisplays() {
                             />
                         </div>
                         ) : (
-                            <div
-                            >
-                       
+                            <div>
+                                <br></br>
                             </div>
                         )}
                     </div>
+                
                     <div>
+                     
                     <PlaylistAddIcon
                       onMouseOver={(event) => {
                         event.target.style.color = '#48D6D2';
@@ -1700,8 +1696,8 @@ function makeActionDisplays() {
                 style={{  backgroundColor:'#d1dceb' , marginBottom:'0px'}}
             >
                 
-                <div style={{ display:'flex', justifyContent:'space-evenly' }}>
-                <div flex='1' style={{marginLeft:'1rem',marginTop:'0.5rem',borderRadius:'10px',height:'4.5rem',width:'60%', display:'flex', justifyContent:'space-between', backgroundColor:'#F8BE28', boxShadow:
+                <div style={{ display:'flex', justifyContent:'space-between', padding:'1rem' }}>
+                <div flex='1' style={{marginLeft:'3rem',borderRadius:'10px',height:'4.5rem',width:'60%', display:'flex', justifyContent:'space-between', backgroundColor:'#F8BE28', boxShadow:
                     "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
                 zIndex:'50%'}}>
                 <div flex='1' style={{ display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
@@ -1774,8 +1770,8 @@ function makeActionDisplays() {
                 </div>
                 </div>
 
-                <div style={{ display:"flex" , marginTop:'1rem'}}>
-                <div style={{marginRight:'1rem', marginLeft:'1rem',display:'flex', justifyContent:'flex-start', flexDirection:'column', alignItems:'left'}}>
+                <div style={{ display:"flex", marginRight:'0.5rem' }}>
+                <div style={{marginRight:'1rem',display:'flex', justifyContent:'flex-start', flexDirection:'column'}}>
 
                     <div >
 
@@ -1875,6 +1871,15 @@ function makeActionDisplays() {
                          {(a.is_sublist_available === "True") ? (
                             <div>
                             <FontAwesomeIcon
+                                onMouseOver={(e) => {
+                        
+                                    e.target.style.color = "#48D6D2";
+                                }}
+                                onMouseOut={(e) => {
+                                    
+            
+                                    e.target.style.color = "#FFFFFF";
+                                }}
                             icon={faList}
                             title="SubList Available"
                             style={{ color: "#ffffff" }}
@@ -1913,6 +1918,7 @@ function makeActionDisplays() {
                         </div>
                         ) : (
                             <div>
+                                 <br></br>
                             </div>    
                             ) 
                                     }
@@ -1951,8 +1957,8 @@ function makeActionDisplays() {
                 style={{ backgroundColor:'#dae5f5' , marginBottom:'0px'}}
             >
                 
-                <div style={{ display:'flex', justifyContent:'space-evenly' }}>
-                <div flex='1' style={{marginLeft:'1rem', marginTop:'0.5rem', height:'4.5rem', borderRadius:'10px',width:'60%', display:'flex', justifyContent:'space-between', backgroundColor:'#67ABFC', boxShadow:
+                <div style={{ display:'flex', justifyContent:'space-between', padding:'1rem' }}>
+                <div flex='1' style={{marginLeft:'4rem', height:'4.5rem', borderRadius:'10px',width:'60%', display:'flex', justifyContent:'space-between', backgroundColor:'#67ABFC', boxShadow:
                     "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)",
                 zIndex:'50%'}}>
                 <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
@@ -2002,8 +2008,8 @@ function makeActionDisplays() {
                 </div>
                 </div>
 
-                <div style={{ display:"flex" , marginTop:'1rem'}}>
-                <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
+                <div style={{ display:"flex", marginRight:'1.5rem' }}>
+                <div style={{display:'flex', justifyContent:'flex-start', flexDirection:'column'}}>
              
 
                     <div style={{ marginLeft:'1rem'}}>
@@ -2089,7 +2095,7 @@ function makeActionDisplays() {
                             />
                     </div>
                 </div>
-                    <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
+                    <div style={{marginLeft:'1rem',display:'flex', justifyContent:'flex-start', flexDirection:'column'}}>
                 
                     <div>
                         <FontAwesomeIcon
