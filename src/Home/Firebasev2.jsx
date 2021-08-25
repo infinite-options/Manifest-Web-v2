@@ -1652,7 +1652,7 @@ function makeActionDisplays() {
                         ) : (
                             <div
                             >
-                       
+                                <br></br>
                             </div>
                         )}
                     </div>
@@ -1895,6 +1895,7 @@ function makeActionDisplays() {
                         </div>
                         ) : (
                             <div>
+                                <br></br>
                             </div>    
                             ) 
                                     }
