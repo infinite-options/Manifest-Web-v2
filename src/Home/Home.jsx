@@ -1182,6 +1182,7 @@ export default function Home(props) {
           if (response.data.result && response.data.result.length !== 0) {
             let x = response.data.result;
             console.log('response', x);
+            console.log('GetGoalsEndv1 Home 1185: ', response);
             x.sort((a, b) => {
               // console.log(a);
               // console.log(b);
@@ -1563,7 +1564,7 @@ export default function Home(props) {
         .catch((error) => {
           console.log('Error in getting goals and routines ' + error);
         });
-    }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
+    }, [userID, updategetHistoryOnClick]);
   }
 
   useEffect(() => console.log('here: 4'), [editingRTS.editing.item]);

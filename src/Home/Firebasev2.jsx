@@ -137,6 +137,7 @@ export default function Firebasev2(props)  {
                 temp.push(response.data.result[i]);
             }
             console.log('log[2] temp: ', temp);
+            console.log('GetGoalsEndv1 FBv2 140: ', temp);
             setGetGoalsEndPoint(temp);
             makeDisplays();
         })
@@ -188,6 +189,7 @@ export default function Firebasev2(props)  {
         .get(BASE_URL + "getgoalsandroutines/" + currentUser)
         .then(response => {
             // setGR(response.data.result)
+            console.log('GetGoalsEndv1 FBv2 192: ', response);
             for(var i = 0; i < response.data.result.length; i++) {
                 GR.push(response.data.result[i])
                 

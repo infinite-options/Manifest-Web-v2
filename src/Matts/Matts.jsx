@@ -255,6 +255,7 @@ const MainPage = ({ ...props})=> {
         axios
           .get(url + stateValue.currentUserId)
           .then((response) => {
+            console.log('GetGoalsEndv1 Matt 258: ', response);
             if (response.data.result && response.data.result.length !== 0) {
               let x = response.data.result;
               console.log(x);

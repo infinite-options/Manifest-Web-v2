@@ -89,6 +89,7 @@ export default function Home() {
     
     axios.get(BASE_URL + "getgoalsandroutines/100-000027")
       .then((response) => {
+        console.log('GetGoalsEndv1 EditIcon Home manifest 92: ', response);
         for(var i =0; i< response.data.result.length; i++){
           console.log("routine",response.data.result[i]);
           if (response.data.result[i].is_persistent === "True") {
