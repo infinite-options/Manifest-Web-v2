@@ -31,7 +31,6 @@ import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 import { Footer } from 'rsuite';
-
 const BASE_URL = process.env.REACT_APP_BASE_URL
 
 const useStyles = makeStyles({
@@ -84,7 +83,6 @@ export default function Firebasev2(props)  {
     const [historyGot, setHG] = useState([]);
     const [toggleActions, setToggleActions] = useState(false);
     const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
-
     const [getActions, setActions] = useState('');
      const [getSteps, setSteps] = useState('');
     const [getActionsEndPoint, setGetActionsEndPoint] = useState([]);
@@ -1333,9 +1331,7 @@ function makeActionDisplays() {
                         <div >
                             <FontAwesomeIcon
                                 title="Available to the user"
-                                style={{
-                                color: "#ffffff",
-                                }}
+                                style={{color: "#ffffff", cursor:"pointer" }}
                                 onClick={(e) => {
                                 e.stopPropagation();
                                 alert("Item Is Availble to the user");
@@ -1351,7 +1347,7 @@ function makeActionDisplays() {
                         <div>
                         <FontAwesomeIcon
                             title="Unavailable to the user"
-                            style={{ color: "#000000" }}
+                            style={{ color: "#000000" , cursor:"pointer"}}
                             onClick={(e) => {
                             e.stopPropagation();
                             alert("Item Is NOT Availble to the user" + r.is_available);
@@ -1448,8 +1444,10 @@ function makeActionDisplays() {
                             <div>
                             <FontAwesomeIcon
                             icon={faList}
+                            onMouseOver={(event) => {event.target.style.color = '#48D6D2';}}
+                            onMouseOut={(event) => {event.target.style.color = '#FFFFFF';}}
                             title="SubList Available"
-                            style={{ color: "#ffffff" }}
+                            style={{ color: "#ffffff", cursor:'pointer' }}
                             size="sm"
                             onClick = {()=> {
                               
@@ -1485,78 +1483,70 @@ function makeActionDisplays() {
                     />
                     </div> */}
 
-                    <FontAwesomeIcon
-                    title="Copy Item"
-                    onMouseOver={(e) => {
-                        
-                        e.target.style.color = "#48D6D2";
-                    }}
-                    onMouseOut={(e) => {
-                        
-
-                        e.target.style.color = "#FFFFFF";
-                    }}
-                    style={{ color: "#FFFFFF" }}
-                    onClick={(e) => {
-                        // console.log("On click");
-                        e.stopPropagation();
-                        // console.log("On click1");
-                        console.log(r.id, r.name)
-                        // copiedRoutineID = r.id
-                        setCRN(r.gr_title)
-                        setCRID(r.gr_unique_id)
-                        setTAToCopyTo({})
-                        setPatientToCopyTo({})
-                        // console.log('test', r.name)
-                        toggleCopyModal([!showCopyModal[0], r.gr_unique_id])
-                        // toggleCopyModal2([!showCopyModal2[0], r.id])
-                        //toggleCopyPicker(!showCopyPicker)
-                        
-                    }}
-                    icon={faCopy}
-                    size="sm"
-                    />
+                        <FontAwesomeIcon
+                        title="Copy Item"
+                        onMouseOver={(e) => { e.target.style.color = "#48D6D2";}}
+                        onMouseOut={(e) => {e.target.style.color = "#FFFFFF";}}
+                        style={{ color: "#FFFFFF", cursor:"pointer" }}
+                        onClick={(e) => {
+                            // console.log("On click");
+                            e.stopPropagation();
+                            // console.log("On click1");
+                            console.log(r.id, r.name)
+                            // copiedRoutineID = r.id
+                            setCRN(r.gr_title)
+                            setCRID(r.gr_unique_id)
+                            setTAToCopyTo({})
+                            setPatientToCopyTo({})
+                            // console.log('test', r.name)
+                            toggleCopyModal([!showCopyModal[0], r.gr_unique_id])
+                            // toggleCopyModal2([!showCopyModal2[0], r.id])
+                            //toggleCopyPicker(!showCopyPicker)
+                            
+                        }}
+                        icon={faCopy}
+                        size="sm"
+                        />
 
                     </div>
 
-                    <div style={{flex:'1', marginLeft:'1rem'}}>
+                    <div style={{flex:'1'}}>
                     
-                    <div >
+                        <div >
 
-<div >
-    {(r.is_available == "True") ? (
-        <div >
-        <FontAwesomeIcon
-            title="Available to the user"
-            style={{
-            color: "#ffffff",
-            }}
-            onClick={(e) => {
-            e.stopPropagation();
-            alert("Item Is Availble to the user");
-            }}
-            icon={faUser}
-            size="sm"
-        />
-        </div>
-    ) : (
-        <div>
-        <FontAwesomeIcon
-            title="Unavailable to the user"
-            style={{ color: "#000000" }}
-            onClick={(e) => {
-            e.stopPropagation();
-            alert("Item Is NOT Availble to the user");
-            }}
-            icon={faUserAltSlash}
-            size="sm"
-        />
-        </div>
-    )}
-    
-    </div>
-</div>
-                    </div>
+                            <div >
+                                {(r.is_available == "True") ? (
+                                    <div >
+                                    <FontAwesomeIcon
+                                        title="Available to the user"
+                                        style={{
+                                        color: "#ffffff", cursor:'pointer'}}
+                                        onClick={(e) => {
+                                        e.stopPropagation();
+                                        alert("Item Is Availble to the user");
+                                        }}
+                                        icon={faUser}
+                                        size="sm"
+                                    />
+                                    </div>
+                                ) : (
+                                    <div>
+                                    <FontAwesomeIcon
+                                        title="Unavailable to the user"
+                                        style={{ color: "#000000", cursor:'pointer' }}
+                                        onClick={(e) => {
+                                        e.stopPropagation();
+                                        alert("Item Is NOT Availble to the user");
+                                        }}
+                                        icon={faUserAltSlash}
+                                        size="sm"
+                                    />
+                                    </div>
+                                )}
+                                
+                                </div>
+                            </div>
+                        </div>
 
                     <div style={{flex:'1'}} >
                     {/* <DeleteGR
@@ -1574,13 +1564,9 @@ function makeActionDisplays() {
                         {/* <div style={{ marginLeft: '5px' }}> */}
                             <FontAwesomeIcon
                                 title="Delete Item 1"
-                                onMouseOver={(event) => {
-                                event.target.style.color = '#48D6D2';
-                                }}
-                                onMouseOut={(event) => {
-                                event.target.style.color = '#FFFFFF';
-                                }}
-                                style={{ color: '#FFFFFF' }}
+                                onMouseOver={(event) => {event.target.style.color = '#48D6D2';}}
+                                onMouseOut={(event) => {event.target.style.color = '#FFFFFF';}}
+                                style={{ color: '#FFFFFF', cursor:'pointer' }}
                                 // style ={{ color:  "#000000" }}
                                 onClick={(e) => {
                                     e.stopPropagation();
@@ -1621,8 +1607,10 @@ function makeActionDisplays() {
                             <div>
                             <FontAwesomeIcon
                             icon={faList}
+                            onMouseOver={(event) => {event.target.style.color = '#48D6D2';}}
+                            onMouseOut={(event) => {event.target.style.color = '#FFFFFF';}}
                             title="SubList Available"
-                            style={{ color: "#ffffff" }}
+                            style={{ color: "#ffffff", cursor:'pointer' }}
                             size="sm"
                             onClick = {()=> {
                                 console.log('log(-2): r.gr_uid = ', r.gr_unique_id);
@@ -1670,19 +1658,15 @@ function makeActionDisplays() {
                     </div>
                     <div>
                     <PlaylistAddIcon
-                      onMouseOver={(event) => {
-                        event.target.style.color = '#48D6D2';
-                        }}
-                        onMouseOut={(event) => {
-                        event.target.style.color = '#FFFFFF';
-                        }}
-                    style={{color:"#ffffff"}}
-                    onClick = {(e)=> {
-                          e.target.style.color = "#000000"
-                          props.setATS(props.newATS)
-                          props.setrID(r)
-                       //  console.log("rID", r)
-                    }}/>
+                        onMouseOver={(event) => {event.target.style.color = '#48D6D2';}}
+                        onMouseOut={(event) => {event.target.style.color = '#FFFFFF';}} 
+                        style={{color:"#ffffff", cursor:'pointer'}}
+                        onClick = {(e)=> {
+                            e.target.style.color = "#000000"
+                            props.setATS(props.newATS)
+                            props.setrID(r)
+                        //  console.log("rID", r)
+                        }}/>
                     </div>
                     </div>
                 </div>
@@ -1755,8 +1739,10 @@ function makeActionDisplays() {
                             <div>
                             <FontAwesomeIcon
                             icon={faList}
+                            onMouseOver={(event) => {event.target.style.color = '#48D6D2';}}
+                            onMouseOut={(event) => {event.target.style.color = '#FFFFFF';}}
                             title="SubList Available"
-                            style={{ color: "#ffffff" }}
+                            style={{ color: "#ffffff", cursor:'pointer' }}
                             size="sm"
                             onClick = {()=> {
                                 // sendRoutineToParent(a.number);
@@ -1775,58 +1761,52 @@ function makeActionDisplays() {
                 </div>
 
                 <div style={{ display:"flex" , marginTop:'1rem'}}>
-                <div style={{marginRight:'1rem', marginLeft:'1rem',display:'flex', justifyContent:'flex-start', flexDirection:'column', alignItems:'left'}}>
+                    <div style={{marginRight:'1rem', marginLeft:'1rem',display:'flex', justifyContent:'flex-start', flexDirection:'column', alignItems:'left'}}>
 
-                    <div >
+                        <div >
 
-                    <div >
-                        {(a.is_available == "True") ? (
-                            <div >
-                            <FontAwesomeIcon
-                                title="Available to the user"
-                                style={{
-                                color: "#ffffff",
-                                }}
-                                onClick={(e) => {
-                                e.stopPropagation();
-                                alert("Item Is Availble to the user");
-                                }}
-                                icon={faUser}
-                                size="sm"
-                            />
+                        <div >
+                            {(a.is_available == "True") ? (
+                                <div >
+                                <FontAwesomeIcon
+                                    title="Available to the user"
+                                    style={{color: "#ffffff",cursor:'pointer' }}
+                                    onClick={(e) => {
+                                    e.stopPropagation();
+                                    alert("Item Is Availble to the user");
+                                    }}
+                                    icon={faUser}
+                                    size="sm"
+                                />
+                                </div>
+                            ) : (
+                                <div>
+                                <FontAwesomeIcon
+                                    title="Unavailable to the user"
+                                    style={{ color: "#000000", cursor:'pointer' }}
+                                    onClick={(e) => {
+                                    e.stopPropagation();
+                                    alert("Item Is NOT Availble to the user");
+                                    }}
+                                    icon={faUserAltSlash}
+                                    size="sm"
+                                />
+                                </div>
+                            )}
+                            
                             </div>
-                        ) : (
-                            <div>
-                            <FontAwesomeIcon
-                                title="Unavailable to the user"
-                                style={{ color: "#000000" }}
-                                onClick={(e) => {
-                                e.stopPropagation();
-                                alert("Item Is NOT Availble to the user");
-                                }}
-                                icon={faUserAltSlash}
-                                size="sm"
-                            />
-                            </div>
-                        )}
-                        
                         </div>
-                    </div>
 
-                    <div  >
-                    <FontAwesomeIcon
+                        <div>
+                            <FontAwesomeIcon
                                 title="Delete Item"
-                                onMouseOver={(event) => {
-                                event.target.style.color = '#48D6D2';
-                                }}
-                                onMouseOut={(event) => {
-                                event.target.style.color = '#FFFFFF';
-                                }}
-                                style={{ color: '#FFFFFF' }}
+                                onMouseOver={(event) => { event.target.style.color = '#48D6D2'; }}
+                                onMouseOut={(event) => {event.target.style.color = '#FFFFFF'; }}
+                                style={{ color: '#FFFFFF', cursor:'pointer' }}
                                 // style ={{ color:  "#000000" }}
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                   // console.log(r)
+                                    // console.log(r)
                                     
                                     let body = {at_id: a.at_unique_id}
 
@@ -1845,10 +1825,10 @@ function makeActionDisplays() {
                                                 temp.push(response.data.result[i]);
                                             }
                                             setGetActionsEndPoint(temp);
-                                          })
-                                          .catch((error) => {
-                                              console.log(error);
-                                          });
+                                            })
+                                            .catch((error) => {
+                                                console.log(error);
+                                            });
                                     };
 
                                     foo();
@@ -1858,8 +1838,8 @@ function makeActionDisplays() {
                                 size="sm"
                             />
                         </div>
-                </div>
-                    <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
+                    </div>
+                <div style={{marginRight:'1rem',display:'flex', justifyContent:'flex-start', flexDirection:'column'}}>
 
                     <div>
                     <EditActionIcon
@@ -1876,8 +1856,10 @@ function makeActionDisplays() {
                             <div>
                             <FontAwesomeIcon
                             icon={faList}
+                            onMouseOver={(event) => {event.target.style.color = '#48D6D2';}}
+                            onMouseOut={(event) => {event.target.style.color = '#FFFFFF';}}
                             title="SubList Available"
-                            style={{ color: "#ffffff" }}
+                            style={{ color: "#ffffff", cursor:'pointer' }}
                             size="sm"
                             onClick = {()=> {
                                 console.log('lengthSteps',getStepsEndPoint.length )
@@ -1920,20 +1902,21 @@ function makeActionDisplays() {
                    
                     </div>
 
-                    <div>
+                    <div >
                     <PlaylistAddIcon
-                      onMouseOver={(event) => {
+                        onMouseOver={(event) => {
                         event.target.style.color = '#48D6D2';
                         }}
                         onMouseOut={(event) => {
                         event.target.style.color = '#FFFFFF';
-                        }}
-                    style={{color:"#ffffff"}}
-                    onClick = {(e)=> {
-                          e.target.style.color = "#000000"
-                          props.setIS(props.newIS)
-                          props.setaID(a)
-                    }}/>
+                        }} 
+                        
+                        style={{color:"#ffffff", cursor:'pointer'}}
+                        onClick = {(e)=> {
+                            e.target.style.color = "#000000"
+                            props.setIS(props.newIS)
+                            props.setaID(a)
+                        }}/>
                     </div>
                     </div>
                 </div>
@@ -2003,109 +1986,105 @@ function makeActionDisplays() {
                 </div>
 
                 <div style={{ display:"flex" , marginTop:'1rem'}}>
-                <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column', alignItems:'left'}}>
-             
-
-                    <div style={{ marginLeft:'1rem'}}>
-
-                    <Row >
-                        {(i.is_available == "True") ? (
-                            <div >
-                            <FontAwesomeIcon
-                                title="Available to the user"
-                                style={{
-                                color: "#ffffff",
-                                }}
-                                onClick={(e) => {
-                                e.stopPropagation();
-                                alert("Item Is Availble to the user");
-                                }}
-                                icon={faUser}
-                                size="sm"
-                            />{" "}
-                            </div>
-                        ) : (
-                            <div>
-                            <FontAwesomeIcon
-                                title="Unavailable to the user"
-                                style={{ color: "#000000" }}
-                                onClick={(e) => {
-                                e.stopPropagation();
-                                alert("Item Is NOT Availble to the user");
-                                }}
-                                icon={faUserAltSlash}
-                                size="sm"
-                            />
-                            </div>
-                        )}
-                        
-                    </Row>
-                    </div>
-
-                    <div >
-                    <FontAwesomeIcon
-                                title="Delete Item "
-                                onMouseOver={(event) => {
-                                event.target.style.color = '#48D6D2';
-                                }}
-                                onMouseOut={(event) => {
-                                event.target.style.color = '#FFFFFF';
-                                }}
-                                style={{ color: '#FFFFFF' }}
-                                // style ={{ color:  "#000000" }}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                  //  console.log(r)
-                                    const foo = async () => {
-                                        console.log('i = ', i);
-                                        let body = {is_id: i.is_unique_id}
-    
-                                        await axios
-                                            .post(BASE_URL + 'deleteIS', body)
-                                            .then(response => {
-                                                console.log('deleting')
-                                                console.log(response.data)
-                                                toggleCalled(!called)
-                                                props.setUpdateGetHistory(!props.updateGetHistory);
-                                            });
-                                        await axios
-                                            .get(BASE_URL + "instructionsSteps/" + i.at__id)
-                                            .then((response) =>{
-                                                const temp = []
-                                                for(var i=0; i <response.data.result.length; i++){
-                                                    temp.push(response.data.result[i]);
-                                                }
-                                                setGetStepsEndPoint(temp)
-                                            })
-                                            .catch((error) => {
-                                                console.log(error);
-                                            });
-                                    };
-
-                                    foo();
-                                }}
-                                icon={faTrashAlt}
-                                size="md"
-                            />
-                    </div>
-                </div>
-                    <div style={{marginRight:'1rem',display:'flex', justifyContent:'space-evenly', flexDirection:'column'}}>
+                    <div style={{marginRight:'1rem',display:'flex', justifyContent:'flex-start', flexDirection:'column', alignItems:'left'}}>
                 
-                    <div>
-                        <FontAwesomeIcon
-                            icon={faBookmark}
-                            title="Must Do"
-                            style={{ color: "#ffffff" }}
-                            size="sm"
+
+                        <div style={{ marginLeft:'1rem'}}>
+
+                            <Row >
+                                {(i.is_available == "True") ? (
+                                    <div >
+                                    <FontAwesomeIcon
+                                        title="Available to the user"
+                                        style={{color: "#ffffff", cursor:'pointer' }}
+                                        onClick={(e) => {
+                                        e.stopPropagation();
+                                        alert("Item Is Availble to the user");
+                                        }}
+                                        icon={faUser}
+                                        size="sm"
+                                    />{" "}
+                                    </div>
+                                ) : (
+                                    <div>
+                                    <FontAwesomeIcon
+                                        title="Unavailable to the user"
+                                        style={{ color: "#000000", cursor:'pointer' }}
+                                        onClick={(e) => {
+                                        e.stopPropagation();
+                                        alert("Item Is NOT Availble to the user");
+                                        }}
+                                        icon={faUserAltSlash}
+                                        size="sm"
+                                    />
+                                    </div>
+                                )}
+                            
+                                </Row>
+                            </div>
+
+                            <div >
+                                <FontAwesomeIcon
+                                    title="Delete Item "
+                                    onMouseOver={(event) => {event.target.style.color = '#48D6D2';}}
+                                    onMouseOut={(event) => {event.target.style.color = '#FFFFFF';}}
+                                    style={{ color: '#FFFFFF', cursor:'pointer' }}
+                                    // style ={{ color:  "#000000" }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        //  console.log(r)
+                                        const foo = async () => {
+                                            console.log('i = ', i);
+                                            let body = {is_id: i.is_unique_id}
+
+                                            await axios
+                                                .post(BASE_URL + 'deleteIS', body)
+                                                .then(response => {
+                                                    console.log('deleting')
+                                                    console.log(response.data)
+                                                    toggleCalled(!called)
+                                                    props.setUpdateGetHistory(!props.updateGetHistory);
+                                                });
+                                            await axios
+                                                .get(BASE_URL + "instructionsSteps/" + i.at__id)
+                                                .then((response) =>{
+                                                    const temp = []
+                                                    for(var i=0; i <response.data.result.length; i++){
+                                                        temp.push(response.data.result[i]);
+                                                    }
+                                                    setGetStepsEndPoint(temp)
+                                                })
+                                                .catch((error) => {
+                                                    console.log(error);
+                                                });
+                                        };
+
+                                        foo();
+                                    }}
+                                    icon={faTrashAlt}
+                                    size="md"
+                                />
+                            </div>
+                        </div>
+                        <div style={{marginRight:'1rem',display:'flex', justifyContent:'flex-start', flexDirection:'column'}}>
+                    
+                        <div>
+                            <FontAwesomeIcon
+                                onMouseOver={(event) => {event.target.style.color = '#48D6D2';}}
+                                onMouseOut={(event) => {event.target.style.color = '#FFFFFF';}}
+                                icon={faBookmark}
+                                title="Must Do"
+                                style={{ color: "#ffffff", cursor:'pointer' }}
+                                size="sm"
+                            />
+                        </div>
+                        <EditStepsIcon
+                            routine={i}
+                            task={null}
+                            step={getSteps}  
                         />
+                        </div>
                     </div>
-                    <EditStepsIcon
-                        routine={i}
-                        task={null}
-                        step={getSteps}  
-                    />
-                    </div>
-                </div>
                 </div>
             </div>
         )

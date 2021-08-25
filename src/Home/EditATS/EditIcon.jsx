@@ -96,13 +96,9 @@ const EditIcon = ({ routine, task, step }) => {
     <div>
       <FontAwesomeIcon
         title="Edit Item"
-        onMouseOver={(event) => {
-          event.target.style.color = '#48D6D2';
-        }}
-        onMouseOut={(event) => {
-          event.target.style.color = '#ffffff';
-        }}
-        style={{ color: '#ffffff' }}
+        onMouseOver={(event) => {event.target.style.color = '#48D6D2';}}
+        onMouseOut={(event) => {event.target.style.color = '#FFFFFF';}}
+        style={{ color: '#ffffff', cursor:'pointer' }}
         icon={faEdit}
         onClick={(e) => {
           axios

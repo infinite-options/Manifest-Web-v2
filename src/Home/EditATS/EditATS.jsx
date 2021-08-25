@@ -48,9 +48,10 @@ const convertDateToTimeString = (dateObject) => {
 
 const EditATS = (props) => {
   const editingATSContext = useContext(EditATSContext);
-  console.log('Props', props.routineID);
-  const startTime = new Date(props.routineID.gr_start_day_and_time);
-  const endTime = new Date(props.routineID.gr_end_day_and_time);
+  console.log('action Props', props);
+  console.log('action Props',  new Date((props.routineID.gr_start_day_and_time).replace(/-/g, '/')));
+  const startTime = new Date((props.routineID.gr_start_day_and_time).replace(/-/g, '/'));
+  const endTime = new Date((props.routineID.gr_end_day_and_time).replace(/-/g, '/'));
   const startDay = convertDateToDayString(startTime);
   const endDay = convertDateToDayString(endTime);
   console.log('action startTime', startTime);
@@ -79,7 +80,7 @@ const EditATS = (props) => {
         },
       });
     }
-  }, []);
+  }, [editingATSContext.editingATS.newItem.start_day,editingATSContext.editingATS.newItem.end_day]);
 
   console.log(
     'action start_day',

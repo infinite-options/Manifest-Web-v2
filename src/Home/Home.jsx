@@ -1681,9 +1681,8 @@ export default function Home(props) {
                     <Button
                       className={classes.buttonSelection}
                       style={{
-                        width: '20%',
-                        marginLeft: '2.5%',
-                        marginRight: '2.5%',
+                        width: '19%',
+                        
                       }}
                       id="one"
                       onClick={() => {
@@ -1700,8 +1699,6 @@ export default function Home(props) {
                     <div
                       style={{
                         width: '20%',
-                        marginLeft: '2.5%',
-                        marginRight: '2.5%',
                       }}
                     ></div>
                   )}
