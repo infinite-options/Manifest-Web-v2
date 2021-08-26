@@ -160,6 +160,7 @@ export default function Home(props) {
   const [routineID, setRoutineID] = useState('');
   const [actionID, setActionID] = useState('');
   const [updategetHistoryOnClick, setUpdateGetHistoryOnClick] = useState(false);
+  const [getActionsEndPoint, setGetActionsEndPoint] = useState([]);
 
   const [hightlight, setHightlight] = useState('');
   const [stateValue, setStateValue] = useState({
@@ -1722,6 +1723,8 @@ export default function Home(props) {
                         editIS={editingIS.editing}
                         updateGetHistory={updategetHistoryOnClick}
                         setUpdateGetHistory={setUpdateGetHistoryOnClick}
+                        getActionsEndPoint={getActionsEndPoint}
+                        setGetActionsEndPoint={setGetActionsEndPoint}
                       />
                     )}
                   </div>
@@ -1807,6 +1810,7 @@ export default function Home(props) {
                         CurrentId={userID}
                         updateGetHistory={updategetHistoryOnClick}
                         setUpdateGetHistory={setUpdateGetHistoryOnClick}
+                        setGetActionsEndPoint={setGetActionsEndPoint}
                       />
                     ) : editingRTS.editing ? (
                       <EditRTS

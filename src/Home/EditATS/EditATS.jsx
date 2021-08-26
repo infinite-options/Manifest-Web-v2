@@ -49,9 +49,10 @@ const convertDateToTimeString = (dateObject) => {
 const EditATS = (props) => {
   const editingATSContext = useContext(EditATSContext);
   console.log('action Props', props);
-  console.log('action Props',  new Date((props.routineID.gr_start_day_and_time).replace(/-/g, '/')));
-  const startTime = new Date((props.routineID.gr_start_day_and_time).replace(/-/g, '/'));
-  const endTime = new Date((props.routineID.gr_end_day_and_time).replace(/-/g, '/'));
+  
+  // console.log('action Props',  new Date((props.routineID.gr_start_day_and_time).replace(/-/g, '/')));
+  const startTime = new Date(props.routineID.gr_start_day_and_time);
+  const endTime = new Date(props.routineID.gr_end_day_and_time);
   const startDay = convertDateToDayString(startTime);
   const endDay = convertDateToDayString(endTime);
   console.log('action startTime', startTime);
@@ -91,7 +92,6 @@ const EditATS = (props) => {
   const updateATS = (e) => {
     e.stopPropagation();
     let object = { ...editingATSContext.editingATS.newItem };
-    props.setUpdateGetHistory(!props.updateGetHistory);
     const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
     const start_day_and_time_string = new Date(
       start_day_and_time_simple_string
@@ -154,7 +154,9 @@ const EditATS = (props) => {
     });
     if (object.id != undefined) {
       console.log('update AT');
-      axios
+
+      const updateDB = async () => {
+        await axios
         .post(BASE_URL + 'updateAT', formData)
         .then((response) => {
           console.log(response);
@@ -176,6 +178,25 @@ const EditATS = (props) => {
           }
           console.log(err);
         });
+
+        console.log('props.rid = ', props.routineID.goal_routine_id);
+        await axios
+        .get(BASE_URL + "actionsTasks/" + props.routineID.goal_routine_id)
+        .then((response) =>{
+            console.log('actionsTasks-response: ', response);
+            const temp = [];
+            for(var i=0; i <response.data.result.length; i++){
+                temp.push(response.data.result[i]);
+            }
+            console.log('tempy = ', temp);
+            props.setGetActionsEndPoint(temp);
+          })
+          .catch((error) => {
+              console.log('actionsTasks error = ', error);
+          });
+      };
+
+      updateDB();
     } else {
       console.log('add AT');
       axios

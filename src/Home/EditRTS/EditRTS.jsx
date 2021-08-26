@@ -29,8 +29,6 @@ const EditRTS = (props) => {
       }
     );
     // editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing;
-    // props.setUpdateGetHistory(!props.updateGetHistory);
-    // props.setUpdateGetHistory(false);
     e.stopPropagation()
     let object = {...editingRTSContext.editingRTS.newItem};
     console.log("updaterts object", object);
@@ -130,7 +128,6 @@ const EditRTS = (props) => {
           editing: false
         });
         props.setUpdateGetHistory(!props.updateGetHistory);
-        // props.setUpdateGetHistory(!props.updateGetHistory);
       })
       .catch((err) => {
         if(err.response) {
@@ -152,7 +149,8 @@ const EditRTS = (props) => {
           ...editingRTSContext.editingRTS,
           gr_array: new_gr_array,
           editing: false
-        })
+        });
+        props.setUpdateGetHistory(!props.updateGetHistory);
       })
       .catch((err) => {
         if(err.response) {

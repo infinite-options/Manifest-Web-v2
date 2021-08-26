@@ -85,8 +85,8 @@ export default function Firebasev2(props)  {
     const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
     const [getActions, setActions] = useState('');
      const [getSteps, setSteps] = useState('');
-    const [getActionsEndPoint, setGetActionsEndPoint] = useState([]);
     const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
+    
 
     const [iconColor, setIconColor] = useState()
     //NOTE This gives you routines within 7 days of current date. Change currentDate to change that
@@ -108,6 +108,7 @@ export default function Firebasev2(props)  {
     const [GR, setGR] = useState([])
     const [copiedRoutineName, setCRN] = useState('')
     const [copiedRoutineID, setCRID] = useState('')
+    console.log('fprops = ', props);
 
 
     // var copiedRoutineID =''
@@ -117,7 +118,7 @@ export default function Firebasev2(props)  {
     }
     useEffect(() => {
         setGetGoalsEndPoint([])
-        setGetActionsEndPoint([])
+        props.setGetActionsEndPoint([])
         setGetStepsEndPoint([])
     },[ props.theCurrentUserID])
 
@@ -148,13 +149,13 @@ export default function Firebasev2(props)  {
     useEffect(() => {
         console.log('log[3] getGoalsEndPoint =', getGoalsEndPoint);
         makeDisplays()
-    }, [getActionsEndPoint,getStepsEndPoint, getGoalsEndPoint, called, props.theCurrentUserID])
+    }, [props.getActionsEndPoint,getStepsEndPoint, getGoalsEndPoint, called, props.theCurrentUserID])
 
 
     useEffect(() => {
         console.log('log(3): getStepsEndPoint = ', getStepsEndPoint);
         makeActionDisplays()
-    }, [getStepsEndPoint,  getActionsEndPoint ,  props.updateGetHistory, called, props.theCurrentUserID])
+    }, [getStepsEndPoint,  props.getActionsEndPoint ,  props.updateGetHistory, called, props.theCurrentUserID])
 
     useEffect(() => {
         console.log('updateGetHistory useEffect 2');
@@ -1161,33 +1162,16 @@ export default function Firebasev2(props)  {
                 tempRows.push(displayRoutines(uniqueObjects[i]));
 
     
-                     for(var j=0; j<getActionsEndPoint.length ; j++){
-                         if(getGoalsEndPoint[i].gr_unique_id === getActionsEndPoint[j].goal_routine_id){
-                            if(tempID.includes(getActionsEndPoint[j].at_unique_id) === false ){
-                                tempRows.push(displayActions(getActionsEndPoint[j]))
-                                tempID.push(getActionsEndPoint[j].at_unique_id)
+                     for(var j=0; j<props.getActionsEndPoint.length ; j++){
+                         if(getGoalsEndPoint[i].gr_unique_id === props.getActionsEndPoint[j].goal_routine_id){
+                            if(tempID.includes(props.getActionsEndPoint[j].at_unique_id) === false ){
+                                tempRows.push(displayActions(props.getActionsEndPoint[j]))
+                                tempID.push(props.getActionsEndPoint[j].at_unique_id)
                                 console.log("only", tempID)
-
-                            //     for(var k=0; k<getStepsEndPoint.length; k++){
-                            //         if(getActionsEndPoint[j].at_unique_id === getStepsEndPoint[k].at_id){
-                            //            if(tempIsID.includes(getStepsEndPoint[k].is_unique_id) === false ){
-                            //                tempRows.push(displayInstructions(getStepsEndPoint[k]))
-                            //                tempIsID.push(getStepsEndPoint[k].is_unique_id)
-                            //                console.log("only", tempIsID)
-                            //            }
-                            //             else{
-                                         
-                            //                 tempRows.pop(displayInstructions(getStepsEndPoint[k]))
-                            //                 tempIsID.pop(getStepsEndPoint[k].is_unique_id) 
-                            //         //        console.log("only1", tempIsID)
-                            //             }
-                            //     }
-                            
-                            // }
                             }
                              else{
                               tempRows.pop()
-                              tempID.pop(getActionsEndPoint[j].at_unique_id) 
+                              tempID.pop(props.getActionsEndPoint[j].at_unique_id) 
                                  console.log("only1", tempID)
                              }
                      }
@@ -1215,15 +1199,15 @@ function makeActionDisplays() {
   
             tempRows.push(displayRoutines(getGoalsEndPoint[i]));
 
-                 for(var j=0; j<getActionsEndPoint.length ; j++){
-                     if(getGoalsEndPoint[i].gr_unique_id === getActionsEndPoint[j].goal_routine_id){
-                        if(tempID.includes(getActionsEndPoint[j].at_unique_id) === false ){
-                            tempRows.push(displayActions(getActionsEndPoint[j]))
-                            tempID.push(getActionsEndPoint[j].at_unique_id)
+                 for(var j=0; j<props.getActionsEndPoint.length ; j++){
+                     if(getGoalsEndPoint[i].gr_unique_id === props.getActionsEndPoint[j].goal_routine_id){
+                        if(tempID.includes(props.getActionsEndPoint[j].at_unique_id) === false ){
+                            tempRows.push(displayActions(props.getActionsEndPoint[j]))
+                            tempID.push(props.getActionsEndPoint[j].at_unique_id)
                             console.log("only", tempID)
 
                             for(var k=0; k<getStepsEndPoint.length; k++){
-                                if(getActionsEndPoint[j].at_unique_id === getStepsEndPoint[k].at_id){
+                                if(props.getActionsEndPoint[j].at_unique_id === getStepsEndPoint[k].at_id){
                                    if(tempIsID.includes(getStepsEndPoint[k].is_unique_id) === false ){
                                        tempRows.push(displayInstructions(getStepsEndPoint[k]))
                                        tempIsID.push(getStepsEndPoint[k].is_unique_id)
@@ -1239,8 +1223,8 @@ function makeActionDisplays() {
                         }
                         }
                          else{
-                       //   tempRows.pop(displayActions(getActionsEndPoint[j]))
-                       //   tempID.pop(getActionsEndPoint[j].at_unique_id) 
+                       //   tempRows.pop(displayActions(props.getActionsEndPoint[j]))
+                       //   tempID.pop(props.getActionsEndPoint[j].at_unique_id) 
                              console.log("only1", tempID)
                          }
                  }
@@ -1614,11 +1598,11 @@ function makeActionDisplays() {
                             size="sm"
                             onClick = {()=> {
                                 console.log('log(-2): r.gr_uid = ', r.gr_unique_id);
-                                console.log("length", getActionsEndPoint.length)
+                                console.log("length", props.getActionsEndPoint.length)
 
-                                if (getActionsEndPoint.length != 0) { 
+                                if (props.getActionsEndPoint.length != 0) { 
                                     //do stuff
-                                    setGetActionsEndPoint([])
+                                    props.setGetActionsEndPoint([])
                                     return 
                                 }
 
@@ -1637,9 +1621,9 @@ function makeActionDisplays() {
                                           // for(var i=response.data.result.length - 1; i > -1; i--){
                                               temp.push(response.data.result[i]);
                                           }
-                                          setGetActionsEndPoint(temp)
+                                          props.setGetActionsEndPoint(temp)
                                          // console.log("historyGot",historyGot);
-                                         console.log("getActionsFire", getActionsEndPoint, temp)
+                                         console.log("getActionsFire", props.getActionsEndPoint, temp)
                                         //  cleanData(historyGot, currentDate);
                                       })
                                       .catch((error) => {
@@ -1824,7 +1808,7 @@ function makeActionDisplays() {
                                             for(var i=0; i <response.data.result.length; i++){
                                                 temp.push(response.data.result[i]);
                                             }
-                                            setGetActionsEndPoint(temp);
+                                            props.setGetActionsEndPoint(temp);
                                             })
                                             .catch((error) => {
                                                 console.log(error);
@@ -1845,7 +1829,8 @@ function makeActionDisplays() {
                     <EditActionIcon
                     routine={a}
                     task={getActions}
-                    step={null}  
+                    step={null}
+                    setRID={props.setrID}
                   />
 
                     </div>

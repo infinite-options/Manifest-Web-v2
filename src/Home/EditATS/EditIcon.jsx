@@ -53,7 +53,7 @@ const convertTimeLengthToMins = (timeString) => {
   return '' + numMins;
 };
 
-const EditIcon = ({ routine, task, step }) => {
+const EditIcon = ({ routine, task, step, setRID }) => {
   console.log('made it');
   const editingATSContext = useContext(EditATSContext);
   const [arrAction, setarrAction] = useState([]);
@@ -101,6 +101,7 @@ const EditIcon = ({ routine, task, step }) => {
         style={{ color: '#ffffff', cursor:'pointer' }}
         icon={faEdit}
         onClick={(e) => {
+          setRID(routine);
           axios
           .get(BASE_URL + 'actionsTasks/' + task.toString())
           .then((response) => {
