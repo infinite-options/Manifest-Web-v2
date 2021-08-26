@@ -1396,7 +1396,8 @@ function makeActionDisplays() {
                     onClick = {() => console.log('here: clicking update')}
                     routine={r}
                     task={null}
-                    step={currentUser} 
+                    step={currentUser}
+                    getGoalsEndPoint={props.getGoalsEndPoint}
                   //  id={currentUser} 
                   />
 

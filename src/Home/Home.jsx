@@ -938,8 +938,10 @@ export default function Home(props) {
     // console.log('base url id ', userID);
 
     useEffect(() => {
-      console.log('here: Change made to editing, re-render triggered. About to get user information');
-      console.log(userID);
+      if (userID == '')
+        return;
+      console.log('here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ', [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
+      
       axios
         .get(url + userID)
         .then((response) => {

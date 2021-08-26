@@ -54,10 +54,9 @@ const convertTimeLengthToMins = (timeString) => {
   return '' + numMins;
 };
 
-const EditIcon = ({ routine, task, step }) => {
+const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
   console.log('EDIT STEP: ' + step);
   const editingRTSContext = useContext(EditRTSContext);
-  const [arrRoutine, setarrRoutine] = useState([]);
   const [routineCall, setroutineCall] = useState(false);
   // var arrRoutine = []
 
@@ -73,34 +72,6 @@ const EditIcon = ({ routine, task, step }) => {
     rowType = 'routine';
     // rowId = routine.id;
   }
-
-  useEffect(() => {
-    console.log('editicon', arrRoutine);
-    console.log('getting new data editicon');
-    axios
-      .get(
-        BASE_URL + 'getgoalsandroutines/' +
-          step
-      )
-      .then((response) => {
-        //let temp = []
-        // console.log("routineGet", response)
-        for (var i = 0; i < response.data.result.length; i++) {
-          // console.log(response.data.result[i])
-          arrRoutine.push(response.data.result[i]);
-          //temp.push(response.data.result[i])
-        }
-        // setarrRoutine(temp)
-      })
-      .catch((err) => {
-        if (err.response) {
-          console.log(err.response);
-        }
-        console.log(err);
-      });
-  }, [routineCall]);
-
-  const outerFunction = () => {};
 
   // console.log("item", step, routine.id)
 
@@ -129,28 +100,28 @@ const EditIcon = ({ routine, task, step }) => {
               // console.log("routineGet", response)
               for (var i = 0; i < response.data.result.length; i++) {
                 // console.log(response.data.result[i])
-                arrRoutine.push(response.data.result[i]);
+                getGoalsEndPoint.push(response.data.result[i]);
                 console.log('in click editicon', response.data.result[i]);
 
                 // temp.push(response.data.result[i])
               }
-              //setarrRoutine(temp)
+              //setgetGoalsEndPoint(temp)
 
               // testing
 
               console.log('clicked on editIcon');
               console.log(
                 'item',
-                arrRoutine[0].gr_start_day_and_time,
+                getGoalsEndPoint[0].gr_start_day_and_time,
                 routine.id
               );
-              console.log(arrRoutine[0].repeat);
+              console.log(getGoalsEndPoint[0].repeat);
               var itemToChange;
-              for (var k = 0; k < arrRoutine.length; k++) {
-                if (routine.gr_unique_id === arrRoutine[k].gr_unique_id) {
-                  itemToChange = arrRoutine[k];
-                  rowId = arrRoutine[k].gr_unique_id;
-                  console.log('item', arrRoutine[k]);
+              for (var k = 0; k < getGoalsEndPoint.length; k++) {
+                if (routine.gr_unique_id === getGoalsEndPoint[k].gr_unique_id) {
+                  itemToChange = getGoalsEndPoint[k];
+                  rowId = getGoalsEndPoint[k].gr_unique_id;
+                  console.log('item', getGoalsEndPoint[k]);
                 }
               }
               //   const itemToChange = editingRTSContext.editingRTS.gr_array.filter((elt) => elt.id === rowId)[0];
@@ -276,14 +247,14 @@ const EditIcon = ({ routine, task, step }) => {
           // testing
 
           // console.log('clicked on editIcon')
-          // console.log("item",arrRoutine[0].gr_start_day_and_time, routine.id)
-          // console.log(arrRoutine[0].repeat)
+          // console.log("item",getGoalsEndPoint[0].gr_start_day_and_time, routine.id)
+          // console.log(getGoalsEndPoint[0].repeat)
           // var itemToChange;
-          // for (var k=0; k<arrRoutine.length; k++){
-          //   if(routine.id === arrRoutine[k].gr_unique_id){
-          //     itemToChange = arrRoutine[k]
-          //     rowId =  arrRoutine[k].gr_unique_id
-          //     console.log("item",arrRoutine[k])
+          // for (var k=0; k<getGoalsEndPoint.length; k++){
+          //   if(routine.id === getGoalsEndPoint[k].gr_unique_id){
+          //     itemToChange = getGoalsEndPoint[k]
+          //     rowId =  getGoalsEndPoint[k].gr_unique_id
+          //     console.log("item",getGoalsEndPoint[k])
           //   }
           // }
           // //   const itemToChange = editingRTSContext.editingRTS.gr_array.filter((elt) => elt.id === rowId)[0];

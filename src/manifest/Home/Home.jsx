@@ -84,25 +84,6 @@ export default function Home() {
     </Box>;
   }
 
-
-  useEffect(() =>{
-    
-    axios.get(BASE_URL + "getgoalsandroutines/100-000027")
-      .then((response) => {
-        for(var i =0; i< response.data.result.length; i++){
-          console.log("routine",response.data.result[i]);
-          if (response.data.result[i].is_persistent === "True") {
-          routinesTitle.push(response.data.result[i].gr_title);
-          routinesId.push(response.data.result[i].gr_unique_id);
-          } 
-        }
-
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  },[] ) 
-
   console.log(routinesTitle)
   console.log(routinesId)
 
