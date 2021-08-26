@@ -230,12 +230,10 @@ const EditATS = (props) => {
         await axios
         .get(BASE_URL + "actionsTasks/" + props.routineID.gr_unique_id)
         .then((response) =>{
-          console.log('USS Callister with response = ', response);
             const temp = [];
             for(var i=0; i <response.data.result.length; i++){
                 temp.push(response.data.result[i]);
             }
-            console.log('tempy = ', temp);
             props.setGetActionsEndPoint(temp);
           })
           .catch((error) => {

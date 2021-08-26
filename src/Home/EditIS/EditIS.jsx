@@ -116,25 +116,42 @@ const EditIS = (props) => {
       updateDB();
     }else{
       console.log("add IS")
-      axios
-      .post(BASE_URL + 'addIS', formData)
-      .then((response) => {
-        console.log(response);
-        const gr_array_index = editingISContext.editingIS.gr_array.findIndex((elt) => elt.id === editingISContext.editingIS.id)
-        const new_gr_array = [...editingISContext.editingIS.gr_array];
-        new_gr_array[gr_array_index] = object;
-        editingISContext.setEditingIS({
-          ...editingISContext.editingIS,
-          gr_array: new_gr_array,
-          editing: false
+      const addToDB = async () => {
+        await axios
+        .post(BASE_URL + 'addIS', formData)
+        .then((response) => {
+          console.log(response);
+          const gr_array_index = editingISContext.editingIS.gr_array.findIndex((elt) => elt.id === editingISContext.editingIS.id)
+          const new_gr_array = [...editingISContext.editingIS.gr_array];
+          new_gr_array[gr_array_index] = object;
+          editingISContext.setEditingIS({
+            ...editingISContext.editingIS,
+            gr_array: new_gr_array,
+            editing: false
+          })
         })
-      })
-      .catch((err) => {
-        if(err.response) {
-          console.log(err.response);
-        }
-        console.log(err)
-      })
+        .catch((err) => {
+          if(err.response) {
+            console.log(err.response);
+          }
+          console.log(err)
+        });
+
+        console.log('props.routineID = ', props.routineID);
+        await axios
+        .get(BASE_URL + "instructionsSteps/" + props.routineID.at_unique_id)
+        .then((response) =>{
+          const temp = []
+            for(var i=0; i <response.data.result.length; i++){
+              temp.push(response.data.result[i]);
+            }
+            props.setGetStepsEndPoint(temp);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      };
+      addToDB();
     }
   }
 

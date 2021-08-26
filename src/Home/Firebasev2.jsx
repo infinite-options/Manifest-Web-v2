@@ -1743,8 +1743,7 @@ function makeActionDisplays() {
                             e.target.style.color = "#000000"
                             props.setIS(props.newIS)
                             props.setaID(a);
-                            console.log('add a = ', a);
-                            props.setRID(a);
+                            props.setrID(a);
                         }}/>
                     </div>
                     </div>
