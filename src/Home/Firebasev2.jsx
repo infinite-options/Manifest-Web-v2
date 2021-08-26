@@ -82,7 +82,6 @@ export default function Firebasev2(props)  {
     const [listOfBlocks, setlistOfBlocks] = useState([]);
     const [historyGot, setHG] = useState([]);
     const [toggleActions, setToggleActions] = useState(false);
-    const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
     const [getActions, setActions] = useState('');
      const [getSteps, setSteps] = useState('');
     
@@ -115,7 +114,7 @@ export default function Firebasev2(props)  {
         return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, id, is_available}
     }
     useEffect(() => {
-        setGetGoalsEndPoint([])
+        props.setGetGoalsEndPoint([])
         props.setGetActionsEndPoint([])
         props.setGetStepsEndPoint([])
     },[ props.theCurrentUserID])
@@ -130,7 +129,7 @@ export default function Firebasev2(props)  {
                 temp.push(response.data.result[i]);
             }
             console.log('log[2] temp: ', temp);
-            setGetGoalsEndPoint(temp);
+            props.setGetGoalsEndPoint(temp);
             makeDisplays();
         })
         .catch((error) => {
@@ -141,9 +140,9 @@ export default function Firebasev2(props)  {
 
 
     useEffect(() => {
-        console.log('log[3] getGoalsEndPoint =', getGoalsEndPoint);
+        console.log('log[3] props.getGoalsEndPoint =', props.getGoalsEndPoint);
         makeDisplays()
-    }, [props.getActionsEndPoint,props.getStepsEndPoint, getGoalsEndPoint, called, props.theCurrentUserID])
+    }, [props.getActionsEndPoint,props.getStepsEndPoint, props.getGoalsEndPoint, called, props.theCurrentUserID])
 
 
     useEffect(() => {
@@ -174,26 +173,8 @@ export default function Firebasev2(props)  {
             })
         .catch((error) => {
             console.log(error);
-        });
-
-        setGR([])
-        axios
-        .get(BASE_URL + "getgoalsandroutines/" + currentUser)
-        .then(response => {
-            // setGR(response.data.result)
-            for(var i = 0; i < response.data.result.length; i++) {
-                GR.push(response.data.result[i])
-                
-
-            }
-                 //    makeDisplays(getGoalsEndPoint);
-
-            })
-        .catch((error) => {
-            console.log(error);
-        });
-        
-    },[props.currentUser, called, props.updateGetHistory])
+        });        
+    },[props.currentUser, called, props.updateGetHistory]);
 
     const copyPicker = () => {
         // console.log('in FireBase, showCopyModal', showCopyModal)
@@ -983,19 +964,13 @@ export default function Firebasev2(props)  {
 
     //makes listOfBlocks with list of displays routiens and such
     function makeDisplays() {
-     
-        console.log("fire Temp",getGoalsEndPoint.length);
         var tempRows = [];
         var tempID = [];
         var tempIsID = [];
         console.log("only 0.1.0", tempRows, tempID);
         var routine;
         var action;
-    //    setGetGoalsEndPoint([])
-        const uniqueObjects = [...new Map(getGoalsEndPoint.map(item => [item.gr_unique_id, item])).values()]
-        console.log("unique obj", uniqueObjects, getGoalsEndPoint)
-
-        console.log("unique obj", uniqueObjects, getGoalsEndPoint)
+        const uniqueObjects = [...new Map(props.getGoalsEndPoint.map(item => [item.gr_unique_id, item])).values()]
 
      
         for (var i=0; i <uniqueObjects.length; i++){
@@ -1004,7 +979,7 @@ export default function Firebasev2(props)  {
 
     
                      for(var j=0; j<props.getActionsEndPoint.length ; j++){
-                         if(getGoalsEndPoint[i].gr_unique_id === props.getActionsEndPoint[j].goal_routine_id){
+                         if(props.getGoalsEndPoint[i].gr_unique_id === props.getActionsEndPoint[j].goal_routine_id){
                             if(tempID.includes(props.getActionsEndPoint[j].at_unique_id) === false ){
                                 tempRows.push(displayActions(props.getActionsEndPoint[j]))
                                 tempID.push(props.getActionsEndPoint[j].at_unique_id)
@@ -1019,7 +994,7 @@ export default function Firebasev2(props)  {
                  }
          }
        
-     //   console.log("filter", getGoalsEndPoint)
+     //   console.log("filter", props.getGoalsEndPoint)
          
         console.log('tempRows',tempRows, tempID);
         setlistOfBlocks(tempRows);
@@ -1027,21 +1002,21 @@ export default function Firebasev2(props)  {
 
 function makeActionDisplays() {
      
-    console.log("fire Temp",getGoalsEndPoint.length);
+    console.log("fire Temp",props.getGoalsEndPoint.length);
     var tempRows = [];
     var tempID = [];
     var tempIsID = [];
     console.log("only 0.1.0", tempRows, tempID);
     var routine;
     var action;
-    const uniqueObjects = [...new Map(getGoalsEndPoint.map(item => [item.gr_unique_id, item])).values()]
-    console.log("unique obj", uniqueObjects, getGoalsEndPoint)
+    const uniqueObjects = [...new Map(props.getGoalsEndPoint.map(item => [item.gr_unique_id, item])).values()]
+    console.log("unique obj", uniqueObjects, props.getGoalsEndPoint)
     for (var i=0; i <uniqueObjects.length; i++){
   
-            tempRows.push(displayRoutines(getGoalsEndPoint[i]));
+            tempRows.push(displayRoutines(props.getGoalsEndPoint[i]));
 
                  for(var j=0; j<props.getActionsEndPoint.length ; j++){
-                     if(getGoalsEndPoint[i].gr_unique_id === props.getActionsEndPoint[j].goal_routine_id){
+                     if(props.getGoalsEndPoint[i].gr_unique_id === props.getActionsEndPoint[j].goal_routine_id){
                         if(tempID.includes(props.getActionsEndPoint[j].at_unique_id) === false ){
                             tempRows.push(displayActions(props.getActionsEndPoint[j]))
                             tempID.push(props.getActionsEndPoint[j].at_unique_id)
@@ -1133,12 +1108,12 @@ function makeActionDisplays() {
                 var temp = []
                 var temp2 = []
 
-                for (var i = 0; i < GR.length; i++) {
-                    temp.push(GR[i].gr_title)
+                for (var i = 0; i < props.getGoalsEndPoint.length; i++) {
+                    temp.push(props.getGoalsEndPoint[i].gr_title)
                 }
 
-                for (var j = 0; j < GR.length; j++) {
-                    temp2.push(GR[j].gr_unique_id)
+                for (var j = 0; j < props.getGoalsEndPoint.length; j++) {
+                    temp2.push(props.getGoalsEndPoint[j].gr_unique_id)
                 }
                 console.log('titles', temp)
                 console.log('titles2', temp2)
@@ -1922,7 +1897,6 @@ function makeActionDisplays() {
     return(
         <row>
                 {/* {makeDisplays()} */}
-                {console.log('FBGR',GR)}
                 {copyPicker()}
                 {copyModal()}
                 {copyModal2()}
