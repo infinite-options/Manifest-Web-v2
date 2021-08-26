@@ -115,26 +115,7 @@ export default function Firebasev2(props)  {
         props.setGetGoalsEndPoint([])
         props.setGetActionsEndPoint([])
         props.setGetStepsEndPoint([])
-    },[ props.theCurrentUserID])
-
-    useEffect(() => {
-        console.log('log[1] updateGetHistory change');
-        axios
-        .get(BASE_URL + "getgoalsandroutines/" + currentUser)
-        .then((response) =>{
-            const temp = [];
-            for(var i=0; i <response.data.result.length; i++){
-                temp.push(response.data.result[i]);
-            }
-            console.log('log[2] temp: ', temp);
-            props.setGetGoalsEndPoint(temp);
-            makeDisplays();
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-
-    },[props.updateGetHistory, props.theCurrentUserID])
+    },[ props.theCurrentUserID]);
 
 
     useEffect(() => {
@@ -146,10 +127,9 @@ export default function Firebasev2(props)  {
     useEffect(() => {
         console.log('log(3): props.getStepsEndPoint = ', props.getStepsEndPoint);
         makeActionDisplays()
-    }, [props.getStepsEndPoint,  props.getActionsEndPoint ,  props.updateGetHistory, props.theCurrentUserID]);
+    }, [props.getStepsEndPoint,  props.getActionsEndPoint, props.theCurrentUserID]);
 
     useEffect(() => {
-        console.log('updateGetHistory useEffect 2');
         setHG([])
         setTAData([])
         setPatientData([])
@@ -172,7 +152,7 @@ export default function Firebasev2(props)  {
         .catch((error) => {
             console.log(error);
         });        
-    },[props.currentUser, props.updateGetHistory]);
+    },[props.currentUser]);
 
     const copyPicker = () => {
         // console.log('in FireBase, showCopyModal', showCopyModal)

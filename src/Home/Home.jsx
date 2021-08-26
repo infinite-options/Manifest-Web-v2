@@ -151,7 +151,6 @@ export default function Home(props) {
   /*----------------------------Use states to define variables----------------------------*/
   const [routineID, setRoutineID] = useState('');
   const [actionID, setActionID] = useState('');
-  const [updategetHistoryOnClick, setUpdateGetHistoryOnClick] = useState(false);
   const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
   const [getActionsEndPoint, setGetActionsEndPoint] = useState([]);
   const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
@@ -946,6 +945,13 @@ export default function Home(props) {
         .get(url + userID)
         .then((response) => {
           console.log('here: Obtained user information');
+          const temp = [];
+
+          for (let i = 0; i < response.data.result.length; i++) {
+            temp.push(response.data.result[i]);
+          }
+
+          setGetGoalsEndPoint(temp);
           if (response.data.result && response.data.result.length !== 0) {
             let x = response.data.result;
             console.log('response', x);
@@ -1487,8 +1493,6 @@ export default function Home(props) {
                         editRTS={editingRTS.editing}
                         editATS={editingATS.editing}
                         editIS={editingIS.editing}
-                        updateGetHistory={updategetHistoryOnClick}
-                        setUpdateGetHistory={setUpdateGetHistoryOnClick}
                         getGoalsEndPoint={getGoalsEndPoint}
                         setGetGoalsEndPoint={setGetGoalsEndPoint}
                         getActionsEndPoint={getActionsEndPoint}
@@ -1572,22 +1576,18 @@ export default function Home(props) {
                         routineID={routineID}
                         actionID={actionID}
                         CurrentId={userID}
-                        updateGetHistory={updategetHistoryOnClick}
                         setGetStepsEndPoint={setGetStepsEndPoint}
                       />
                     ) : editingATS.editing ? (
                       <EditATS
                         routineID={routineID}
                         CurrentId={userID}
-                        updateGetHistory={updategetHistoryOnClick}
                         setGetActionsEndPoint={setGetActionsEndPoint}
                       />
                     ) : editingRTS.editing ? (
                       <EditRTS
                         CurrentId={userID}
                         ta_ID={selectedUser}
-                        updateGetHistory={updategetHistoryOnClick}
-                        setUpdateGetHistory={setUpdateGetHistoryOnClick}
                         setGetGoalsEndPoint={setGetGoalsEndPoint}
                       />
                     ) : (
