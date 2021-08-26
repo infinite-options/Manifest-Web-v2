@@ -908,6 +908,8 @@ export default function Home(props) {
     console.log('curWeek');
   };
 
+  useEffect(() => console.log('routineID = ', routineID), [routineID]);
+
   const getDate = () => {
     stateValue.dateContext.format('dddd');
 

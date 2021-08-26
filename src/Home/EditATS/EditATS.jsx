@@ -152,6 +152,7 @@ const EditATS = (props) => {
         formData.append(entry[0], entry[1]);
       }
     });
+    const gr_id = props.routineID.goal_routine_id;
     if (object.id != undefined) {
       console.log('update AT');
 
@@ -179,7 +180,8 @@ const EditATS = (props) => {
           console.log(err);
         });
 
-        console.log('props.rid = ', props.routineID.goal_routine_id);
+        console.log('getting actionsTasks with full URL: ', BASE_URL + "actionsTasks/" + props.routineID.goal_routine_id);
+        console.log('update GRID = ', gr_id);
         await axios
         .get(BASE_URL + "actionsTasks/" + props.routineID.goal_routine_id)
         .then((response) =>{
@@ -197,30 +199,50 @@ const EditATS = (props) => {
       };
 
       updateDB();
-    } else {
-      console.log('add AT');
-      axios
-        .post(BASE_URL + 'addAT', formData)
-        .then((response) => {
-          console.log(response);
-          const gr_array_index =
-            editingATSContext.editingATS.gr_array.findIndex(
-              (elt) => elt.id === editingATSContext.editingATS.id
-            );
-          const new_gr_array = [...editingATSContext.editingATS.gr_array];
-          new_gr_array[gr_array_index] = object;
-          editingATSContext.setEditingATS({
-            ...editingATSContext.editingATS,
-            gr_array: new_gr_array,
-            editing: false,
+    }
+    else 
+    {
+      const addToDB = async () => 
+      {
+        await axios
+          .post(BASE_URL + 'addAT', formData)
+          .then((response) => {
+            console.log(response);
+            const gr_array_index =
+              editingATSContext.editingATS.gr_array.findIndex(
+                (elt) => elt.id === editingATSContext.editingATS.id
+              );
+            const new_gr_array = [...editingATSContext.editingATS.gr_array];
+            new_gr_array[gr_array_index] = object;
+            editingATSContext.setEditingATS({
+              ...editingATSContext.editingATS,
+              gr_array: new_gr_array,
+              editing: false,
+            });
+          })
+          .catch((err) => {
+            if (err.response) {
+              console.log(err.response);
+            }
+            console.log(err);
           });
-        })
-        .catch((err) => {
-          if (err.response) {
-            console.log(err.response);
-          }
-          console.log(err);
-        });
+
+        await axios
+        .get(BASE_URL + "actionsTasks/" + props.routineID.gr_unique_id)
+        .then((response) =>{
+          console.log('USS Callister with response = ', response);
+            const temp = [];
+            for(var i=0; i <response.data.result.length; i++){
+                temp.push(response.data.result[i]);
+            }
+            console.log('tempy = ', temp);
+            props.setGetActionsEndPoint(temp);
+          })
+          .catch((error) => {
+              console.log('actionsTasks error = ', error);
+          });
+      }
+      addToDB();
     }
   };
   return (

@@ -89,25 +89,24 @@ export default function Firebasev2(props)  {
 
     const [iconColor, setIconColor] = useState()
     //NOTE This gives you routines within 7 days of current date. Change currentDate to change that
-    const [currentDate, setCurDate] = useState(new Date(Date.now()))
+    const [currentDate, setCurDate] = useState(new Date(Date.now()));
     const classes = useStyles();
     const [rows, setRows] = useState([]);
-    const [called, toggleCalled] = useState(false)
+    const [called, toggleCalled] = useState(false);
 
-    const [showCopyPicker, toggleCopyPicker] = useState(false)
-    const [showCopyModal, toggleCopyModal] = useState([false, ''])
-    const [showCopyModal2, toggleCopyModal2] = useState([false, ''])
-    const [showCopyModalPatients, toggleCopyModalPatients] = useState([false, ''])
-    const [showCopyModalTA, toggleCopyModalTA] = useState([false, ''])
-    const [showCopyModalConfirm, toggleCopyModalConfirm] = useState(false)
-    const [allTAData, setTAData] = useState([])
-    const [allPatientData, setPatientData] = useState([])
-    const [taToCopyTo, setTAToCopyTo] = useState({})
-    const [patientToCopyTo, setPatientToCopyTo] = useState({})
-    const [GR, setGR] = useState([])
-    const [copiedRoutineName, setCRN] = useState('')
-    const [copiedRoutineID, setCRID] = useState('')
-    console.log('fprops = ', props);
+    const [showCopyPicker, toggleCopyPicker] = useState(false);
+    const [showCopyModal, toggleCopyModal] = useState([false, '']);
+    const [showCopyModal2, toggleCopyModal2] = useState([false, '']);
+    const [showCopyModalPatients, toggleCopyModalPatients] = useState([false, '']);
+    const [showCopyModalTA, toggleCopyModalTA] = useState([false, '']);
+    const [showCopyModalConfirm, toggleCopyModalConfirm] = useState(false);
+    const [allTAData, setTAData] = useState([]);
+    const [allPatientData, setPatientData] = useState([]);
+    const [taToCopyTo, setTAToCopyTo] = useState({});
+    const [patientToCopyTo, setPatientToCopyTo] = useState({});
+    const [GR, setGR] = useState([]);
+    const [copiedRoutineName, setCRN] = useState('');
+    const [copiedRoutineID, setCRID] = useState('');
 
 
     // var copiedRoutineID =''
@@ -120,10 +119,6 @@ export default function Firebasev2(props)  {
         props.setGetActionsEndPoint([])
         props.setGetStepsEndPoint([])
     },[ props.theCurrentUserID])
-
-    console.log("historyFire", props.updateGetHistory)
-
-    console.log('firebase props: ', props);
 
     useEffect(() => {
         console.log('log[1] updateGetHistory change');
@@ -1492,10 +1487,10 @@ function makeActionDisplays() {
                         onMouseOut={(event) => {event.target.style.color = '#FFFFFF';}} 
                         style={{color:"#ffffff", cursor:'pointer'}}
                         onClick = {(e)=> {
+                            e.preventDefault();
                             e.target.style.color = "#000000"
                             props.setATS(props.newATS)
                             props.setrID(r)
-                        //  console.log("rID", r)
                         }}/>
                     </div>
                     </div>
@@ -1747,7 +1742,9 @@ function makeActionDisplays() {
                         onClick = {(e)=> {
                             e.target.style.color = "#000000"
                             props.setIS(props.newIS)
-                            props.setaID(a)
+                            props.setaID(a);
+                            console.log('add a = ', a);
+                            props.setRID(a);
                         }}/>
                     </div>
                     </div>
