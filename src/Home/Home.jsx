@@ -161,6 +161,7 @@ export default function Home(props) {
   const [actionID, setActionID] = useState('');
   const [updategetHistoryOnClick, setUpdateGetHistoryOnClick] = useState(false);
   const [getActionsEndPoint, setGetActionsEndPoint] = useState([]);
+  const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
 
   const [hightlight, setHightlight] = useState('');
   const [stateValue, setStateValue] = useState({
@@ -1577,6 +1578,8 @@ export default function Home(props) {
     // }, []);
   };
 
+  useEffect(() => console.log('getStepsEndPoint = ', getStepsEndPoint), [getStepsEndPoint]);
+
   function ToggleShowAbout() {
     history.push('/about');
   }
@@ -1725,6 +1728,8 @@ export default function Home(props) {
                         setUpdateGetHistory={setUpdateGetHistoryOnClick}
                         getActionsEndPoint={getActionsEndPoint}
                         setGetActionsEndPoint={setGetActionsEndPoint}
+                        getStepsEndPoint={getStepsEndPoint}
+                        setGetStepsEndPoint={setGetStepsEndPoint}
                       />
                     )}
                   </div>
@@ -1799,10 +1804,12 @@ export default function Home(props) {
                   <div style={{ width: '100%' }}>
                     {editingIS.editing ? (
                       <EditIS
+                        routineID={routineID}
                         actionID={actionID}
                         CurrentId={userID}
                         updateGetHistory={updategetHistoryOnClick}
                         setUpdateGetHistory={setUpdateGetHistoryOnClick}
+                        setGetStepsEndPoint={setGetStepsEndPoint}
                       />
                     ) : editingATS.editing ? (
                       <EditATS

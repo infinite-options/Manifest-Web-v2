@@ -22,7 +22,6 @@ const EditIS = (props) => {
     editingISContext.editingIS.editing = !editingISContext.editingIS.editing
     let object = {...editingISContext.editingIS.newItem}
     console.log('object initial: ', object);
-    props.setUpdateGetHistory(!props.updateGetHistory)
     object.start_day_and_time = `${object.start_day} ${object.start_time}:00`;
     delete object.start_day;
     delete object.start_time;
@@ -78,27 +77,43 @@ const EditIS = (props) => {
     }
     console.log('obj.is_id: ', object.is_id)
     if (object.is_id != undefined){
-      console.log("update IS with URL: ", BASE_URL + 'updateIS');
-      axios
-      .post(BASE_URL + 'updateIS', formData)
-      .then((response) => {
-        console.log('successful post: ', response);
-        const gr_array_index = editingISContext.editingIS.gr_array.findIndex((elt) => elt.id === editingISContext.editingIS.id)
-        const new_gr_array = [...editingISContext.editingIS.gr_array];
-        new_gr_array[gr_array_index] = object;
-        editingISContext.setEditingIS({
-          ...editingISContext.editingIS,
-          gr_array: new_gr_array,
-          editing: false
+      const updateDB = async () => {
+        console.log('editis-props = ', props);
+        await axios
+        .post(BASE_URL + 'updateIS', formData)
+        .then((response) => {
+          console.log('successful post: ', response);
+          const gr_array_index = editingISContext.editingIS.gr_array.findIndex((elt) => elt.id === editingISContext.editingIS.id)
+          const new_gr_array = [...editingISContext.editingIS.gr_array];
+          new_gr_array[gr_array_index] = object;
+          editingISContext.setEditingIS({
+            ...editingISContext.editingIS,
+            gr_array: new_gr_array,
+            editing: false
+          })
         })
-      })
-      .catch((err) => {
-        if(err.response) {
-          console.log(err.response);
-        }
-        console.log('unsuccessful post: ', err)
-      })
+        .catch((err) => {
+          if(err.response) {
+            console.log(err.response);
+          }
+          console.log('unsuccessful post: ', err)
+        });
+  
+        await axios
+        .get(BASE_URL + "instructionsSteps/" + props.routineID.at_id)
+        .then((response) =>{
+         const temp = []
+            for(var i=0; i <response.data.result.length; i++){
+                  temp.push(response.data.result[i]);
+              }
+              props.setGetStepsEndPoint(temp);
+          })
+          .catch((error) => {
+              console.log(error);
+          });
+      };
     
+      updateDB();
     }else{
       console.log("add IS")
       axios

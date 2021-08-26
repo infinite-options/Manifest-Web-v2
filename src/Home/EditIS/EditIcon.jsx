@@ -3,6 +3,7 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from 'axios';
 import EditISContext from './EditISContext';
+import { propTypes } from 'react-bootstrap/esm/Image';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -51,7 +52,7 @@ const convertTimeLengthToMins = (timeString) => {
   return '' + numMins;
 }
 
-const EditIcon = ({routine, task, step}) => {
+const EditIcon = ({routine, task, step, setRID}) => {
   const editingISContext = useContext(EditISContext);
   const [arrSteps, setarrSteps] = useState([])
 
@@ -96,6 +97,7 @@ const EditIcon = ({routine, task, step}) => {
         icon={faEdit}
         onClick={(e) => {
           e.stopPropagation();
+          setRID(routine);
           console.log("steps",arrSteps)
 
         //  const itemToChange = routine;

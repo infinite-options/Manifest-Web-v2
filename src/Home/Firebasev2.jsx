@@ -85,7 +85,6 @@ export default function Firebasev2(props)  {
     const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
     const [getActions, setActions] = useState('');
      const [getSteps, setSteps] = useState('');
-    const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
     
 
     const [iconColor, setIconColor] = useState()
@@ -119,7 +118,7 @@ export default function Firebasev2(props)  {
     useEffect(() => {
         setGetGoalsEndPoint([])
         props.setGetActionsEndPoint([])
-        setGetStepsEndPoint([])
+        props.setGetStepsEndPoint([])
     },[ props.theCurrentUserID])
 
     console.log("historyFire", props.updateGetHistory)
@@ -149,13 +148,13 @@ export default function Firebasev2(props)  {
     useEffect(() => {
         console.log('log[3] getGoalsEndPoint =', getGoalsEndPoint);
         makeDisplays()
-    }, [props.getActionsEndPoint,getStepsEndPoint, getGoalsEndPoint, called, props.theCurrentUserID])
+    }, [props.getActionsEndPoint,props.getStepsEndPoint, getGoalsEndPoint, called, props.theCurrentUserID])
 
 
     useEffect(() => {
-        console.log('log(3): getStepsEndPoint = ', getStepsEndPoint);
+        console.log('log(3): props.getStepsEndPoint = ', props.getStepsEndPoint);
         makeActionDisplays()
-    }, [getStepsEndPoint,  props.getActionsEndPoint ,  props.updateGetHistory, called, props.theCurrentUserID])
+    }, [props.getStepsEndPoint,  props.getActionsEndPoint ,  props.updateGetHistory, called, props.theCurrentUserID])
 
     useEffect(() => {
         console.log('updateGetHistory useEffect 2');
@@ -972,159 +971,6 @@ export default function Firebasev2(props)  {
         }
         return null
     }
-    
-    //This clean data is from History Page - it creates "rows" of routines actions and instructions
-
-     //-------- clean historyGot - just dates we want, just info we want, and structure vertical to horizontal   --------
-    //  function cleanData(historyGot, useDate){
-        
-    //     //go through at find historyGots that are within 7 days of useDate
-    //     console.log("date:" + useDate);
-    //     const temp = [];
-    //     for(var i=0; i <historyGot.length; i++){
-    //     // for(var i=historyGot.length - 1; i > -1; i--){
-    //         var historyDate = new Date(historyGot[i].date);
-    //         console.log('cleanData',historyGot[i].id ,historyDate, useDate, useDate.getTime() - 604800000)
-    //         if ((historyDate.getTime() >= useDate.getTime() - 604800000)    //filter for within 7 datets
-    //         // && historyDate.getTime() - 20000 <= useDate.getTime()){                 // 7: 604800000    2: 172800000
-    //         ){
-    //             temp.push(historyGot[i]);
-    //         }
-    //     }
-    //     console.log('temp',temp)
-    //     //now temp has data we want
-    // // move temp to inRange with no repeats
-    //     const tempR = temp.reverse()
-    //     console.log('tempR', tempR)
-
-    //     const map = new Map();
-        
-    //     // for (const item of temp){
-    //     //     if(!map.has(item.date)){
-    //     //         map.set(item.date, true);
-    //     //         inRange.push({
-    //     //             date: item.date,
-    //     //             details: item.details
-    //     //         })
-    //     //     }
-    //     // }
-
-    //     for (const item of tempR){
-    //         if(!map.has(item.date)){
-    //             map.set(item.date, true);
-    //             inRange.push({
-    //                 date: item.date,
-    //                 details: item.details
-    //             })
-    //         }
-    //     }
-
-    //     function custom_sort(a, b) {
-    //         return (new Date(a.start_day_and_time).getHours() + (new Date(a.start_day_and_time).getMinutes() / 60))
-    //          - (new Date(b.start_day_and_time).getHours() + (new Date(b.start_day_and_time).getMinutes() / 60));
-
-    //     }
-
-    //     console.log('inRange', inRange)
-    //     //bigList will hold new data format sidewase
-    //     var bigList = [];       
-    //     for (var d = 0; d < inRange.length; d++){
-    //         const obj = JSON.parse(inRange[d].details)
-    //         console.log("obj",obj);
-            
-    //         //sort obj by time of day
-    //         obj.sort(custom_sort);
-            
-    //         for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
-    //          //   if(obj[r].routine !== undefined){
-    //             if(obj[r].title){
-    //                 // console.log("gere");
-    //                 var isNewR = true;
-    //                 for (var s=0; s<bigList.length; s++){       //check through and see if this is a new routine
-    //                     if (bigList[s].type == "Routine" && bigList[s].id == obj[r].routine){
-    //                         bigList[s].days[d] = obj[r].status;   //if already there- just update that day status
-    //                        // bigList[s].id = obj[r].routine;
-    //                         isNewR = false;
-    //                         break;
-    //                     }
-    //                 }
-    //                 if (isNewR){ //if new, make object and put in bigList
-    //                     var currentR = {type: "Routine", title: obj[r].title, under: "", days: [], tBox: {}, 
-    //                     show: true, photo: obj[r].photo, startTime: obj[r].start_day_and_time, is_available: obj[r].is_available,
-    //                     endTime: obj[r].end_day_and_time, is_sublist_available: obj[r].is_sublist_available, id: obj[r].routine}; 
-    //                     currentR.days[d] = obj[r].status;
-    //                     bigList.push(currentR);
-    //                 }
-
-    //                 if(obj[r].actions!= undefined){
-    //                     var actions = obj[r].actions;
-    //                     for (var a=0; a < actions.length; a++){         //FOR ACTIONS
-    //                         if(actions[a].title){
-    //                             var isNewA = true;
-    //                             for (var s=0; s<bigList.length; s++){
-    //                                 if(bigList[s].type == "Action" && bigList[s].id == actions[a].action){
-    //                                     bigList[s].days[d] = actions[a].status;
-    //                                     isNewA = false;
-    //                                     break;
-    //                                 }
-    //                             }
-    //                             if(isNewA){
-    //                                 var currentA = {type: "Action", title: actions[a].title, under: obj[r].title, days:[], tBox: {}, show: false,
-    //                                 photo: actions[a].photo, is_sublist_available: actions[a].is_sublist_available,
-    //                                 is_available: actions[a].is_available, id: actions[a].action};
-    //                                 currentA.days[d] = actions[a].status;
-    //                                 bigList.push(currentA);
-    //                             }
-    //                             if(actions[a].instructions != undefined){
-    //                                 var insts = actions[a].instructions;
-    //                                 for(var i=0; i < insts.length; i++){        //FOR INSTRUCTIONS
-    //                                     if (insts[i].title){
-    //                                         var isNewI = true;
-    //                                         for(var s=0; s<bigList.length; s++){
-    //                                             if (bigList[s].type == "Instruction" && bigList[s].id == insts[i].instruction){
-    //                                                 bigList[s].days[d] = insts[i].status;
-    //                                                 isNewI = false;
-    //                                                 break;
-    //                                             }
-    //                                         }
-    //                                         if(isNewI){
-    //                                             var currentI = {type: "Instruction", title: insts[i].title, under: actions[a].title, days:[], tBox: {},
-    //                                             show: false, photo: insts[i].photo, is_available: insts[i].is_available, id: insts[i].instruction};
-    //                                             currentI.days[d] = insts[i].status;
-    //                                             bigList.push(currentI);
-    //                                         }
-    //                                     }
-    //                                 }
-    //                             }
-    //                         }
-    //                     }
-    //                 }
-    //           //  }
-    //         }
-    //         }
-    //     }
-        
-    //     setRows([]);
-    //     console.log("ROWS" + rows);
-    //     console.log('biglist',bigList);
-    //     // bigList = addCircles(bigList);
-    //     // console.log(bigList);
-    //    // bigList = addNames(bigList, routines);
-    //     // console.log(bigList);
-    //     for (var i=0; i< bigList.length; i++){
-    //         rows.push(createData(bigList[i].title, bigList[i].days[6], bigList[i].days[5], bigList[i].days[4], bigList[i].days[3],
-    //              bigList[i].days[2], bigList[i].days[1], bigList[i].days[0], bigList[i].show, bigList[i].under, bigList[i].photo,
-    //              bigList[i].startTime, bigList[i].endTime, bigList[i].is_sublist_available, bigList[i].type, bigList[i].id, bigList[i].is_available));
-    //     }
-    //     // console.log(tempRows);
-    //     // setRows(tempRows);
-    //     console.log('rows',rows);
-    //     // console.log("GERE");
-    //     makeDisplays(onlyAllowed(rows));
-    //     return(true);
-    // }
-
-
 
       //only return rows with "show"
     function onlyAllowed(rows){
@@ -1206,17 +1052,17 @@ function makeActionDisplays() {
                             tempID.push(props.getActionsEndPoint[j].at_unique_id)
                             console.log("only", tempID)
 
-                            for(var k=0; k<getStepsEndPoint.length; k++){
-                                if(props.getActionsEndPoint[j].at_unique_id === getStepsEndPoint[k].at_id){
-                                   if(tempIsID.includes(getStepsEndPoint[k].is_unique_id) === false ){
-                                       tempRows.push(displayInstructions(getStepsEndPoint[k]))
-                                       tempIsID.push(getStepsEndPoint[k].is_unique_id)
+                            for(var k=0; k<props.getStepsEndPoint.length; k++){
+                                if(props.getActionsEndPoint[j].at_unique_id === props.getStepsEndPoint[k].at_id){
+                                   if(tempIsID.includes(props.getStepsEndPoint[k].is_unique_id) === false ){
+                                       tempRows.push(displayInstructions(props.getStepsEndPoint[k]))
+                                       tempIsID.push(props.getStepsEndPoint[k].is_unique_id)
                                        console.log("only", tempIsID)
                                    }
                                     else{
                                      
                                         tempRows.pop()
-                                        tempIsID.pop(getStepsEndPoint[k].is_unique_id) 
+                                        tempIsID.pop(props.getStepsEndPoint[k].is_unique_id) 
                                     }
                             }
                         
@@ -1847,10 +1693,10 @@ function makeActionDisplays() {
                             style={{ color: "#ffffff", cursor:'pointer' }}
                             size="sm"
                             onClick = {()=> {
-                                console.log('lengthSteps',getStepsEndPoint.length )
-                                if (getStepsEndPoint.length != 0) { 
+                                console.log('lengthSteps',props.getStepsEndPoint.length )
+                                if (props.getStepsEndPoint.length != 0) { 
                                     //do stuff
-                                    setGetStepsEndPoint([])
+                                    props.setGetStepsEndPoint([])
 
                                     return 
                                 }
@@ -1866,9 +1712,9 @@ function makeActionDisplays() {
                                  // for(var i=response.data.result.length - 1; i > -1; i--){
                                      temp.push(response.data.result[i]);
                                  }
-                                 setGetStepsEndPoint(temp)
+                                 props.setGetStepsEndPoint(temp)
                                 // console.log("historyGot",historyGot);
-                                console.log("getStepsFire",  getStepsEndPoint)
+                                console.log("getStepsFire",  props.getStepsEndPoint)
                                //  cleanData(historyGot, currentDate);
                              })
                              .catch((error) => {
@@ -2038,7 +1884,7 @@ function makeActionDisplays() {
                                                     for(var i=0; i <response.data.result.length; i++){
                                                         temp.push(response.data.result[i]);
                                                     }
-                                                    setGetStepsEndPoint(temp)
+                                                    props.setGetStepsEndPoint(temp)
                                                 })
                                                 .catch((error) => {
                                                     console.log(error);
@@ -2067,7 +1913,8 @@ function makeActionDisplays() {
                         <EditStepsIcon
                             routine={i}
                             task={null}
-                            step={getSteps}  
+                            step={getSteps}
+                            setRID={props.setrID}
                         />
                         </div>
                     </div>
