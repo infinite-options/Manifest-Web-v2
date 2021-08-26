@@ -91,7 +91,6 @@ export default function Firebasev2(props)  {
     const [currentDate, setCurDate] = useState(new Date(Date.now()));
     const classes = useStyles();
     const [rows, setRows] = useState([]);
-    const [called, toggleCalled] = useState(false);
 
     const [showCopyPicker, toggleCopyPicker] = useState(false);
     const [showCopyModal, toggleCopyModal] = useState([false, '']);
@@ -135,19 +134,19 @@ export default function Firebasev2(props)  {
             console.log(error);
         });
 
-    },[props.updateGetHistory, called, props.theCurrentUserID])
+    },[props.updateGetHistory, props.theCurrentUserID])
 
 
     useEffect(() => {
         console.log('log[3] props.getGoalsEndPoint =', props.getGoalsEndPoint);
         makeDisplays()
-    }, [props.getActionsEndPoint,props.getStepsEndPoint, props.getGoalsEndPoint, called, props.theCurrentUserID])
+    }, [props.getActionsEndPoint,props.getStepsEndPoint, props.getGoalsEndPoint, props.theCurrentUserID])
 
 
     useEffect(() => {
         console.log('log(3): props.getStepsEndPoint = ', props.getStepsEndPoint);
         makeActionDisplays()
-    }, [props.getStepsEndPoint,  props.getActionsEndPoint ,  props.updateGetHistory, called, props.theCurrentUserID]);
+    }, [props.getStepsEndPoint,  props.getActionsEndPoint ,  props.updateGetHistory, props.theCurrentUserID]);
 
     useEffect(() => {
         console.log('updateGetHistory useEffect 2');
@@ -173,7 +172,7 @@ export default function Firebasev2(props)  {
         .catch((error) => {
             console.log(error);
         });        
-    },[props.currentUser, called, props.updateGetHistory]);
+    },[props.currentUser, props.updateGetHistory]);
 
     const copyPicker = () => {
         // console.log('in FireBase, showCopyModal', showCopyModal)
@@ -1093,7 +1092,7 @@ function makeActionDisplays() {
 
     //no need to use GR here - "is_avalible" is part of "r" and comes from getHistory
     //this was causing an error of not showing routines on the left side of home when
-    //switching pages, because GR was not getting updated before this was called. So GR
+    //switching pages, because GR was not getting updated before this was. So GR
     //was empty. now no need for GR and no issue. 
     function getIsAvailableFromGR(r) {
         // console.log('checking availability', r, GR, currentUser)
@@ -1623,10 +1622,8 @@ function makeActionDisplays() {
                                     const foo = async () => {
                                         await axios
                                             .post(BASE_URL + 'deleteAT', body)
-                                            .then(response => {
-                                                console.log(response.data)
-                                                // toggleCalled(!called);
-                                            });
+                                            .then(response => console.log(response.data))
+                                            .catch(err => console.error('err: ', err));
                                         await axios
                                         .get(BASE_URL + "actionsTasks/" + a.goal_routine_id)
                                         .then((response) =>{
@@ -1635,10 +1632,10 @@ function makeActionDisplays() {
                                                 temp.push(response.data.result[i]);
                                             }
                                             props.setGetActionsEndPoint(temp);
-                                            })
-                                            .catch((error) => {
-                                                console.log(error);
-                                            });
+                                        })
+                                        .catch((error) => {
+                                            console.log(error);
+                                        });
                                     };
 
                                     foo();

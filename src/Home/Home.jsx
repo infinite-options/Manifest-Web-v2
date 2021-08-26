@@ -1588,6 +1588,7 @@ export default function Home(props) {
                         ta_ID={selectedUser}
                         updateGetHistory={updategetHistoryOnClick}
                         setUpdateGetHistory={setUpdateGetHistoryOnClick}
+                        setGetGoalsEndPoint={setGetGoalsEndPoint}
                       />
                     ) : (
                       showCalendarView()

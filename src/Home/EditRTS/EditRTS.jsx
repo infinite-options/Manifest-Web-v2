@@ -114,49 +114,80 @@ const EditRTS = (props) => {
     if (object.id != '') {
       console.log('updateGR');
       console.log('here: About to post changes to db');
-      axios
-      .post(BASE_URL + 'updateGR', formData)
-      .then((_) => {
-        console.log('editrts', _)
-        const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
-        const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
-        new_gr_array[gr_array_index] = object;
-        console.log('here: Changes made to db');
-        editingRTSContext.setEditingRTS({
-          ...editingRTSContext.editingRTS,
-          gr_array: new_gr_array,
-          editing: false
+      async function updateDB() {
+        await axios
+        .post(BASE_URL + 'updateGR', formData)
+        .then((_) => {
+          console.log('editrts', _)
+          const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
+          const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
+          new_gr_array[gr_array_index] = object;
+          console.log('here: Changes made to db');
+          editingRTSContext.setEditingRTS({
+            ...editingRTSContext.editingRTS,
+            gr_array: new_gr_array,
+            editing: false
+          });
+        })
+        .catch((err) => {
+          if(err.response) {
+            console.log(err.response);
+          }
+          console.log(err)
         });
-        props.setUpdateGetHistory(!props.updateGetHistory);
-      })
-      .catch((err) => {
-        if(err.response) {
-          console.log(err.response);
-        }
-        console.log(err)
-      })
+
+        await axios
+        .get(BASE_URL + "getgoalsandroutines/" + props.CurrentId)
+        .then((response) =>{
+            const temp = [];
+            for(var i=0; i <response.data.result.length; i++){
+                temp.push(response.data.result[i]);
+            }
+            props.setGetGoalsEndPoint(temp);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+      }
+
+      updateDB();
     } else {
       console.log('addGR')
-      axios
-      .post(BASE_URL + 'addGR', formData)
-      .then((_) => {
-        console.log(_)
-        const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
-        const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
-       new_gr_array[gr_array_index] = object;
-        console.log('here 1');
-        editingRTSContext.setEditingRTS({
-          ...editingRTSContext.editingRTS,
-          gr_array: new_gr_array,
-          editing: false
+      const addToDB = async () => {
+        await axios
+        .post(BASE_URL + 'addGR', formData)
+        .then((_) => {
+          console.log(_)
+          const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
+          const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
+          new_gr_array[gr_array_index] = object;
+          editingRTSContext.setEditingRTS({
+            ...editingRTSContext.editingRTS,
+            gr_array: new_gr_array,
+            editing: false
+          });
+        })
+        .catch((err) => {
+          if(err.response) {
+            console.log(err.response);
+          }
         });
-        props.setUpdateGetHistory(!props.updateGetHistory);
-      })
-      .catch((err) => {
-        if(err.response) {
-          console.log(err.response);
-        }
-      });
+
+        await axios
+        .get(BASE_URL + "getgoalsandroutines/" + props.CurrentId)
+        .then((response) =>{
+            const temp = [];
+            for(var i=0; i <response.data.result.length; i++){
+                temp.push(response.data.result[i]);
+            }
+            props.setGetGoalsEndPoint(temp);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+      };
+
+      addToDB();
     }
   };
 
