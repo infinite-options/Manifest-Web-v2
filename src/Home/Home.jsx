@@ -1573,7 +1573,6 @@ export default function Home(props) {
                         actionID={actionID}
                         CurrentId={userID}
                         updateGetHistory={updategetHistoryOnClick}
-                        setUpdateGetHistory={setUpdateGetHistoryOnClick}
                         setGetStepsEndPoint={setGetStepsEndPoint}
                       />
                     ) : editingATS.editing ? (
@@ -1581,7 +1580,6 @@ export default function Home(props) {
                         routineID={routineID}
                         CurrentId={userID}
                         updateGetHistory={updategetHistoryOnClick}
-                        setUpdateGetHistory={setUpdateGetHistoryOnClick}
                         setGetActionsEndPoint={setGetActionsEndPoint}
                       />
                     ) : editingRTS.editing ? (

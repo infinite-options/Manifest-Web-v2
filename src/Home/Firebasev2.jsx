@@ -103,7 +103,6 @@ export default function Firebasev2(props)  {
     const [allPatientData, setPatientData] = useState([]);
     const [taToCopyTo, setTAToCopyTo] = useState({});
     const [patientToCopyTo, setPatientToCopyTo] = useState({});
-    const [GR, setGR] = useState([]);
     const [copiedRoutineName, setCRN] = useState('');
     const [copiedRoutineID, setCRID] = useState('');
 
@@ -148,7 +147,7 @@ export default function Firebasev2(props)  {
     useEffect(() => {
         console.log('log(3): props.getStepsEndPoint = ', props.getStepsEndPoint);
         makeActionDisplays()
-    }, [props.getStepsEndPoint,  props.getActionsEndPoint ,  props.updateGetHistory, called, props.theCurrentUserID])
+    }, [props.getStepsEndPoint,  props.getActionsEndPoint ,  props.updateGetHistory, called, props.theCurrentUserID]);
 
     useEffect(() => {
         console.log('updateGetHistory useEffect 2');
@@ -1374,14 +1373,24 @@ function makeActionDisplays() {
                                     
                                     let body = {goal_routine_id: r.gr_unique_id}
 
-                                    axios
-                                        .post(BASE_URL + 'deleteGR', body)
-                                        .then(response => {
-                                            console.log('deleting')
-                                            console.log(response.data)
-                                            toggleCalled(!called)
-                                            props.setUpdateGetHistory(!props.updateGetHistory);
+                                    const updateDB = async () => {
+                                        await axios.post(BASE_URL + 'deleteGR', body)
+                                        
+                                        await axios
+                                        .get(BASE_URL + "getgoalsandroutines/" + currentUser)
+                                        .then((response) =>{
+                                            const temp = [];
+                                            for(var i=0; i <response.data.result.length; i++){
+                                                temp.push(response.data.result[i]);
+                                            }
+                                            props.setGetGoalsEndPoint(temp);
                                         })
+                                        .catch((error) => {
+                                            console.log(error);
+                                        });
+                                    };
+
+                                    updateDB();
                                 }}
                                 icon={faTrashAlt}
                                 size="sm"
@@ -1846,11 +1855,9 @@ function makeActionDisplays() {
                                                 .then(response => {
                                                     console.log('deleting')
                                                     console.log(response.data)
-                                                    toggleCalled(!called)
-                                                    props.setUpdateGetHistory(!props.updateGetHistory);
                                                 });
                                             await axios
-                                                .get(BASE_URL + "instructionsSteps/" + i.at__id)
+                                                .get(BASE_URL + "instructionsSteps/" + i.at_id)
                                                 .then((response) =>{
                                                     const temp = []
                                                     for(var i=0; i <response.data.result.length; i++){
