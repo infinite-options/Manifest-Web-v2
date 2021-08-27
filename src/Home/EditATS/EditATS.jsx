@@ -49,12 +49,16 @@ const convertDateToTimeString = (dateObject) => {
 const EditATS = (props) => {
   const editingATSContext = useContext(EditATSContext);
   console.log('action Props', props);
-  
+  console.log('editATS gre = ', props.getGoalsEndPoint)
+  const routine = props.routineID.gr_unique_id ? props.routineID :
+    props.getGoalsEndPoint.filter(goal => goal.gr_unique_id === props.routineID.goal_routine_id)[0];
+  console.log('test-routine = ', routine);
+
   // console.log('action Props',  new Date((props.routineID.gr_start_day_and_time).replace(/-/g, '/')));
-  //const startTime = new Date(props.routineID.gr_start_day_and_time);
-  //const endTime = new Date(props.routineID.gr_end_day_and_time);
-  const startTime = new Date((props.routineID.gr_start_day_and_time).replace(/-/g, '/'));
-  const endTime = new Date((props.routineID.gr_end_day_and_time).replace(/-/g, '/'));
+  // const startTime = new Date(props.routineID.gr_start_day_and_time);
+  // const endTime = new Date(props.routineID.gr_end_day_and_time);
+  const startTime = new Date(routine.gr_start_day_and_time.replace(/-/g, '/'));
+  const endTime = new Date(routine.gr_end_day_and_time.replace(/-/g, '/'));
 
 
   const startDay = convertDateToDayString(startTime);
@@ -77,10 +81,10 @@ const EditATS = (props) => {
           start_day: startDay,
           end_day: endDay,
           at_available_start_time: convertDateToTimeString(
-            new Date(props.routineID.gr_start_day_and_time.replace(/-/g, '/'))
+            new Date(routine.gr_start_day_and_time.replace(/-/g, '/'))
           ),
           at_available_end_time: convertDateToTimeString(
-            new Date(props.routineID.gr_end_day_and_time.replace(/-/g, '/'))
+            new Date(routine.gr_end_day_and_time.replace(/-/g, '/'))
           ),
         },
       });
@@ -136,7 +140,7 @@ const EditATS = (props) => {
     delete object.location;
     delete object.start_day_and_time;
     object.title = object.at_title;
-    object.gr_id = props.routineID.gr_unique_id;
+    object.gr_id = routine.gr_unique_id;
     delete object.at_title;
     const numHours = object.numMins > 60 ? object.numMins / 60: '00';
     let numMins = object.numMins % 60;
@@ -156,7 +160,6 @@ const EditATS = (props) => {
         formData.append(entry[0], entry[1]);
       }
     });
-    const gr_id = props.routineID.goal_routine_id;
     if (object.id != undefined) {
       console.log('update AT');
 
@@ -185,7 +188,6 @@ const EditATS = (props) => {
         });
 
         console.log('getting actionsTasks with full URL: ', BASE_URL + "actionsTasks/" + props.routineID.goal_routine_id);
-        console.log('update GRID = ', gr_id);
         await axios
         .get(BASE_URL + "actionsTasks/" + props.routineID.goal_routine_id)
         .then((response) =>{

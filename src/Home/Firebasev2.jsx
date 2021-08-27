@@ -105,8 +105,6 @@ export default function Firebasev2(props)  {
     const [copiedRoutineName, setCRN] = useState('');
     const [copiedRoutineID, setCRID] = useState('');
 
-
-    // var copiedRoutineID =''
     // var copiedRoutineName = ''
     function createData(name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, id, is_available){    //rows structure
         return {name, sun, mon, tue, wed, thurs, fri, sat, show, under, photo, startTime, endTime, is_sublist_available, type, id, is_available}
@@ -1255,7 +1253,6 @@ export default function Firebasev2(props)  {
                             e.stopPropagation();
                             // console.log("On click1");
                             console.log(r.id, r.name)
-                            // copiedRoutineID = r.id
                             setCRN(r.gr_title)
                             setCRID(r.gr_unique_id)
                             setTAToCopyTo({})

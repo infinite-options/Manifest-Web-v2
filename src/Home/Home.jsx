@@ -810,8 +810,6 @@ export default function Home(props) {
     console.log('curWeek');
   };
 
-  useEffect(() => console.log('routineID = ', routineID), [routineID]);
-
   const getDate = () => {
     stateValue.dateContext.format('dddd');
 
@@ -1583,6 +1581,7 @@ export default function Home(props) {
                         routineID={routineID}
                         CurrentId={userID}
                         setGetActionsEndPoint={setGetActionsEndPoint}
+                        getGoalsEndPoint={getGoalsEndPoint}
                       />
                     ) : editingRTS.editing ? (
                       <EditRTS
