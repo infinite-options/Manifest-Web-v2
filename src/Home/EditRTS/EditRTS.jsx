@@ -442,6 +442,9 @@ const EditRTS = (props) => {
               }}
               value={editingRTSContext.editingRTS.newItem.numMins}
               onChange={(e) => {
+                if (e.target.value < 0)
+                  return;
+                console.log('binky = ', e.target.value);
                 editingRTSContext.setEditingRTS({
                   ...editingRTSContext.editingRTS,
                   newItem: {
