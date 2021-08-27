@@ -433,6 +433,8 @@ const EditATS = (props) => {
                 type="number"
                 value={editingATSContext.editingATS.newItem.numMins}
                 onChange={(e) => {
+                  if (e.target.value < 0)
+                    return;
                   editingATSContext.setEditingATS({
                     ...editingATSContext.editingATS,
                     newItem: {

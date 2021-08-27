@@ -319,6 +319,8 @@ const EditIS = (props) => {
                 type='number'
                 value={editingISContext.editingIS.newItem.numMins}
                 onChange={(e) => {
+                  if (e.target.value < 0)
+                    return;
                   editingISContext.setEditingIS({
                     ...editingISContext.editingIS,
                     newItem: {
