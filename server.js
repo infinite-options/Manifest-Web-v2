@@ -18,8 +18,8 @@ app.get('/*', function (req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-var key_url = '/etc/letsencrypt/live/manifestmy.space/privkey.pem';
-var cert_url = '/etc/letsencrypt/live/manifestmy.space/cert.pem';
+var key_url = '/etc/letsencrypt/live/manifestmy.life/privkey.pem';
+var cert_url = '/etc/letsencrypt/live/manifestmy.life/cert.pem';
 
 var options = {};
 
