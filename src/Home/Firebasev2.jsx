@@ -1588,11 +1588,24 @@ export default function Firebasev2(props)  {
                                         await axios
                                         .get(BASE_URL + "actionsTasks/" + a.goal_routine_id)
                                         .then((response) =>{
+                                            console.log('jere1');
                                             const temp = []
                                             for(var i=0; i <response.data.result.length; i++){
                                                 temp.push(response.data.result[i]);
                                             }
                                             props.setGetActionsEndPoint(temp);
+
+                                            if (response.data.result.length == 0) {
+                                                const tempArr = [];
+                                                for (let i = 0; i < props.getGoalsEndPoint.length; i++) {
+                                                    const goal = props.getGoalsEndPoint[i];
+                                                    if (props.getGoalsEndPoint[i].gr_unique_id === a.goal_routine_id) {
+                                                        goal.is_sublist_available = 'False';
+                                                    }
+                                                    tempArr[i] = goal;
+                                                }
+                                                props.setGetGoalsEndPoint(tempArr);
+                                            }
                                         })
                                         .catch((error) => {
                                             console.log(error);
