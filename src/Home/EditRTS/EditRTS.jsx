@@ -672,8 +672,12 @@ const EditRTS = (props) => {
                       fontSize: '12px',
                       fontWeight: 'bold',
                     }}
-                    value={editingRTSContext.editingRTS.newItem.repeat_every}
+                    value={ (editingRTSContext.editingRTS.newItem.repeat ===
+                      'False' ||
+                    editingRTSContext.editingRTS.newItem.repeat === false) ? 1 : editingRTSContext.editingRTS.newItem.repeat_every}
                     onChange={(e) => {
+                      if (e.target.value < 1)
+                        return;
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
                         newItem: {
