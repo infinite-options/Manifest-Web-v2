@@ -40,7 +40,6 @@ const useStyles = makeStyles({
         props.itemId.map(item => {
             axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/actionsTasks/" + item.toString())
             .then((response) => {
-                console.log('here-test 8');
               console.log("actions",response);
               for(var i =0; i< response.data.result.length; i++){
                 console.log("routine",response.data.result[i].at_title);

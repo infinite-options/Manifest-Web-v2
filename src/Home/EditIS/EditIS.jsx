@@ -102,6 +102,7 @@ const EditIS = (props) => {
         await axios
         .get(BASE_URL + "instructionsSteps/" + props.routineID.at_id)
         .then((response) =>{
+          console.log('here-test 3');
          const temp = []
             for(var i=0; i <response.data.result.length; i++){
                   temp.push(response.data.result[i]);
@@ -141,6 +142,7 @@ const EditIS = (props) => {
         await axios
         .get(BASE_URL + "instructionsSteps/" + props.routineID.at_unique_id)
         .then((response) =>{
+          console.log('here-test 4');
           const temp = []
             for(var i=0; i <response.data.result.length; i++){
               temp.push(response.data.result[i]);

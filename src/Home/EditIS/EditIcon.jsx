@@ -52,9 +52,8 @@ const convertTimeLengthToMins = (timeString) => {
   return '' + numMins;
 }
 
-const EditIcon = ({routine, task, step, setRID}) => {
+const EditIcon = ({routine, task, step, setRID, getStepsEndPoint}) => {
   const editingISContext = useContext(EditISContext);
-  const [arrSteps, setarrSteps] = useState([])
 
   let rowType = '';
   let rowId = '';
@@ -69,24 +68,6 @@ const EditIcon = ({routine, task, step, setRID}) => {
     rowId = routine.gr_unique_id;
   }
 
-  console.log('stepIs',step)
-  useEffect(() => {
-
-    axios.get(BASE_URL + 'instructionsSteps/' + step.toString())
-    .then((response) => {
-      console.log("steps", response)
-      for(var i=0; i <response.data.result.length; i++){
-        arrSteps.push(response.data.result[i])
-      }
-    })
-    .catch((err) => {
-      if(err.response) {
-        console.log(err.response);
-      }
-      console.log(err)
-    })
-  },[]);
-
   return (
     <div>
       <FontAwesomeIcon
@@ -98,15 +79,12 @@ const EditIcon = ({routine, task, step, setRID}) => {
         onClick={(e) => {
           e.stopPropagation();
           setRID(routine);
-          console.log("steps",arrSteps)
 
-        //  const itemToChange = routine;
           var itemToChange;
-          for(var j=0;j<arrSteps.length;j++){
-          if (routine.is_unique_id === arrSteps[j].is_unique_id){
-            itemToChange = arrSteps[j];
-            console.log("stepsTime",itemToChange)
-          }
+          for(var j=0;j<getStepsEndPoint.length;j++){
+            if (routine.is_unique_id === getStepsEndPoint[j].is_unique_id){
+              itemToChange = getStepsEndPoint[j];
+            }
           }
           console.log("TimeStep", itemToChange.is_expected_completion_time)
           const expectedCompletionTime = itemToChange.is_expected_completion_time ? itemToChange.is_expected_completion_time : '00:00:00';

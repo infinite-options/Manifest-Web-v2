@@ -192,7 +192,6 @@ const EditATS = (props) => {
         .get(BASE_URL + "actionsTasks/" + props.routineID.goal_routine_id)
         .then((response) =>{
             console.log('actionsTasks-response: ', response);
-            console.log('here-test 4');
             const temp = [];
             for(var i=0; i <response.data.result.length; i++){
                 temp.push(response.data.result[i]);
@@ -242,7 +241,6 @@ const EditATS = (props) => {
                 temp.push(response.data.result[i]);
             }
             props.setGetActionsEndPoint(temp);
-            console.log('here-test 5');
           })
           .catch((error) => {
               console.log('actionsTasks error = ', error);

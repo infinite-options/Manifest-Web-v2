@@ -1398,7 +1398,6 @@ export default function Firebasev2(props)  {
                                 setActions(r.gr_unique_id)
 
                                 console.log("routine", getActions)
-                                console.log('here-test 1');
      
                                     axios
                                     .get(BASE_URL + "actionsTasks/" + r.gr_unique_id)
@@ -1589,7 +1588,6 @@ export default function Firebasev2(props)  {
                                         await axios
                                         .get(BASE_URL + "actionsTasks/" + a.goal_routine_id)
                                         .then((response) =>{
-                                            console.log('here-test 3');
                                             const temp = []
                                             for(var i=0; i <response.data.result.length; i++){
                                                 temp.push(response.data.result[i]);
@@ -1648,6 +1646,7 @@ export default function Firebasev2(props)  {
                            axios
                            .get(BASE_URL + "instructionsSteps/" + a.at_unique_id)
                            .then((response) =>{
+                            console.log('here-test 0');
                             const temp = []
                                for(var i=0; i <response.data.result.length; i++){
                                  // for(var i=response.data.result.length - 1; i > -1; i--){
@@ -1820,6 +1819,7 @@ export default function Firebasev2(props)  {
                                             await axios
                                                 .get(BASE_URL + "instructionsSteps/" + i.at_id)
                                                 .then((response) =>{
+                                                    console.log('here-test 1');
                                                     const temp = []
                                                     for(var i=0; i <response.data.result.length; i++){
                                                         temp.push(response.data.result[i]);
@@ -1855,6 +1855,7 @@ export default function Firebasev2(props)  {
                             task={null}
                             step={getSteps}
                             setRID={props.setrID}
+                            getStepsEndPoint={props.getStepsEndPoint}
                         />
                         </div>
                     </div>
