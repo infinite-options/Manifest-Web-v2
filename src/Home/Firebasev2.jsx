@@ -1362,7 +1362,6 @@ export default function Firebasev2(props)  {
 
                    <div>
                   <EditIcon
-                    onClick = {() => console.log('here: clicking update')}
                     routine={r}
                     task={null}
                     step={currentUser}
@@ -1382,15 +1381,16 @@ export default function Firebasev2(props)  {
                             title="SubList Available"
                             style={{ color: "#ffffff", cursor:'pointer' }}
                             size="sm"
-                            onClick = {()=> {
+                            onClick = {(e)=> {
                                 console.log('log(-2): r.gr_uid = ', r.gr_unique_id);
-                                console.log("length", props.getActionsEndPoint.length)
+                                console.log("length", props.getActionsEndPoint.length);
 
                                 if (props.getActionsEndPoint.length != 0) { 
                                     //do stuff
                                     props.setGetActionsEndPoint([])
                                     return 
                                 }
+                                e.preventDefault();
 
                                 // sendRoutineToParent(r.name);
                              //   clickHandle(r.gr_title)
@@ -1398,6 +1398,7 @@ export default function Firebasev2(props)  {
                                 setActions(r.gr_unique_id)
 
                                 console.log("routine", getActions)
+                                console.log('here-test 1');
      
                                     axios
                                     .get(BASE_URL + "actionsTasks/" + r.gr_unique_id)
@@ -1588,6 +1589,7 @@ export default function Firebasev2(props)  {
                                         await axios
                                         .get(BASE_URL + "actionsTasks/" + a.goal_routine_id)
                                         .then((response) =>{
+                                            console.log('here-test 3');
                                             const temp = []
                                             for(var i=0; i <response.data.result.length; i++){
                                                 temp.push(response.data.result[i]);
@@ -1611,11 +1613,12 @@ export default function Firebasev2(props)  {
 
                     <div>
                     <EditActionIcon
-                    routine={a}
-                    task={getActions}
-                    step={null}
-                    setRID={props.setrID}
-                  />
+                        routine={a}
+                        task={getActions}
+                        step={null}
+                        setRID={props.setrID}
+                        getActionsEndPoint={props.getActionsEndPoint}
+                    />
 
                     </div>
 
