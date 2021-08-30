@@ -1037,7 +1037,8 @@ const EditRTS = (props) => {
                   style={{ width: '20px', height: '20px' }}
                   checked={
                     editingRTSContext.editingRTS.newItem.user_notifications
-                      .before.is_enabled
+                      .before.is_enabled !== 'False' && editingRTSContext.editingRTS.newItem.user_notifications
+                      .before.is_enabled !== false
                   }
                   onChange={(e) => {
                     editingRTSContext.setEditingRTS({
@@ -1101,7 +1102,8 @@ const EditRTS = (props) => {
                   style={{ width: '20px', height: '20px' }}
                   checked={
                     editingRTSContext.editingRTS.newItem.ta_notifications.before
-                      .is_enabled
+                      .is_enabled !== 'False' && editingRTSContext.editingRTS.newItem.ta_notifications.before
+                      .is_enabled !== false
                   }
                   onChange={(e) => {
                     editingRTSContext.setEditingRTS({
@@ -1215,7 +1217,8 @@ const EditRTS = (props) => {
                   style={{ width: '20px', height: '20px' }}
                   checked={
                     editingRTSContext.editingRTS.newItem.user_notifications
-                      .during.is_enabled
+                      .during.is_enabled !== 'False' && editingRTSContext.editingRTS.newItem.user_notifications
+                      .during.is_enabled !== false
                   }
                   onChange={(e) => {
                     editingRTSContext.setEditingRTS({
@@ -1279,7 +1282,8 @@ const EditRTS = (props) => {
                   style={{ width: '20px', height: '20px' }}
                   checked={
                     editingRTSContext.editingRTS.newItem.ta_notifications.during
-                      .is_enabled
+                      .is_enabled !== 'False' && editingRTSContext.editingRTS.newItem.ta_notifications.during
+                      .is_enabled !== false
                   }
                   onChange={(e) => {
                     editingRTSContext.setEditingRTS({
@@ -1394,7 +1398,8 @@ const EditRTS = (props) => {
                   style={{ width: '20px', height: '20px' }}
                   checked={
                     editingRTSContext.editingRTS.newItem.user_notifications
-                      .after.is_enabled
+                      .after.is_enabled !== 'False' && editingRTSContext.editingRTS.newItem.user_notifications
+                      .after.is_enabled !== false 
                   }
                   onChange={(e) => {
                     editingRTSContext.setEditingRTS({
@@ -1458,7 +1463,8 @@ const EditRTS = (props) => {
                   style={{ width: '20px', height: '20px' }}
                   checked={
                     editingRTSContext.editingRTS.newItem.ta_notifications.after
-                      .is_enabled
+                      .is_enabled !== 'False' && editingRTSContext.editingRTS.newItem.ta_notifications.after
+                      .is_enabled !== false
                   }
                   onChange={(e) => {
                     editingRTSContext.setEditingRTS({
