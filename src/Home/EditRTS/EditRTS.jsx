@@ -908,22 +908,9 @@ const EditRTS = (props) => {
                     }}
                   />
                   <span> Available to User </span>
-                  {/* <input
-                      type='checkbox'
-                      style={{width: '20px', height: '20px'}}
-                      checked={editingRTSContext.editingRTS.newItem.is_available}
-                      onChange={(e) => {
-                        editingRTSContext.setEditingRTS({
-                          ...editingRTSContext.editingRTS,
-                          newItem: {
-                            ...editingRTSContext.editingRTS.newItem,
-                            is_available: e.target.checked
-                          }
-                        })
-                      }}
-                    /> */}
-                  {editingRTSContext.editingRTS.newItem.is_available ==
-                  'True' ? (
+                  {console.log('is_avail? ', editingRTSContext.editingRTS.newItem.is_available)}
+                  {editingRTSContext.editingRTS.newItem.is_available ===
+                  'True' || editingRTSContext.editingRTS.newItem.is_available === true ? (
                     <input
                       type="checkbox"
                       style={{ width: '20px', height: '20px' }}
