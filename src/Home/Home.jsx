@@ -1575,6 +1575,8 @@ export default function Home(props) {
                         actionID={actionID}
                         CurrentId={userID}
                         setGetStepsEndPoint={setGetStepsEndPoint}
+                        getActionsEndPoint={getActionsEndPoint}
+                        setGetActionsEndPoint={setGetActionsEndPoint}
                       />
                     ) : editingATS.editing ? (
                       <EditATS

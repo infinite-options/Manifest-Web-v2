@@ -146,6 +146,22 @@ const EditIS = (props) => {
               temp.push(response.data.result[i]);
             }
             props.setGetStepsEndPoint(temp);
+
+            if (response.data.result.length === 1) {
+              console.log('here-test 1 with gaep = ', props.getActionsEndPoint, ', and props = ', props);
+              const tempArr = [];
+              for (let k = 0; k < props.getActionsEndPoint.length; k++) {
+                const action = props.getActionsEndPoint[k];
+                console.log('here-test 2: action = ', action, '\nroutineID = ', props.routineID);
+                if (action.at_unique_id === props.routineID.at_unique_id) {
+                  console.log('here-test 3');
+                  action.is_sublist_available = 'True';
+                }
+                tempArr[k] = action;
+              }
+              console.log('here-test 4: tempArr = ', tempArr);
+              props.setGetActionsEndPoint(tempArr);
+            }
           })
           .catch((error) => {
             console.log(error);

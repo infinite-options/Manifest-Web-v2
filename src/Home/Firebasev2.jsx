@@ -116,7 +116,8 @@ export default function Firebasev2(props)  {
     },[ props.theCurrentUserID]);
 
     useEffect(() => {
-        makeActionDisplays()
+        makeActionDisplays();
+        console.log('getGoals: ', props.getGoalsEndPoint, '\ngetActions: ', props.getActionsEndPoint, '\ngetSteps: ', props.getStepsEndPoint);
     }, [props.getGoalsEndPoint, props.getStepsEndPoint,  props.getActionsEndPoint, props.theCurrentUserID]);
 
     useEffect(() => {
@@ -1505,7 +1506,6 @@ export default function Firebasev2(props)  {
                     </Col>
                 </div>
                 <div style={{marginLeft:'1.5rem'}}>
-                {console.log('here-test 6: a.isa = ', a.is_sublist_available)}
                 {(a.is_sublist_available === "True") ? (
                             <div>
                             <FontAwesomeIcon
@@ -1666,7 +1666,6 @@ export default function Firebasev2(props)  {
                                  }
                                  props.setGetStepsEndPoint(temp)
                                 // console.log("historyGot",historyGot);
-                                console.log("getStepsFire",  props.getStepsEndPoint)
                                //  cleanData(historyGot, currentDate);
                              })
                              .catch((error) => {
@@ -1831,22 +1830,17 @@ export default function Firebasev2(props)  {
                                             await axios
                                                 .get(BASE_URL + "instructionsSteps/" + i.at_id)
                                                 .then((response) =>{
-                                                    console.log('here-test 1 with i = ', i);
                                                     const temp = []
                                                     for(var k=0; k <response.data.result.length; k++){
                                                         temp.push(response.data.result[k]);
                                                     }
                                                     props.setGetStepsEndPoint(temp);
-                                                    console.log('here-test 2 with temp = ', temp, '\nresponse.data.result.length = ', response.data.result.length);
 
                                                     if (response.data.result.length == 0) {
                                                         const tempArr = [];
-                                                        console.log('here-test 3');
                                                         for (let j = 0; j < props.getActionsEndPoint.length; j++) {
                                                             const action = props.getActionsEndPoint[j];
-                                                            console.log('here-test 4: new-action is ', action, ', i.at_id = ', i.at_id);
                                                             if (action.at_unique_id === i.at_id) {
-                                                                console.log('here-test 5');
                                                                 action.is_sublist_available = 'False';
                                                             }
                                                             tempArr[j] = action;
@@ -1884,6 +1878,8 @@ export default function Firebasev2(props)  {
                             step={getSteps}
                             setRID={props.setrID}
                             getStepsEndPoint={props.getStepsEndPoint}
+                            getActionsEndPoint={props.getActionsEndPoint}
+                            setGetActionsEndPoint={props.setGetActionsEndPoint}
                         />
                         </div>
                     </div>
