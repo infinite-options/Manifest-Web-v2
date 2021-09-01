@@ -6,6 +6,7 @@ import { BorderColor } from '@material-ui/icons';
 import zIndex from '@material-ui/core/styles/zIndex';
 import greenTick from '../manifest/LoginAssets/GreenTick.svg';
 import yelloTick from '../manifest/LoginAssets/YellowTick.svg';
+import { columnsTotalWidthSelector } from '@material-ui/data-grid';
 
 export default class WeekRoutines extends Component {
   constructor(props) {
@@ -39,6 +40,7 @@ export default class WeekRoutines extends Component {
     var arr = this.props.routines;
     var dic = {};
     let startObject = this.props.dateContext.clone();
+    console.log('startObject = ', startObject);
     console.log(this.props.routines, 'start');
     let endObject = this.props.dateContext.clone();
     let startDay = startObject.startOf('week');
@@ -47,6 +49,7 @@ export default class WeekRoutines extends Component {
     let endDate = new Date(endDay.format('YYYY-MM-DD'));
     startDate.setHours(0, 0, 0);
     endDate.setHours(23, 59, 59);
+    console.log('startDay = ', startDay, ', startDate = ', startDate, '\nEndDay = ', endDay, ', endDate = ', endDate);
     for (let i = 0; i < arr.length; i++) {
       let tempStart = arr[i].start_day_and_time;
       let tempEnd = arr[i].end_day_and_time;
@@ -387,6 +390,7 @@ export default class WeekRoutines extends Component {
 
       // console.log(arr);
       //console.log("isDisplayedTodayCalculated", isDisplayedTodayCalculated);
+      console.log('arr = ', arr);
       if (isDisplayedTodayCalculated) {
         //console.log("today is the day");
         tempStartTime.setMonth(curMonth);
@@ -518,17 +522,23 @@ export default class WeekRoutines extends Component {
                     >
                       {/* insert border change here: */}
                       <div>{arr[i].title}</div>
-
+                      {console.log('curDate2 = ', curDate2.format('D'), '/', curDate2.format('M'), ', today = ', today.getDate(), '/', today.getMonth() + 1, '\nIneq == ',
+                        (curDate2.format('Y') < (today.getYear() + 1900) || (curDate2.format('Y') >= today.getYear() + 1900 &&
+                        curDate2.format('M') < today.getMonth() + 1) || (curDate2.format('Y') >= today.getYear() + 1900 &&
+                        curDate2.format('M') >= (today.getMonth() + 1) && curDate2.format('D') <= today.getDate()))
+                      )}
                       <div
                         style={{
                           width: '13px',
                           height: '13px',
                           backgroundImage:
                             arr[i].is_complete === true
-                              ? `url(${yelloTick})`
+                              ? (curDate2.format('Y') < (today.getYear() + 1900) || (curDate2.format('Y') >= today.getYear() + 1900 &&
+                              curDate2.format('M') < today.getMonth() + 1) || (curDate2.format('Y') >= today.getYear() + 1900 &&
+                              curDate2.format('M') >= (today.getMonth() + 1) && curDate2.format('D') <= today.getDate())) ? `url(${yelloTick})`
                               : arr[i].is_in_progress === true
                               ? `url(${greenTick})`
-                              : '',
+                              : '' : '',
                         }}
                       ></div>
                     </div>
@@ -715,6 +725,7 @@ export default class WeekRoutines extends Component {
         }
       }
     }
+    console.log('res_wr = ', res);
     return res;
   };
 
