@@ -522,11 +522,7 @@ export default class WeekRoutines extends Component {
                     >
                       {/* insert border change here: */}
                       <div>{arr[i].title}</div>
-                      {console.log('curDate2 = ', curDate2.format('D'), '/', curDate2.format('M'), ', today = ', today.getDate(), '/', today.getMonth() + 1, '\nIneq == ',
-                        (curDate2.format('Y') < (today.getYear() + 1900) || (curDate2.format('Y') >= today.getYear() + 1900 &&
-                        curDate2.format('M') < today.getMonth() + 1) || (curDate2.format('Y') >= today.getYear() + 1900 &&
-                        curDate2.format('M') >= (today.getMonth() + 1) && curDate2.format('D') <= today.getDate()))
-                      )}
+
                       <div
                         style={{
                           width: '13px',

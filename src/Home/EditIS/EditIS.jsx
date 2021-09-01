@@ -352,8 +352,9 @@ const EditIS = (props) => {
             
             <div style={{display:'flex', marginTop:'1rem'}}>
             <div style={{fontSize:'12px',}}> Available to User </div>
-            {editingISContext.editingIS.newItem.is_available ==
-                  'True' ? (
+            {console.log('editingISContext.editingIS.newItem.is_available = ', editingISContext.editingIS.newItem.is_available)}
+            {editingISContext.editingIS.newItem.is_available ===
+                  'True' || editingISContext.editingIS.newItem.is_available === true ? (
                     <input
                       type="checkbox"
                       style={{ width: '20px', height: '20px' }}
