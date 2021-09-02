@@ -466,6 +466,11 @@ export default class WeekRoutines extends Component {
                 //   tempStartTime,
                 //   tempEndTime
                 // );
+                const [comp_year, comp_month, comp_day] = [parseInt(arr[i].datetime_completed.substring(0, 4)),
+                  parseInt(arr[i].datetime_completed.substring(5, 7)), parseInt(arr[i].datetime_completed.substring(8, 10))];
+                const [curr_year, curr_month, curr_day] = [parseInt(curDate2.format('Y')),
+                  parseInt(curDate2.format('M')), parseInt(curDate2.format('D'))];
+                console.log('completed ', `${comp_year}-${comp_month}-${comp_day}. curr ${curr_year}-${curr_month}-${curr_day}`)
                 let newElement = (
                   <div key={'event' + i}>
                     <div
@@ -528,13 +533,20 @@ export default class WeekRoutines extends Component {
                           width: '13px',
                           height: '13px',
                           backgroundImage:
-                            arr[i].is_complete === true
-                              ? (curDate2.format('Y') < (today.getYear() + 1900) || (curDate2.format('Y') >= today.getYear() + 1900 &&
-                              curDate2.format('M') < today.getMonth() + 1) || (curDate2.format('Y') >= today.getYear() + 1900 &&
-                              curDate2.format('M') >= (today.getMonth() + 1) && curDate2.format('D') <= today.getDate())) ? `url(${yelloTick})`
-                              : arr[i].is_in_progress === true
-                              ? `url(${greenTick})`
-                              : '' : '',
+                        arr[i].is_complete === true
+                          ? (curr_year < comp_year || (curr_year >= comp_year &&
+                          curr_month < comp_month) || (curr_year >= comp_year &&
+                          curr_month >= comp_month && curr_day <= comp_day)) ? `url(${yelloTick})`
+                          : arr[i].is_in_progress === true
+                          ? `url(${greenTick})`
+                          : '' : '',
+                        // arr[i].is_complete === true
+                        //   ? (curDate2.format('Y') < (today.getYear() + 1900) || (curDate2.format('Y') >= today.getYear() + 1900 &&
+                        //   curDate2.format('M') < today.getMonth() + 1) || (curDate2.format('Y') >= today.getYear() + 1900 &&
+                        //   curDate2.format('M') >= (today.getMonth() + 1) && curDate2.format('D') <= today.getDate())) ? `url(${yelloTick})`
+                        //   : arr[i].is_in_progress === true
+                        //   ? `url(${greenTick})`
+                        //   : '' : '',
                         }}
                       ></div>
                     </div>

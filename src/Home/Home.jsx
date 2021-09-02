@@ -942,7 +942,7 @@ export default function Home(props) {
       axios
         .get(url + userID)
         .then((response) => {
-          console.log('here: Obtained user information');
+          console.log('here: Obtained user information with res = ', response);
           const temp = [];
 
           for (let i = 0; i < response.data.result.length; i++) {
