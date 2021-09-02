@@ -152,7 +152,7 @@ export default function Home(props) {
   const [routineID, setRoutineID] = useState('');
   const [actionID, setActionID] = useState('');
   const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
-  const [getActionsEndPoint, setGetActionsEndPoint] = useState([]);
+  const [getActionsEndPoint, setGetActionsEndPoint] = useState({});
   const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
 
   const [hightlight, setHightlight] = useState('');
@@ -942,7 +942,7 @@ export default function Home(props) {
       axios
         .get(url + userID)
         .then((response) => {
-          console.log('here: Obtained user information with res = ', response);
+          console.log('here: Obtained user information with res = ', response.data.result);
           const temp = [];
 
           for (let i = 0; i < response.data.result.length; i++) {

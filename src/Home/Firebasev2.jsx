@@ -111,13 +111,14 @@ export default function Firebasev2(props)  {
     }
     useEffect(() => {
         props.setGetGoalsEndPoint([])
-        props.setGetActionsEndPoint([])
+        props.setGetActionsEndPoint({})
         props.setGetStepsEndPoint([])
     },[ props.theCurrentUserID]);
 
     useEffect(() => {
         makeActionDisplays();
         console.log('getGoals: ', props.getGoalsEndPoint, '\ngetActions: ', props.getActionsEndPoint, '\ngetSteps: ', props.getStepsEndPoint);
+        console.log('here-2: gaep on useEffect = ', props.getActionsEndPoint);
     }, [props.getGoalsEndPoint, props.getStepsEndPoint,  props.getActionsEndPoint, props.theCurrentUserID]);
 
     useEffect(() => {
@@ -944,24 +945,25 @@ export default function Firebasev2(props)  {
      
         for (var i=0; i <uniqueObjects.length; i++){
       
-                tempRows.push(displayRoutines(uniqueObjects[i]));
+            tempRows.push(displayRoutines(uniqueObjects[i]));
 
-    
-                     for(var j=0; j<props.getActionsEndPoint.length ; j++){
-                         if(props.getGoalsEndPoint[i].gr_unique_id === props.getActionsEndPoint[j].goal_routine_id){
-                            if(tempID.includes(props.getActionsEndPoint[j].at_unique_id) === false ){
-                                tempRows.push(displayActions(props.getActionsEndPoint[j]))
-                                tempID.push(props.getActionsEndPoint[j].at_unique_id)
-                                console.log("only", tempID)
-                            }
-                             else{
-                              tempRows.pop()
-                              tempID.pop(props.getActionsEndPoint[j].at_unique_id) 
-                                 console.log("only1", tempID)
-                             }
-                     }
-                 }
-         }
+            if (props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id]) {
+                for(var j=0; j<props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id].length ; j++){
+                    if(props.getGoalsEndPoint[i].gr_unique_id === props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id][j].goal_routine_id){
+                        if(tempID.includes(props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id][j].at_unique_id) === false ){
+                            tempRows.push(displayActions(props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id][j]))
+                            tempID.push(props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id][j].at_unique_id)
+                            console.log("only", tempID)
+                        }
+                        else{
+                            tempRows.pop()
+                            tempID.pop(props.getActionsEndPoint[j].at_unique_id) 
+                            console.log("only1", tempID)
+                        }
+                    }
+                }
+            }
+        }
        
      //   console.log("filter", props.getGoalsEndPoint)
          
@@ -981,31 +983,34 @@ export default function Firebasev2(props)  {
         console.log("unique obj", uniqueObjects, props.getGoalsEndPoint)
         for (var i=0; i <uniqueObjects.length; i++){
             tempRows.push(displayRoutines(props.getGoalsEndPoint[i]));
-            for(var j=0; j<props.getActionsEndPoint.length; j++){
-                if(props.getGoalsEndPoint[i].gr_unique_id === props.getActionsEndPoint[j].goal_routine_id){
-                    if(tempID.includes(props.getActionsEndPoint[j].at_unique_id) === false ){
-                        tempRows.push(displayActions(props.getActionsEndPoint[j]))
-                        tempID.push(props.getActionsEndPoint[j].at_unique_id)
-                        console.log("only", tempID)
-
-                        for(var k=0; k<props.getStepsEndPoint.length; k++){
-                            if(props.getActionsEndPoint[j].at_unique_id === props.getStepsEndPoint[k].at_id){
-                                if(tempIsID.includes(props.getStepsEndPoint[k].is_unique_id) === false ){
-                                    tempRows.push(displayInstructions(props.getStepsEndPoint[k]))
-                                    tempIsID.push(props.getStepsEndPoint[k].is_unique_id)
-                                    console.log("only", tempIsID)
+            console.log('p.ggep[i] = ', props.getGoalsEndPoint[i].gr_unique_id);
+            if (props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id]) {
+                for(var j=0; j<props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id].length; j++){
+                    if(props.getGoalsEndPoint[i].gr_unique_id === props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id][j].goal_routine_id){
+                        if(tempID.includes(props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id][j].at_unique_id) === false ){
+                            tempRows.push(displayActions(props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id][j]))
+                            tempID.push(props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id][j].at_unique_id)
+                            console.log("only", tempID)
+    
+                            for(var k=0; k<props.getStepsEndPoint.length; k++){
+                                if(props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id][j].at_unique_id === props.getStepsEndPoint[k].at_id){
+                                    if(tempIsID.includes(props.getStepsEndPoint[k].is_unique_id) === false ){
+                                        tempRows.push(displayInstructions(props.getStepsEndPoint[k]))
+                                        tempIsID.push(props.getStepsEndPoint[k].is_unique_id)
+                                        console.log("only", tempIsID)
+                                    }
+                                    else{
+                                        
+                                        tempRows.pop()
+                                        tempIsID.pop(props.getStepsEndPoint[k].is_unique_id) 
+                                    }
                                 }
-                                else{
-                                    
-                                    tempRows.pop()
-                                    tempIsID.pop(props.getStepsEndPoint[k].is_unique_id) 
-                                }
+                        
                             }
-                    
                         }
                     }
+                
                 }
-            
             }
 
         }
@@ -1384,11 +1389,10 @@ export default function Firebasev2(props)  {
                             size="sm"
                             onClick = {(e)=> {
                                 console.log('log(-2): r.gr_uid = ', r.gr_unique_id);
-                                console.log("length", props.getActionsEndPoint.length);
 
-                                if (props.getActionsEndPoint.length != 0) { 
+                                if (props.getActionsEndPoint[r.gr_unique_id] != undefined) { 
                                     //do stuff
-                                    props.setGetActionsEndPoint([])
+                                    props.setGetActionsEndPoint({})
                                     return 
                                 }
                                 e.preventDefault();
@@ -1398,25 +1402,29 @@ export default function Firebasev2(props)  {
                                 // setLoading(!isLoading);
                                 setActions(r.gr_unique_id)
 
-                                console.log("routine", getActions)
+                                console.log("routine", getActions);
      
-                                    axios
-                                    .get(BASE_URL + "actionsTasks/" + r.gr_unique_id)
-                                    .then((response) =>{
+                                axios
+                                .get(BASE_URL + "actionsTasks/" + r.gr_unique_id)
+                                .then((response) => {
                                         const temp = []
                                         for(var i=0; i <response.data.result.length; i++){
-                                          // for(var i=response.data.result.length - 1; i > -1; i--){
-                                              temp.push(response.data.result[i]);
-                                          }
-                                          props.setGetActionsEndPoint(temp)
-                                         // console.log("historyGot",historyGot);
-                                         console.log("getActionsFire", props.getActionsEndPoint, temp)
-                                        //  cleanData(historyGot, currentDate);
-                                      })
-                                      .catch((error) => {
-                                          console.log(error);
-                                      });
-                                      makeDisplays()
+                                            temp.push(response.data.result[i]);
+                                        }
+                                        const tempObj = {};
+
+                                        for (const key in props.getActionsEndPoint) {
+                                            tempObj[key] = props.getActionsEndPoint[key];
+                                        }
+                                        console.log('here-0: temp = ', temp, '\ntempObj = ', tempObj);
+                                        tempObj[r.gr_unique_id] = temp;
+                                        console.log('here-1: gaep = ', props.getActionsEndPoint);
+                                        props.setGetActionsEndPoint(tempObj);
+                                    })
+                                    .catch((error) => {
+                                        console.log(error);
+                                    });
+                                    makeDisplays()
                             }}
                             />
                         </div>
@@ -1593,7 +1601,13 @@ export default function Firebasev2(props)  {
                                             for(var i=0; i <response.data.result.length; i++){
                                                 temp.push(response.data.result[i]);
                                             }
-                                            props.setGetActionsEndPoint(temp);
+
+                                            const tempObj = {};
+                                            for (const key in props.getActionsEndPoint) {
+                                                tempObj[key] = props.getActionsEndPoint[key];
+                                            }
+                                            tempObj[a.goal_routine_id] = temp;
+                                            props.setGetActionsEndPoint(tempObj);
 
                                             if (response.data.result.length == 0) {
                                                 const tempArr = [];
@@ -1830,7 +1844,7 @@ export default function Firebasev2(props)  {
                                             await axios
                                                 .get(BASE_URL + "instructionsSteps/" + i.at_id)
                                                 .then((response) =>{
-                                                    const temp = []
+                                                    const temp = [];
                                                     for(var k=0; k <response.data.result.length; k++){
                                                         temp.push(response.data.result[k]);
                                                     }
@@ -1838,14 +1852,23 @@ export default function Firebasev2(props)  {
 
                                                     if (response.data.result.length == 0) {
                                                         const tempArr = [];
-                                                        for (let j = 0; j < props.getActionsEndPoint.length; j++) {
-                                                            const action = props.getActionsEndPoint[j];
+                                                        let curr_goal_id = null;
+                                                        for (const goal of props.getGoalsEndPoint) {
+                                                            for (const action of props.getActionsEndPoint[goal.gr_unique_id]) {
+                                                                if (action.at_unique_id === i.at_id) {
+                                                                    curr_goal_id = goal.gr_unique_id;
+                                                                }
+                                                            }
+                                                        }
+                                                        for (let j = 0; j < props.getActionsEndPoint[curr_goal_id].length; j++) {
+                                                            const action = props.getActionsEndPoint[curr_goal_id][j];
                                                             if (action.at_unique_id === i.at_id) {
                                                                 action.is_sublist_available = 'False';
                                                             }
                                                             tempArr[j] = action;
                                                         }
-                                                        props.setGetActionsEndPoint(tempArr);
+                                                        props.getActionsEndPoint[curr_goal_id] = tempArr;
+                                                        props.setGetActionsEndPoint(props.getActionsEndPoint);
                                                     }
                                                 })
                                                 .catch((error) => {
