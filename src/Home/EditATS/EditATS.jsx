@@ -253,7 +253,7 @@ const EditATS = (props) => {
             for (const key in props.getActionsEndPoint) {
               tempObj[key] = props.getActionsEndPoint[key];
             }
-            tempObj[props.routineID.goal_routine_id] = temp;
+            tempObj[props.routineID.gr_unique_id] = temp;
             console.log('here 0: props.gaep = ', props.getActionsEndPoint, '\ntempObj = ', tempObj);
 
             props.setGetActionsEndPoint(tempObj);
