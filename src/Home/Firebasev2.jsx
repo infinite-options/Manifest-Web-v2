@@ -1834,7 +1834,6 @@ export default function Firebasev2(props)  {
                                         e.stopPropagation();
                                         //  console.log(r)
                                         const foo = async () => {
-                                            console.log('i = ', i);
                                             let body = {is_id: i.is_unique_id}
 
                                             await axios
@@ -1847,7 +1846,7 @@ export default function Firebasev2(props)  {
                                                 .get(BASE_URL + "instructionsSteps/" + i.at_id)
                                                 .then((response) =>{
                                                     const temp = [];
-                                                    for(var k=0; k <response.data.result.length; k++){
+                                                    for(let k = 0; k < response.data.result.length; k++){
                                                         temp.push(response.data.result[k]);
                                                     }
 
@@ -1859,15 +1858,24 @@ export default function Firebasev2(props)  {
                                                     props.setGetStepsEndPoint(tempObj);
 
                                                     if (response.data.result.length == 0) {
-                                                        const tempArr = [];
                                                         let curr_goal_id = null;
+                                                        let goal_found = false;
                                                         for (const goal of props.getGoalsEndPoint) {
-                                                            for (const action of props.getActionsEndPoint[goal.gr_unique_id]) {
-                                                                if (action.at_unique_id === i.at_id) {
-                                                                    curr_goal_id = goal.gr_unique_id;
+                                                            if (props.getActionsEndPoint[goal.gr_unique_id]) {
+                                                                for (const action of props.getActionsEndPoint[goal.gr_unique_id]) {
+                                                                    if (action.at_unique_id === i.at_id) {
+                                                                        curr_goal_id = goal.gr_unique_id;
+                                                                        goal_found = true;
+                                                                        break;
+                                                                    }
                                                                 }
                                                             }
+
+                                                            if (goal_found)
+                                                                break;
                                                         }
+
+                                                        const tempArr = [];
                                                         for (let j = 0; j < props.getActionsEndPoint[curr_goal_id].length; j++) {
                                                             const action = props.getActionsEndPoint[curr_goal_id][j];
                                                             if (action.at_unique_id === i.at_id) {
@@ -1875,8 +1883,13 @@ export default function Firebasev2(props)  {
                                                             }
                                                             tempArr[j] = action;
                                                         }
-                                                        props.getActionsEndPoint[curr_goal_id] = tempArr;
-                                                        props.setGetActionsEndPoint(props.getActionsEndPoint);
+
+                                                        const tempObj2 = {};
+                                                        for (const action_id in props.getActionsEndPoint) {
+                                                            tempObj2[action_id] = props.getActionsEndPoint[action_id];
+                                                        }
+                                                        tempObj2[i.at_id] = tempArr;
+                                                        props.setGetActionsEndPoint(tempObj2);
                                                     }
                                                 })
                                                 .catch((error) => {
