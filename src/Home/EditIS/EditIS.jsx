@@ -102,11 +102,17 @@ const EditIS = (props) => {
         await axios
         .get(BASE_URL + "instructionsSteps/" + props.routineID.at_id)
         .then((response) =>{
-         const temp = []
+            const temp = []
             for(var i=0; i <response.data.result.length; i++){
-                  temp.push(response.data.result[i]);
-              }
-              props.setGetStepsEndPoint(temp);
+                temp.push(response.data.result[i]);
+            }
+
+            const tempObj = {};
+            for (const action_id in props.getStepsEndPoint) {
+              tempObj[action_id] = props.getStepsEndPoint[action_id];
+            }
+            tempObj[props.routineID.at_id] = temp;
+            props.setGetStepsEndPoint(tempObj);
           })
           .catch((error) => {
               console.log(error);
@@ -151,6 +157,7 @@ const EditIS = (props) => {
               tempObj[action_id] = props.getStepsEndPoint[action_id];
             }
             tempObj[props.routineID.at_unique_id] = temp;
+            console.log('log-1: tempObj = ', tempObj);
             props.setGetStepsEndPoint(tempObj);
 
             if (response.data.result.length === 1) {
