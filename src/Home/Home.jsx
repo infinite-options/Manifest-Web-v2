@@ -1582,6 +1582,7 @@ export default function Home(props) {
                       <EditATS
                         routineID={routineID}
                         CurrentId={userID}
+                        getActionsEndPoint={getActionsEndPoint}
                         setGetActionsEndPoint={setGetActionsEndPoint}
                         getGoalsEndPoint={getGoalsEndPoint}
                       />

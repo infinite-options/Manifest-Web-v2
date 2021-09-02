@@ -196,8 +196,15 @@ const EditATS = (props) => {
             for(var i=0; i <response.data.result.length; i++){
                 temp.push(response.data.result[i]);
             }
-            console.log('tempy = ', temp);
-            props.setGetActionsEndPoint(temp);
+
+            const tempObj = {};
+            for (const key in props.getActionsEndPoint) {
+              tempObj[key] = props.getActionsEndPoint[key];
+            }
+            tempObj[props.routineID.goal_routine_id] = temp;
+            console.log('here 0: props.gaep = ', props.getActionsEndPoint, '\ntempObj = ', tempObj);
+
+            props.setGetActionsEndPoint(tempObj);
           })
           .catch((error) => {
               console.log('actionsTasks error = ', error);
