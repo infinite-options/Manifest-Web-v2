@@ -1392,7 +1392,12 @@ export default function Firebasev2(props)  {
 
                                 if (props.getActionsEndPoint[r.gr_unique_id] != undefined) { 
                                     //do stuff
-                                    props.setGetActionsEndPoint({})
+                                    const tempObj = {};
+                                    for (const key in props.getActionsEndPoint) {
+                                        tempObj[key] = props.getActionsEndPoint[key];
+                                    }
+                                    tempObj[r.gr_unique_id] = undefined;
+                                    props.setGetActionsEndPoint(tempObj);
                                     return 
                                 }
                                 e.preventDefault();
