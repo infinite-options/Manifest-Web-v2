@@ -1574,6 +1574,7 @@ export default function Home(props) {
                         routineID={routineID}
                         actionID={actionID}
                         CurrentId={userID}
+                        getStepsEndPoint={getStepsEndPoint}
                         setGetStepsEndPoint={setGetStepsEndPoint}
                         getActionsEndPoint={getActionsEndPoint}
                         setGetActionsEndPoint={setGetActionsEndPoint}

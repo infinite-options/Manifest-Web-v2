@@ -112,7 +112,7 @@ export default function Firebasev2(props)  {
     useEffect(() => {
         props.setGetGoalsEndPoint([])
         props.setGetActionsEndPoint({})
-        props.setGetStepsEndPoint([])
+        props.setGetStepsEndPoint({})
     },[ props.theCurrentUserID]);
 
     useEffect(() => {
@@ -992,20 +992,22 @@ export default function Firebasev2(props)  {
                             tempID.push(props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id][j].at_unique_id)
                             console.log("only", tempID)
     
-                            for(var k=0; k<props.getStepsEndPoint.length; k++){
-                                if(props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id][j].at_unique_id === props.getStepsEndPoint[k].at_id){
-                                    if(tempIsID.includes(props.getStepsEndPoint[k].is_unique_id) === false ){
-                                        tempRows.push(displayInstructions(props.getStepsEndPoint[k]))
-                                        tempIsID.push(props.getStepsEndPoint[k].is_unique_id)
-                                        console.log("only", tempIsID)
+                            const currStepArr = props.getStepsEndPoint[props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id][j].at_unique_id];
+                            if (currStepArr) {
+                                for(var k=0; k<currStepArr.length; k++){
+                                    if(props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id][j].at_unique_id === currStepArr[k].at_id){
+                                        if(tempIsID.includes(currStepArr[k].is_unique_id) === false ){
+                                            tempRows.push(displayInstructions(currStepArr[k]))
+                                            tempIsID.push(currStepArr[k].is_unique_id)
+                                            console.log("only", tempIsID)
+                                        }
+                                        else{
+                                            tempRows.pop();
+                                            tempIsID.pop(currStepArr[k].is_unique_id);
+                                        }
                                     }
-                                    else{
-                                        
-                                        tempRows.pop()
-                                        tempIsID.pop(props.getStepsEndPoint[k].is_unique_id) 
-                                    }
+                            
                                 }
-                        
                             }
                         }
                     }
@@ -1661,34 +1663,32 @@ export default function Firebasev2(props)  {
                             style={{ color: "#ffffff", cursor:'pointer' }}
                             size="sm"
                             onClick = {()=> {
-                                console.log('lengthSteps',props.getStepsEndPoint.length )
-                                if (props.getStepsEndPoint.length != 0) { 
-                                    //do stuff
-                                    props.setGetStepsEndPoint([])
-
-                                    return 
+                                if (props.getStepsEndPoint[a.at_unique_id] != undefined) {
+                                    props.setGetStepsEndPoint({});
+                                    return;
                                 }
-                                // sendRoutineToParent(a.number);
-                                // setLoading(!isLoading);
-                           //     clickHandle(a.name)
-                           setSteps(a.at_unique_id)
-                           axios
-                           .get(BASE_URL + "instructionsSteps/" + a.at_unique_id)
-                           .then((response) =>{
-                            const temp = []
-                               for(var i=0; i <response.data.result.length; i++){
-                                 // for(var i=response.data.result.length - 1; i > -1; i--){
-                                     temp.push(response.data.result[i]);
-                                 }
-                                 props.setGetStepsEndPoint(temp)
-                                // console.log("historyGot",historyGot);
-                               //  cleanData(historyGot, currentDate);
-                             })
-                             .catch((error) => {
-                                 console.log(error);
-                             });
-                             makeActionDisplays()
-                            }}
+
+                                setSteps(a.at_unique_id)
+                                axios
+                                .get(BASE_URL + "instructionsSteps/" + a.at_unique_id)
+                                .then((response) =>{
+                                        const temp = []
+                                        for(var i=0; i <response.data.result.length; i++){
+                                            temp.push(response.data.result[i]);
+                                        }
+
+                                        const tempObj = {};
+                                        for (const action_id in props.getStepsEndPoint) {
+                                            tempObj[action_id] = props.getStepsEndPoint[action_id];
+                                        }
+                                        tempObj[a.at_unique_id] = temp;
+                                        props.setGetStepsEndPoint(tempObj)
+                                    })
+                                    .catch((error) => {
+                                        console.log(error);
+                                    });
+                                    makeActionDisplays()
+                                    }}
                             />
                         </div>
                         ) : (
@@ -1850,7 +1850,13 @@ export default function Firebasev2(props)  {
                                                     for(var k=0; k <response.data.result.length; k++){
                                                         temp.push(response.data.result[k]);
                                                     }
-                                                    props.setGetStepsEndPoint(temp);
+
+                                                    const tempObj = {};
+                                                    for (const action_id in props.getStepsEndPoint) {
+                                                        tempObj[action_id] = props.getStepsEndPoint[action_id];
+                                                    }
+                                                    tempObj[i.at_id] = temp;
+                                                    props.setGetStepsEndPoint(tempObj);
 
                                                     if (response.data.result.length == 0) {
                                                         const tempArr = [];

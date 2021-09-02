@@ -81,9 +81,9 @@ const EditIcon = ({routine, task, step, setRID, getStepsEndPoint}) => {
           setRID(routine);
 
           var itemToChange;
-          for(var j=0;j<getStepsEndPoint.length;j++){
-            if (routine.is_unique_id === getStepsEndPoint[j].is_unique_id){
-              itemToChange = getStepsEndPoint[j];
+          for(var j=0;j<getStepsEndPoint[routine.at_id].length;j++){
+            if (routine.is_unique_id === getStepsEndPoint[routine.at_id][j].is_unique_id){
+              itemToChange = getStepsEndPoint[routine.at_id][j];
             }
           }
           console.log("TimeStep", itemToChange.is_expected_completion_time)

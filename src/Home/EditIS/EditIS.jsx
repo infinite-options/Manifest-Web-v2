@@ -145,7 +145,13 @@ const EditIS = (props) => {
             for(var i=0; i <response.data.result.length; i++){
               temp.push(response.data.result[i]);
             }
-            props.setGetStepsEndPoint(temp);
+
+            const tempObj = {};
+            for (const action_id in props.getStepsEndPoint) {
+              tempObj[action_id] = props.getStepsEndPoint[action_id];
+            }
+            tempObj[props.routineID.at_unique_id] = temp;
+            props.setGetStepsEndPoint(tempObj);
 
             if (response.data.result.length === 1) {
               let goal_id = null;
