@@ -534,9 +534,8 @@ export default class WeekRoutines extends Component {
                           height: '13px',
                           backgroundImage:
                         arr[i].is_complete === true
-                          ? (curr_year < comp_year || (curr_year >= comp_year &&
-                          curr_month < comp_month) || (curr_year >= comp_year &&
-                          curr_month >= comp_month && curr_day <= comp_day)) ? `url(${yelloTick})`
+                          ? (curr_year === comp_year && curr_month === comp_month &&
+                          curr_day === comp_day) ? `url(${yelloTick})`
                           : arr[i].is_in_progress === true
                           ? `url(${greenTick})`
                           : '' : '',

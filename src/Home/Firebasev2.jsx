@@ -117,8 +117,7 @@ export default function Firebasev2(props)  {
 
     useEffect(() => {
         makeActionDisplays();
-        console.log('getGoals: ', props.getGoalsEndPoint, '\ngetActions: ', props.getActionsEndPoint, '\ngetSteps: ', props.getStepsEndPoint);
-        console.log('here-2: gaep on useEffect = ', props.getActionsEndPoint);
+        console.log('here-2: gsep on useEffect = ', props.getStepsEndPoint);
     }, [props.getGoalsEndPoint, props.getStepsEndPoint,  props.getActionsEndPoint, props.theCurrentUserID]);
 
     useEffect(() => {
