@@ -1664,7 +1664,12 @@ export default function Firebasev2(props)  {
                             size="sm"
                             onClick = {()=> {
                                 if (props.getStepsEndPoint[a.at_unique_id] != undefined) {
-                                    props.setGetStepsEndPoint({});
+                                    const tempObj = {};
+                                    for (const action_id in props.getStepsEndPoint) {
+                                        tempObj[action_id] = props.getStepsEndPoint[action_id];
+                                    }
+                                    tempObj[a.at_unique_id] = undefined;
+                                    props.setGetStepsEndPoint(tempObj);
                                     return;
                                 }
 
