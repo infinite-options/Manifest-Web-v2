@@ -69,8 +69,6 @@ const EditIcon = ({ routine, task, step, setRID, getActionsEndPoint }) => {
     rowId = routine.id;
   }
 
-  console.log('getActionsEndPoint: ', getActionsEndPoint);
-
   return (
     <div>
       <FontAwesomeIcon
@@ -83,7 +81,6 @@ const EditIcon = ({ routine, task, step, setRID, getActionsEndPoint }) => {
           e.preventDefault();
           setRID(routine);
           var itemToChange;
-          console.log('onClick-routine = ', routine);
           for (var j = 0; j < getActionsEndPoint[routine.goal_routine_id].length; j++) {
             if (routine.at_unique_id === getActionsEndPoint[routine.goal_routine_id][j].at_unique_id) {
               itemToChange = getActionsEndPoint[routine.goal_routine_id][j];

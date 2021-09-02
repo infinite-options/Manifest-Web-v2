@@ -148,19 +148,27 @@ const EditIS = (props) => {
             props.setGetStepsEndPoint(temp);
 
             if (response.data.result.length === 1) {
-              console.log('here-test 1 with gaep = ', props.getActionsEndPoint, ', and props = ', props);
+              let goal_id = null;
+              const tempObj = {};
+              for (const gr_id in props.getActionsEndPoint) {
+                tempObj[gr_id] = props.getActionsEndPoint[gr_id];
+  
+                for (const action of props.getActionsEndPoint[gr_id]) {
+                  if (action.at_unique_id === props.routineID.at_unique_id)
+                    goal_id = action.goal_routine_id;
+                }
+              }
+
               const tempArr = [];
-              for (let k = 0; k < props.getActionsEndPoint.length; k++) {
-                const action = props.getActionsEndPoint[k];
-                console.log('here-test 2: action = ', action, '\nroutineID = ', props.routineID);
+              for (let k = 0; k < props.getActionsEndPoint[goal_id].length; k++) {
+                const action = props.getActionsEndPoint[goal_id][k];
                 if (action.at_unique_id === props.routineID.at_unique_id) {
-                  console.log('here-test 3');
                   action.is_sublist_available = 'True';
                 }
                 tempArr[k] = action;
               }
-              console.log('here-test 4: tempArr = ', tempArr);
-              props.setGetActionsEndPoint(tempArr);
+              tempObj[goal_id] = tempArr;
+              props.setGetActionsEndPoint(tempObj);
             }
           })
           .catch((error) => {

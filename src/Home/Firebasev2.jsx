@@ -1402,10 +1402,7 @@ export default function Firebasev2(props)  {
                                 }
                                 e.preventDefault();
 
-                                // sendRoutineToParent(r.name);
-                             //   clickHandle(r.gr_title)
-                                // setLoading(!isLoading);
-                                setActions(r.gr_unique_id)
+                                setActions(r.gr_unique_id);
 
                                 console.log("routine", getActions);
      
