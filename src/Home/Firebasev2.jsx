@@ -117,8 +117,10 @@ export default function Firebasev2(props)  {
 
     useEffect(() => {
         makeActionDisplays();
-        console.log('here-2: gsep on useEffect = ', props.getStepsEndPoint);
+        // console.log('here-2: gsep on useEffect = ', props.getStepsEndPoint);
     }, [props.getGoalsEndPoint, props.getStepsEndPoint,  props.getActionsEndPoint, props.theCurrentUserID]);
+
+    useEffect(() => console.log('gsep = ', props.getStepsEndPoint), [props.getStepsEndPoint]);
 
     useEffect(() => {
         setHG([])
@@ -971,13 +973,10 @@ export default function Firebasev2(props)  {
 }
 
     function makeActionDisplays() {
-        console.log("fire Temp",props.getGoalsEndPoint.length);
         var tempRows = [];
         var tempID = [];
         var tempIsID = [];
         console.log("only 0.1.0", tempRows, tempID);
-        var routine;
-        var action;
         const uniqueObjects = [...new Map(props.getGoalsEndPoint.map(item => [item.gr_unique_id, item])).values()]
         console.log("unique obj", uniqueObjects, props.getGoalsEndPoint)
         for (var i=0; i <uniqueObjects.length; i++){
@@ -1397,7 +1396,7 @@ export default function Firebasev2(props)  {
                                     for (const key in props.getActionsEndPoint) {
                                         tempObj[key] = props.getActionsEndPoint[key];
                                     }
-                                    tempObj[r.gr_unique_id] = undefined;
+                                    delete tempObj[r.gr_unique_id];
                                     props.setGetActionsEndPoint(tempObj);
                                     return 
                                 }
@@ -1427,7 +1426,7 @@ export default function Firebasev2(props)  {
                                     .catch((error) => {
                                         console.log(error);
                                     });
-                                    makeDisplays()
+                                    makeActionDisplays()
                             }}
                             />
                         </div>
@@ -1667,7 +1666,7 @@ export default function Firebasev2(props)  {
                                     for (const action_id in props.getStepsEndPoint) {
                                         tempObj[action_id] = props.getStepsEndPoint[action_id];
                                     }
-                                    tempObj[a.at_unique_id] = undefined;
+                                    delete tempObj[a.at_unique_id];
                                     props.setGetStepsEndPoint(tempObj);
                                     return;
                                 }
