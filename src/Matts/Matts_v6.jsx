@@ -175,7 +175,6 @@ export default function MainPage(props) {
 
      //-------- clean historyGot - just dates we want, just info we want, and structure vertical to horizontal   --------
     function cleanData(historyGot, useDate){
-        
         //go through at find historyGots that are within 7 days of useDate
         console.log("date:" + useDate);
         // console.log(new Date().toISOString());
@@ -189,7 +188,7 @@ export default function MainPage(props) {
         }
         console.log(temp);
         //now temp has data we want
-    // move temp to inRange with no repeats
+        // move temp to inRange with no repeats
         const map = new Map();
         for (const item of temp){
             if(!map.has(item.date)){
@@ -297,9 +296,9 @@ export default function MainPage(props) {
         console.log("ROWS" + rows);
         console.log({bigList});
         bigList = addCircles(bigList);
-        console.log(bigList);
+        // console.log(bigList);
        // bigList = addNames(bigList, routines);
-        console.log(bigList);
+        // console.log(bigList);
         var tempRows = [];
         for (var i=0; i< bigList.length; i++){
             tempRows.push(createData(bigList[i].title, bigList[i].number, bigList[i].days[6], bigList[i].days[5], bigList[i].days[4], bigList[i].days[3],
@@ -310,7 +309,6 @@ export default function MainPage(props) {
         setLoading(false);
         setRows(tempRows);
         console.log(rows);
-        console.log("GERE");
         return(true);
     }
 
@@ -357,7 +355,9 @@ export default function MainPage(props) {
                                                     <div className = "whiteHalfTop" ></div>
                                                 </div>);
                         }
-                        else{bigList[i].days[d] = <div className = "nsI"></div>;}
+                        else {
+                            bigList[i].days[d] = <div className = "nsI"></div>;
+                        }
                     }
                     else if(bigList[i].days[d] == "complete"){
                         bigList[i].days[d] = <div className = "cI"></div>;
@@ -376,14 +376,17 @@ export default function MainPage(props) {
                 // }
                 if(above == checks.number){
                     // console.log(checks);
-                    if (checks.days[d] == "completed" || checks.days[d] == "complete"){
-                        return true;}
-                    if(checks.days[d].props != undefined){
+                    if (checks.days[d] == "completed" || checks.days[d] == "complete") {
+                        return true;
+                    }
+                    if(checks.days[d] && checks.days[d].props != undefined) {
                         if (checks.days[d].props.className == "cR" || checks.days[d].props.className == "cA"){
                             return true;
                         }
                     }
-                    else{return checkAbove(checks.under, d)}
+                    else{
+                        return checkAbove(checks.under, d)
+                    }
                 }
             }
             return false;

@@ -955,7 +955,7 @@ const VerticalRoutine = ({userID}) => {
     if(isLoading){
         return(
             <div>
-                <h1>Loading...</h1>
+                <h1>StinkyClinky</h1>
             </div>
         )
     }
