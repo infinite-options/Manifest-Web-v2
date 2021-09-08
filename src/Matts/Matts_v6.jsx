@@ -194,17 +194,19 @@ export default function MainPage(props) {
         const map = new Map();
         let j = 0;
         for (const item of temp){
-            console.log('temp1.1: item = ', item);
-            if(!map.has(item.date)){
-                map.set(item.date, true);
+            if(!map.has(item.date.substring(0, 10))){
+                map.set(item.date.substring(0, 10), true);
                 let prevDate = j === 0 ? null : new Date(inRange[j - 1].date.substring(0, 10));
                 const currDate = item.date.substring(0, 10);
                 while (prevDate !== null && Moment(prevDate.getTime() + 86400000).format('MM/DD/YYYY') !== currDate) {
-                    prevDate = new Date(prevDate.getTime() + 86400000);
+                    console.log('separation: prevDate = ', Moment(prevDate.getTime() + 86400000).format('MM/DD/YYYY'), ', currDate = ', currDate);
                     inRange.push({
-                        date: Moment(prevDate.getTime()).format('MM/DD/YYYY'),
+                        date: Moment(prevDate.getTime()).format('MM/DD/YYYY') + ' 00:00:00',
                         details: '[]',
                     });
+                    map.set(Moment(prevDate.getTime()).format('MM/DD/YYYY'), true);
+                    prevDate = new Date(prevDate.getTime() + 86400000);
+                    j++;
                 }
                 inRange.push({
                     date: item.date,
@@ -214,7 +216,7 @@ export default function MainPage(props) {
             }
         }
         inRange.reverse();//put latest day at end
-        console.log('inRange1 = ', inRange);
+        console.log('inRange1 = ', inRange, ', map = ', map);
 
         function custom_sort(a, b) {
             return (new Date(a.start_day_and_time).getHours() + (new Date(a.start_day_and_time).getMinutes() / 60))
