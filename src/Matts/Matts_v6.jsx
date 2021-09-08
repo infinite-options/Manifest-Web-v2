@@ -192,14 +192,25 @@ export default function MainPage(props) {
         //now temp has data we want
         // move temp to inRange with no repeats
         const map = new Map();
+        let j = 0;
         for (const item of temp){
             console.log('temp1.1: item = ', item);
             if(!map.has(item.date)){
                 map.set(item.date, true);
+                let prevDate = j === 0 ? null : new Date(inRange[j - 1].date.substring(0, 10));
+                const currDate = item.date.substring(0, 10);
+                while (prevDate !== null && Moment(prevDate.getTime() + 86400000).format('MM/DD/YYYY') !== currDate) {
+                    prevDate = new Date(prevDate.getTime() + 86400000);
+                    inRange.push({
+                        date: Moment(prevDate.getTime()).format('MM/DD/YYYY'),
+                        details: '[]',
+                    });
+                }
                 inRange.push({
                     date: item.date,
                     details: item.details
                 })
+                j++;
             }
         }
         inRange.reverse();//put latest day at end
@@ -211,26 +222,17 @@ export default function MainPage(props) {
         }
 
         //bigList will hold new data format sidewase
-        var bigList = [];       
-        // for (var d = (inRange.length - 1); d >= 0; d--){
+        var bigList = [];
         for (var d = 0; d < inRange.length; d++){   
             const obj = JSON.parse(inRange[d].details)
 
             //sort obj by time of day
             obj.sort(custom_sort);
             for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
-                // console.log(r);
-                if (obj[r].title === 'DP - Test routine 2 (repeats)') {
-                    console.log('start obj[r] = ', obj[r]);
-                }
                 if(obj[r].routine){
-                    // console.log("gere");
                     var isNewR = true;
                     for (var s=0; s<bigList.length; s++){       //check through and see if this is a new routine
                         if (bigList[s].type == "Routine" && bigList[s].number == obj[r].routine){
-                            if (obj[r].title === 'DP - Test routine 2 (repeats)') {
-                                console.log(obj[r].days, ', d = ', d, 'start obj[r].days = ');
-                            }
                             bigList[s].days[d] = obj[r].status;   //if already there- just update that day status
                             isNewR = false;
                             break;
@@ -289,12 +291,6 @@ export default function MainPage(props) {
                             }
                         }
                     }
-                    
-
-                }
-
-                if (obj[r].title === 'DP - Test routine 2 (repeats)') {
-                    console.log('end obj[r] = ', obj[r]);
                 }
             }
         }
@@ -304,13 +300,22 @@ export default function MainPage(props) {
         console.log('BIGLIST data before = ', bigList);
         bigList = addCircles(bigList);
         console.log('BIGLIST data after = ', bigList);
-        // console.log(bigList);
-       // bigList = addNames(bigList, routines);
-        // console.log(bigList);
+
+        const dateIndexMapping = {};
+        const origin = useDate.getTime();
+        for (let k = 6; k >= 0; k--)
+        {
+            const currDay = Moment(origin - 86400000 * (7 - k)).format('dddd');
+            dateIndexMapping[currDay] = 6 - k;
+        }
+
         var tempRows = [];
         for (var i=0; i< bigList.length; i++){
-            tempRows.push(createData(bigList[i].title, bigList[i].number, bigList[i].days[6], bigList[i].days[5], bigList[i].days[4], bigList[i].days[3],
-                 bigList[i].days[2], bigList[i].days[1], bigList[i].days[0], bigList[i].show, bigList[i].under, bigList[i].photo,
+            tempRows.push(createData(bigList[i].title, bigList[i].number,
+                bigList[i].days[dateIndexMapping['Sunday']], bigList[i].days[dateIndexMapping['Monday']],
+                bigList[i].days[dateIndexMapping['Tuesday']], bigList[i].days[dateIndexMapping['Wednesday']],
+                bigList[i].days[dateIndexMapping['Thursday']], bigList[i].days[dateIndexMapping['Friday']],
+                bigList[i].days[dateIndexMapping['Saturday']], bigList[i].show, bigList[i].under, bigList[i].photo,
                  bigList[i].startTime, bigList[i].endTime, bigList[i].is_sublist_available, bigList[i].type, bigList[i].is_available));
         }
         console.log(tempRows);
