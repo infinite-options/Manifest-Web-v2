@@ -947,6 +947,24 @@ export default function Home(props) {
           for (let i = 0; i < response.data.result.length; i++) {
             temp.push(response.data.result[i]);
           }
+          temp.sort((a, b) => {
+            const [a_start, b_start] = [new Date(a.gr_start_day_and_time), new Date(b.gr_start_day_and_time)];
+            const [a_end, b_end] = [new Date(a.gr_end_day_and_time), new Date(b.gr_end_day_and_time)];
+            if (a_start < b_start)
+              return -1;
+            else if (a_start > b_start)
+              return 1;
+            else {
+              if (a_end < b_end)
+                return -1;
+              else if (a_end > b_end)
+                return 1;
+            }
+
+            return 0;
+          });
+
+          console.log('homeTemp = ', temp);
 
           setGetGoalsEndPoint(temp);
           if (response.data.result && response.data.result.length !== 0) {

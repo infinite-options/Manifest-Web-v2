@@ -500,7 +500,7 @@ export default class WeekRoutines extends Component {
                       style={{
                         zIndex: this.state.zIndex,
                         marginTop: minsToMarginTop + 'px',
-                        padding: '5px',
+                        padding: '3px',
                         fontSize: fontSize + 'px',
                         // border: '1px lightgray solid ',
                         border:
@@ -519,7 +519,6 @@ export default class WeekRoutines extends Component {
                         width: itemWidth + 'px',
                         position: 'absolute',
                         height: height + 'px',
-                        marginLeft: addmarginLeft + 'px',
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
