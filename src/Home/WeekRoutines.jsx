@@ -532,21 +532,20 @@ export default class WeekRoutines extends Component {
                           width: '13px',
                           height: '13px',
                           backgroundImage:
-                        arr[i].is_complete === true
-                          ? (curr_year === comp_year && curr_month === comp_month &&
-                          curr_day === comp_day) ? `url(${yelloTick})`
-                          : arr[i].is_in_progress === true
-                          ? `url(${greenTick})`
-                          : '' : '',
+                            (curr_year === comp_year && curr_month === comp_month &&
+                              curr_day === comp_day) ? arr[i].is_in_progress === true ?
+                                `url(${yelloTick})` : arr[i].is_complete === true ?
+                                  `url(${greenTick})` : ''
+                                : ''
+                        //   backgroundImage:
                         // arr[i].is_complete === true
-                        //   ? (curDate2.format('Y') < (today.getYear() + 1900) || (curDate2.format('Y') >= today.getYear() + 1900 &&
-                        //   curDate2.format('M') < today.getMonth() + 1) || (curDate2.format('Y') >= today.getYear() + 1900 &&
-                        //   curDate2.format('M') >= (today.getMonth() + 1) && curDate2.format('D') <= today.getDate())) ? `url(${yelloTick})`
-                        //   : arr[i].is_in_progress === true
-                        //   ? `url(${greenTick})`
+                        //   ? (curr_year === comp_year && curr_month === comp_month &&
+                        //   curr_day === comp_day) ? arr[i].is_in_progress === true ?
+                        //   `url(${yelloTick})` : `url(${greenTick})`
                         //   : '' : '',
                         }}
-                      ></div>
+                      >
+                      </div>
                     </div>
                   </div>
                 );
