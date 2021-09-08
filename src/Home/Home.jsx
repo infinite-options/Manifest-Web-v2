@@ -39,7 +39,6 @@ import DayRoutines from './DayRoutines.jsx';
 import WeekRoutines from './WeekRoutines.jsx';
 import userContext from './userContext';
 
-import { Navigation } from './navigation';
 import EditRTSContext from './EditRTS/EditRTSContext';
 import EditRTS from './EditRTS/EditRTS';
 

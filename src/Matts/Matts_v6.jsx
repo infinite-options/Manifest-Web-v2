@@ -67,10 +67,10 @@ const useStyles = makeStyles({
 })
 
 export default function MainPage(props) {
-//    const { profile, setProfile } = useContext(AuthContext);
-//    console.log(props.location.state);
-//    console.log(props.location.routines);
-//    console.log(props.routines);
+    //    const { profile, setProfile } = useContext(AuthContext);
+    //    console.log(props.location.state);
+    //    console.log(props.location.routines);
+    //    console.log(props.routines);
 
     console.log('here test');
     //----Change these commented lines to get userID from state being passed in/
@@ -120,15 +120,16 @@ export default function MainPage(props) {
     
     
     useEffect(() => {
+        console.log('history1');
         axios.get(BASE_URL + "getHistory/" + currentUser)
         .then((response) =>{
-            console.log(response);
+            console.log('getHistory response = ', response.data);
             for(var i=0; i <response.data.result.length; i++){
                 // console.log(response.data.result[i]);
                 historyGot.push(response.data.result[i]);
             }
             // setHG(historyGot);
-            console.log(historyGot);
+            console.log('hgot = ', historyGot);
             console.log(currentDate);
             cleanData(historyGot, currentDate);
             // console.log(response.data.result[1].details);
@@ -179,6 +180,7 @@ export default function MainPage(props) {
         console.log("date:" + useDate);
         // console.log(new Date().toISOString());
         const temp = [];
+        console.log('historyGot = ', historyGot)
         for(var i=0; i <historyGot.length; i++){
             var historyDate = new Date(historyGot[i].date_affected);
             if ((historyDate.getTime() >= useDate.getTime() - 691200000)    //filter for within 7 datets
@@ -186,11 +188,12 @@ export default function MainPage(props) {
                 temp.push(historyGot[i]);
             }
         }
-        console.log(temp);
+        console.log('temp1 = ', temp);
         //now temp has data we want
         // move temp to inRange with no repeats
         const map = new Map();
         for (const item of temp){
+            console.log('temp1.1: item = ', item);
             if(!map.has(item.date)){
                 map.set(item.date, true);
                 inRange.push({
@@ -200,6 +203,7 @@ export default function MainPage(props) {
             }
         }
         inRange.reverse();//put latest day at end
+        console.log('inRange1 = ', inRange);
 
         function custom_sort(a, b) {
             return (new Date(a.start_day_and_time).getHours() + (new Date(a.start_day_and_time).getMinutes() / 60))
@@ -210,24 +214,23 @@ export default function MainPage(props) {
         var bigList = [];       
         // for (var d = (inRange.length - 1); d >= 0; d--){
         for (var d = 0; d < inRange.length; d++){   
-        const obj = JSON.parse(inRange[d].details)
-            // console.log(obj);
+            const obj = JSON.parse(inRange[d].details)
 
             //sort obj by time of day
             obj.sort(custom_sort);
             for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
-                // console.log(obj[r]);
-                if(obj[r].routine){
-                    // console.log("gotem");
-                }
-            }
-            for (var r = 0; r < obj.length; r++){           //FOR ROUTINES
                 // console.log(r);
+                if (obj[r].title === 'DP - Test routine 2 (repeats)') {
+                    console.log('start obj[r] = ', obj[r]);
+                }
                 if(obj[r].routine){
                     // console.log("gere");
                     var isNewR = true;
                     for (var s=0; s<bigList.length; s++){       //check through and see if this is a new routine
                         if (bigList[s].type == "Routine" && bigList[s].number == obj[r].routine){
+                            if (obj[r].title === 'DP - Test routine 2 (repeats)') {
+                                console.log(obj[r].days, ', d = ', d, 'start obj[r].days = ');
+                            }
                             bigList[s].days[d] = obj[r].status;   //if already there- just update that day status
                             isNewR = false;
                             break;
@@ -289,13 +292,18 @@ export default function MainPage(props) {
                     
 
                 }
+
+                if (obj[r].title === 'DP - Test routine 2 (repeats)') {
+                    console.log('end obj[r] = ', obj[r]);
+                }
             }
         }
         
         setRows([]);
-        console.log("ROWS" + rows);
-        console.log({bigList});
+        console.log("ROWSdata = ", rows);
+        console.log('BIGLIST data before = ', bigList);
         bigList = addCircles(bigList);
+        console.log('BIGLIST data after = ', bigList);
         // console.log(bigList);
        // bigList = addNames(bigList, routines);
         // console.log(bigList);
@@ -313,7 +321,7 @@ export default function MainPage(props) {
     }
 
 
-// ------ just replaces days completed or not with appropriate circles to display ---------
+    // ------ just replaces days completed or not with appropriate circles to display ---------
     function addCircles(bigList){
         for (var i=0; i< bigList.length; i++){
             for(var d=0; d<bigList[i].days.length; d++){
@@ -391,14 +399,9 @@ export default function MainPage(props) {
             }
             return false;
         }
-    }
+    }   
 
-    
-
-
-   
-
-// --------   when routine is clicked on. set children show to true, re-render with setRows ----------
+    // --------   when routine is clicked on. set children show to true, re-render with setRows ----------
     function clickHandle(number){
         console.log(rows);
         var newRows = [];
@@ -434,7 +437,7 @@ export default function MainPage(props) {
     }
 
 
-// -------    returns shortened version of rows with only those with show true ----------------------
+    // -------    returns shortened version of rows with only those with show true ----------------------
     function onlyAllowed(){
         var newRows = [];
         for (var r=0; r < rows.length; r ++){
@@ -508,6 +511,7 @@ export default function MainPage(props) {
     if(childIn != ""){
         clickHandle(childIn);
     }
+
     return (
         <Container fluid padding = "0px">
             {/* <Navigation userID={currentUser} /> */}
@@ -587,22 +591,40 @@ export default function MainPage(props) {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {onlyAllowed().map((row) => (
-                                            <TableRow key={row.number} >
-                                                <TableCell align="right" height="98px">{row.sun}</TableCell>
-                                                <TableCell align="right">{row.mon}</TableCell>
-                                                <TableCell align="right">{row.tue}</TableCell>
-                                                <TableCell align="right">{row.wed}</TableCell>
-                                                <TableCell align="right">{row.thurs}</TableCell>
-                                                <TableCell align="right">{row.fri}</TableCell>
-                                                <TableCell align="right">{row.sat}</TableCell>
-                                                <TableCell align="right" component="th" scope="row"
-                                                onClick = {() => clickHandle(row.number)}
-                                                >
-                                                    
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
+                                        {onlyAllowed().map((row) => {
+                                            const origin = currentDate.getTime() - 604800000;
+                                            const msInDay = 86400000;
+                                            const weekDays = [];
+                                            for (let i = 0; i < 7; i++)
+                                            {
+                                                const dayOfWeek = Moment(origin + i * msInDay).format('dddd');
+                                                weekDays[i] = dayOfWeek === 'Thursday' ?
+                                                    'thurs' : dayOfWeek.toLowerCase().substring(0, 3);
+                                            }
+
+                                            return(
+                                                <TableRow key={row.number}>
+                                                    {weekDays.map(weekDay => <TableCell align="right" height="98px">{row[weekDay]}</TableCell>)}
+                                                    <TableCell align="right" component="th" scope="row" onClick = {() => clickHandle(row.number)} />
+                                                </TableRow>
+                                            )
+                                            // return(
+                                            //     <TableRow key={row.number}>
+                                            //         <TableCell align="right" height="98px">{row.sun}</TableCell>
+                                            //         <TableCell align="right">{row.mon}</TableCell>
+                                            //         <TableCell align="right">{row.tue}</TableCell>
+                                            //         <TableCell align="right">{row.wed}</TableCell>
+                                            //         <TableCell align="right">{row.thurs}</TableCell>
+                                            //         <TableCell align="right">{row.fri}</TableCell>
+                                            //         <TableCell align="right">{row.sat}</TableCell>
+                                            //         <TableCell align="right" component="th" scope="row"
+                                            //         onClick = {() => clickHandle(row.number)}
+                                            //         >
+                                                        
+                                            //         </TableCell>
+                                            //     </TableRow>
+                                            // )
+                                        })}
                                     </TableBody>
                                 </Table>
                             </TableContainer>
