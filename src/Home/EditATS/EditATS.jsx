@@ -398,6 +398,8 @@ const EditATS = (props) => {
                 type="date"
                 value={editingATSContext.editingATS.newItem.end_day}
                 onChange={(e) => {
+                  if (e.target.value < editingATSContext.editingATS.newItem.start_day)
+                    return;
                   editingATSContext.setEditingATS({
                     ...editingATSContext.editingATS,
                     newItem: {

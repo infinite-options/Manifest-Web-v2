@@ -481,6 +481,8 @@ const EditRTS = (props) => {
                   type="date"
                   value={editingRTSContext.editingRTS.newItem.end_day}
                   onChange={(e) => {
+                    if (e.target.value < editingRTSContext.editingRTS.newItem.start_day)
+                      return;
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {
