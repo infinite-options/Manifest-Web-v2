@@ -29,7 +29,6 @@ const EditRTS = (props) => {
     let [a_time, b_time] = [0, 0];
     if (a_parity === 'PM' && a_HMS[0] !== '12')
     {
-      console.log('loggy-1: a_HMS[0] = ', a_HMS[0], ', a_HMS[0] === "12" ? ', a_HMS[0] === '12');
       const hoursInt = parseInt(a_HMS[0]) + 12;
       a_HMS[0] = `${hoursInt}`;
     }
@@ -772,11 +771,15 @@ const EditRTS = (props) => {
                       fontSize: '12px',
                       fontWeight: 'bold',
                     }}
-                    value={ (editingRTSContext.editingRTS.newItem.repeat ===
-                      'False' ||
-                    editingRTSContext.editingRTS.newItem.repeat === false) ? 1 : editingRTSContext.editingRTS.newItem.repeat_every}
+                    value={(editingRTSContext.editingRTS.newItem.repeat === 'False' ||
+                      editingRTSContext.editingRTS.newItem.repeat === false) ?
+                      1 : editingRTSContext.editingRTS.newItem.repeat_every
+                    }
                     onChange={(e) => {
-                      if (e.target.value < 1)
+                      if ((e.target.value !== '' && e.target.value < 1) ||
+                        editingRTSContext.editingRTS.newItem.repeat === 'False' ||
+                        editingRTSContext.editingRTS.newItem.repeat === false
+                      )
                         return;
                       editingRTSContext.setEditingRTS({
                         ...editingRTSContext.editingRTS,
