@@ -389,8 +389,51 @@ export default function Firebasev2(props)  {
                         axios
                             .post(BASE_URL + 'copyGR', myObj)
                             .then(response => {
-                                console.log(response.data)
                                 toggleCopyModalConfirm(false)
+                                axios
+                                .get(BASE_URL + "getgoalsandroutines/" + currentUser)
+                                .then((response) =>{
+                                    const temp = [];
+                                    for(var i=0; i <response.data.result.length; i++){
+                                        temp.push(response.data.result[i]);
+                                    }
+                                    temp.sort((a, b) => {
+                                        const [a_start, b_start] = [new Date(a.gr_start_day_and_time), new Date(b.gr_start_day_and_time)];
+                                        const [a_end, b_end] = [new Date(a.gr_end_day_and_time), new Date(b.gr_end_day_and_time)];
+                            
+                                        const [a_start_time, b_start_time] = getTimes(a.gr_start_day_and_time, b.gr_start_day_and_time);
+                                        const [a_end_time, b_end_time] = getTimes(a.gr_end_day_and_time, b.gr_end_day_and_time);
+                            
+                                        if (a_start_time < b_start_time)
+                                          return -1;
+                                        else if (a_start_time > b_start_time)
+                                          return 1;
+                                        else {
+                                          if (a_end_time < b_end_time)
+                                            return -1;
+                                          else if (a_end_time > b_end_time)
+                                            return 1;
+                                          else {
+                                            if (a_start < b_start)
+                                              return -1;
+                                            else if (a_start > b_start)
+                                              return 1;
+                                            else {
+                                              if (a_end < b_end)
+                                                return -1;
+                                              else if (a_end > b_end)
+                                                return 1;
+                                            }
+                                          }
+                                        }
+                            
+                                        return 0;
+                                      });
+                                    props.setGetGoalsEndPoint(temp);
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                });
                             })
                             .catch(err => {
                                 console.log(err)
@@ -1284,27 +1327,27 @@ export default function Firebasev2(props)  {
                     </div> */}
 
                         <FontAwesomeIcon
-                        title="Copy Item"
-                        onMouseOver={(e) => { e.target.style.color = "#48D6D2";}}
-                        onMouseOut={(e) => {e.target.style.color = "#FFFFFF";}}
-                        style={{ color: "#FFFFFF", cursor:"pointer" }}
-                        onClick={(e) => {
-                            // console.log("On click");
-                            e.stopPropagation();
-                            // console.log("On click1");
-                            console.log(r.id, r.name)
-                            setCRN(r.gr_title)
-                            setCRID(r.gr_unique_id)
-                            setTAToCopyTo({})
-                            setPatientToCopyTo({})
-                            // console.log('test', r.name)
-                            toggleCopyModal([!showCopyModal[0], r.gr_unique_id])
-                            // toggleCopyModal2([!showCopyModal2[0], r.id])
-                            //toggleCopyPicker(!showCopyPicker)
-                            
-                        }}
-                        icon={faCopy}
-                        size="sm"
+                            title="Copy Item"
+                            onMouseOver={(e) => { e.target.style.color = "#48D6D2";}}
+                            onMouseOut={(e) => {e.target.style.color = "#FFFFFF";}}
+                            style={{ color: "#FFFFFF", cursor:"pointer" }}
+                            onClick={(e) => {
+                                // console.log("On click");
+                                e.stopPropagation();
+                                // console.log("On click1");
+                                console.log(r.id, r.name)
+                                setCRN(r.gr_title)
+                                setCRID(r.gr_unique_id)
+                                setTAToCopyTo({})
+                                setPatientToCopyTo({})
+                                // console.log('test', r.name)
+                                toggleCopyModal([!showCopyModal[0], r.gr_unique_id])
+                                // toggleCopyModal2([!showCopyModal2[0], r.id])
+                                //toggleCopyPicker(!showCopyPicker)
+                                
+                            }}
+                            icon={faCopy}
+                            size="sm"
                         />
 
                     </div>

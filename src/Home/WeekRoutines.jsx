@@ -527,13 +527,13 @@ export default class WeekRoutines extends Component {
                       <div>{arr[i].title}</div>
                       <div
                         style={{
-                          width: '13px',
+                          width: '21px',
                           height: '13px',
                           backgroundImage:
                           (curr_year === todayYear && curr_month === todayMonth &&
                             curr_day === todayDay) ? arr[i].is_in_progress === true ?
                                 `url(${yelloTick})` : arr[i].is_complete === true ?
-                                  `url(${greenTick})` : '' : ''
+                                  `url(${greenTick})` : '' : '',
                         }}
                       >
                       </div>
