@@ -91,7 +91,13 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent, allRows}) =>
     }
 
     function formatDateTime(str) {
-        let newTime = new Date(str).toLocaleTimeString();
+        let newTime = new Date(str.replace(/-/g, '/')).toLocaleTimeString();
+        newTime = newTime.substring(0, 5) + " " + newTime.slice(-2);
+        return newTime;
+    }
+
+    function formatDateTime(str) {
+        let newTime = new Date(str.replace(/-/g, '/')).toLocaleTimeString();
         newTime = newTime.substring(0, 5) + " " + newTime.slice(-2);
         return newTime;
       }
@@ -122,6 +128,7 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent, allRows}) =>
                         color:'#ffffff'
                     }}
                     >
+                    {console.log('r in vr2 = ', r)}
                     {
                         formatDateTime(
                         r["startTime"]  

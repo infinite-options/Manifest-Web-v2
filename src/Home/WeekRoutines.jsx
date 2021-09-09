@@ -527,6 +527,12 @@ export default class WeekRoutines extends Component {
                       {/* insert border change here: */}
                       <div>{arr[i].title}</div>
 
+                      {(curr_year === comp_year && curr_month === comp_month &&
+                              curr_day === comp_day) ? console.log('Completed today: arr[i].is_in_progress === true ?', arr[i].is_in_progress === true,
+                              ', arr[i].is_complete === true ? ', arr[i].is_complete === true) : ''}
+                      {arr[i].title === 'DP - Test routine 2.5 (repeats)' ? console.log('gemini: arr[i] = ', arr[i]) : ''}
+                      {arr[i].title === 'DP - Test routine 5 (midnight)' ? console.log('alpha: arr[i] = ', arr[i]) : ''}
+                      {arr[i].title === 'DP - Test routine 6 (end on midnight)' ? console.log('beta: arr[i] = ', arr[i]) : ''}
                       <div
                         style={{
                           width: '13px',
@@ -537,12 +543,6 @@ export default class WeekRoutines extends Component {
                                 `url(${yelloTick})` : arr[i].is_complete === true ?
                                   `url(${greenTick})` : ''
                                 : ''
-                        //   backgroundImage:
-                        // arr[i].is_complete === true
-                        //   ? (curr_year === comp_year && curr_month === comp_month &&
-                        //   curr_day === comp_day) ? arr[i].is_in_progress === true ?
-                        //   `url(${yelloTick})` : `url(${greenTick})`
-                        //   : '' : '',
                         }}
                       >
                       </div>

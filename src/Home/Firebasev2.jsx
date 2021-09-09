@@ -1056,7 +1056,7 @@ export default function Firebasev2(props)  {
         let newTime = new Date(str.replace(/-/g, '/')).toLocaleTimeString();
         newTime = newTime.substring(0, 5) + " " + newTime.slice(-2);
         return newTime;
-      }
+    }
 
     //when clicking the subroutines button
     function clickHandle(name){
