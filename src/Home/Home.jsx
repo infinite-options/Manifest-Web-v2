@@ -933,6 +933,40 @@ export default function Home(props) {
     // console.log('base url ', url);
     // console.log('base url id ', userID);
 
+    const getTimes = (a_day_time, b_day_time) => {
+      const [a_start_time, b_start_time] = [a_day_time.substring(10, a_day_time.length), b_day_time.substring(10, b_day_time.length)];
+      const [a_HMS, b_HMS] = [a_start_time.substring(0, a_start_time.length - 3).replace(/\s{1,}/, '').split(':'),
+        b_start_time.substring(0, b_start_time.length - 3).replace(/\s{1,}/, '').split(':')];
+      const [a_parity, b_parity] = [a_start_time.substring(a_start_time.length - 3, a_start_time.length).replace(/\s{1,}/, ''),
+        b_start_time.substring(b_start_time.length - 3, b_start_time.length).replace(/\s{1,}/, '')];
+      
+      let [a_time, b_time] = [0, 0];
+      if (a_parity === 'PM' && a_HMS[0] !== '12')
+      {
+        console.log('loggy-1: a_HMS[0] = ', a_HMS[0], ', a_HMS[0] === "12" ? ', a_HMS[0] === '12');
+        const hoursInt = parseInt(a_HMS[0]) + 12;
+        a_HMS[0] = `${hoursInt}`;
+      }
+      else if (a_parity === 'AM' && a_HMS[0] === '12')
+        a_HMS[0] = '00';
+
+      if (b_parity === 'PM' && b_HMS[0] !== '12')
+      {
+        const hoursInt = parseInt(b_HMS[0]) + 12;
+        b_HMS[0] = `${hoursInt}`;
+      }
+      else if (b_parity === 'AM' && b_HMS[0] === '12')
+        b_HMS[0] = '00';
+
+      for (let i = 0; i < a_HMS.length; i++)
+      {
+        a_time += Math.pow(60, (a_HMS.length - i - 1)) * parseInt(a_HMS[i]);
+        b_time += Math.pow(60, (b_HMS.length - i - 1)) * parseInt(b_HMS[i]);
+      }
+      
+      return [a_time, b_time];
+    };
+
     useEffect(() => {
       if (userID == '')
         return;
@@ -950,15 +984,31 @@ export default function Home(props) {
           temp.sort((a, b) => {
             const [a_start, b_start] = [new Date(a.gr_start_day_and_time), new Date(b.gr_start_day_and_time)];
             const [a_end, b_end] = [new Date(a.gr_end_day_and_time), new Date(b.gr_end_day_and_time)];
-            if (a_start < b_start)
+
+            const [a_start_time, b_start_time] = getTimes(a.gr_start_day_and_time, b.gr_start_day_and_time);
+            const [a_end_time, b_end_time] = getTimes(a.gr_end_day_and_time, b.gr_end_day_and_time);
+
+            if (a_start_time < b_start_time)
               return -1;
-            else if (a_start > b_start)
+            else if (a_start_time > b_start_time)
               return 1;
             else {
-              if (a_end < b_end)
+              if (a_end_time < b_end_time)
                 return -1;
-              else if (a_end > b_end)
+              else if (a_end_time > b_end_time)
                 return 1;
+              else {
+                if (a_start < b_start)
+                  return -1;
+                else if (a_start > b_start)
+                  return 1;
+                else {
+                  if (a_end < b_end)
+                    return -1;
+                  else if (a_end > b_end)
+                    return 1;
+                }
+              }
             }
 
             return 0;
