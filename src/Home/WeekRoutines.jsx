@@ -418,7 +418,7 @@ export default class WeekRoutines extends Component {
                 (tempStartTime.getMinutes() / 60) *
                 this.state.pxPerHourForConversion;
               let hourDiff = tempEndTime.getHours() - tempStartTime.getHours();
-              let minDiff = tempEndTime.getMinutes() / 60;
+              let minDiff = tempEndTime.getMinutes() / 60 - tempStartTime.getMinutes() / 60;
               let color = 'PaleTurquoise';
               let height =
                 (hourDiff + minDiff) * this.state.pxPerHourForConversion;
