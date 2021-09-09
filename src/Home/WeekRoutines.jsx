@@ -101,12 +101,9 @@ export default class WeekRoutines extends Component {
           if (CurrentDate >= startDate) {
             if (repeatEnds == 'On') {
               // repeatEndsOn.setDate(arr[i]["repeat_ends_on"])
-            } else if (repeatEnds == 'After') {
+            } else if (repeatEnds == 'Occur') {
               if (repeatFrequency == 'Day') {
                 repeatEndsOn = new Date(startDate);
-                // console.log(startDate.getDate())
-                // console.log(repeatOccurences, repeatEvery)
-                // console.log( repeatEndsOn.setDate(startDate.getDate() + (repeatOccurences-1)*repeatEvery))
                 repeatEndsOn.setDate(
                   tempStartTime.getDate() + (repeatOccurences - 1) * repeatEvery
                 );
@@ -264,7 +261,7 @@ export default class WeekRoutines extends Component {
       } else {
         if (CurrentDate >= startDate2) {
           if (repeatEnds == 'On') {
-          } else if (repeatEnds == 'After') {
+          } else if (repeatEnds == 'Occur') {
             if (repeatFrequency == 'Day') {
               repeatEndsOn = new Date(startDate2);
               repeatEndsOn.setDate(

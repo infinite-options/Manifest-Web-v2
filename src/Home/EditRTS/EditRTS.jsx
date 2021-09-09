@@ -914,6 +914,7 @@ const EditRTS = (props) => {
                         });
                       }}
                     />
+                    {console.log('newItem: ', editingRTSContext.editingRTS.newItem)}
                     <div style={{ float: 'left', width: '20%' }}>After</div>
                     <input
                       style={{
