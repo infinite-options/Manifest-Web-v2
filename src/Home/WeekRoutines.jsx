@@ -465,8 +465,20 @@ export default class WeekRoutines extends Component {
                 // );
                 const [comp_year, comp_month, comp_day] = [parseInt(arr[i].datetime_completed.substring(0, 4)),
                   parseInt(arr[i].datetime_completed.substring(5, 7)), parseInt(arr[i].datetime_completed.substring(8, 10))];
+                const [todayYear, todayMonth, todayDay] = [today.getFullYear(), today.getMonth() + 1, today.getDate()];
+                console.log(`Today: ${todayMonth}/${todayDay}/${todayYear}`);
+                // const [started_year, started_month, started_day] = [parseInt(arr[i].datetime_started.substring(0, 4)),
+                //   parseInt(arr[i].datetime_started.substring(5, 7)), parseInt(arr[i].datetime_started.substring(8, 10))];
                 const [curr_year, curr_month, curr_day] = [parseInt(curDate2.format('Y')),
                   parseInt(curDate2.format('M')), parseInt(curDate2.format('D'))];
+                  if (curr_year === todayYear && curr_month === todayMonth &&
+                    curr_day === todayDay) {
+                      console.log('gemmy: ', `Today: ${todayMonth}/${todayDay}/${todayYear}`, `curr: ${curr_month}/${curr_day}/${curr_year}`)
+                    }
+                    console.log(`curr: ${curr_month}/${curr_day}/${curr_year}`);
+                  console.log('Months: curr_month = ', curr_month, ', todayMonth = ', todayMonth);
+                  console.log('Dates-Years: curr_date = ', curr_day, ', todayDay = ', todayDay, ', ', 'Years: curr_Year = ', curr_year, ', todayYear = ', todayYear);
+                  console.log('Years: curr_Year = ', curr_year, ', todayYear = ', todayYear);
                 console.log('completed ', `${comp_year}-${comp_month}-${comp_day}. curr ${curr_year}-${curr_month}-${curr_day}`)
                 let newElement = (
                   <div key={'event' + i}>
@@ -535,11 +547,16 @@ export default class WeekRoutines extends Component {
                           width: '13px',
                           height: '13px',
                           backgroundImage:
-                            (curr_year === comp_year && curr_month === comp_month &&
-                              curr_day === comp_day) ? arr[i].is_in_progress === true ?
+                          (curr_year === todayYear && curr_month === todayMonth &&
+                            curr_day === todayDay) ? arr[i].is_in_progress === true ?
                                 `url(${yelloTick})` : arr[i].is_complete === true ?
-                                  `url(${greenTick})` : ''
-                                : ''
+                                  `url(${greenTick})` : '' : ''
+                          // backgroundImage:
+                            // (curr_year === comp_year && curr_month === comp_month &&
+                            //   curr_day === comp_day) ? arr[i].is_in_progress === true ?
+                          //       `url(${yelloTick})` : arr[i].is_complete === true ?
+                          //         `url(${greenTick})` : ''
+                          //       : ''
                         }}
                       >
                       </div>
