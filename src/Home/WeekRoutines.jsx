@@ -470,6 +470,17 @@ export default class WeekRoutines extends Component {
                 //   parseInt(arr[i].datetime_started.substring(5, 7)), parseInt(arr[i].datetime_started.substring(8, 10))];
                 const [curr_year, curr_month, curr_day] = [parseInt(curDate2.format('Y')),
                   parseInt(curDate2.format('M')), parseInt(curDate2.format('D'))];
+                
+                const start_time = arr[i].start_day_and_time.substring(11).split(/[:\s+]/);
+                // Need to strip trailing zeros because the data in the database
+                // is inconsistent about this
+                if (start_time[0][0] == '0')
+                    start_time[0] = start_time[0][1];
+                const end_time = arr[i].end_day_and_time.substring(11).split(/[:\s+]/);
+                // Need to strip trailing zeros because the data in the database
+                // is inconsistent about this
+                if (end_time[0][0] == '0')
+                    end_time[0] = end_time[0][1];
                 let newElement = (
                   <div key={'event' + i}>
                     <div
@@ -510,7 +521,7 @@ export default class WeekRoutines extends Component {
                         borderRadius: '10px',
                         background:
                         curDate2.format('D') === today.getDate().toString() & curDate2.format('M') === (today.getMonth()+1).toString()
-                        ? '#FF6B4A'
+                        ? JSON.stringify(start_time) !== JSON.stringify(end_time) ? '#FF6B4A' : '#9b4aff'
                       
                             : arr[i].is_complete
                             ? '#BBC7D7'
