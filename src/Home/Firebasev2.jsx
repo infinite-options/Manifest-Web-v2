@@ -1220,8 +1220,16 @@ export default function Firebasev2(props)  {
     
     function displayRoutines(r){
         const ret = getIsAvailableFromGR(r)
-        console.log('getGoalsEndPoint = ', props.getGoalsEndPoint, '\nr = ', r);
-     //   if (ret == 'E') {
+        const start_time = r.gr_start_day_and_time.substring(11).split(/[:\s+]/);
+        // Need to strip trailing zeros because the data in the database
+        // is inconsistent about this
+        if (start_time[0][0] == '0')
+            start_time[0] = start_time[0][1];
+        const end_time = r.gr_end_day_and_time.substring(11).split(/[:\s+]/);
+        // Need to strip trailing zeros because the data in the database
+        // is inconsistent about this
+        if (end_time[0][0] == '0')
+            end_time[0] = end_time[0][1];
         return(
             <ListGroup.Item
                 key={r.gr_unique_id}
@@ -1232,9 +1240,20 @@ export default function Firebasev2(props)  {
                   }}
             >
                 <div style={{ display:'flex', justifyContent:'space-between' }}>
-                <div flex='1' style={{marginLeft:'1rem', height:'4.5rem', borderRadius:'10px',width:'65%', display:'flex', justifyContent:'space-between', backgroundColor:'#FF6B4A', boxShadow:
-                    "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.09)",
-                zIndex:'50%'}}>
+                <div
+                    flex='1'
+                    style={{
+                        marginLeft:'1rem',
+                        height:'4.5rem',
+                        borderRadius:'10px',
+                        width:'65%',
+                        display:'flex',
+                        justifyContent:'space-between',
+                        backgroundColor: JSON.stringify(start_time) !== JSON.stringify(end_time) ? '#FF6B4A' : '#9b4aff',
+                        boxShadow: "0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.09)",
+                        zIndex:'50%'
+                    }}
+                >
                 <div flex='1' style={{marginTop:'0.5rem', display:'flex', flexDirection:'column', justifyContent:'flex-start' }} >
                 <div style={{ marginLeft:'1rem'}} >
                 { r.gr_start_day_and_time && r.gr_end_day_and_time  ? (

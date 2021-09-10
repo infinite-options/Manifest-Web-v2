@@ -151,7 +151,7 @@ export default function AboutModal(props) {
       .get(url + userID) //this.props.theCurrentUserId)
       .then((response) => {
         if (response.data.result.length !== 0) {
-          console.log(response)
+          console.log('aboutMe res = ', response.data.result);
           let details = response.data.result[0];
 
           let x = {
