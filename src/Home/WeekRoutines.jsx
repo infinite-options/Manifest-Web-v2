@@ -520,12 +520,9 @@ export default class WeekRoutines extends Component {
                         float: 'left',
                         borderRadius: '10px',
                         background:
-                        curDate2.format('D') === today.getDate().toString() & curDate2.format('M') === (today.getMonth()+1).toString()
-                        ? JSON.stringify(start_time) !== JSON.stringify(end_time) ? '#FF6B4A' : '#9b4aff'
-                      
-                            : arr[i].is_complete
-                            ? '#BBC7D7'
-                            : 'lightslategray',
+                          JSON.stringify(start_time) === JSON.stringify(end_time) ?  '#9b4aff' :
+                            curDate2.format('D') === today.getDate().toString() & curDate2.format('M') === (today.getMonth()+1).toString() ?
+                              '#FF6B4A' : arr[i].is_complete ? '#BBC7D7' : 'lightslategray',
                         width: itemWidth + 'px',
                         position: 'absolute',
                         height: height + 'px',
