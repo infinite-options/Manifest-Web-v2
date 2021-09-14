@@ -391,9 +391,10 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent, allRows}) =>
     }
 
     function getPercent (x){
-            var total = getTotalAndDone(x)[0];
-            var done = getTotalAndDone(x)[1];
-            return(Math.round((done/total)*100) + "%");
+        var total = getTotalAndDone(x)[0];
+        var done = getTotalAndDone(x)[1];
+        const pct = Math.round((done/total)*100) + "%";
+        return(pct === "NaN%" ? "-%" : pct);
     }
 
     function getBelowPercent(x){
@@ -409,7 +410,8 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent, allRows}) =>
         if(total === 0){
             return("");
         }
-        return(Math.round((done/total)*100) + "%");
+        const pct = Math.round((done/total)*100) + "%";
+        return(pct === "NaN%" ? "-%" : pct);
     }
 
     function getDoubleBelowPercent(x){
@@ -429,7 +431,8 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent, allRows}) =>
             return("");
         }
         console.log("total", total,"done",done);
-        return(Math.round((done/total)*100) + "%");
+        const pct = Math.round((done/total)*100) + "%";
+        return(pct === "NaN%" ? "-%" : pct);
     }
 
     function getTotalAndDone(x){
