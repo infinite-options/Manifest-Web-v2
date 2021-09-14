@@ -68,6 +68,13 @@ const EditRTS = (props) => {
     console.log('propsrts: ', props);
     // Get start_day_and_time
     const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
+    const end_day_and_time_simple_string = `${object.end_day} ${object.end_time}:00`;
+    if (end_day_and_time_simple_string < start_day_and_time_simple_string)
+    {
+      alert("Routine must not end before it starts. Update the date and/or time of the routine.");
+      return;
+    }
+    console.log('obj.start = ', start_day_and_time_simple_string);
     //const start_day_and_time_string = new Date(start_day_and_time_simple_string).toString();
     const convertedStartTime = moment(start_day_and_time_simple_string).format(
       'LTS'
@@ -89,7 +96,6 @@ const EditRTS = (props) => {
     delete object.notification;
    // object.is_available = 'True';
     // Get end_day_and_time
-    const end_day_and_time_simple_string = `${object.end_day} ${object.end_time}:00`;
 
     console.log('end day', object.end_day);
     console.log('end time', object.end_time);
