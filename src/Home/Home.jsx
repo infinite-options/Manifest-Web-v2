@@ -982,8 +982,10 @@ export default function Home(props) {
             temp.push(response.data.result[i]);
           }
           temp.sort((a, b) => {
-            const [a_start, b_start] = [new Date(a.gr_start_day_and_time), new Date(b.gr_start_day_and_time)];
-            const [a_end, b_end] = [new Date(a.gr_end_day_and_time), new Date(b.gr_end_day_and_time)];
+            console.log('a = ', a, '\nb = ', b);
+            const [a_start, b_start] = [a.gr_start_day_and_time, b.gr_start_day_and_time];
+            console.log('a_start = ', a_start, '\nb_start = ', b_start);
+            const [a_end, b_end] = [a.gr_end_day_and_time, b.gr_end_day_and_time];
 
             const [a_start_time, b_start_time] = getTimes(a.gr_start_day_and_time, b.gr_start_day_and_time);
             const [a_end_time, b_end_time] = getTimes(a.gr_end_day_and_time, b.gr_end_day_and_time);

@@ -87,6 +87,8 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent, allRows}) =>
             }
             else {tempRows.push(displayInstructions(onlyAllowed[i]))}
         }
+        console.log("tempRows = ", tempRows);
+        console.log("onlyAllowed = ", onlyAllowed);
         setRows(tempRows);
     }
 
