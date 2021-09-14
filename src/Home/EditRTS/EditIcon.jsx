@@ -84,6 +84,7 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
         style={{ color: '#ffffff', cursor:'pointer' }}
         icon={faEdit}
         onClick={(e) => {
+          console.log('logpog2');
           e.stopPropagation();
           //  setroutineCall(!routineCall)
 
@@ -95,6 +96,7 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
                 step
             )
             .then((response) => {
+              console.log('logpog3');
               let temp = [];
               console.log('in click editicon');
               // console.log("routineGet", response)
@@ -116,7 +118,7 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
                 routine.id
               );
               console.log(getGoalsEndPoint[0].repeat);
-              var itemToChange;
+              let itemToChange;
               for (var k = 0; k < getGoalsEndPoint.length; k++) {
                 if (routine.gr_unique_id === getGoalsEndPoint[k].gr_unique_id) {
                   itemToChange = getGoalsEndPoint[k];
@@ -158,12 +160,13 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
               const numMins = convertTimeLengthToMins(expectedCompletionTime);
               itemToChange.numMins = numMins;
               delete itemToChange.gr_expected_completion_time;
+              console.log('itemToChange = ', itemToChange);
               console.log(
                 'itemToChange',
                 itemToChange.notifications[0].after_message
               );
               console.log(itemToChange);
-
+              console.log('logpog4: newItem = ', editingRTSContext.editingRTS.newItem);
               editingRTSContext.setEditingRTS({
                 ...editingRTSContext.editingRTS,
                 editing:
@@ -210,10 +213,10 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
                     before: {
                       ...editingRTSContext.editingRTS.newItem.user_notifications
                         .after,
-                      message: itemToChange.notifications[0].before_message,
+                      message: itemToChange.notifications[1].before_message,
                       is_enabled:
-                        itemToChange.notifications[0].before_is_enable,
-                      time: itemToChange.notifications[0].before_time,
+                        itemToChange.notifications[1].before_is_enable,
+                      time: itemToChange.notifications[1].before_time,
                     },
                     during: {
                       ...editingRTSContext.editingRTS.newItem.user_notifications
@@ -228,12 +231,13 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
                         .after,
                       message: itemToChange.notifications[1].after_message,
                       is_enabled: itemToChange.notifications[1].after_is_enable,
-                      time: itemToChange.notifications[0].after_time,
+                      time: itemToChange.notifications[1].after_time,
                     },
                   },
                   ...itemToChange,
                 },
               });
+              console.log('logpog5: newItem = ', editingRTSContext.editingRTS.newItem);
 
               // testing
             })

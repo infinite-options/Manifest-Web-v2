@@ -9,6 +9,7 @@ import UploadImage from '../UploadImage';
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const EditRTS = (props) => {
+  console.log('logpog1');
   const editingRTSContext = useContext(EditRTSContext);
 
   const [photo, setPhoto] = useState(
@@ -584,7 +585,9 @@ const EditRTS = (props) => {
                   type="date"
                   value={editingRTSContext.editingRTS.newItem.end_day}
                   onChange={(e) => {
-                    if (e.target.value < editingRTSContext.editingRTS.newItem.start_day)
+                    console.log("e.tar.val = ", e.target.value);
+                    const year = parseInt(e.target.value.substring(0, 4));
+                    if (e.target.value < editingRTSContext.editingRTS.newItem.start_day && year > 1000)
                       return;
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
@@ -1103,6 +1106,7 @@ const EditRTS = (props) => {
                       .time
                   }
                   onChange={(e) => {
+                    console.log('loggywoggy1');
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {
@@ -1137,6 +1141,8 @@ const EditRTS = (props) => {
                   marginLeft: '20px',
                 }}
               >
+                {console.log('loggy-user2: userNotifs.before = ', editingRTSContext.editingRTS.newItem.user_notifications.before)}
+                {console.log('loggy-ta3: taNotifs.before = ', editingRTSContext.editingRTS.newItem.ta_notifications.before)}
                 User &nbsp;
                 <input
                   type="checkbox"
@@ -1147,6 +1153,7 @@ const EditRTS = (props) => {
                       .before.is_enabled !== false
                   }
                   onChange={(e) => {
+                    console.log('loggywoggy2');
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {
@@ -1178,6 +1185,7 @@ const EditRTS = (props) => {
                       .before.message
                   }
                   onChange={(e) => {
+                    console.log('loggywoggy3');
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {
@@ -1212,6 +1220,7 @@ const EditRTS = (props) => {
                       .is_enabled !== false
                   }
                   onChange={(e) => {
+                    console.log('loggywoggy4');
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {
@@ -1243,6 +1252,7 @@ const EditRTS = (props) => {
                       .message
                   }
                   onChange={(e) => {
+                    console.log('loggywoggy5');
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {

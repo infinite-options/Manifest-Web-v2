@@ -623,6 +623,9 @@ export default function Home(props) {
   const [editingATS, setEditingATS] = useState(initialEditingATSState);
   const [editingIS, setEditingIS] = useState(initialEditingISState);
 
+  useEffect(() => console.log('logpog0: user_notifs.before = ', editingRTS.newItem.user_notifications.before), [editingRTS.newItem.user_notifications.before]);
+  useEffect(() => console.log('loggy-ta5: ta_notifs = ', editingRTS.newItem.ta_notifications.before), [editingRTS.newItem.ta_notifications.before]);
+
   // console.log(calendarView);
   /*----------------------------Custom Hook to make styles----------------------------*/
   const useStyles = makeStyles({
