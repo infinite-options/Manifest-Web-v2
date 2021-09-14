@@ -84,7 +84,6 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
         style={{ color: '#ffffff', cursor:'pointer' }}
         icon={faEdit}
         onClick={(e) => {
-          console.log('logpog2');
           e.stopPropagation();
           //  setroutineCall(!routineCall)
 
@@ -96,7 +95,6 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
                 step
             )
             .then((response) => {
-              console.log('logpog3');
               let temp = [];
               console.log('in click editicon');
               // console.log("routineGet", response)
@@ -166,7 +164,6 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
                 itemToChange.notifications[0].after_message
               );
               console.log(itemToChange);
-              console.log('logpog4: newItem = ', editingRTSContext.editingRTS.newItem);
               editingRTSContext.setEditingRTS({
                 ...editingRTSContext.editingRTS,
                 editing:
@@ -237,7 +234,6 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
                   ...itemToChange,
                 },
               });
-              console.log('logpog5: newItem = ', editingRTSContext.editingRTS.newItem);
 
               // testing
             })

@@ -130,7 +130,6 @@ export default function Firebasev2(props)  {
         let [a_time, b_time] = [0, 0];
         if (a_parity === 'PM' && a_HMS[0] !== '12')
         {
-          console.log('loggy-1: a_HMS[0] = ', a_HMS[0], ', a_HMS[0] === "12" ? ', a_HMS[0] === '12');
           const hoursInt = parseInt(a_HMS[0]) + 12;
           a_HMS[0] = `${hoursInt}`;
         }
@@ -384,7 +383,7 @@ export default function Firebasev2(props)  {
                             ta_id: taToCopyTo.ta_unique_id
                         }
 
-                        console.log(myObj)
+                        console.log('myObj = ', myObj);
 
                         axios
                             .post(BASE_URL + 'copyGR', myObj)
