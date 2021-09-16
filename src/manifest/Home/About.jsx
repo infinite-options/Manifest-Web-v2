@@ -294,12 +294,14 @@ export default function AboutModal(props) {
   const tzMap = {
     'Pacific/Samoa': '(GMT-11:00)',
     'America/Honolulu': '(GMT-10:00)',
+    'Pacific/Marquesas': '(GMT-09:30)',
     'America/Juneau': '(GMT-09:00)',
     'America/Los_Angeles': '(GMT-08:00)',
     'America/Phoenix': '(GMT-07:00)',
     'America/Chicago': '(GMT-06:00)',
     'America/New_York': '(GMT-05:00)',
     'America/Puerto_Rico':'(GMT-04:00)',
+    'Canada/Newfoundland': '(GMT-03:30)',
     'America/Buenos_Aires': '(GMT-03:00)',
     'America/Noronha': '(GMT-02:00)',
     'Atlantic/Azores': '(GMT-01:00)',
@@ -307,15 +309,23 @@ export default function AboutModal(props) {
     'Europe/Berlin': '(GMT+01:00)',
     'Asia/Jerusalem': '(GMT+02:00)',
     'Europe/Moscow': '(GMT+03:00)',
+    'Asia/Tehran': '(GMT+03:30)',
     'Asia/Dubai': '(GMT+04:00)',
+    'Asia/Kabul': '(GMT+04:30)',
     'Asia/Karachi': '(GMT+05:00)',
+    'Asia/Calcutta': '(GMT+05:30)',
     'Asia/Almaty': '(GMT+06:00)',
+    'Indian/Cocos': '(GMT+06:30)',
     'Asia/Bangkok': '(GMT+07:00)',
     'Asia/Hong_Kong': '(GMT+08:00)',
     'Asia/Tokyo': '(GMT+09:00)',
+    'Australia/Darwin': '(GMT+09:30)',
     'Australia/Brisbane': '(GMT+10:00)',
+    'Australia/Lord_How': '(GMT+10:30)',
     'Asia/Magadan': '(GMT+11:00)',
     'Pacific/Fiji': '(GMT+12:00)',
+    'Pacific/Apia': '(GMT+13:00)',
+    'Pacific/Kiritimati': '(GMT+14:00)',
   };
   const tzList2 = [];
   for (let i = -8; i <= 8; i++)
@@ -563,8 +573,8 @@ export default function AboutModal(props) {
     let body = {
       user_id : userID,
       //ta_people_id: selectedTAid,
-      name: addPersonName,
-      relationship: "",
+      name: taObject.name,
+      relationship: taObject.relationship,
       important:"TRUE",
       picture: "",
       photo_url:photo,
@@ -655,7 +665,7 @@ export default function AboutModal(props) {
   } 
 
   const editPersonModal = (taObject) => {
-    if (editPerson) {
+    if (editPerson || addPerson) {
       return (
         <div
           style={{
@@ -898,7 +908,8 @@ export default function AboutModal(props) {
                 marginRight: "10%"
               }}
               onClick = {() => {
-                setPerson(false)
+                setPerson(false);
+                setAddPerson(false);
               }}
               >
                 Cancel
@@ -914,9 +925,13 @@ export default function AboutModal(props) {
                 marginRight: "5%"
               }}
               onClick = {() => {
-                UpdatePerson();
+                if (addPerson)
+                  AddPerson();
+                else
+                  UpdatePerson();
                 toggleConfirmed(true)
                 setPerson(false);
+                setAddPerson(false);
               }}
               >
                 Save Changes
@@ -1879,7 +1894,7 @@ export default function AboutModal(props) {
             )
           })
           }
-             <Box hidden={!addPerson}>
+             <Box hidden={true}>
              <div style={{display:'flex', justifyContent:'space-evenly', marginTop:'1rem'}}> 
              <div>
              <img style={{height:'5rem', width:'5rem',backgroundColor:'#ffffff', borderRadius:'10px'}} src={photo}/> 
@@ -1973,7 +1988,8 @@ export default function AboutModal(props) {
                   <Button 
                   style={{ color: 'white', paddingTop: '10px', backgroundColor:'#889AB5', borderColor:'#889AB5'}}
                   onClick ={ (e) => {
-                      setAddPerson(!addPerson)
+                      setAddPerson(!addPerson);
+                      setTaObject({});
                   }}>
                     Add Person +
                   </Button>
