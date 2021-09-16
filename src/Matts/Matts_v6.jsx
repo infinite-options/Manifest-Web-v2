@@ -444,6 +444,8 @@ export default function MainPage(props) {
     }
 
     const getTimes = (a_day_time, b_day_time) => {
+        if (a_day_time == undefined || b_day_time == undefined)
+            return ['', ''];
         const [a_start_time, b_start_time] = [a_day_time.substring(10, a_day_time.length), b_day_time.substring(10, b_day_time.length)];
         const [a_HMS, b_HMS] = [a_start_time.substring(0, a_start_time.length - 3).replace(/\s{1,}/, '').split(':'),
           b_start_time.substring(0, b_start_time.length - 3).replace(/\s{1,}/, '').split(':')];
