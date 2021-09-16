@@ -1127,12 +1127,6 @@ const EditRTS = (props) => {
                       .time
                   }
                   onChange={(e) => {
-                    console.log('log-6.8');
-                    const re = /\d{0,}/;
-                    const test = re.test(e.target.value);
-                    console.log('log-7: test = ', test);
-                    if (!test)
-                      return;
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {
