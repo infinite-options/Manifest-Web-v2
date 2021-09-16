@@ -159,11 +159,30 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
               itemToChange.numMins = numMins;
               delete itemToChange.gr_expected_completion_time;
               console.log('itemToChange = ', itemToChange);
-              console.log(
-                'itemToChange',
-                itemToChange.notifications[0].after_message
-              );
-              console.log(itemToChange);
+              let [ta_times, user_times] = [{}, {}];
+              ta_times['before'] = itemToChange.notifications[0].before_time.split(':');
+              console.log('log-5: ta_times["before"] = ', ta_times['before']);
+              if (ta_times['before'].length !== 0 && ta_times['before'][0] !== '')
+                ta_times['before'] = parseInt(ta_times['before'][0]) * 60 + parseInt(ta_times['before'][1]);
+              ta_times['during'] = itemToChange.notifications[0].during_time.split(':');
+              if (ta_times['during'].length !== 0 && ta_times['during'][0] !== '')
+                ta_times['during'] = parseInt(ta_times['during'][0]) * 60 + parseInt(ta_times['during'][1]);
+              ta_times['after'] = itemToChange.notifications[0].after_time.split(':');
+              if (ta_times['after'].length !== 0 && ta_times['after'][0] !== '')
+                ta_times['after'] = parseInt(ta_times['after'][0]) * 60 + parseInt(ta_times['after'][1]);
+
+              user_times['before'] = itemToChange.notifications[1].before_time.split(':');
+              if (user_times['before'].length !== 0 && user_times['before'][0] !== '')
+                user_times['before'] = parseInt(user_times['before'][0]) * 60 + parseInt(user_times['before'][1]);
+              user_times['during'] = itemToChange.notifications[1].during_time.split(':');
+              if (user_times['during'].length !== 0 && user_times['during'][0] !== '')
+                user_times['during'] = parseInt(user_times['during'][0]) * 60 + parseInt(user_times['during'][1]);
+              user_times['after'] = itemToChange.notifications[1].after_time.split(':');
+              if (user_times['after'].length !== 0 && user_times['after'][0] !== '')
+                user_times['after'] = parseInt(user_times['after'][0]) * 60 + parseInt(user_times['after'][1]);
+              
+              console.log('log-5: ta_times = ', ta_times);
+              console.log('log-6: user_times = ', user_times);
               editingRTSContext.setEditingRTS({
                 ...editingRTSContext.editingRTS,
                 editing:
@@ -186,7 +205,7 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
                       message: itemToChange.notifications[0].before_message,
                       is_enabled:
                         itemToChange.notifications[0].before_is_enable,
-                      time: itemToChange.notifications[0].before_time,
+                      time: ta_times['before'],
                     },
                     during: {
                       ...editingRTSContext.editingRTS.newItem.ta_notifications
@@ -194,14 +213,14 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
                       message: itemToChange.notifications[0].during_message,
                       is_enabled:
                         itemToChange.notifications[0].during_is_enable,
-                      time: itemToChange.notifications[0].during_time,
+                      time: ta_times['during'],
                     },
                     after: {
                       ...editingRTSContext.editingRTS.newItem.ta_notifications
                         .after,
                       message: itemToChange.notifications[0].after_message,
                       is_enabled: itemToChange.notifications[0].after_is_enable,
-                      time: itemToChange.notifications[0].after_time,
+                      time: ta_times['after'],
                     },
                   },
 
@@ -213,7 +232,7 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
                       message: itemToChange.notifications[1].before_message,
                       is_enabled:
                         itemToChange.notifications[1].before_is_enable,
-                      time: itemToChange.notifications[1].before_time,
+                      time: user_times['before'],
                     },
                     during: {
                       ...editingRTSContext.editingRTS.newItem.user_notifications
@@ -221,14 +240,14 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
                       message: itemToChange.notifications[1].during_message,
                       is_enabled:
                         itemToChange.notifications[1].during_is_enable,
-                      time: itemToChange.notifications[1].during_time,
+                      time: user_times['during'],
                     },
                     after: {
                       ...editingRTSContext.editingRTS.newItem.user_notifications
                         .after,
                       message: itemToChange.notifications[1].after_message,
                       is_enabled: itemToChange.notifications[1].after_is_enable,
-                      time: itemToChange.notifications[1].after_time,
+                      time: user_times['after'],
                     },
                   },
                   ...itemToChange,

@@ -52,6 +52,20 @@ const EditRTS = (props) => {
     return [a_time, b_time];
   };
 
+  const convertMins = (mins) => {
+    if (mins === '')
+      return '';
+    console.log('before: mins = ', mins, ', mins / 60 = ', mins / 60);
+    mins = parseInt(mins);
+    console.log('after: mins = ', mins, ', mins / 60 = ', mins / 60);
+    let hours = Math.floor(mins / 60);
+    hours = hours < 10 ? '0' + hours : hours;
+    let minutes = mins % 60;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    console.log('mins = ', mins, ', mins / 60 = ', mins / 60);
+    return hours + ':' + minutes + ':00';
+  };
+
   console.log('Repeat', editingRTSContext.editingRTS.newItem.repeat);
   const updateRTS = (e) => {
     console.log('here: entering updateRTS function');
@@ -64,8 +78,21 @@ const EditRTS = (props) => {
     // editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing;
     e.stopPropagation()
     let object = {...editingRTSContext.editingRTS.newItem};
-    console.log("updaterts object", object);
-    console.log('propsrts: ', props);
+    object.ta_notifications.before.time = convertMins(object.ta_notifications.before.time);
+    object.ta_notifications.during.time = convertMins(object.ta_notifications.during.time);
+    object.ta_notifications.after.time = convertMins(object.ta_notifications.after.time);
+    object.user_notifications.before.time = convertMins(object.user_notifications.before.time);
+    object.user_notifications.during.time = convertMins(object.user_notifications.during.time);
+    object.user_notifications.after.time = convertMins(object.user_notifications.after.time);
+    console.log('log-1: ta = ', {
+      'before': object.ta_notifications.before.time,
+      'during': object.ta_notifications.during.time,
+      'after': object.ta_notifications.after.time,
+    });
+    console.log('log-2: user = ', {
+      'before': object.user_notifications.before.time,
+      'during': object.user_notifications.during.time, 
+      'after': object.user_notifications.after.time});
     // Get start_day_and_time
     const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
     const end_day_and_time_simple_string = `${object.end_day} ${object.end_time}:00`;
@@ -1100,6 +1127,12 @@ const EditRTS = (props) => {
                       .time
                   }
                   onChange={(e) => {
+                    if (!e.target.value)
+                      return;
+                    let hours = Math.floor(e.target.value / 60);
+                    hours = hours < 10 ? '0' + hours : hours;
+                    let minutes = e.target.value % 60;
+                    minutes = minutes < 10 ? '0' + minutes : minutes;
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {
@@ -1280,6 +1313,12 @@ const EditRTS = (props) => {
                       .time
                   }
                   onChange={(e) => {
+                    if (!e.target.value)
+                      return;
+                    let hours = Math.floor(e.target.value / 60);
+                    hours = hours < 10 ? '0' + hours : hours;
+                    let minutes = e.target.value % 60;
+                    minutes = minutes < 10 ? '0' + minutes : minutes;
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {
@@ -1460,6 +1499,16 @@ const EditRTS = (props) => {
                       .time
                   }
                   onChange={(e) => {
+                    if (!e.target.value)
+                    {
+                      console.log('e.tar.val is undef: ', e.target.value);
+                      return;
+                    }
+                    console.log('e.tar.val = ', e.target.value, 'e.tar.val / 60 = ', e.target.value / 60);
+                    let hours = Math.floor(parseInt(e.target.value) / 60);
+                    hours = hours < 10 ? '0' + hours : hours;
+                    let minutes = e.target.value % 60;
+                    minutes = minutes < 10 ? '0' + minutes : minutes;
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {
