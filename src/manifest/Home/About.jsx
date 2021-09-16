@@ -579,8 +579,11 @@ export default function AboutModal(props) {
       picture: "",
       photo_url:photo,
       ta_time_zone: taObject.time_zone,
+      people_email: taObject.email,
+      people_employer: taObject.employer,
+      people_phone_number: taObject.phone_number,
     }
-    console.log("addPerson", body);
+    console.log("addPerson.body = ", body);
     let formData = new FormData();
     Object.entries(body).forEach(entry => {
       // if (typeof entry[1].name == 'string'){
@@ -599,7 +602,7 @@ export default function AboutModal(props) {
     axios
     .post(BASE_URL + 'addPeople' , formData)
       .then((response) => {
-      console.log('addPeople',response.data);
+      console.log('addPeople.response = ',response.data);
     })
     .catch((error) => {
       console.log(error);
