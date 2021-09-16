@@ -132,6 +132,7 @@ export default function AboutModal(props) {
        console.log('taObject', taObject)
 
   useEffect(()=> {
+    console.log('yayayayayay');
       axios
         .get(
           BASE_URL + 'listPeople/' + userID )
@@ -646,6 +647,7 @@ export default function AboutModal(props) {
       BASE_URL + 'updatePeople' , formData)
       .then((response) => {
       console.log(response.data);
+      toggleCalled(!called);
     })
     .catch((error) => {
       console.log(error);
@@ -783,7 +785,7 @@ export default function AboutModal(props) {
                       setTaObject({
                         ...taObject,
                         time_zone: e.target.value,
-                      })
+                      });
                     }}
                     renderValue={() => {
                       console.log('timeZone1 = ', taObject.time_zone);
@@ -914,7 +916,7 @@ export default function AboutModal(props) {
               onClick = {() => {
                 UpdatePerson();
                 toggleConfirmed(true)
-                setPerson(false)
+                setPerson(false);
               }}
               >
                 Save Changes
