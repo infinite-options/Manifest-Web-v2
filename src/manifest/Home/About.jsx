@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Box } from '@material-ui/core';
+import { Box, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import SettingPage from '../Home/SettingPage';
+import momentTZ from 'moment-timezone';
 import {
   Form,
   Row,
@@ -27,6 +28,7 @@ import LoginContext from '../../LoginContext'
 import { useHistory, Redirect } from 'react-router-dom';
 import AddIconModal from '../../Home/AddIconModal';
 import UploadImage from '../../Home/UploadImage';
+const moment = require('moment');
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const useStyles = makeStyles({
@@ -66,7 +68,8 @@ export default function AboutModal(props) {
   const [called, toggleCalled] = useState(false)
   const [saveConfirm, toggleSave] = useState(false);
   const [editPerson, setPerson] =useState(false)
-  const [taObject, setTaObject] = useState({})
+  const [taObject, setTaObject] = useState({});
+  const [timeZone, setTimeZone] = useState('');
   //aboutMeObject states
   const [aboutMeObject, setAboutMeObject] = useState({
     birth_date: new Date(),
@@ -285,6 +288,41 @@ export default function AboutModal(props) {
       });
   }
 
+  useEffect(() => console.log('taObject = ', taObject), [taObject]);
+
+  const tzMap = {
+    'Pacific/Samoa': '(GMT-11:00)',
+    'America/Honolulu': '(GMT-10:00)',
+    'America/Juneau': '(GMT-09:00)',
+    'America/Los Angeles': '(GMT-08:00)',
+    'America/Phoenix': '(GMT-07:00)',
+    'America/Chicago': '(GMT-06:00)',
+    'America/New York': '(GMT-05:00)',
+    'America/Puerto Rico': '(GMT-04:00)',
+    'America/Buenos_Aires': '(GMT-03:00)',
+    'America/Noronha': '(GMT-02:00)',
+    'Atlantic/Azores': '(GMT-01:00)',
+    'Europe/London': '(GMT+00:00)',
+    'Europe/Berlin': '(GMT+01:00)',
+    'Asia/Jerusalem': '(GMT+02:00)',
+    'Europe/Moscow': '(GMT+03:00)',
+    'Asia/Dubai': '(GMT+04:00)',
+    'Asia/Karachi': '(GMT+05:00)',
+    'Asia/Almaty': '(GMT+06:00)',
+    'Asia/Bangkok': '(GMT+07:00)',
+    'Asia/Hong Kong': '(GMT+08:00)',
+    'Asia/Tokyo': '(GMT+09:00)',
+    'Australia/Brisbane': '(GMT+10:00)',
+    'Asia/Magadan': '(GMT+11:00)',
+    'Pacific/Fiji': '(GMT+12:00)',
+  };
+  const tzList2 = [];
+  for (let i = -8; i <= 8; i++)
+  {
+    const offset = i < 0 ? `GMT-${-1 * i}` : `GMT+${i}`;
+    tzList2.push(moment().tz(`Etc/${offset}`).format('HH:MM') + ' ' + offset); 
+  }
+
   function handleFileSelected(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -371,7 +409,9 @@ export default function AboutModal(props) {
       .catch((error) => {
           console.log(error);
       });
-  }, [userID])
+  }, [userID]);
+
+  useEffect(() => console.log('loggy1: aboutMeObj = ', aboutMeObject), [aboutMeObject.message_card]);
 
   function hideAboutForm(e) {
     props.CameBackFalse();
@@ -636,10 +676,10 @@ export default function AboutModal(props) {
               width: "400px",
               // height: "100px",
               color: "white",
-              padding: "40px"
+              padding: "40px",
             }}
           >
-            <div style={{textAlign: 'center', marginBottom: '20px'}}>Person Info </div>
+            <div style={{textAlign: 'center', marginBottom: '20px'}}>Person Info</div>
             <Form.Group>
             <Row>
               <Col style={{ paddingRight: '10px' }}>
@@ -672,61 +712,92 @@ export default function AboutModal(props) {
             <div style={{ fontWeight: 'bold', marginTop: '10px' }}>
               Change Icon
             </div>
-            <div style={{ textAlign: 'left', float:'left', marginTop: '1rem',width:'100%' }}>
-            <Row >
-              <Col style={{ textDecoration:'underline', paddingLeft:'0', marginLeft:'0', width:'70%'}}>
-              <div style={{ marginBottom: '8px',  fontSize: '14px', }}>
-                  Add icon to library
-              </div>
-              <div style={{ paddingLeft:'0', marginLeft:'-1rem'}}>
-                <UploadImage 
-                  photoUrl={photo}
-                  setPhotoUrl={setPhoto}
-                  currentUserId={props.CurrentId} /> 
-              </div>
-              <div style={{ paddingLeft:'0', marginLeft:'-1rem'}}>
-                <AddIconModal
-                  photoUrl = {photo}
-                  setPhotoUrl = {setPhoto}
-                />
-              </div>
-              
-              </Col>
-              <Col>
-                <div  style={{ marginLeft: '1rem' }}>
-                <img style={{height:'5rem', width:'5rem',backgroundColor:'#ffffff', borderRadius:'10px'}} src={photo}/> 
-              </div> 
-              </Col>
-            </Row>
+            <div style={{ textAlign: 'left', float:'left', marginTop: '1rem',width:'100%'}}>
+              <Row >
+                <Col style={{ textDecoration:'underline', paddingLeft:'0', marginLeft:'0', width:'70%'}}>
+                <div style={{ marginBottom: '8px',  fontSize: '14px', }}>
+                    Add icon to library
+                </div>
+                <div style={{ paddingLeft:'0', marginLeft:'-1rem'}}>
+                  <UploadImage 
+                    photoUrl={photo}
+                    setPhotoUrl={setPhoto}
+                    currentUserId={props.CurrentId} /> 
+                </div>
+                <div style={{ paddingLeft:'0', marginLeft:'-1rem'}}>
+                  <AddIconModal
+                    photoUrl = {photo}
+                    setPhotoUrl = {setPhoto}
+                  />
+                </div>
+                
+                </Col>
+                <Col>
+                  <div  style={{ marginLeft: '1rem' }}>
+                  <img style={{height:'5rem', width:'5rem',backgroundColor:'#ffffff', borderRadius:'10px'}} src={photo}/> 
+                </div> 
+                </Col>
+              </Row>
             </div>
             
             <br />
-            <Row>
+            <Row style = {{display: 'block'}}>
               <Col style={{ paddingRight: '10px' }}>
-                <label
-                  style={{
-                    marginTop: '10px',
-                    marginRight: '20px',
-                    fontWeight: 'bolder',
-                    color: 'white',
-                  }}
-                >
+                <div style = {{marginTop: '25px', fontWeight: 'bold', marginBottom: '10px'}}>
                   Relationship
-                </label>
-                <Form.Control
-                  type="text"
-                  value={taObject.relationship}
-                  placeholder="Enter relationship"
-                  onChange={(e) => {
-                    console.log(e.target.value)
-                    setTaObject({
-                      ...taObject,
-                      relationship: e.target.value,
-                    })
-                  }}
-                  
-                />
-                </Col>
+                </div>
+                <FormControl fullWidth>
+                  <Select
+                    value={taObject.relationship}
+                    style = {{backgroundColor: 'white', paddingLeft: '15px'}}
+                    renderValue={() => {
+                      if (taObject.relationship === '') {
+                        return <div>Enter a relationship</div>;
+                      }
+          
+                      return taObject.relationship;
+                    }}
+                    onChange={(e) => {
+                      setTaObject({
+                        ...taObject,
+                        relationship: e.target.value,
+                      });
+                    }}
+                  >
+                    <MenuItem value = {'Advisor'}>{'Advisor'}</MenuItem>
+                    <MenuItem value = {'Friend'}>{'Friend'}</MenuItem>
+                    <MenuItem value = {'Relative'}>{'Relative'}</MenuItem>
+                  </Select>
+                </FormControl>
+                <div style = {{marginTop: '25px', fontWeight: 'bold', marginBottom: '10px'}}>
+                  Time Zone
+                </div>
+                {console.log('timeSettings')}
+                <FormControl fullWidth>
+                  <Select
+                    value={taObject.time_zone || ''}
+                    style = {{backgroundColor: 'white', paddingLeft: '15px'}}
+                    onChange={(e) => {
+                      setTaObject({
+                        ...taObject,
+                        time_zone: e.target.value,
+                      })
+                    }}
+                    renderValue={() => {
+                      console.log('timeZone1 = ', taObject.time_zone);
+                      if (taObject.time_zone === '') {
+                        return <div>Enter a timezone</div>;
+                      }
+          
+                      return taObject.time_zone;
+                    }}
+                  >
+                    {Object.keys(tzMap).map((tz) => (
+                      <MenuItem value = {tz}>{`${tz}  ${tzMap[tz]}`}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Col>
             </Row>
             <br />
             <Row>
@@ -1234,25 +1305,39 @@ export default function AboutModal(props) {
               color: 'white',
             }}
           >
-            <Form.Label>Time Settings</Form.Label>
-            <Form.Control
-              style={{ borderRadius: '10px' }}
-              type="text"
-              rows="4"
-              type="text"
-              //placeholder="(GMT-08:00) Pacific Time"
-              value={aboutMeObject.timeSettings.timeZone || ''}
-              onChange={(e) => {
-                e.stopPropagation();
-                setAboutMeObject((prevState) => ({
-                  ...prevState,
-                  message_card: e.target.value,
-                  timeSettings: {
-                    ...prevState.timeSettings,
-                  },
-                }));
-              }}
-            />
+            <div style = {{marginTop: '25px', fontWeight: 'bold', marginBottom: '10px'}}>
+              Time Settings
+            </div>
+            {console.log('timeSettings')}
+            <FormControl fullWidth>
+              <Select
+                value={aboutMeObject.timeSettings.timeZone || ''}
+                style = {{backgroundColor: 'white', paddingLeft: '15px'}}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  setAboutMeObject((prevState) => ({
+                    ...prevState,
+                    message_card: e.target.value,
+                    timeSettings: {
+                      ...prevState.timeSettings,
+                      timeZone: e.target.value,
+                    },
+                  }));
+                }}
+                renderValue={() => {
+                  console.log('timeZone1 = ', aboutMeObject.timeSettings.timeZone);
+                  if (aboutMeObject.timeSettings.timeZone === '') {
+                    return <div>Enter a timezone</div>;
+                  }
+      
+                  return aboutMeObject.timeSettings.timeZone;
+                }}
+              >
+                {Object.keys(tzMap).map((tz) => (
+                  <MenuItem value = {tz}>{`${tz}  ${tzMap[tz]}`}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Form.Group>
           <table>
             <tr>
@@ -1713,6 +1798,7 @@ export default function AboutModal(props) {
             </Form.Label>
             <div id="divToReload">
             {listPeople.map((lp) => {
+              console.log('lp = ', lp);
               return(
                 <div style={{display:'flex', justifyContent:'space-evenly', marginTop:'1rem'}}>
                 
