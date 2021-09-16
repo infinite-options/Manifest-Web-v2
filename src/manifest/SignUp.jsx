@@ -18,6 +18,7 @@ import { GoogleLogin } from 'react-google-login';
 import axios from 'axios';
 import { useState, useContext } from 'react';
 import SocialLogin from './SocialLogin';
+const moment = require('moment');
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -141,6 +142,7 @@ export default function Login() {
           last_name: newLName,
           phone_number: newPhoneNumber,
           employer: newEmployer,
+          ta_time_zone: moment.tz.guess(),
         }
       )
       .then((response) => {

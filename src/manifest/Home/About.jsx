@@ -294,11 +294,11 @@ export default function AboutModal(props) {
     'Pacific/Samoa': '(GMT-11:00)',
     'America/Honolulu': '(GMT-10:00)',
     'America/Juneau': '(GMT-09:00)',
-    'America/Los Angeles': '(GMT-08:00)',
+    'America/Los_Angeles': '(GMT-08:00)',
     'America/Phoenix': '(GMT-07:00)',
     'America/Chicago': '(GMT-06:00)',
-    'America/New York': '(GMT-05:00)',
-    'America/Puerto Rico': '(GMT-04:00)',
+    'America/New_York': '(GMT-05:00)',
+    'America/Puerto_Rico':'(GMT-04:00)',
     'America/Buenos_Aires': '(GMT-03:00)',
     'America/Noronha': '(GMT-02:00)',
     'Atlantic/Azores': '(GMT-01:00)',
@@ -310,7 +310,7 @@ export default function AboutModal(props) {
     'Asia/Karachi': '(GMT+05:00)',
     'Asia/Almaty': '(GMT+06:00)',
     'Asia/Bangkok': '(GMT+07:00)',
-    'Asia/Hong Kong': '(GMT+08:00)',
+    'Asia/Hong_Kong': '(GMT+08:00)',
     'Asia/Tokyo': '(GMT+09:00)',
     'Australia/Brisbane': '(GMT+10:00)',
     'Asia/Magadan': '(GMT+11:00)',
@@ -567,8 +567,9 @@ export default function AboutModal(props) {
       important:"TRUE",
       picture: "",
       photo_url:photo,
+      ta_time_zone: taObject.time_zone,
     }
-    console.log("addPerson", body)
+    console.log("addPerson", body);
     let formData = new FormData();
     Object.entries(body).forEach(entry => {
       // if (typeof entry[1].name == 'string'){
@@ -583,7 +584,7 @@ export default function AboutModal(props) {
       else{
           formData.append(entry[0], entry[1]);
       }
-  });
+    });
     axios
     .post(BASE_URL + 'addPeople' , formData)
       .then((response) => {
@@ -617,6 +618,7 @@ export default function AboutModal(props) {
       people_have_pic:'False',
       people_pic: "",
       photo_url:photo,
+      ta_time_zone: taObject.time_zone,
     }
     console.log("updatePerson", body)
     if (taObject.phone_number === 'undefined') {
@@ -789,11 +791,11 @@ export default function AboutModal(props) {
                         return <div>Enter a timezone</div>;
                       }
           
-                      return taObject.time_zone;
+                      return taObject.time_zone.split('_').join(' ');
                     }}
                   >
                     {Object.keys(tzMap).map((tz) => (
-                      <MenuItem value = {tz}>{`${tz}  ${tzMap[tz]}`}</MenuItem>
+                      <MenuItem value = {tz}>{`${tz.split('_').join(' ')}  ${tzMap[tz]}`}</MenuItem>
                     ))}
                   </Select>
                 </FormControl>
@@ -1311,7 +1313,7 @@ export default function AboutModal(props) {
             {console.log('timeSettings')}
             <FormControl fullWidth>
               <Select
-                value={aboutMeObject.timeSettings.timeZone || ''}
+                value={aboutMeObject.timeSettings.timeZone.split('_').join(' ') || ''}
                 style = {{backgroundColor: 'white', paddingLeft: '15px'}}
                 onChange={(e) => {
                   e.stopPropagation();
@@ -1330,11 +1332,11 @@ export default function AboutModal(props) {
                     return <div>Enter a timezone</div>;
                   }
       
-                  return aboutMeObject.timeSettings.timeZone;
+                  return aboutMeObject.timeSettings.timeZone.split('_').join(' ');
                 }}
               >
                 {Object.keys(tzMap).map((tz) => (
-                  <MenuItem value = {tz}>{`${tz}  ${tzMap[tz]}`}</MenuItem>
+                  <MenuItem value = {tz}>{`${tz.split('_').join(' ')}  ${tzMap[tz]}`}</MenuItem>
                 ))}
               </Select>
             </FormControl>
