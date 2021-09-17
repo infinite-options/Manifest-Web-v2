@@ -485,7 +485,6 @@ export default function MainPage(props) {
 
     // -------    returns shortened version of rows with only those with show true ----------------------
     function onlyAllowed(){
-        console.log('logpog8');
         var newRows = [];
         for (var r=0; r < rows.length; r ++){
             if (rows[r].show){

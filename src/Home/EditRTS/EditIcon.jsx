@@ -88,6 +88,8 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
           //  setroutineCall(!routineCall)
 
           // testing
+          console.log('logpog-4');
+          console.log('clicked editRoutine: step = ', step);
 
           axios
             .get(
@@ -95,8 +97,9 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
                 step
             )
             .then((response) => {
+              console.log('logpog-5');
               let temp = [];
-              console.log('in click editicon');
+              console.log('in click editicon: editingRTS = ', editingRTSContext.editingRTS);
               // console.log("routineGet", response)
               for (var i = 0; i < response.data.result.length; i++) {
                 // console.log(response.data.result[i])
@@ -133,6 +136,7 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
                   itemToChange.gr_start_day_and_time.replace(/-/g, '/')
                 );
               }
+              console.log('logpog-5.1');
 
               console.log('start', startDate);
               const startDay = convertDateToDayString(startDate);
@@ -170,19 +174,21 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
               ta_times['after'] = itemToChange.notifications[0].after_time.split(':');
               if (ta_times['after'].length !== 0 && ta_times['after'][0] !== '')
                 ta_times['after'] = parseInt(ta_times['after'][0]) * 60 + parseInt(ta_times['after'][1]);
+              console.log('logpog-5.2: itemToChange.notifs[1] = ', itemToChange.notifications[1]);
 
               user_times['before'] = itemToChange.notifications[1].before_time.split(':');
               if (user_times['before'].length !== 0 && user_times['before'][0] !== '')
                 user_times['before'] = parseInt(user_times['before'][0]) * 60 + parseInt(user_times['before'][1]);
+              console.log('logpog-5.3');
               user_times['during'] = itemToChange.notifications[1].during_time.split(':');
               if (user_times['during'].length !== 0 && user_times['during'][0] !== '')
                 user_times['during'] = parseInt(user_times['during'][0]) * 60 + parseInt(user_times['during'][1]);
+              console.log('logpog-5.4');
               user_times['after'] = itemToChange.notifications[1].after_time.split(':');
               if (user_times['after'].length !== 0 && user_times['after'][0] !== '')
                 user_times['after'] = parseInt(user_times['after'][0]) * 60 + parseInt(user_times['after'][1]);
-              
-              console.log('log-5: ta_times = ', ta_times);
-              console.log('log-6: user_times = ', user_times);
+              console.log('logpog-6: ta_times = ', ta_times);
+              console.log('logpog-7: user_times = ', user_times);
               editingRTSContext.setEditingRTS({
                 ...editingRTSContext.editingRTS,
                 editing:
@@ -253,6 +259,7 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
                   ...itemToChange,
                 },
               });
+              console.log('logpog-8');
 
               // testing
             })

@@ -625,7 +625,7 @@ export default function AboutModal(props) {
       ta_people_id: ta_user_id,
       people_name: taObject.name,
       people_relationship: taObject.relationship,
-      people_phone_number: taObject.phone_number,
+      people_phone_number: taObject.phone_number.replace(/\D/g, ''),
       people_employer:taObject.employer,
       people_email: taObject.email,
       people_important:"True",
@@ -665,7 +665,8 @@ export default function AboutModal(props) {
     .catch((error) => {
       console.log(error);
     });
-  } 
+  }
+  console.log('testetseetestest');
 
   const editPersonModal = (taObject) => {
     if (editPerson || addPerson) {
@@ -835,12 +836,13 @@ export default function AboutModal(props) {
                   onChange={(e) => {
                     const re = /\D/g;
                     const test = e.target.value.replace(re, '');
+                    console.log('test = ', test);
                     if (test.length > 10)
                       return;
                     setTaObject({
                       ...taObject,
                       phone_number: e.target.value,
-                    })
+                    });
                   }}
                   
                 />
@@ -1858,7 +1860,18 @@ export default function AboutModal(props) {
                   onClick={(e) => {
                     setPerson(true);
                     setTa_user_id(lp.ta_people_id);
-                    setTaObject(lp);
+                    let temp_phone = '';
+                    for (let i = 0; i < lp.phone_number.length; i++)
+                    {
+                      temp_phone += lp.phone_number[i];
+                      if (i === 2 || i === 5)
+                        temp_phone += '-';
+                    }
+                    console.log('temp_phone = ', temp_phone);
+                    setTaObject({
+                      ...lp,
+                      phone_number: temp_phone,
+                    });
                     setAddPersonName(lp.people_name)
                   }}
                />

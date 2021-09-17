@@ -154,18 +154,23 @@ const EditRTS = (props) => {
     
     console.log("obj",object);
     let formData = new FormData();
+    const body = [];
     Object.entries(object).forEach((entry) => {
+      console.log('test-entry: ', entry);
       // if (typeof entry[1].name == 'string'){
       if (typeof entry[1] == 'string'){
           formData.append(entry[0], entry[1]);
+          body.push([entry[0], entry[1]]);
       }
       else if (entry[1] instanceof Object) {
+          body.push([entry[0], entry[1]]);
           entry[1] = JSON.stringify(entry[1])
           formData.append(entry[0], entry[1]);
       }
       
       else{
           formData.append(entry[0], entry[1]);
+          body.push([entry[0], entry[1]]);
       }
     });
     console.log('photo: ', image);
@@ -177,6 +182,7 @@ const EditRTS = (props) => {
     }
     console.log('object.id') 
     console.log(object.id)
+    console.log('gr_body = ', body);
     if (object.id != '') {
       console.log('updateGR');
       console.log('here: About to post changes to db');
