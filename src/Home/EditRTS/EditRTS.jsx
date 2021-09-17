@@ -1133,6 +1133,8 @@ const EditRTS = (props) => {
                       .time
                   }
                   onChange={(e) => {
+                    if (e.target.value < 0)
+                      return;
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {
@@ -1313,6 +1315,8 @@ const EditRTS = (props) => {
                       .time
                   }
                   onChange={(e) => {
+                    if (e.target.value < 0)
+                      return;
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {
@@ -1493,6 +1497,8 @@ const EditRTS = (props) => {
                       .time
                   }
                   onChange={(e) => {
+                    if (e.target.value < 0)
+                      return;
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {

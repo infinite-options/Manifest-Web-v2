@@ -573,6 +573,9 @@ const AddRTS = () => {
                           .before.time
                       }
                       onChange={(e) => {
+                        console.log('e.target.val = ', e.target.value );
+                        if (e.target.value < 0)
+                          return;
                         editingRTSContext.setEditingRTS({
                           ...editingRTSContext.editingRTS,
                           newItem: {
