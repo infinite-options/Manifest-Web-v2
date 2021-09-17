@@ -581,7 +581,7 @@ export default function AboutModal(props) {
       ta_time_zone: taObject.time_zone,
       people_email: taObject.email,
       people_employer: taObject.employer,
-      people_phone_number: taObject.phone_number,
+      people_phone_number: taObject.phone_number.replace(/\D/g, ''),
     }
     console.log("addPerson.body = ", body);
     let formData = new FormData();
@@ -833,7 +833,10 @@ export default function AboutModal(props) {
                   value={taObject.phone_number}
                   placeholder="Enter phone number"
                   onChange={(e) => {
-                    console.log(e.target.value)
+                    const re = /\D/g;
+                    const test = e.target.value.replace(re, '');
+                    if (test.length > 10)
+                      return;
                     setTaObject({
                       ...taObject,
                       phone_number: e.target.value,
