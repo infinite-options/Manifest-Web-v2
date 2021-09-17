@@ -1342,7 +1342,6 @@ export default function AboutModal(props) {
                   e.stopPropagation();
                   setAboutMeObject((prevState) => ({
                     ...prevState,
-                    message_card: e.target.value,
                     timeSettings: {
                       ...prevState.timeSettings,
                       timeZone: e.target.value,
