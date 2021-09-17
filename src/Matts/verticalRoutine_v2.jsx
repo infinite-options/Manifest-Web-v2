@@ -171,14 +171,15 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent, allRows}) =>
                 {(r.is_sublist_available === "True") ? (
                             <div>
                             <FontAwesomeIcon
-                            icon={faList}
-                            title="SubList Available"
-                            style={{ color: "#ffffff" }}
-                            size="small"
-                            onClick = {()=> {
-                                sendRoutineToParent(r.number);
-                                setLoading(!isLoading);
-                            }}
+                                icon={faList}
+                                title="SubList Available"
+                                style={{ color: "#ffffff" }}
+                                size="small"
+                                onClick = {()=> {
+                                    console.log('logpog1');
+                                    sendRoutineToParent(r.number);
+                                    setLoading(!isLoading);
+                                }}
                             />
                         </div>
                         ) : (

@@ -410,6 +410,7 @@ export default function MainPage(props) {
 
     // --------   when routine is clicked on. set children show to true, re-render with setRows ----------
     function clickHandle(number){
+        console.log('logpog2');
         console.log(rows);
         var newRows = [];
         //take out duplicates of rows (copy into newRows)
@@ -481,6 +482,7 @@ export default function MainPage(props) {
 
     // -------    returns shortened version of rows with only those with show true ----------------------
     function onlyAllowed(){
+        console.log('logpog8');
         var newRows = [];
         for (var r=0; r < rows.length; r ++){
             if (rows[r].show){
@@ -488,11 +490,12 @@ export default function MainPage(props) {
                 newRows.push(rows[r]);
             }
         }
+
         if (newRows.length === 0)
             return newRows;
         console.log("ROWS HERE: ", rows);
+        console.log('NEWROWS HERE: ', newRows);
         console.log("ONLY ALLOWED HERE:")
-        console.log(newRows);
         newRows.sort((a, b) => {
             console.log('a = ', a, '\nb = ', b);
             const [a_start, b_start] = [a.startTime, b.startTime];
@@ -526,6 +529,7 @@ export default function MainPage(props) {
 
             return 0;
         });
+        console.log('newRows after sort: newRows = ', newRows);
         return(newRows);
     }
 
@@ -546,7 +550,6 @@ export default function MainPage(props) {
     function prevWeek(){
         // TO DO! WEEKS
         // setRows([]);
-        console.log("clocked pre");
         setCurDate(new Date(currentDate.getTime() - 604800000));
         cleanData(historyGot, new Date(currentDate.getTime() - 604800000));
         // console.log((new Date(Date.now())).getTime());

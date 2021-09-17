@@ -1724,7 +1724,7 @@ export default function AboutModal(props) {
           >
             <Form.Label>Family Contacts</Form.Label>
             <Form.Control
-              style={{ borderRadius: '10px' }}
+              style={{ borderRadius: '10px', height: '100px' }}
               as="textarea"
               rows="9"
               type="text"
@@ -1752,7 +1752,7 @@ export default function AboutModal(props) {
              Current Medication 
             </Form.Label>
             <Form.Control
-              style={{ borderRadius: '10px' }}
+              style={{ borderRadius: '10px', height: '100px' }}
               as="textarea"
               rows="9"
               type="text"
@@ -1780,7 +1780,7 @@ export default function AboutModal(props) {
               Medicine Schedule
             </Form.Label>
             <Form.Control
-              style={{ borderRadius: '10px' }}
+              style={{ borderRadius: '10px', height: '100px', }}
               as="textarea"
               rows="9"
               type="text"
