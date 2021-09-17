@@ -54,7 +54,7 @@ const EditRTS = (props) => {
 
   const convertMins = (mins) => {
     if (mins === '')
-      return '';
+      return '00:00:00';
     console.log('before: mins = ', mins, ', mins / 60 = ', mins / 60);
     mins = parseInt(mins);
     console.log('after: mins = ', mins, ', mins / 60 = ', mins / 60);
@@ -78,6 +78,11 @@ const EditRTS = (props) => {
     // editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing;
     e.stopPropagation()
     let object = {...editingRTSContext.editingRTS.newItem};
+    const [ta_before, ta_during, ta_after] = [
+      convertMins(object.ta_notifications.before.time),
+      convertMins(object.ta_notifications.during.time),
+      convertMins(object.ta_notifications.after.time),
+    ]
     object.ta_notifications.before.time = convertMins(object.ta_notifications.before.time);
     object.ta_notifications.during.time = convertMins(object.ta_notifications.during.time);
     object.ta_notifications.after.time = convertMins(object.ta_notifications.after.time);
@@ -154,23 +159,19 @@ const EditRTS = (props) => {
     
     console.log("obj",object);
     let formData = new FormData();
-    const body = [];
     Object.entries(object).forEach((entry) => {
       console.log('test-entry: ', entry);
       // if (typeof entry[1].name == 'string'){
       if (typeof entry[1] == 'string'){
           formData.append(entry[0], entry[1]);
-          body.push([entry[0], entry[1]]);
       }
       else if (entry[1] instanceof Object) {
-          body.push([entry[0], entry[1]]);
           entry[1] = JSON.stringify(entry[1])
           formData.append(entry[0], entry[1]);
       }
       
       else{
           formData.append(entry[0], entry[1]);
-          body.push([entry[0], entry[1]]);
       }
     });
     console.log('photo: ', image);
@@ -182,7 +183,6 @@ const EditRTS = (props) => {
     }
     console.log('object.id') 
     console.log(object.id)
-    console.log('gr_body = ', body);
     if (object.id != '') {
       console.log('updateGR');
       console.log('here: About to post changes to db');
