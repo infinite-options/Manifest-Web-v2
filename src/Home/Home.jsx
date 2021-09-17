@@ -1305,6 +1305,7 @@ export default function Home(props) {
 
                 // routine_ids.push(x[i]["gr_unique_id"]);
                 // routine.push(x[i]);
+
                 if (
                   stateValue.calendarView === 'Day' &&
                   goalDate.getTime() > todayStartDate.getTime() &&
@@ -1565,6 +1566,8 @@ export default function Home(props) {
                         setGetActionsEndPoint={setGetActionsEndPoint}
                         getStepsEndPoint={getStepsEndPoint}
                         setGetStepsEndPoint={setGetStepsEndPoint}
+                        stateValue = {stateValue}
+                        setStateValue = {setStateValue}
                       />
                     )}
                   </div>
