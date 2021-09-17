@@ -505,8 +505,6 @@ export default function AboutModal(props) {
     axios
       .post(BASE_URL + "updateAboutMe", formData)
       .then((response) => {
-        console.log(response);
-        // this.hideAboutForm();
 
         if (imageChanged) {
           props.updateProfilePic(body.first_name + ' ' + body.last_name, url);
@@ -517,6 +515,15 @@ export default function AboutModal(props) {
           );
         }
         props.updateProfileTimeZone(aboutMeObject.timeSettings['timeZone']);
+          axios
+          .get(
+            BASE_URL + 'listPeople/' + userID )
+            .then((response) => {
+            setListPeople(response.data.result.result)
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       })
       .catch((err) => {
         console.log('Error updating Details', err);
@@ -603,6 +610,15 @@ export default function AboutModal(props) {
     .post(BASE_URL + 'addPeople' , formData)
       .then((response) => {
       console.log('addPeople.response = ',response.data);
+      axios
+      .get(
+        BASE_URL + 'listPeople/' + userID )
+        .then((response) => {
+        setListPeople(response.data.result.result)
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     })
     .catch((error) => {
       console.log(error);
@@ -932,6 +948,7 @@ export default function AboutModal(props) {
                 marginRight: "5%"
               }}
               onClick = {() => {
+                console.log('')
                 if (addPerson)
                   AddPerson();
                 else
