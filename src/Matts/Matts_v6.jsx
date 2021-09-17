@@ -226,7 +226,8 @@ export default function MainPage(props) {
         //bigList will hold new data format sidewase
         var bigList = [];
         for (var d = 0; d < inRange.length; d++){   
-            const obj = JSON.parse(inRange[d].details)
+            const obj = JSON.parse(inRange[d].details);
+            console.log('obj = ', obj);
 
             //sort obj by time of day
             obj.sort(custom_sort);
@@ -265,7 +266,8 @@ export default function MainPage(props) {
                                 if(isNewA){
                                     var currentA = {type: "Action", title: actions[a].title, under: obj[r].routine, days:[], tBox: {}, show: false,
                                      photo: actions[a].photo, is_sublist_available: actions[a].is_sublist_available, 
-                                     is_available: actions[a].is_available, number: actions[a].action};
+                                     is_available: actions[a].is_available, number: actions[a].action, startTime: obj[r].start_day_and_time,
+                                     endTime: obj[r].end_day_and_time};
                                     currentA.days[d] = actions[a].status;
                                     bigList.push(currentA);
                                 }
@@ -283,7 +285,8 @@ export default function MainPage(props) {
                                             }
                                             if(isNewI){
                                                 var currentI = {type: "Instruction", title: insts[i].title, under: actions[a].action, days:[], tBox: {}, 
-                                                show: false, photo: insts[i].photo, is_available: insts[i].is_available, number: insts[i].instruction};
+                                                show: false, photo: insts[i].photo, is_available: insts[i].is_available, number: insts[i].instruction,
+                                                startTime: obj[r].start_day_and_time, endTime: obj[r].end_day_and_time};
                                                 currentI.days[d] = insts[i].status;
                                                 bigList.push(currentI);
                                             }
