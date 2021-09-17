@@ -164,6 +164,7 @@ export default function Firebasev2(props)  {
         axios
         .get(BASE_URL + "listAllTAForCopy")
         .then(response => {
+            console.log('res.data.res = ', response.data.result);
             setTAData(response.data.result)            
             })
         .catch((error) => {

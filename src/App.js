@@ -201,7 +201,7 @@
 
 // export default App;
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 import LoginContext, { LoginInitState } from 'LoginContext';
@@ -235,6 +235,7 @@ export default function App() {
   const [loginState, setLoginState] = useState(LoginInitState);
   console.log("login State")
   console.log(loginState)
+  useEffect(() => console.log('curUser = ', loginState.curUser), [loginState.curUser]);
   return (
     <Router>
       <LoginContext.Provider

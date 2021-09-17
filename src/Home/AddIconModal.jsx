@@ -218,14 +218,13 @@ export default class AddIconModal extends Component {
     }
 
     return (
-      <>
+      <div>
         <Button
           variant="text"
           style={{ textDecoration:'underline', color:'#ffffff', fontSize:'14px' }}
           onClick={this.onHandleShowClick}
-        >
-         Use icon from library
-        </Button>
+          children = "Use icon from library"
+        />
         <Modal show={this.state.show} onHide={this.onHandleShowClick}>
           <Modal.Header closeButton>
             <Modal.Title>Icon List</Modal.Title>
@@ -291,7 +290,7 @@ export default class AddIconModal extends Component {
             </Button> */}
           </Modal.Footer>
         </Modal>
-      </>
+      </div>
 
       /* <Modal show={this.state.show} onHide={this.onHandleShowClick}>
           <Modal.Header closeButton>

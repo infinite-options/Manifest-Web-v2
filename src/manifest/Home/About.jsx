@@ -681,7 +681,7 @@ export default function AboutModal(props) {
             overflow: "auto",
             position: "fixed",
             display: "grid",
-            backgroundColor: 'rgba(255, 255, 255, 0.5)'
+            backgroundColor: 'rgba(255, 255, 255, 0.5)',
           }}
         >
           <div
@@ -697,7 +697,7 @@ export default function AboutModal(props) {
               padding: "40px",
             }}
           >
-            <div style={{textAlign: 'center', marginBottom: '20px'}}>Person Info</div>
+            <div style={{textAlign: 'center', marginBottom: '20px',}}>Person Info</div>
             <Form.Group>
             <Row>
               <Col style={{ paddingRight: '10px' }}>
@@ -731,24 +731,23 @@ export default function AboutModal(props) {
               Change Icon
             </div>
             <div style={{ textAlign: 'left', float:'left', marginTop: '1rem',width:'100%'}}>
-              <Row >
-                <Col style={{ textDecoration:'underline', paddingLeft:'0', marginLeft:'0', width:'70%'}}>
-                <div style={{ marginBottom: '8px',  fontSize: '14px', }}>
-                    Add icon to library
-                </div>
-                <div style={{ paddingLeft:'0', marginLeft:'-1rem'}}>
-                  <UploadImage 
-                    photoUrl={photo}
-                    setPhotoUrl={setPhoto}
-                    currentUserId={props.CurrentId} /> 
-                </div>
-                <div style={{ paddingLeft:'0', marginLeft:'-1rem'}}>
-                  <AddIconModal
-                    photoUrl = {photo}
-                    setPhotoUrl = {setPhoto}
-                  />
-                </div>
-                
+              <Row>
+                <Col style={{ textDecoration:'underline', paddingLeft:'0', marginLeft:'0', width:'70%',}}>
+                  <div style={{ marginBottom: '8px',  fontSize: '14px', }}>
+                      Add icon to library
+                  </div>
+                  <div style={{ paddingLeft:'0', marginLeft:'-1rem'}}>
+                    <UploadImage 
+                      photoUrl={photo}
+                      setPhotoUrl={setPhoto}
+                      currentUserId={props.CurrentId} /> 
+                  </div>
+                  <div style={{marginLeft:'-1rem'}}>
+                    <AddIconModal
+                      photoUrl = {photo}
+                      setPhotoUrl = {setPhoto}
+                    />
+                  </div>
                 </Col>
                 <Col>
                   <div  style={{ marginLeft: '1rem' }}>
@@ -1154,14 +1153,6 @@ export default function AboutModal(props) {
                 >
                   Change Image
                 </h1>
-                <div
-                  style={{
-                    fontSize: '16px',
-                    textDecoration: 'underline',
-                  }}
-                >
-                  Upload from Computer
-                </div>
                 <div
                   style={{
                     fontSize: '16px',
