@@ -339,17 +339,17 @@ export default function AboutModal(props) {
     event.stopPropagation();
 
     const file = event.target.files[0]; //stores file uploaded in file
-    console.log(file);
 
     setSaveButtonEnabled(false);
     setImageChanged(true);
 
     let targetFile = file;
     if (targetFile !== null && Object.keys(aboutMeObject).length !== 0) {
+      const imageURL = URL.createObjectURL(file);
       setAboutMeObject((prevState) => ({
         ...prevState,
         have_pic: true,
-        pic: file,
+        pic: imageURL,
         timeSettings: {
           ...prevState.timeSettings,
         },
