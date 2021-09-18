@@ -431,6 +431,271 @@ export default function Firebasev2(props)  {
                                         return 0;
                                       });
                                     props.setGetGoalsEndPoint(temp);
+
+                                    const routine = [];
+                                    const routine_ids = [];
+                                    let x = response.data.result;
+                                    console.log('response', x);
+                                    x.sort((a, b) => {
+                                    // console.log(a);
+                                    // console.log(b);
+                                    let datetimeA = new Date(
+                                        a['gr_start_day_and_time'].replace(/-/g, '/')
+                                    );
+
+                                    let datetimeB = new Date(
+                                        b['gr_start_day_and_time'].replace(/-/g, '/')
+                                    );
+
+                                    let timeA =
+                                        new Date(datetimeA).getHours() * 60 +
+                                        new Date(datetimeA).getMinutes();
+
+                                    let timeB =
+                                        new Date(datetimeB).getHours() * 60 +
+                                        new Date(datetimeB).getMinutes();
+
+                                    return timeA - timeB;
+                                    });
+
+                                    let gr_array = [];
+
+                                    for (let i = 0; i < x.length; ++i) {
+                                        let gr = {};
+                                        gr.audio = '';
+                                        // gr.available_end_time = "23:59:59";
+                                        // gr.available_start_time = "00:00:00";
+                                        gr.datetime_completed = x[i].gr_datetime_completed;
+                                        gr.datetime_started = x[i].gr_datetime_started;
+                                        gr.end_day_and_time = x[i].gr_end_day_and_time;
+                                        gr.expected_completion_time = x[i].expected_completion_time;
+                                        gr.id = x[i].gr_unique_id;
+
+                                        gr.is_available = x[i].is_available.toLowerCase() === 'true';
+
+                                        gr.is_complete = x[i].is_complete.toLowerCase() === 'true';
+                                        gr.is_displayed_today =
+                                            x[i].is_displayed_today.toLowerCase() === 'true';
+                                        gr.is_in_progress = x[i].is_in_progress.toLowerCase() === 'true';
+                                        gr.is_persistent = x[i].is_persistent.toLowerCase() === 'true';
+                                        gr.is_sublist_available =
+                                            x[i].is_sublist_available.toLowerCase() === 'true';
+                                        gr.is_timed = x[i].is_timed.toLowerCase() === 'true';
+
+                                        gr.photo = x[i].photo;
+                                        gr.repeat = x[i].repeat.toLowerCase() === 'true';
+                                        gr.repeat_type = x[i].repeat_type || 'Never';
+                                        gr.repeat_ends_on = x[i].repeat_ends_on;
+                                        gr.repeat_every = x[i].repeat_every;
+                                        gr.repeat_frequency = x[i].repeat_frequency;
+                                        gr.repeat_occurences = x[i].repeat_occurences;
+
+                                        const repeat_week_days_json = JSON.parse(x[i].repeat_week_days);
+
+                                        if (repeat_week_days_json) {
+                                            gr.repeat_week_days = {
+                                            0:
+                                                repeat_week_days_json.Sunday &&
+                                                repeat_week_days_json.Sunday.toLowerCase() === 'true'
+                                                ? 'Sunday'
+                                                : '',
+                                            1:
+                                                repeat_week_days_json.Monday &&
+                                                repeat_week_days_json.Monday.toLowerCase() === 'true'
+                                                ? 'Monday'
+                                                : '',
+                                            2:
+                                                repeat_week_days_json.Tuesday &&
+                                                repeat_week_days_json.Tuesday.toLowerCase() === 'true'
+                                                ? 'Tuesday'
+                                                : '',
+                                            3:
+                                                repeat_week_days_json.Wednesday &&
+                                                repeat_week_days_json.Wednesday.toLowerCase() === 'true'
+                                                ? 'Wednesday'
+                                                : '',
+                                            4:
+                                                repeat_week_days_json.Thursday &&
+                                                repeat_week_days_json.Thursday.toLowerCase() === 'true'
+                                                ? 'Thursday'
+                                                : '',
+                                            5:
+                                                repeat_week_days_json.Friday &&
+                                                repeat_week_days_json.Friday.toLowerCase() === 'true'
+                                                ? 'Friday'
+                                                : '',
+                                            6:
+                                                repeat_week_days_json.Saturday &&
+                                                repeat_week_days_json.Saturday.toLowerCase() === 'true'
+                                                ? 'Saturday'
+                                                : '',
+                                            };
+                                        } else {
+                                            gr.repeat_week_days = {
+                                            0: '',
+                                            1: '',
+                                            2: '',
+                                            3: '',
+                                            4: '',
+                                            5: '',
+                                            6: '',
+                                            };
+                                        }
+
+                                        gr.start_day_and_time = x[i].gr_start_day_and_time;
+
+                                        // const first_notifications = x[i].notifications[0];
+                                        // const second_notifications = x[i].notifications[1];
+                                        // console.log(first_notifications);
+                                        // console.log(second_notifications);
+
+                                        for (let k = 0; k < x[i].notifications.length; ++k) {
+                                            const first_notifications = x[i].notifications[k];
+                                            if (first_notifications) {
+                                            if (first_notifications.user_ta_id.charAt(0) === '1') {
+                                                gr.user_notifications = {
+                                                before: {
+                                                    is_enabled:
+                                                    first_notifications.before_is_enable.toLowerCase() ===
+                                                    'true',
+                                                    is_set:
+                                                    first_notifications.before_is_set.toLowerCase() ===
+                                                    'true',
+                                                    message: first_notifications.before_message,
+                                                    time: first_notifications.before_time,
+                                                },
+                                                during: {
+                                                    is_enabled:
+                                                    first_notifications.during_is_enable.toLowerCase() ===
+                                                    'true',
+                                                    is_set:
+                                                    first_notifications.during_is_set.toLowerCase() ===
+                                                    'true',
+                                                    message: first_notifications.during_message,
+                                                    time: first_notifications.during_time,
+                                                },
+                                                after: {
+                                                    is_enabled:
+                                                    first_notifications.after_is_enable.toLowerCase() ===
+                                                    'true',
+                                                    is_set: first_notifications.after_is_set.toLowerCase(),
+                                                    message: first_notifications.after_message,
+                                                    time: first_notifications.after_time,
+                                                },
+                                                };
+                                            } else if (
+                                                first_notifications.user_ta_id.charAt(0) === '2' &&
+                                                first_notifications.user_ta_id === props.stateValue.ta_people_id
+                                            ) {
+                                                gr.ta_notifications = {
+                                                before: {
+                                                    is_enabled:
+                                                    first_notifications.before_is_enable.toLowerCase() ===
+                                                    'true',
+                                                    is_set:
+                                                    first_notifications.before_is_set.toLowerCase() ===
+                                                    'true',
+                                                    message: first_notifications.before_message,
+                                                    time: first_notifications.before_time,
+                                                },
+                                                during: {
+                                                    is_enabled:
+                                                    first_notifications.during_is_enable.toLowerCase() ===
+                                                    'true',
+                                                    is_set: first_notifications.during_is_set.toLowerCase(),
+                                                    message: first_notifications.during_message,
+                                                    time: first_notifications.during_time,
+                                                },
+                                                after: {
+                                                    is_enabled:
+                                                    first_notifications.after_is_enable.toLowerCase() ===
+                                                    'true',
+                                                    is_set:
+                                                    first_notifications.after_is_set.toLowerCase() ===
+                                                    'true',
+                                                    message: first_notifications.after_message,
+                                                    time: first_notifications.after_time,
+                                                },
+                                                };
+                                            }
+                                            }
+                                        }
+
+                                        gr.title = x[i].gr_title;
+                                        var goalDate = new Date(gr.end_day_and_time.replace(/-/g, '/'));
+                                        console.log(goalDate);
+                                        //For Today Goals and Routines
+                                        let startOfDay = moment(goalDate);
+                                        let endOfDay = moment(goalDate);
+                                        let begOfTheDay = startOfDay.startOf('day');
+                                        let endOfTheDay = endOfDay.endOf('day');
+                                        let todayStartDate = new Date(begOfTheDay.format('MM/DD/YYYY'));
+                                        let todayEndDate = new Date(endOfTheDay.format('MM/DD/YYYY'));
+                                        todayStartDate.setHours(0, 0, 0);
+                                        todayEndDate.setHours(23, 59, 59);
+
+                                        //For Week Goals and Routines
+                                        let startWeek = moment(goalDate);
+                                        let endWeek = moment(goalDate);
+                                        let startDay = startWeek.startOf('week');
+                                        let endDay = endWeek.endOf('week');
+                                        let startDate = new Date(startDay.format('MM/DD/YYYY'));
+                                        let endDate = new Date(endDay.format('MM/DD/YYYY'));
+                                        startDate.setHours(0, 0, 0);
+                                        endDate.setHours(23, 59, 59);
+
+                                        //For Months Goals and Routines
+                                        let startMonth = moment(goalDate);
+                                        let endMonth = moment(goalDate);
+                                        let startDayMonth = startMonth.startOf('month');
+                                        let endDayMonth = endMonth.endOf('month');
+                                        let monthStartDate = new Date(startDayMonth.format('MM/DD/YYYY'));
+                                        let monthEndDate = new Date(endDayMonth.format('MM/DD/YYYY'));
+                                        monthStartDate.setHours(0, 0, 0);
+                                        monthEndDate.setHours(23, 59, 59);
+
+                                        if (
+                                            props.stateValue.calendarView === 'Day' &&
+                                            goalDate.getTime() > todayStartDate.getTime() &&
+                                            goalDate.getTime() < todayEndDate.getTime()
+                                        ) {
+                                            gr_array.push(gr);
+                                        }
+                                        if (
+                                            props.stateValue.calendarView === 'Week' &&
+                                            goalDate.getTime() > startDate.getTime() &&
+                                            goalDate.getTime() < endDate.getTime()
+                                        ) {
+                                            gr_array.push(gr);
+                                        }
+                                        if (x[i]['is_persistent'].toLowerCase() === 'true') {
+                                            
+                                            if (
+                                            props.stateValue.calendarView === 'Day' &&
+                                            goalDate.getTime() > todayStartDate.getTime() &&
+                                            goalDate.getTime() < todayEndDate.getTime()
+                                            ) {
+                                            routine_ids.push(gr['id']);
+                                            routine.push(gr);
+                                            }
+                                            if (
+                                            props.stateValue.calendarView === 'Week' &&
+                                            goalDate.getTime() > todayStartDate.getTime() &&
+                                            goalDate.getTime() < todayEndDate.getTime()
+                                            ) {
+                                            routine_ids.push(gr['id']);
+                                            routine.push(gr);
+                                            }
+                                        }
+                                    }
+
+                                    props.setStateValue((prevState) => {
+                                        return {
+                                            ...prevState,
+                                            routine_ids: routine_ids,
+                                            routines: routine,
+                                        };
+                                    });
                                 })
                                 .catch((error) => {
                                     console.log(error);
