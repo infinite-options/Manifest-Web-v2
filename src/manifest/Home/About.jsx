@@ -94,13 +94,12 @@ export default function AboutModal(props) {
 
   const history = useHistory();
 
- 
-
   const [motivation0 , setMotivation0] = useState('')
   const [motivation1 , setMotivation1] = useState('')
   const [motivation2 , setMotivation2] = useState('')
   const [motivation3 , setMotivation3] = useState('')
   const [motivation4 , setMotivation4] = useState('')
+  const [showUploadImage, toggleUploadImage] = useState(false);
 
   const [feelings0 , setFeelings0] = useState('')
   const [feelings1 , setFeelings1] = useState('')
@@ -119,6 +118,87 @@ export default function AboutModal(props) {
   const loginContext = useContext(LoginContext);
   const userID = loginContext.loginState.curUser;
   //const userID = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1];
+
+  const uploadImageModal = () => {
+    return (
+      <Modal
+        show={showUploadImage}
+        onHide={() => {
+          toggleUploadImage(false);
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Upload Image</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <div>Upload Image</div>
+          <input
+            type="file"
+            onChange={(e) => {
+              console.log('here: selecting image');
+              if (e.target.files[0]) {
+                const image1 = e.target.files[0];
+                // console.log(image1.name);
+                console.log('image1 = ', image1);
+                setTaObject({
+                  ...taObject,
+                  pic: image1,
+                });
+              }
+            }}
+          />
+          <Button
+            variant="dark"
+            onClick={() => {
+              console.log('here: uploading image');
+              if (taObject.pic === null) {
+                alert('Please select an image to upload');
+                return;
+              }
+              const salt = Math.floor(Math.random() * 9999999999);
+              let image_name = taObject.pic.name;
+              image_name = image_name + salt.toString();
+              const imageLink = URL.createObjectURL(taObject.pic);
+              setTaObject({
+                ...taObject,
+                pic: imageLink
+              });
+              console.log('URL: ', imageLink);
+            }}
+          >
+            Upload
+          </Button>
+          <img
+            src={taObject.pic || 'http://via.placeholder.com/400x300'}
+            alt="Uploaded images"
+            height="300"
+            width="400"
+          />
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              toggleUploadImage(false);
+            }}
+          >
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              console.log('here: Confirming changes');
+              toggleUploadImage(false);
+            }}
+          >
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  };
 
   // if (document.cookie
   //   .split(";")
@@ -647,7 +727,7 @@ export default function AboutModal(props) {
       people_important:"True",
       people_have_pic:'False',
       people_pic: "",
-      photo_url:photo,
+      photo_url:taObject.pic,
       ta_time_zone: taObject.time_zone,
     }
     console.log("updatePerson", body)
@@ -749,8 +829,12 @@ export default function AboutModal(props) {
             <div style={{ textAlign: 'left', float:'left', marginTop: '1rem',width:'100%'}}>
               <Row>
                 <Col style={{ textDecoration:'underline', paddingLeft:'0', marginLeft:'0', width:'70%',}}>
-                  <div style={{ marginBottom: '8px',  fontSize: '14px',}}>
-                      Add icon to library
+                  <div
+                    onClick={() => {
+                      toggleUploadImage(!showUploadImage);
+                    }}
+                  >
+                    Add icon to library
                   </div>
                   <div style={{ paddingLeft:'0', marginLeft:'-1rem'}}>
                     <UploadImage 
@@ -767,7 +851,7 @@ export default function AboutModal(props) {
                 </Col>
                 <Col>
                   <div  style={{ marginLeft: '1rem' }}>
-                    <img style={{height:'5rem', width:'5rem',backgroundColor:'#ffffff', borderRadius:'10px'}} src={photo}/> 
+                    <img style={{height:'5rem', width:'5rem',backgroundColor:'#ffffff', borderRadius:'10px'}} src={taObject.pic}/> 
                   </div> 
                 </Col>
               </Row>
@@ -1087,6 +1171,7 @@ export default function AboutModal(props) {
 
   return (
     <div>
+      {uploadImageModal()}
       {editPersonModal(taObject)}
       {confirmedModal()}
       {confirmSaveModal()}
