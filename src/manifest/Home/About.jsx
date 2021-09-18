@@ -749,7 +749,7 @@ export default function AboutModal(props) {
             <div style={{ textAlign: 'left', float:'left', marginTop: '1rem',width:'100%'}}>
               <Row>
                 <Col style={{ textDecoration:'underline', paddingLeft:'0', marginLeft:'0', width:'70%',}}>
-                  <div style={{ marginBottom: '8px',  fontSize: '14px', }}>
+                  <div style={{ marginBottom: '8px',  fontSize: '14px',}}>
                       Add icon to library
                   </div>
                   <div style={{ paddingLeft:'0', marginLeft:'-1rem'}}>
@@ -767,8 +767,8 @@ export default function AboutModal(props) {
                 </Col>
                 <Col>
                   <div  style={{ marginLeft: '1rem' }}>
-                  <img style={{height:'5rem', width:'5rem',backgroundColor:'#ffffff', borderRadius:'10px'}} src={photo}/> 
-                </div> 
+                    <img style={{height:'5rem', width:'5rem',backgroundColor:'#ffffff', borderRadius:'10px'}} src={photo}/> 
+                  </div> 
                 </Col>
               </Row>
             </div>
