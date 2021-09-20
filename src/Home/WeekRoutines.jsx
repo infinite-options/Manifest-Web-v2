@@ -40,7 +40,7 @@ export default class WeekRoutines extends Component {
     var arr = this.props.routines;
     var dic = {};
     let startObject = this.props.dateContext.clone();
-    console.log('startObject = ', startObject);
+    console.log('startObject = ', startObject.timeZone);
     console.log(this.props.routines, 'start');
     let endObject = this.props.dateContext.clone();
     let startDay = startObject.startOf('week');
@@ -63,7 +63,7 @@ export default class WeekRoutines extends Component {
       let tempStart = arr[i].start_day_and_time;
       let tempEnd = arr[i].end_day_and_time;
       let tempStartTime = new Date(
-        new Date(tempStart.replace(/-/g, '/')).toLocaleString('UTC', {
+        new Date(tempStart.replace(/-/g, '/')).toLocaleString({
           timeZone: this.props.timeZone,
         })
       );
@@ -72,14 +72,10 @@ export default class WeekRoutines extends Component {
       let repeatEvery = parseInt(arr[i]['repeat_every']);
       let repeatEnds = arr[i]['repeat_type'];
       let repeatEndsOn = new Date(
-        new Date(arr[i]['repeat_ends_on'].replace(/-/g, '/')).toLocaleString(
-          'UTC',
-          {
-            timeZone: this.props.timeZone,
-          }
-        )
+        new Date(arr[i]['repeat_ends_on'].replace(/-/g, '/')).toLocaleString({
+          timeZone: this.props.timeZone,
+        })
       );
-      console.log('getgoals', repeatEndsOn);
       repeatEndsOn.setHours(0, 0, 0, 0);
       let repeatFrequency = arr[i]['repeat_frequency'];
       let repeatWeekDays = [];
@@ -228,7 +224,7 @@ export default class WeekRoutines extends Component {
           timeZone: this.props.TimeZone,
         })
       );
-      console.log('getGoals', CurrentDate);
+
       CurrentDate.setHours(0, 0, 0, 0);
 
       let startDate2 = new Date(
@@ -239,7 +235,7 @@ export default class WeekRoutines extends Component {
           }
         )
       );
-      console.log('getGoals', startDate2);
+
       startDate2.setHours(0, 0, 0, 0);
 
       let isDisplayedTodayCalculated = false;
@@ -258,7 +254,7 @@ export default class WeekRoutines extends Component {
           }
         )
       );
-      console.log('getGoals', repeatEndsOn);
+
       repeatEndsOn.setHours(0, 0, 0, 0);
 
       let repeatFrequency = arr[i].repeat_frequency;
@@ -846,7 +842,6 @@ export default class WeekRoutines extends Component {
                   width: '100%',
                 }}
               >
-                {console.log('getgoals', this.getRoutineItemFromDic(i, j, dic))}
                 {this.getRoutineItemFromDic(i, j, dic)}
               </Col>
             </Row>
@@ -867,7 +862,21 @@ export default class WeekRoutines extends Component {
     let startObject = this.props.dateContext.clone();
     let startDay = startObject.startOf('week');
     let curDate = startDay.clone();
-    let today = new Date();
+    console.log('getgoals curDate', curDate);
+    console.log('getgoals timeZone', this.props.timeZone);
+    //let today = new Date();
+    /* let today = new Date();
+    console.log('getGoals today', today); */
+    let today = new Date().toLocaleString('UTC', {
+      timeZone: this.props.timeZone,
+    });
+
+    let dateNew = moment(today).tz('US/Pacific');
+    console.log('getGoals dateNew', dateNew);
+    let curDateNew = curDate.tz('US/Pacific');
+    console.log('getGoals curDateNew', curDateNew);
+    console.log('getGoals today', today);
+    console.log('getGoals curDate', curDateNew.format('D'));
     for (let i = 0; i < 7; i++) {
       arr.push(
         <Col key={'day' + i}>
@@ -876,10 +885,15 @@ export default class WeekRoutines extends Component {
               textAlign: 'center',
               height: this.state.pxPerHour,
               color:
+                (curDate.format('D') === dateNew.format('D')) &
+                (curDate.format('M') === dateNew.format('M'))
+                  ? '#FF6B4A'
+                  : '',
+              /* color:
                 (curDate.format('D') === today.getDate().toString()) &
                 (curDate.format('M') === (today.getMonth() + 1).toString())
                   ? '#FF6B4A'
-                  : '',
+                  : '', */
             }}
           >
             {curDate.format('MMM' + ' ' + 'D')}
@@ -895,10 +909,17 @@ export default class WeekRoutines extends Component {
     let startObject = this.props.dateContext.clone();
     let startDay = startObject.startOf('week');
     let curDate = startDay.clone();
-    let today = new Date();
+    //let today = new Date();
+    /* let today = new Date().toLocaleString('UTC', {
+      timeZone: this.props.timeZone,
+    }); */
 
-    //console.log('Curdate',curDate.format('D'))
-    //console.log('curdate today.toString()',today.getDate().toString())
+    let today = new Date().toLocaleString('UTC', {
+      timeZone: this.props.timeZone,
+    });
+
+    let dateNew = moment(today).tz('US/Pacific');
+    console.log('getGoals dateNew', dateNew);
 
     for (let i = 0; i < 7; i++) {
       arr.push(
@@ -908,9 +929,9 @@ export default class WeekRoutines extends Component {
               textAlign: 'center',
               fontWeight: 'bold',
               color:
-                (curDate.format('D') === today.getDate().toString()) &
-                (curDate.format('dddd') === moment(today).format('dddd')) &
-                (curDate.format('M') === (today.getMonth() + 1).toString())
+                (curDate.format('D') === dateNew.format('D')) &
+                (curDate.format('dddd') === dateNew.format('dddd')) &
+                (curDate.format('M') === dateNew.format('M'))
                   ? '#FF6B4A'
                   : '',
             }}

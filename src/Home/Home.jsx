@@ -337,7 +337,7 @@ export default function Home(props) {
 
     currentUserPicUrl: '',
     currentUserName: '',
-    currentUserTimeZone: Intl.DateTimeFormat().resolvedOptions().userTime_zone,
+    currentUserTimeZone: userTime_zone,
     currentUserId: userID, //'100-000071',
     currentAdvisorCandidateName: '',
     currentAdvisorCandidateId: '',
@@ -869,6 +869,7 @@ export default function Home(props) {
             // getEventsByInterval={getEventsByIntervalDayVersion}
             timeZone={stateValue.currentUserTimeZone}
           />
+
           <DayRoutines
             // handleDateClick={this.handleDateClickOnDayView}
             timeZone={stateValue.currentUserTimeZone}

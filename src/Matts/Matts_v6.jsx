@@ -98,6 +98,7 @@ export default function MainPage(props) {
       .split('=')[1];
   } else {
     userID = loginContext.loginState.curUser;
+    userTime_zone = loginContext.loginState.curUserTimeZone;
   }
   if (userID != currentUser) {
     setHG([]);
@@ -775,7 +776,7 @@ export default function MainPage(props) {
                           <p
                             style={{ textTransform: 'none', height: '19.5px' }}
                           >
-                            {Intl.DateTimeFormat().resolvedOptions().timeZone}
+                            {userTime_zone}
                           </p>
                         </Col>
                         <Col style={{ justifyContent: 'right' }}>
