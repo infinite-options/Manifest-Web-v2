@@ -280,14 +280,14 @@ export default function Home(props) {
     //////////New additions for new calendar
     dateContext: moment(
       new Date(
-        new Date().toLocaleString('en-US', {
+        new Date().toLocaleString('UTC', {
           timeZone: Intl.DateTimeFormat().resolvedOptions().userTime_zone,
         })
       )
     ), //Keep track of day and month
     todayDateObject: moment(
       new Date(
-        new Date().toLocaleString('en-US', {
+        new Date().toLocaleString('UTC', {
           timeZone: Intl.DateTimeFormat().resolvedOptions().userTime_zone,
         })
       )
@@ -361,7 +361,7 @@ export default function Home(props) {
     BASE_URL:
       'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/',
   });
-
+  console.log('startObject = ', stateValue.currentUserTimeZone);
   const initialEditingRTSState = {
     editing: false,
     type: '',
@@ -867,11 +867,11 @@ export default function Home(props) {
             // handleDateClick={handleDateClickOnDayView}
             dayEvents={stateValue.dayEvents}
             // getEventsByInterval={getEventsByIntervalDayVersion}
-            timeZone={userTime_zone}
+            timeZone={stateValue.currentUserTimeZone}
           />
           <DayRoutines
             // handleDateClick={this.handleDateClickOnDayView}
-            timeZone={userTime_zone}
+            timeZone={stateValue.currentUserTimeZone}
             dateContext={stateValue.dateContext}
             routine_ids={stateValue.routine_ids}
             routines={stateValue.routines}
@@ -896,7 +896,7 @@ export default function Home(props) {
       >
         <Row style={{ float: 'right', width: '100%' }}>
           <WeekRoutines
-            timeZone={userTime_zone}
+            timeZone={stateValue.currentUserTimeZone}
             routines={stateValue.routines}
             dateContext={stateValue.dateContext}
             BASE_URL={stateValue.BASE_URL}

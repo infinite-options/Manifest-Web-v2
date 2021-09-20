@@ -79,7 +79,7 @@ export default class WeekRoutines extends Component {
           }
         )
       );
-      //console.log('repeat', repeatEndsOn);
+      console.log('getgoals', repeatEndsOn);
       repeatEndsOn.setHours(0, 0, 0, 0);
       let repeatFrequency = arr[i]['repeat_frequency'];
       let repeatWeekDays = [];
@@ -192,6 +192,7 @@ export default class WeekRoutines extends Component {
 
   getRoutineItemFromDic = (day, hour, dic) => {
     let startObject = this.props.dateContext.clone();
+    console.log('startObject = ', startObject);
     let startDay = startObject.startOf('week');
     let curDate2 = startDay.clone();
     curDate2.add(day, 'days');
@@ -227,6 +228,7 @@ export default class WeekRoutines extends Component {
           timeZone: this.props.TimeZone,
         })
       );
+      console.log('getGoals', CurrentDate);
       CurrentDate.setHours(0, 0, 0, 0);
 
       let startDate2 = new Date(
@@ -237,6 +239,7 @@ export default class WeekRoutines extends Component {
           }
         )
       );
+      console.log('getGoals', startDate2);
       startDate2.setHours(0, 0, 0, 0);
 
       let isDisplayedTodayCalculated = false;
@@ -248,10 +251,14 @@ export default class WeekRoutines extends Component {
       let repeatEnds = arr[i].repeat_type;
 
       let repeatEndsOn = new Date(
-        new Date(arr[i].repeat_ends_on).toLocaleString('UTC', {
-          timeZone: this.props.TimeZone,
-        })
+        new Date(arr[i].repeat_ends_on.replace(/-/g, '/')).toLocaleString(
+          'UTC',
+          {
+            timeZone: this.props.TimeZone,
+          }
+        )
       );
+      console.log('getGoals', repeatEndsOn);
       repeatEndsOn.setHours(0, 0, 0, 0);
 
       let repeatFrequency = arr[i].repeat_frequency;
@@ -409,6 +416,7 @@ export default class WeekRoutines extends Component {
       }
 
       let startDate = moment(tempStartTime);
+      console.log(tempStartTime);
       let endDate = moment(tempEndTime);
 
       if (
@@ -517,18 +525,6 @@ export default class WeekRoutines extends Component {
                         '\nEnd: ' +
                         tempEndTime
                       }
-                      // onMouseOver={(e) => {
-                      //   e.target.style.color = 'white';
-                      //   e.target.style.background = 'skyblue';
-                      //   e.target.style.zIndex = '2';
-                      // }}
-
-                      // onMouseOut={(e) => {
-                      //   e.target.style.zIndex = '1';
-                      // //  e.target.style.color = '#000000';
-                      //   e.target.style.background = color;
-                      // }}
-
                       key={i}
                       style={{
                         zIndex: this.state.zIndex,
@@ -850,6 +846,7 @@ export default class WeekRoutines extends Component {
                   width: '100%',
                 }}
               >
+                {console.log('getgoals', this.getRoutineItemFromDic(i, j, dic))}
                 {this.getRoutineItemFromDic(i, j, dic)}
               </Col>
             </Row>
