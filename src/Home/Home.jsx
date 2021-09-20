@@ -65,6 +65,7 @@ export default function Home(props) {
   }
 
   var userID = '';
+  var userTime_zone = '';
   if (
     document.cookie
       .split(';')
@@ -75,10 +76,16 @@ export default function Home(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_uid='))
       .split('=')[1];
+    userTime_zone = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_timeZone='))
+      .split('=')[1];
     // document.cookie = 'patient_name=test'
   } else {
     console.log('in here', console.log(loginContext.loginState));
     userID = loginContext.loginState.curUser;
+    userTime_zone = loginContext.loginState.curUserTimeZone;
+    console.log('curUser', userTime_zone);
     // document.cookie = 'patient_name=test'
   }
 
@@ -127,10 +134,12 @@ export default function Home(props) {
         if (response.result !== false) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
+          const curUserTZ = usersOfTA[0].time_zone;
           loginContext.setLoginState({
             ...loginContext.loginState,
             usersOfTA: response.data.result,
             curUser: curUserID,
+            curUserTimeZone: curUserTZ,
           });
           console.log(curUserID);
           // setUserID(curUserID);
@@ -246,8 +255,7 @@ export default function Home(props) {
     weekEvents: [], //holds google events data for a week
     originalGoalsAndRoutineArr: [], //Hold goals and routines so day and week view can access it
     goals: [],
-    routines: [
-    ],
+    routines: [],
     routine_ids: [],
     goal_ids: [],
     showRoutineGoalModal: false,
@@ -273,14 +281,14 @@ export default function Home(props) {
     dateContext: moment(
       new Date(
         new Date().toLocaleString('en-US', {
-          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          timeZone: Intl.DateTimeFormat().resolvedOptions().userTime_zone,
         })
       )
     ), //Keep track of day and month
     todayDateObject: moment(
       new Date(
         new Date().toLocaleString('en-US', {
-          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          timeZone: Intl.DateTimeFormat().resolvedOptions().userTime_zone,
         })
       )
     ), //Remember today's date to create the circular effect over todays day
@@ -329,7 +337,7 @@ export default function Home(props) {
 
     currentUserPicUrl: '',
     currentUserName: '',
-    currentUserTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    currentUserTimeZone: Intl.DateTimeFormat().resolvedOptions().userTime_zone,
     currentUserId: userID, //'100-000071',
     currentAdvisorCandidateName: '',
     currentAdvisorCandidateId: '',
@@ -690,7 +698,9 @@ export default function Home(props) {
       let endObject = stateValue.dateContext.clone();
       let startDay = startObject.startOf('month');
       let endDay = endObject.endOf('month');
+
       let startDate = new Date(startDay.format('MM/DD/YYYY'));
+      console.log('startObject', startDate);
       let endDate = new Date(endDay.format('MM/DD/YYYY'));
       startDate.setHours(0, 0, 0);
       endDate.setHours(23, 59, 59);
@@ -785,27 +795,28 @@ export default function Home(props) {
     let today = new Date();
     dateContext = moment(dateContext);
 
-    
-    {(0 <= today.getDate().toString()- dateContext.format('D')) && (today.getDate().toString()- dateContext.format('D') <=6) && ((today.getMonth()+1).toString()- dateContext.format('M')===0)
-    ?( setStateValue((prevState) => {
-      return {
-        ...prevState,
-        dateContext: dateContext,
-        dayEvents: [],
-      };
-      // updateEventsArray();
-    }))
-    :( setStateValue((prevState) => {
-      return {
-        ...prevState,
-        dateContext: moment(today),
-        dayEvents: [],
-      };
-      // updateEventsArray();
-    }))
-                            }
-   
-   
+    {
+      0 <= today.getDate().toString() - dateContext.format('D') &&
+      today.getDate().toString() - dateContext.format('D') <= 6 &&
+      (today.getMonth() + 1).toString() - dateContext.format('M') === 0
+        ? setStateValue((prevState) => {
+            return {
+              ...prevState,
+              dateContext: dateContext,
+              dayEvents: [],
+            };
+            // updateEventsArray();
+          })
+        : setStateValue((prevState) => {
+            return {
+              ...prevState,
+              dateContext: moment(today),
+              dayEvents: [],
+            };
+            // updateEventsArray();
+          });
+    }
+
     console.log('curWeek');
   };
 
@@ -856,11 +867,11 @@ export default function Home(props) {
             // handleDateClick={handleDateClickOnDayView}
             dayEvents={stateValue.dayEvents}
             // getEventsByInterval={getEventsByIntervalDayVersion}
-            timeZone={stateValue.currentUserTimeZone}
+            timeZone={userTime_zone}
           />
           <DayRoutines
             // handleDateClick={this.handleDateClickOnDayView}
-            timeZone={stateValue.currentUserTimeZone}
+            timeZone={userTime_zone}
             dateContext={stateValue.dateContext}
             routine_ids={stateValue.routine_ids}
             routines={stateValue.routines}
@@ -885,7 +896,7 @@ export default function Home(props) {
       >
         <Row style={{ float: 'right', width: '100%' }}>
           <WeekRoutines
-            timeZone={stateValue.currentUserTimeZone}
+            timeZone={userTime_zone}
             routines={stateValue.routines}
             dateContext={stateValue.dateContext}
             BASE_URL={stateValue.BASE_URL}
@@ -934,47 +945,62 @@ export default function Home(props) {
     // console.log('base url id ', userID);
 
     const getTimes = (a_day_time, b_day_time) => {
-      const [a_start_time, b_start_time] = [a_day_time.substring(10, a_day_time.length), b_day_time.substring(10, b_day_time.length)];
-      const [a_HMS, b_HMS] = [a_start_time.substring(0, a_start_time.length - 3).replace(/\s{1,}/, '').split(':'),
-        b_start_time.substring(0, b_start_time.length - 3).replace(/\s{1,}/, '').split(':')];
-      const [a_parity, b_parity] = [a_start_time.substring(a_start_time.length - 3, a_start_time.length).replace(/\s{1,}/, ''),
-        b_start_time.substring(b_start_time.length - 3, b_start_time.length).replace(/\s{1,}/, '')];
-      
+      const [a_start_time, b_start_time] = [
+        a_day_time.substring(10, a_day_time.length),
+        b_day_time.substring(10, b_day_time.length),
+      ];
+      const [a_HMS, b_HMS] = [
+        a_start_time
+          .substring(0, a_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+        b_start_time
+          .substring(0, b_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+      ];
+      const [a_parity, b_parity] = [
+        a_start_time
+          .substring(a_start_time.length - 3, a_start_time.length)
+          .replace(/\s{1,}/, ''),
+        b_start_time
+          .substring(b_start_time.length - 3, b_start_time.length)
+          .replace(/\s{1,}/, ''),
+      ];
+
       let [a_time, b_time] = [0, 0];
-      if (a_parity === 'PM' && a_HMS[0] !== '12')
-      {
+      if (a_parity === 'PM' && a_HMS[0] !== '12') {
         const hoursInt = parseInt(a_HMS[0]) + 12;
         a_HMS[0] = `${hoursInt}`;
-      }
-      else if (a_parity === 'AM' && a_HMS[0] === '12')
-        a_HMS[0] = '00';
+      } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
 
-      if (b_parity === 'PM' && b_HMS[0] !== '12')
-      {
+      if (b_parity === 'PM' && b_HMS[0] !== '12') {
         const hoursInt = parseInt(b_HMS[0]) + 12;
         b_HMS[0] = `${hoursInt}`;
-      }
-      else if (b_parity === 'AM' && b_HMS[0] === '12')
-        b_HMS[0] = '00';
+      } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
 
-      for (let i = 0; i < a_HMS.length; i++)
-      {
-        a_time += Math.pow(60, (a_HMS.length - i - 1)) * parseInt(a_HMS[i]);
-        b_time += Math.pow(60, (b_HMS.length - i - 1)) * parseInt(b_HMS[i]);
+      for (let i = 0; i < a_HMS.length; i++) {
+        a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+        b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
       }
-      
+
       return [a_time, b_time];
     };
 
     useEffect(() => {
-      if (userID == '')
-        return;
-      console.log('here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ', [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
-      
+      if (userID == '') return;
+      console.log(
+        'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
+        [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
+      );
+
       axios
         .get(url + userID)
         .then((response) => {
-          console.log('here: Obtained user information with res = ', response.data.result);
+          console.log(
+            'here: Obtained user information with res = ',
+            response.data.result
+          );
           const temp = [];
 
           for (let i = 0; i < response.data.result.length; i++) {
@@ -982,32 +1008,36 @@ export default function Home(props) {
           }
           temp.sort((a, b) => {
             console.log('a = ', a, '\nb = ', b);
-            const [a_start, b_start] = [a.gr_start_day_and_time, b.gr_start_day_and_time];
+            const [a_start, b_start] = [
+              a.gr_start_day_and_time,
+              b.gr_start_day_and_time,
+            ];
             console.log('a_start = ', a_start, '\nb_start = ', b_start);
-            const [a_end, b_end] = [a.gr_end_day_and_time, b.gr_end_day_and_time];
+            const [a_end, b_end] = [
+              a.gr_end_day_and_time,
+              b.gr_end_day_and_time,
+            ];
 
-            const [a_start_time, b_start_time] = getTimes(a.gr_start_day_and_time, b.gr_start_day_and_time);
-            const [a_end_time, b_end_time] = getTimes(a.gr_end_day_and_time, b.gr_end_day_and_time);
+            const [a_start_time, b_start_time] = getTimes(
+              a.gr_start_day_and_time,
+              b.gr_start_day_and_time
+            );
+            const [a_end_time, b_end_time] = getTimes(
+              a.gr_end_day_and_time,
+              b.gr_end_day_and_time
+            );
 
-            if (a_start_time < b_start_time)
-              return -1;
-            else if (a_start_time > b_start_time)
-              return 1;
+            if (a_start_time < b_start_time) return -1;
+            else if (a_start_time > b_start_time) return 1;
             else {
-              if (a_end_time < b_end_time)
-                return -1;
-              else if (a_end_time > b_end_time)
-                return 1;
+              if (a_end_time < b_end_time) return -1;
+              else if (a_end_time > b_end_time) return 1;
               else {
-                if (a_start < b_start)
-                  return -1;
-                else if (a_start > b_start)
-                  return 1;
+                if (a_start < b_start) return -1;
+                else if (a_start > b_start) return 1;
                 else {
-                  if (a_end < b_end)
-                    return -1;
-                  else if (a_end > b_end)
-                    return 1;
+                  if (a_end < b_end) return -1;
+                  else if (a_end > b_end) return 1;
                 }
               }
             }
@@ -1439,9 +1469,12 @@ export default function Home(props) {
   console.log('stateValue', stateValue);
   let curDate = startWeek.clone();
   let today = new Date();
-  console.log('curDate',curDate.format('D'))
-  console.log('curdate today.toString()',today.getDate().toString())
-  console.log('curdate- today', today.getDate().toString()-curDate.format('D'))
+  console.log('curDate', curDate.format('D'));
+  console.log('curdate today.toString()', today.getDate().toString());
+  console.log(
+    'curdate- today',
+    today.getDate().toString() - curDate.format('D')
+  );
   return (
     // console.log('home routines', stateValue.routines),
     /*----------------------------button
@@ -1482,7 +1515,6 @@ export default function Home(props) {
                 stateValue.BASE_URL)
               }
             >
-              
               <Box backgroundColor="#bbc8d7">
                 <div style={{ width: '30%', float: 'left' }}>
                   <Button
@@ -1522,7 +1554,6 @@ export default function Home(props) {
                       className={classes.buttonSelection}
                       style={{
                         width: '19%',
-                        
                       }}
                       id="one"
                       onClick={() => {
@@ -1566,8 +1597,8 @@ export default function Home(props) {
                         setGetActionsEndPoint={setGetActionsEndPoint}
                         getStepsEndPoint={getStepsEndPoint}
                         setGetStepsEndPoint={setGetStepsEndPoint}
-                        stateValue = {stateValue}
-                        setStateValue = {setStateValue}
+                        stateValue={stateValue}
+                        setStateValue={setStateValue}
                       />
                     )}
                   </div>
@@ -1585,12 +1616,20 @@ export default function Home(props) {
                       style={{ width: '100%' }}
                       // flex
                     >
-                      <Container style={{ marginRight: '-10rem',width: '100%' }}>
+                      <Container
+                        style={{ marginRight: '-10rem', width: '100%' }}
+                      >
                         <Row style={{ margin: '0px', width: '100%' }}>
-                          <Col style={{ width: '10%', paddingTop:'1rem', marginLeft:'7rem' }}>
-                            <div >
+                          <Col
+                            style={{
+                              width: '10%',
+                              paddingTop: '1rem',
+                              marginLeft: '7rem',
+                            }}
+                          >
+                            <div>
                               <FontAwesomeIcon
-                                style={{ cursor:'pointer'  }}
+                                style={{ cursor: 'pointer' }}
                                 icon={faChevronLeft}
                                 size="2x"
                                 onClick={(e) => {
@@ -1601,21 +1640,55 @@ export default function Home(props) {
                           </Col>
                           <Col
                             md="auto"
-                            style={{ textAlign: 'center',  width: '70%' }}
+                            style={{ textAlign: 'center', width: '70%' }}
                             className="bigfancytext"
                           >
-                            {(0 <= today.getDate().toString()- curDate.format('D')) && (today.getDate().toString()- curDate.format('D') <=6) && ((today.getMonth()+1).toString()- curDate.format('M')===0)
-                            ?<p style={{font: 'normal normal bold 28px SF Pro', paddingBottom:'0px'}}>This week</p>
-                            :<p style={{font: 'normal normal bold 28px SF Pro', paddingBottom:'0px'}}>Week of {startWeek.format('D MMMM YYYY')} </p>
-                            }
-                              <p style={{font: 'normal normal bold 20px SF Pro', paddingBottom:'0px'}} className="normalfancytext">
-                              {stateValue.currentUserTimeZone}
+                            {0 <=
+                              today.getDate().toString() -
+                                curDate.format('D') &&
+                            today.getDate().toString() - curDate.format('D') <=
+                              6 &&
+                            (today.getMonth() + 1).toString() -
+                              curDate.format('M') ===
+                              0 ? (
+                              <p
+                                style={{
+                                  font: 'normal normal bold 28px SF Pro',
+                                  paddingBottom: '0px',
+                                }}
+                              >
+                                This week
+                              </p>
+                            ) : (
+                              <p
+                                style={{
+                                  font: 'normal normal bold 28px SF Pro',
+                                  paddingBottom: '0px',
+                                }}
+                              >
+                                Week of {startWeek.format('D MMMM YYYY')}{' '}
+                              </p>
+                            )}
+                            <p
+                              style={{
+                                font: 'normal normal bold 20px SF Pro',
+                                paddingBottom: '0px',
+                              }}
+                              className="normalfancytext"
+                            >
+                              {userTime_zone}
                             </p>
                           </Col>
-                          <Col style={{ width: '10%', textAlign: 'right', paddingTop:'1rem' }}>
+                          <Col
+                            style={{
+                              width: '10%',
+                              textAlign: 'right',
+                              paddingTop: '1rem',
+                            }}
+                          >
                             <FontAwesomeIcon
                               // style={{ marginLeft: "50%" }}
-                              style={{ float: 'right', cursor:'pointer'  }}
+                              style={{ float: 'right', cursor: 'pointer' }}
                               icon={faChevronRight}
                               size="2x"
                               className="X"
@@ -1624,14 +1697,23 @@ export default function Home(props) {
                               }}
                             />
                           </Col>
-                          <Col style={{ width: '10%', textAlign: 'right', paddingTop:'1rem', marginRight:'1rem' }}>
+                          <Col
+                            style={{
+                              width: '10%',
+                              textAlign: 'right',
+                              paddingTop: '1rem',
+                              marginRight: '1rem',
+                            }}
+                          >
                             <FontAwesomeIcon
                               // style={{ marginLeft: "50%" }}
-                              style={{ float: 'right', cursor:'pointer'  }}
+                              style={{ float: 'right', cursor: 'pointer' }}
                               icon={faCalendar}
                               size="2x"
                               className="X"
-                              onClick={(e) => {curWeek(); }}
+                              onClick={(e) => {
+                                curWeek();
+                              }}
                             />
                           </Col>
                         </Row>

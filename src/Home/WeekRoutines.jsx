@@ -49,21 +49,31 @@ export default class WeekRoutines extends Component {
     let endDate = new Date(endDay.format('YYYY-MM-DD'));
     startDate.setHours(0, 0, 0);
     endDate.setHours(23, 59, 59);
-    console.log('startDay = ', startDay, ', startDate = ', startDate, '\nEndDay = ', endDay, ', endDate = ', endDate);
+    console.log(
+      'startDay = ',
+      startDay,
+      ', startDate = ',
+      startDate,
+      '\nEndDay = ',
+      endDay,
+      ', endDate = ',
+      endDate
+    );
     for (let i = 0; i < arr.length; i++) {
       let tempStart = arr[i].start_day_and_time;
       let tempEnd = arr[i].end_day_and_time;
       let tempStartTime = new Date(
-        new Date(tempStart.replace(/-/g, '/')).toLocaleString('en-US', {
+        new Date(tempStart.replace(/-/g, '/')).toLocaleString('UTC', {
           timeZone: this.props.timeZone,
         })
       );
+      console.log('timeZone', tempStartTime);
       let repeatOccurences = parseInt(arr[i]['repeat_occurences']);
       let repeatEvery = parseInt(arr[i]['repeat_every']);
       let repeatEnds = arr[i]['repeat_type'];
       let repeatEndsOn = new Date(
         new Date(arr[i]['repeat_ends_on'].replace(/-/g, '/')).toLocaleString(
-          'en-US',
+          'UTC',
           {
             timeZone: this.props.timeZone,
           }
@@ -213,7 +223,7 @@ export default class WeekRoutines extends Component {
        */
 
       let CurrentDate = new Date(
-        new Date(curYear, curMonth, curDate2.date()).toLocaleString('en-US', {
+        new Date(curYear, curMonth, curDate2.date()).toLocaleString('UTC', {
           timeZone: this.props.TimeZone,
         })
       );
@@ -221,7 +231,7 @@ export default class WeekRoutines extends Component {
 
       let startDate2 = new Date(
         new Date(arr[i].start_day_and_time.replace(/-/g, '/')).toLocaleString(
-          'en-US',
+          'UTC',
           {
             timeZone: this.props.TimeZone,
           }
@@ -238,7 +248,7 @@ export default class WeekRoutines extends Component {
       let repeatEnds = arr[i].repeat_type;
 
       let repeatEndsOn = new Date(
-        new Date(arr[i].repeat_ends_on).toLocaleString('en-US', {
+        new Date(arr[i].repeat_ends_on).toLocaleString('UTC', {
           timeZone: this.props.TimeZone,
         })
       );
@@ -418,7 +428,8 @@ export default class WeekRoutines extends Component {
                 (tempStartTime.getMinutes() / 60) *
                 this.state.pxPerHourForConversion;
               let hourDiff = tempEndTime.getHours() - tempStartTime.getHours();
-              let minDiff = tempEndTime.getMinutes() / 60 - tempStartTime.getMinutes() / 60;
+              let minDiff =
+                tempEndTime.getMinutes() / 60 - tempStartTime.getMinutes() / 60;
               let color = 'PaleTurquoise';
               let height =
                 (hourDiff + minDiff) * this.state.pxPerHourForConversion;
@@ -463,24 +474,36 @@ export default class WeekRoutines extends Component {
                 //   tempStartTime,
                 //   tempEndTime
                 // );
-                const [comp_year, comp_month, comp_day] = [parseInt(arr[i].datetime_completed.substring(0, 4)),
-                  parseInt(arr[i].datetime_completed.substring(5, 7)), parseInt(arr[i].datetime_completed.substring(8, 10))];
-                const [todayYear, todayMonth, todayDay] = [today.getFullYear(), today.getMonth() + 1, today.getDate()];
+                const [comp_year, comp_month, comp_day] = [
+                  parseInt(arr[i].datetime_completed.substring(0, 4)),
+                  parseInt(arr[i].datetime_completed.substring(5, 7)),
+                  parseInt(arr[i].datetime_completed.substring(8, 10)),
+                ];
+                const [todayYear, todayMonth, todayDay] = [
+                  today.getFullYear(),
+                  today.getMonth() + 1,
+                  today.getDate(),
+                ];
                 // const [started_year, started_month, started_day] = [parseInt(arr[i].datetime_started.substring(0, 4)),
                 //   parseInt(arr[i].datetime_started.substring(5, 7)), parseInt(arr[i].datetime_started.substring(8, 10))];
-                const [curr_year, curr_month, curr_day] = [parseInt(curDate2.format('Y')),
-                  parseInt(curDate2.format('M')), parseInt(curDate2.format('D'))];
-                
-                const start_time = arr[i].start_day_and_time.substring(11).split(/[:\s+]/);
+                const [curr_year, curr_month, curr_day] = [
+                  parseInt(curDate2.format('Y')),
+                  parseInt(curDate2.format('M')),
+                  parseInt(curDate2.format('D')),
+                ];
+
+                const start_time = arr[i].start_day_and_time
+                  .substring(11)
+                  .split(/[:\s+]/);
                 // Need to strip trailing zeros because the data in the database
                 // is inconsistent about this
-                if (start_time[0][0] == '0')
-                    start_time[0] = start_time[0][1];
-                const end_time = arr[i].end_day_and_time.substring(11).split(/[:\s+]/);
+                if (start_time[0][0] == '0') start_time[0] = start_time[0][1];
+                const end_time = arr[i].end_day_and_time
+                  .substring(11)
+                  .split(/[:\s+]/);
                 // Need to strip trailing zeros because the data in the database
                 // is inconsistent about this
-                if (end_time[0][0] == '0')
-                    end_time[0] = end_time[0][1];
+                if (end_time[0][0] == '0') end_time[0] = end_time[0][1];
                 let newElement = (
                   <div key={'event' + i}>
                     <div
@@ -520,9 +543,17 @@ export default class WeekRoutines extends Component {
                         float: 'left',
                         borderRadius: '10px',
                         background:
-                          JSON.stringify(start_time) === JSON.stringify(end_time) ?  '#9b4aff' :
-                            curDate2.format('D') === today.getDate().toString() & curDate2.format('M') === (today.getMonth()+1).toString() ?
-                              '#FF6B4A' : arr[i].is_complete ? '#BBC7D7' : 'lightslategray',
+                          JSON.stringify(start_time) ===
+                          JSON.stringify(end_time)
+                            ? '#9b4aff'
+                            : (curDate2.format('D') ===
+                                today.getDate().toString()) &
+                              (curDate2.format('M') ===
+                                (today.getMonth() + 1).toString())
+                            ? '#FF6B4A'
+                            : arr[i].is_complete
+                            ? '#BBC7D7'
+                            : 'lightslategray',
                         width: itemWidth + 'px',
                         position: 'absolute',
                         height: height + 'px',
@@ -538,13 +569,17 @@ export default class WeekRoutines extends Component {
                           width: '21px',
                           height: '13px',
                           backgroundImage:
-                          (curr_year === todayYear && curr_month === todayMonth &&
-                            curr_day === todayDay) ? arr[i].is_in_progress === true ?
-                                `url(${yelloTick})` : arr[i].is_complete === true ?
-                                  `url(${greenTick})` : '' : '',
+                            curr_year === todayYear &&
+                            curr_month === todayMonth &&
+                            curr_day === todayDay
+                              ? arr[i].is_in_progress === true
+                                ? `url(${yelloTick})`
+                                : arr[i].is_complete === true
+                                ? `url(${greenTick})`
+                                : ''
+                              : '',
                         }}
-                      >
-                      </div>
+                      ></div>
                     </div>
                   </div>
                 );
@@ -739,7 +774,7 @@ export default class WeekRoutines extends Component {
     for (let i = 0; i < 24; ++i) {
       // if (i < 12) {
       arr.push(
-        <Row key={'weekEvent' + i} style={{marginLeft:"3rem"}}>
+        <Row key={'weekEvent' + i} style={{ marginLeft: '3rem' }}>
           <Col
             style={{
               // borderTop: '1px solid lavender',
@@ -801,7 +836,7 @@ export default class WeekRoutines extends Component {
       var arr = [];
       for (let j = 0; j < 24; ++j) {
         arr.push(
-          <Container key={'weekRoutine' + i + j} >
+          <Container key={'weekRoutine' + i + j}>
             <Row style={{ position: 'relative' }}>
               <Col
                 style={{
@@ -811,7 +846,7 @@ export default class WeekRoutines extends Component {
                   height: '50px',
                   color: 'white',
                   borderBottom: '2px solid #b1b3b6',
-                  margin:'0px',
+                  margin: '0px',
                   width: '100%',
                 }}
               >
@@ -844,7 +879,8 @@ export default class WeekRoutines extends Component {
               textAlign: 'center',
               height: this.state.pxPerHour,
               color:
-                curDate.format('D') === today.getDate().toString() & curDate.format('M') === (today.getMonth()+1).toString()
+                (curDate.format('D') === today.getDate().toString()) &
+                (curDate.format('M') === (today.getMonth() + 1).toString())
                   ? '#FF6B4A'
                   : '',
             }}
@@ -857,16 +893,16 @@ export default class WeekRoutines extends Component {
     }
     return arr;
   };
-  weekdaysDisplay =()=>{
+  weekdaysDisplay = () => {
     let arr = [];
     let startObject = this.props.dateContext.clone();
     let startDay = startObject.startOf('week');
     let curDate = startDay.clone();
     let today = new Date();
+
     //console.log('Curdate',curDate.format('D'))
     //console.log('curdate today.toString()',today.getDate().toString())
-    
-      
+
     for (let i = 0; i < 7; i++) {
       arr.push(
         <Col key={'day' + i}>
@@ -875,7 +911,9 @@ export default class WeekRoutines extends Component {
               textAlign: 'center',
               fontWeight: 'bold',
               color:
-              curDate.format('D') === today.getDate().toString() & curDate.format('dddd') === moment(today).format('dddd') & curDate.format('M') === (today.getMonth()+1).toString()
+                (curDate.format('D') === today.getDate().toString()) &
+                (curDate.format('dddd') === moment(today).format('dddd')) &
+                (curDate.format('M') === (today.getMonth() + 1).toString())
                   ? '#FF6B4A'
                   : '',
             }}
@@ -887,7 +925,7 @@ export default class WeekRoutines extends Component {
       curDate.add(1, 'day');
     }
     return arr;
-    };
+  };
   render() {
     let today = '';
     switch (new Date().getDay()) {
@@ -934,11 +972,10 @@ export default class WeekRoutines extends Component {
         </>
       );
     }); */
-  
 
     return (
       <Container style={{ margin: '0rem' }}>
-        <Row style={{ marginLeft: '3rem', marginRight:'-1rem'  }}>
+        <Row style={{ marginLeft: '3rem', marginRight: '-1rem' }}>
           <Row
             style={{
               overflowX: 'hidden',
@@ -958,8 +995,7 @@ export default class WeekRoutines extends Component {
           noGutters={true}
           // style={{ overflowY: 'scroll', maxHeight: '1350px' }}
           className="d-flex justify-content-end"
-          style={{ marginLeft:'-5rem', marginRight: '0rem' }}
-          
+          style={{ marginLeft: '-5rem', marginRight: '0rem' }}
         >
           <Col>
             <Container style={{ margin: '0', padding: '0', width: '6px' }}>

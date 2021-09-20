@@ -213,7 +213,6 @@ import { Navigation } from './Home/navigation';
 import Nav from '../src/Nav';
 // import { Login } from './Login/Login';
 
-
 // import WeekCalendar from 'react-week-calendar';
 
 // import 'react-week-calendar/dist/style.css';
@@ -233,9 +232,16 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 /* Main function for all the pages and elements */
 export default function App() {
   const [loginState, setLoginState] = useState(LoginInitState);
-  console.log("login State")
-  console.log(loginState)
-  useEffect(() => console.log('curUser = ', loginState.curUser), [loginState.curUser]);
+  console.log('login State');
+  console.log(loginState);
+  useEffect(
+    () => console.log('curUser = ', loginState.curUser),
+    [loginState.curUser]
+  );
+  useEffect(
+    () => console.log('curUserTimeZone = ', loginState.curUserTimeZone),
+    [loginState.curUserTimeZone]
+  );
   return (
     <Router>
       <LoginContext.Provider
@@ -244,23 +250,23 @@ export default function App() {
           setLoginState: setLoginState,
         }}
       >
-      <div>
-        {/* <Link to="/login">Login </Link> */}
+        <div>
+          {/* <Link to="/login">Login </Link> */}
 
-        {/* <Link to="/">Home</Link> */}
-        
-        <Navigation />
+          {/* <Link to="/">Home</Link> */}
 
-        {/* <Switch>
+          <Navigation />
+
+          {/* <Switch>
           <Route path="/"> */}
-        <Nav />
-        {/* </Route> */}
+          <Nav />
+          {/* </Route> */}
 
-        {/* <Route path="/login">
+          {/* <Route path="/login">
             <Login />
           </Route> */}
-        {/* </Switch> */}
-      </div>
+          {/* </Switch> */}
+        </div>
       </LoginContext.Provider>
     </Router>
     // <div>

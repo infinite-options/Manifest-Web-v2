@@ -54,17 +54,12 @@ export default function Login() {
     event.preventDefault();
     console.log('event', event, email, password);
     axios
-      .get(
-        BASE_URL + 'loginTA/' +
-          email.toString() +
-          '/' +
-          password.toString()
-      )
+      .get(BASE_URL + 'loginTA/' + email.toString() + '/' + password.toString())
       .then((response) => {
         console.log('response', response.data);
-        document.cookie = 'ta_uid='+response.data.result
-        document.cookie = 'ta_email='+email
-        document.cookie = 'patient_name=Loading'
+        document.cookie = 'ta_uid=' + response.data.result;
+        document.cookie = 'ta_email=' + email;
+        document.cookie = 'patient_name=Loading';
         if (response.data.result !== false) {
           setLoggedIn(true);
           console.log('response id', response.data.result, loggedIn);
@@ -78,6 +73,7 @@ export default function Login() {
             },
             usersOfTA: [],
             curUser: '',
+            curUserTimeZone: '',
           });
           history.push({
             pathname: '/home',
@@ -103,18 +99,15 @@ export default function Login() {
       let last_name = response.profileObj.familyName;
       console.log(e, at, rt, first_name, last_name);
       axios
-        .get(
-          BASE_URL + 'loginSocialTA/' +
-            e
-        ) //, {
+        .get(BASE_URL + 'loginSocialTA/' + e) //, {
         // username: e,  1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com
         //})
         .then((response) => {
-          console.log('social login')
+          console.log('social login');
           console.log(response.data.result);
-          document.cookie = 'ta_uid='+response.data.result
-          document.cookie = 'ta_email='+e
-          document.cookie = 'patient_name=Loading'
+          document.cookie = 'ta_uid=' + response.data.result;
+          document.cookie = 'ta_email=' + e;
+          document.cookie = 'patient_name=Loading';
           if (response.data !== false) {
             loginContext.setLoginState({
               ...loginContext.loginState,
@@ -126,6 +119,7 @@ export default function Login() {
               },
               usersOfTA: [],
               curUser: '',
+              curUserTimeZone: '',
             });
             console.log('Login successful');
             console.log(e);
@@ -149,11 +143,10 @@ export default function Login() {
   };
 
   if (
-    document.cookie
-      .split(";")
-      .some(item => item.trim().startsWith("ta_uid="))
-  ) {history.push('/home')} else {
-    
+    document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
+  ) {
+    history.push('/home');
+  } else {
   }
 
   return (
@@ -240,7 +233,6 @@ export default function Login() {
             ></Button>
           </Box>
           <Box>
-
             <GoogleLogin
               clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
               render={(renderProps) => (

@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext } from 'react';
 
 const LoginContext = createContext();
 
@@ -13,4 +13,5 @@ export const LoginInitState = {
   },
   usersOfTA: [],
   curUser: '',
-}
+  curUserTimeZone: '',
+};

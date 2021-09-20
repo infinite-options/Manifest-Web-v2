@@ -82,6 +82,7 @@ export default function MainPage(props) {
 
   // Kyle cookie code
   var userID = '';
+  var userTime_zone = '';
   if (
     document.cookie
       .split(';')
@@ -90,6 +91,10 @@ export default function MainPage(props) {
     userID = document.cookie
       .split('; ')
       .find((row) => row.startsWith('patient_uid='))
+      .split('=')[1];
+    userTime_zone = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_timeZone='))
       .split('=')[1];
   } else {
     userID = loginContext.loginState.curUser;
@@ -190,12 +195,14 @@ export default function MainPage(props) {
         if (response.result !== false) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
+          const curUserTZ = usersOfTA[0].time_zone;
           loginContext.setLoginState({
             ...loginContext.loginState,
             usersOfTA: response.data.result,
             curUser: curUserID,
+            curUserTimeZone: curUserTZ,
           });
-          console.log(curUserID);
+          console.log('curUser', curUserID);
           // setUserID(curUserID);
           // console.log(userID);
           // GrabFireBaseRoutinesGoalsData();
