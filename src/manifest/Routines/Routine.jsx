@@ -38,7 +38,7 @@ const useStyles = makeStyles({
 
     function handleAction() {
         props.itemId.map(item => {
-            axios.get("https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/actionsTasks/" + item.toString())
+            axios.get("https://gyn3vgy3fb.execute-api.us-west-1.amazonaws.com/dev/api/v2/actionsTasks/" + item.toString())
             .then((response) => {
               console.log("actions",response);
               for(var i =0; i< response.data.result.length; i++){

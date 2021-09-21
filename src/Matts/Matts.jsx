@@ -237,7 +237,7 @@ const MainPage = ({ ...props})=> {
       // date: this.getVersionDate(),
       // BASE_URL: getBaseUrl(),
       BASE_URL:
-        'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/',
+        'https://gyn3vgy3fb.execute-api.us-west-1.amazonaws.com/dev/api/v2/',
   });
   
   function GrabFireBaseRoutinesGoalsData() {

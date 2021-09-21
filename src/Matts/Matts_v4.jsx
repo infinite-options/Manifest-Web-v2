@@ -41,7 +41,7 @@ export default function MainPage() {
     // useEffect(() => {
     //     const fetchData = async ()=> {
     //         const result = await axios(
-    //             "https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/getHistory/" + currentUser,
+    //             "https://gyn3vgy3fb.execute-api.us-west-1.amazonaws.com/dev/api/v2/getHistory/" + currentUser,
     //         );
     //         console.log(result);
     //         for(var i=0; i <result.data.result.length; i++){

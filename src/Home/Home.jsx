@@ -374,7 +374,7 @@ export default function Home(props) {
     // date: this.getVersionDate(),
     // BASE_URL: getBaseUrl(),
     BASE_URL:
-      'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/',
+      'https://gyn3vgy3fb.execute-api.us-west-1.amazonaws.com/dev/api/v2/',
   });
   console.log('startObject = ', stateValue.currentUserTimeZone);
   const initialEditingRTSState = {

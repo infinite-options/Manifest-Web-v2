@@ -269,7 +269,7 @@ export default function Login() {
       console.log(e, at, rt, first_name, last_name);
       axios
         .get(
-          'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/loginSocialTA/' +
+          'https://gyn3vgy3fb.execute-api.us-west-1.amazonaws.com/dev/api/v2/loginSocialTA/' +
             e
         ) //, {
         // username: e,  1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com
