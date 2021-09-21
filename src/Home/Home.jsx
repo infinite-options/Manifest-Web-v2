@@ -86,7 +86,12 @@ export default function Home(props) {
     console.log('in here', console.log(loginContext.loginState));
     console.log('document cookie', document.cookie);
     userID = loginContext.loginState.curUser;
-    userTime_zone = 'America/Tijuana';
+    //userTime_zone = 'America/Tijuana';
+    if (loginContext.loginState.usersOfTA.length === 0) {
+      userTime_zone = 'America/Tijuana';
+    } else {
+      userTime_zone = loginContext.loginState.usersOfTA[0].time_zone;
+    }
     /* userTime_zone = document.cookie
       .split('; ')
       .find((row) => row.startsWith('patient_timeZone='))
