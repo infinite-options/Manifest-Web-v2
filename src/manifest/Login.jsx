@@ -145,7 +145,7 @@ export default function Login() {
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
   ) {
-    console.log('we are here');
+    console.log('login successful');
     console.log(document.cookie);
     //console.log(ta_uid);
     history.push('/home');

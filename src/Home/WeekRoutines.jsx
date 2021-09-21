@@ -40,8 +40,8 @@ export default class WeekRoutines extends Component {
     var arr = this.props.routines;
     var dic = {};
     let startObject = this.props.dateContext.clone();
-    console.log('startObject timezone = ', this.props);
-    console.log(this.props.routines, 'start');
+    //console.log('startObject timezone = ', this.props);
+    //console.log(this.props.routines, 'start');
     let endObject = this.props.dateContext.clone();
     let startDay = startObject.startOf('week');
     let endDay = endObject.endOf('week');
@@ -188,7 +188,7 @@ export default class WeekRoutines extends Component {
 
   getRoutineItemFromDic = (day, hour, dic) => {
     let startObject = this.props.dateContext.clone();
-    console.log('startObject = ', startObject);
+    //console.log('startObject = ', startObject);
     let startDay = startObject.startOf('week');
     let curDate2 = startDay.clone();
     curDate2.add(day, 'days');
@@ -199,9 +199,9 @@ export default class WeekRoutines extends Component {
 
     let dateNew = new Date().toLocaleString(tz, tz);
 
-    console.log('getgoals timeZone', tz, dateNew);
+    //console.log('getgoals timeZone', tz, dateNew);
     let today = moment(dateNew);
-    console.log('getGoals today', today);
+    //console.log('getGoals today', today);
     //let today = new Date();
     var res = [];
     var tempStart = null;
@@ -871,8 +871,8 @@ export default class WeekRoutines extends Component {
     let startObject = this.props.dateContext.clone();
     let startDay = startObject.startOf('week');
     let curDate = startDay.clone();
-    console.log('getgoals curDate', curDate);
-    console.log('getgoals timeZone', this.props.timeZone);
+    //console.log('getgoals curDate', curDate);
+    //console.log('getgoals timeZone', this.props.timeZone);
     const tz = {
       timeZone: this.props.timeZone,
       // add more here
@@ -883,10 +883,10 @@ export default class WeekRoutines extends Component {
 
     console.log('getgoals timeZone and today', tz, today);
 
-    console.log('getGoals today', today);
+    //console.log('getGoals today', today);
     //let today = new Date();
     let dateNew = moment(today);
-    console.log('getGoals dateNew', dateNew);
+    //console.log('getGoals dateNew', dateNew);
     for (let i = 0; i < 7; i++) {
       arr.push(
         <Col key={'day' + i}>

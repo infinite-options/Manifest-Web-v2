@@ -56,6 +56,8 @@ export default function Home(props) {
   const loginContext = useContext(LoginContext);
   var selectedUser = loginContext.loginState.curUser;
   console.log(loginContext.loginState.curUser);
+  console.log('document cookie', document.cookie);
+
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
   ) {
@@ -65,14 +67,17 @@ export default function Home(props) {
       .split('=')[1];
   }
 
-  var userID = '';
-  var userTime_zone = '';
-  if (
+  console.log('ta_uid', selectedUser);
+
+  //var userID = '';
+  //var userTime_zone = 'America/Tijuana';
+
+  /* if (
     document.cookie
       .split(';')
       .some((item) => item.trim().startsWith('patient_uid='))
   ) {
-    console.log('in there');
+    console.log('found patient uid in cookie');
     userID = document.cookie
       .split('; ')
       .find((row) => row.startsWith('patient_uid='))
@@ -81,28 +86,31 @@ export default function Home(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_timeZone='))
       .split('=')[1];
-    // document.cookie = 'patient_timeZone=test'
+
+    console.log('user_id', userID);
+    console.log('user_timezone', userTime_zone);
   } else {
-    console.log('in here', console.log(loginContext.loginState));
-    console.log('document cookie', document.cookie);
+    console.log('coulnt find patient uid in cookie');
+    console.log(loginContext.loginState);
+
+    //console.log('document cookie', document.cookie);
     userID = loginContext.loginState.curUser;
     userTime_zone = 'America/Tijuana';
-    /* userTime_zone = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('patient_timeZone='))
-      .split('=')[1]; */
+    
     //userTime_zone = loginContext.loginState.curUserTimeZone;
-    console.log('curUser', userID);
-    console.log('curUser', userTime_zone);
+    //console.log('curUser', userID);
+    //console.log('curUser', userTime_zone);
     // document.cookie = 'patient_name=test'
-  }
+  } */
 
   const history = useHistory();
   //console.log('curUser timezone', userTime_zone);
   /* useEffect() is used to render API calls as minimumly 
   as possible based on past experience, if not included 
   causes alarms and excessive rendering */
-  function GetBaseUrl() {
+
+  //commented out to see if its used
+  /* function GetBaseUrl() {
     useEffect(() => {
       axios.get('/base_url', {}).then((response) => {
         console.log('getBaseUrl', response);
@@ -115,7 +123,7 @@ export default function Home(props) {
         });
       });
     }, []);
-  }
+  } */
 
   // const [userID, setUserID] = useState(" ");
 
@@ -150,8 +158,8 @@ export default function Home(props) {
             curUser: curUserID,
             curUserTimeZone: curUserTZ,
           });
-          console.log(curUserID);
-          console.log('timezone', curUserTZ);
+          console.log('useEffect id', curUserID);
+          console.log('useEffect timezone', curUserTZ);
           // setUserID(curUserID);
           // console.log(userID);
           GrabFireBaseRoutinesGoalsData();
@@ -165,6 +173,94 @@ export default function Home(props) {
       });
   }, [loginContext.loginState.reload]);
   // }
+
+  let userID = loginContext.loginState.curUserID;
+  let userTime_zone = loginContext.loginState.curUserTZ;
+
+  console.log('userID after useeffect', userID);
+  console.log('userTime_zone after useeffect', userTime_zone);
+
+  document.cookie = 'patient_uid=' + userID;
+  document.cookie = 'patient_timeZone=' + userTime_zone;
+
+  console.log('cookies after useefect', document.cookies);
+
+  if (
+    document.cookie
+      .split(';')
+      .some((item) => item.trim().startsWith('patient_uid='))
+  ) {
+    console.log('found patient uid in cookie');
+    userID = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_uid='))
+      .split('=')[1];
+    userTime_zone = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_timeZone='))
+      .split('=')[1];
+
+    console.log('user_id', userID);
+    console.log('user_timezone', userTime_zone);
+  } else {
+    console.log('couldnt find patient uid in cookie');
+    console.log(loginContext.loginState);
+
+    //console.log('document cookie', document.cookie);
+    userID = loginContext.loginState.curUser;
+    userTime_zone = 'America/Tijuana';
+
+    //userTime_zone = loginContext.loginState.curUserTimeZone;
+    console.log('curUser', userID);
+    console.log('curUser', userTime_zone);
+    // document.cookie = 'patient_name=test'
+  }
+
+  /* if (
+    document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
+  ) {
+    selectedUser = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('ta_uid='))
+      .split('=')[1];
+  } */
+
+  /* console.log('ta_uid', selectedUser);
+
+  var userID = '';
+  var userTime_zone = 'America/Tijuana'; */
+
+  /* if (
+    document.cookie
+      .split(';')
+      .some((item) => item.trim().startsWith('patient_uid='))
+  ) {
+    console.log('found patient uid in cookie');
+    userID = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_uid='))
+      .split('=')[1];
+    userTime_zone = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_timeZone='))
+      .split('=')[1];
+
+    console.log('user_id', userID);
+    console.log('user_timezone', userTime_zone);
+  } else {
+    console.log('coulnt find patient uid in cookie');
+    console.log(loginContext.loginState);
+
+    //console.log('document cookie', document.cookie);
+    userID = loginContext.loginState.curUser;
+    userTime_zone = 'America/Tijuana';
+    
+    //userTime_zone = loginContext.loginState.curUserTimeZone;
+    //console.log('curUser', userID);
+    //console.log('curUser', userTime_zone);
+    // document.cookie = 'patient_name=test'
+  }*/
+
   console.log(loginContext.loginState.curUserTimeZone);
   /*----------------------------Use states to define variables----------------------------*/
   const [routineID, setRoutineID] = useState('');

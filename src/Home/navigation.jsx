@@ -77,6 +77,7 @@ const useStyles = makeStyles({
 
 /* Navigation Bar component function */
 export function Navigation() {
+  console.log('in navigation');
   const history = useHistory();
 
   const classes = useStyles();
@@ -123,7 +124,7 @@ export function Navigation() {
       .find((row) => row.startsWith('ta_uid='))
       .split('=')[1];
   }
-
+  console.log('selected User ta_id', selectedUser);
   console.log('User list', listOfUsers);
   console.log('Cur ta', selectedUser);
   const userListRendered = () => {
