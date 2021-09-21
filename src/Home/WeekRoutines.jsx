@@ -40,7 +40,7 @@ export default class WeekRoutines extends Component {
     var arr = this.props.routines;
     var dic = {};
     let startObject = this.props.dateContext.clone();
-    console.log('startObject = ', startObject.timeZone);
+    console.log('startObject timezone = ', this.props);
     console.log(this.props.routines, 'start');
     let endObject = this.props.dateContext.clone();
     let startDay = startObject.startOf('week');
@@ -67,7 +67,7 @@ export default class WeekRoutines extends Component {
           timeZone: this.props.timeZone,
         })
       );
-      console.log('timeZone', tempStartTime);
+      //console.log('timeZone', tempStartTime);
       let repeatOccurences = parseInt(arr[i]['repeat_occurences']);
       let repeatEvery = parseInt(arr[i]['repeat_every']);
       let repeatEnds = arr[i]['repeat_type'];
@@ -192,7 +192,17 @@ export default class WeekRoutines extends Component {
     let startDay = startObject.startOf('week');
     let curDate2 = startDay.clone();
     curDate2.add(day, 'days');
-    let today = new Date();
+    const tz = {
+      timeZone: this.props.timeZone,
+      // add more here
+    };
+
+    let dateNew = new Date().toLocaleString(tz, tz);
+
+    console.log('getgoals timeZone', tz, dateNew);
+    let today = moment(dateNew);
+    console.log('getGoals today', today);
+    //let today = new Date();
     var res = [];
     var tempStart = null;
     var tempEnd = null;
@@ -484,10 +494,11 @@ export default class WeekRoutines extends Component {
                   parseInt(arr[i].datetime_completed.substring(8, 10)),
                 ];
                 const [todayYear, todayMonth, todayDay] = [
-                  today.getFullYear(),
-                  today.getMonth() + 1,
-                  today.getDate(),
+                  today.format('Y'),
+                  today.format('M'),
+                  today.format('D'),
                 ];
+                console.log('getgoals today', today);
                 // const [started_year, started_month, started_day] = [parseInt(arr[i].datetime_started.substring(0, 4)),
                 //   parseInt(arr[i].datetime_started.substring(5, 7)), parseInt(arr[i].datetime_started.substring(8, 10))];
                 const [curr_year, curr_month, curr_day] = [
@@ -538,10 +549,8 @@ export default class WeekRoutines extends Component {
                           JSON.stringify(start_time) ===
                           JSON.stringify(end_time)
                             ? '#9b4aff'
-                            : (curDate2.format('D') ===
-                                today.getDate().toString()) &
-                              (curDate2.format('M') ===
-                                (today.getMonth() + 1).toString())
+                            : (curDate2.format('D') === today.format('D')) &
+                              (curDate2.format('M') === today.format('M'))
                             ? '#FF6B4A'
                             : arr[i].is_complete
                             ? '#BBC7D7'
@@ -864,19 +873,20 @@ export default class WeekRoutines extends Component {
     let curDate = startDay.clone();
     console.log('getgoals curDate', curDate);
     console.log('getgoals timeZone', this.props.timeZone);
-    //let today = new Date();
-    /* let today = new Date();
-    console.log('getGoals today', today); */
-    let today = new Date().toLocaleString('UTC', {
+    const tz = {
       timeZone: this.props.timeZone,
-    });
+      // add more here
+    };
+    console.log('getgoals timeZone', tz);
 
-    let dateNew = moment(today).tz('US/Pacific');
-    console.log('getGoals dateNew', dateNew);
-    let curDateNew = curDate.tz('US/Pacific');
-    console.log('getGoals curDateNew', curDateNew);
+    let today = new Date().toLocaleString(tz, tz);
+
+    console.log('getgoals timeZone and today', tz, today);
+
     console.log('getGoals today', today);
-    console.log('getGoals curDate', curDateNew.format('D'));
+    //let today = new Date();
+    let dateNew = moment(today);
+    console.log('getGoals dateNew', dateNew);
     for (let i = 0; i < 7; i++) {
       arr.push(
         <Col key={'day' + i}>
@@ -909,16 +919,14 @@ export default class WeekRoutines extends Component {
     let startObject = this.props.dateContext.clone();
     let startDay = startObject.startOf('week');
     let curDate = startDay.clone();
-    //let today = new Date();
-    /* let today = new Date().toLocaleString('UTC', {
+    const tz = {
       timeZone: this.props.timeZone,
-    }); */
+      // add more here
+    };
+    console.log('getgoals timeZone', tz);
+    let today = new Date().toLocaleString(tz, tz);
 
-    let today = new Date().toLocaleString('UTC', {
-      timeZone: this.props.timeZone,
-    });
-
-    let dateNew = moment(today).tz('US/Pacific');
+    let dateNew = moment(today);
     console.log('getGoals dateNew', dateNew);
 
     for (let i = 0; i < 7; i++) {

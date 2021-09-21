@@ -33,7 +33,7 @@ const useStyles = makeStyles({
 /* Navigation Bar component function */
 export default function Login() {
   const loginContext = useContext(LoginContext);
-
+  console.log('in login page');
   const classes = useStyles();
   const history = useHistory();
 
@@ -145,6 +145,9 @@ export default function Login() {
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
   ) {
+    console.log('we are here');
+    console.log(document.cookie);
+    //console.log(ta_uid);
     history.push('/home');
   } else {
   }

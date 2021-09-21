@@ -52,9 +52,10 @@ import LoginContext from '../LoginContext';
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 export default function Home(props) {
+  console.log('In home');
   const loginContext = useContext(LoginContext);
   var selectedUser = loginContext.loginState.curUser;
-
+  console.log(loginContext.loginState.curUser);
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
   ) {
@@ -80,17 +81,24 @@ export default function Home(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_timeZone='))
       .split('=')[1];
-    // document.cookie = 'patient_name=test'
+    // document.cookie = 'patient_timeZone=test'
   } else {
     console.log('in here', console.log(loginContext.loginState));
+    console.log('document cookie', document.cookie);
     userID = loginContext.loginState.curUser;
-    userTime_zone = loginContext.loginState.curUserTimeZone;
+    userTime_zone = 'America/Tijuana';
+    /* userTime_zone = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_timeZone='))
+      .split('=')[1]; */
+    //userTime_zone = loginContext.loginState.curUserTimeZone;
+    console.log('curUser', userID);
     console.log('curUser', userTime_zone);
     // document.cookie = 'patient_name=test'
   }
 
   const history = useHistory();
-
+  //console.log('curUser timezone', userTime_zone);
   /* useEffect() is used to render API calls as minimumly 
   as possible based on past experience, if not included 
   causes alarms and excessive rendering */
@@ -135,6 +143,7 @@ export default function Home(props) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;
+          console.log('timezone', curUserTZ);
           loginContext.setLoginState({
             ...loginContext.loginState,
             usersOfTA: response.data.result,
@@ -142,6 +151,7 @@ export default function Home(props) {
             curUserTimeZone: curUserTZ,
           });
           console.log(curUserID);
+          console.log('timezone', curUserTZ);
           // setUserID(curUserID);
           // console.log(userID);
           GrabFireBaseRoutinesGoalsData();
@@ -155,7 +165,7 @@ export default function Home(props) {
       });
   }, [loginContext.loginState.reload]);
   // }
-
+  console.log(loginContext.loginState.curUserTimeZone);
   /*----------------------------Use states to define variables----------------------------*/
   const [routineID, setRoutineID] = useState('');
   const [actionID, setActionID] = useState('');
@@ -867,12 +877,12 @@ export default function Home(props) {
             // handleDateClick={handleDateClickOnDayView}
             dayEvents={stateValue.dayEvents}
             // getEventsByInterval={getEventsByIntervalDayVersion}
-            timeZone={stateValue.currentUserTimeZone}
+            timeZone={userTime_zone}
           />
 
           <DayRoutines
             // handleDateClick={this.handleDateClickOnDayView}
-            timeZone={stateValue.currentUserTimeZone}
+            timeZone={userTime_zone}
             dateContext={stateValue.dateContext}
             routine_ids={stateValue.routine_ids}
             routines={stateValue.routines}
@@ -897,7 +907,7 @@ export default function Home(props) {
       >
         <Row style={{ float: 'right', width: '100%' }}>
           <WeekRoutines
-            timeZone={stateValue.currentUserTimeZone}
+            timeZone={userTime_zone}
             routines={stateValue.routines}
             dateContext={stateValue.dateContext}
             BASE_URL={stateValue.BASE_URL}

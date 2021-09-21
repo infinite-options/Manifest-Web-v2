@@ -14,6 +14,7 @@ import TimezoneSelect from 'react-timezone-select';
 import LoginContext from '../LoginContext';
 import axios from 'axios';
 import { CompareSharp } from '@material-ui/icons';
+import { faYenSign } from '@fortawesome/free-solid-svg-icons';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -81,9 +82,12 @@ export function Navigation() {
   const classes = useStyles();
 
   const loginContext = useContext(LoginContext);
+  console.log(loginContext);
   const listOfUsers = loginContext.loginState.usersOfTA;
   var selectedUser = loginContext.loginState.curUser;
   const currentUser = loginContext.loginState.curUser;
+  var curUserID = '';
+  var curUserTZ = '';
 
   // const selectedUser = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
   // const [selectedUser, setSelectedUser] = useState('')
@@ -121,8 +125,7 @@ export function Navigation() {
   }
 
   console.log('User list', listOfUsers);
-  console.log('Cur user', selectedUser);
-
+  console.log('Cur ta', selectedUser);
   const userListRendered = () => {
     if (
       document.cookie
@@ -135,6 +138,7 @@ export function Navigation() {
         .split('; ')
         .find((row) => row.startsWith('ta_uid='))
         .split('=')[1];
+
       console.log('list of users');
       console.log(listOfUsers);
       const elements = listOfUsers.map((user) => (
@@ -152,7 +156,6 @@ export function Navigation() {
       ));
 
       console.log('document cookie', document.cookie);
-
       if (
         document.cookie
           .split(';')

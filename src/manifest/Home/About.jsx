@@ -144,6 +144,7 @@ export default function AboutModal(props) {
       .split('=')[1];
   } else {
     userID = loginContext.loginState.curUser;
+    userTime_zone = loginContext.loginState.curUserTimeZone;
   }
 
   console.log('currentUser: ' + currentUser);
