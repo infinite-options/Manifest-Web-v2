@@ -15,6 +15,9 @@ const EditRTS = (props) => {
     editingRTSContext.editingRTS.newItem.gr_photo
   );
   console.log('obj. ', props);
+  const tz = {
+    timeZone: props.stateValue.currentUserTimeZone,
+  };
   const [showUploadImage, toggleUploadImage] = useState(false);
   const [image, setImage] = useState(null);
   const [imageName, setImageName] = useState('');
@@ -76,9 +79,10 @@ const EditRTS = (props) => {
     return hours + ':' + minutes + ':00';
   };
 
-  console.log('Repeat', editingRTSContext.editingRTS.newItem.repeat);
+  console.log('today timezone', editingRTSContext.editingRTS.newItem);
   const updateRTS = (e) => {
-    console.log('here: entering updateRTS function');
+    console.log(' today timezone here: entering updateRTS function');
+    console.log('today timezone timezone', tz);
     editingRTSContext.setEditingRTS({
       ...editingRTSContext.editingRTS,
       editing: true,
@@ -121,7 +125,9 @@ const EditRTS = (props) => {
     });
     // Get start_day_and_time
     const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
+    console.log('today timezone converted', start_day_and_time_simple_string);
     const end_day_and_time_simple_string = `${object.end_day} ${object.end_time}:00`;
+    console.log('today timezone converted', end_day_and_time_simple_string);
     if (end_day_and_time_simple_string < start_day_and_time_simple_string) {
       alert(
         'Routine must not end before it starts. Update the date and/or time of the routine.'
@@ -133,6 +139,7 @@ const EditRTS = (props) => {
     const convertedStartTime = moment(start_day_and_time_simple_string).format(
       'LTS'
     );
+
     object.start_day_and_time =
       `${object.start_day}` + ' ' + convertedStartTime; //start_day_and_time_string;
     delete object.start_day;
@@ -234,24 +241,17 @@ const EditRTS = (props) => {
           .then((response) => {
             const temp = [];
 
-            const tz = {
-              timeZone: props.stateValue.currentUserTimeZone,
-              // add more here
-            };
-
-            let dateNew = new Date().toLocaleString(tz, tz);
-            let today = moment(dateNew);
             for (var i = 0; i < response.data.result.length; i++) {
               temp.push(response.data.result[i]);
             }
             temp.sort((a, b) => {
               const [a_start, b_start] = [
-                new Date(a.gr_start_day_and_time).toLocaleString(tz, tz),
-                new Date(b.gr_start_day_and_time).toLocaleString(tz, tz),
+                new Date(a.gr_start_day_and_time),
+                new Date(b.gr_start_day_and_time),
               ];
               const [a_end, b_end] = [
-                new Date(a.gr_end_day_and_time).toLocaleString(tz, tz),
-                new Date(b.gr_end_day_and_time).toLocaleString(tz, tz),
+                new Date(a.gr_end_day_and_time),
+                new Date(b.gr_end_day_and_time),
               ];
 
               const [a_start_time, b_start_time] = getTimes(
@@ -317,24 +317,18 @@ const EditRTS = (props) => {
           .get(BASE_URL + 'getgoalsandroutines/' + props.CurrentId)
           .then((response) => {
             const temp = [];
-            const tz = {
-              timeZone: props.stateValue.currentUserTimeZone,
-              // add more here
-            };
 
-            let dateNew = new Date().toLocaleString(tz, tz);
-            let today = moment(dateNew);
             for (var i = 0; i < response.data.result.length; i++) {
               temp.push(response.data.result[i]);
             }
             temp.sort((a, b) => {
               const [a_start, b_start] = [
-                new Date(a.gr_start_day_and_time).toLocaleString(tz, tz),
-                new Date(b.gr_start_day_and_time).toLocaleString(tz, tz),
+                new Date(a.gr_start_day_and_time),
+                new Date(b.gr_start_day_and_time),
               ];
               const [a_end, b_end] = [
-                new Date(a.gr_end_day_and_time).toLocaleString(tz, tz),
-                new Date(b.gr_end_day_and_time).toLocaleString(tz, tz),
+                new Date(a.gr_end_day_and_time),
+                new Date(b.gr_end_day_and_time),
               ];
 
               const [a_start_time, b_start_time] = getTimes(
@@ -606,6 +600,10 @@ const EditRTS = (props) => {
                     });
                   }}
                 />
+                {console.log(
+                  'today timezone',
+                  editingRTSContext.editingRTS.newItem.start_time
+                )}
               </Col>
             </Row>
           </Container>

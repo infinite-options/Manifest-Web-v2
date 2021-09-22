@@ -779,7 +779,9 @@ export default function Home(props) {
 
   const nextWeek = () => {
     let dateContext = Object.assign({}, stateValue.dateContext);
+    console.log('today timezone nextWeek', dateContext);
     dateContext = moment(dateContext).add(1, 'week');
+    console.log('today timezone nextWeek', dateContext);
     setStateValue((prevState) => {
       return {
         ...prevState,
@@ -788,12 +790,13 @@ export default function Home(props) {
       };
       // updateEventsArray();
     });
-    console.log('nextWekk');
+    console.log('today timezone nextWeek');
   };
 
   const prevWeek = () => {
     let dateContext = Object.assign({}, stateValue.dateContext);
     dateContext = moment(dateContext).subtract(1, 'week');
+    console.log('today timezone prevWeek', dateContext);
     setStateValue((prevState) => {
       return {
         ...prevState,
@@ -802,17 +805,18 @@ export default function Home(props) {
       };
       // updateEventsArray();
     });
-    console.log('prevWeek');
+    console.log('today timezone prevWeek');
   };
   const curWeek = () => {
     let dateContext = Object.assign({}, stateValue.dateContext);
     let today = new Date();
     dateContext = moment(dateContext);
+    console.log('today timezone curWeek', dateContext);
 
     {
-      0 <= today.format('D') - dateContext.format('D') &&
-      today.format('D') - dateContext.format('D') <= 6 &&
-      today.format('M') - dateContext.format('M') === 0
+      0 <= today.getDate().toString() - dateContext.format('D') &&
+      today.getDate().toString() - dateContext.format('D') <= 6 &&
+      (today.getMonth() + 1).toString() - dateContext.format('M') === 0
         ? setStateValue((prevState) => {
             return {
               ...prevState,
@@ -831,7 +835,7 @@ export default function Home(props) {
           });
     }
 
-    console.log('curWeek');
+    console.log('today timezone curWeek');
   };
 
   const getDate = () => {
@@ -1672,6 +1676,18 @@ export default function Home(props) {
                                   paddingBottom: '0px',
                                 }}
                               >
+                                {console.log(
+                                  'today timezone',
+                                  today.format('D') - curDate.format('D')
+                                )}
+                                {console.log(
+                                  'today timezone',
+                                  today.format('D')
+                                )}
+                                {console.log(
+                                  'today timezone',
+                                  curDate.format('D')
+                                )}
                                 This week
                               </p>
                             ) : (
