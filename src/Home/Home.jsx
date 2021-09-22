@@ -373,8 +373,7 @@ export default function Home(props) {
     // versionNumber: this.getVersionNumber(),
     // date: this.getVersionDate(),
     // BASE_URL: getBaseUrl(),
-    BASE_URL:
-      'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/',
+    BASE_URL: BASE_URL,
   });
   console.log('startObject = ', stateValue.currentUserTimeZone);
   const initialEditingRTSState = {
@@ -811,9 +810,9 @@ export default function Home(props) {
     dateContext = moment(dateContext);
 
     {
-      0 <= today.getDate().toString() - dateContext.format('D') &&
-      today.getDate().toString() - dateContext.format('D') <= 6 &&
-      (today.getMonth() + 1).toString() - dateContext.format('M') === 0
+      0 <= today.format('D') - dateContext.format('D') &&
+      today.format('D') - dateContext.format('D') <= 6 &&
+      today.format('M') - dateContext.format('M') === 0
         ? setStateValue((prevState) => {
             return {
               ...prevState,
@@ -1484,13 +1483,14 @@ export default function Home(props) {
   }
   console.log('stateValue', stateValue);
   let curDate = startWeek.clone();
-  let today = new Date();
-  console.log('curDate', curDate.format('D'));
-  console.log('curdate today.toString()', today.getDate().toString());
-  console.log(
-    'curdate- today',
-    today.getDate().toString() - curDate.format('D')
-  );
+  //let today = new Date();
+  const tz = {
+    timeZone: userTime_zone,
+    // add more here
+  };
+
+  let dateNew = new Date().toLocaleString(tz, tz);
+  let today = moment(dateNew);
   return (
     // console.log('home routines', stateValue.routines),
     /*----------------------------button
@@ -1503,18 +1503,24 @@ export default function Home(props) {
           editingRTS: editingRTS,
           setEditingRTS: setEditingRTS,
         }}
+        stateValue={stateValue}
+        setStateValue={setStateValue}
       >
         <EditATSContext.Provider
           value={{
             editingATS: editingATS,
             setEditingATS: setEditingATS,
           }}
+          stateValue={stateValue}
+          setStateValue={setStateValue}
         >
           <EditISContext.Provider
             value={{
               editingIS: editingIS,
               setEditingIS: setEditingIS,
             }}
+            stateValue={stateValue}
+            setStateValue={setStateValue}
           >
             <userContext.Provider
               value={
@@ -1659,14 +1665,9 @@ export default function Home(props) {
                             style={{ textAlign: 'center', width: '70%' }}
                             className="bigfancytext"
                           >
-                            {0 <=
-                              today.getDate().toString() -
-                                curDate.format('D') &&
-                            today.getDate().toString() - curDate.format('D') <=
-                              6 &&
-                            (today.getMonth() + 1).toString() -
-                              curDate.format('M') ===
-                              0 ? (
+                            {0 <= today.format('D') - curDate.format('D') &&
+                            today.format('D') - curDate.format('D') <= 6 &&
+                            today.format('M') - curDate.format('M') === 0 ? (
                               <p
                                 style={{
                                   font: 'normal normal bold 28px SF Pro',

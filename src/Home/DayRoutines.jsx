@@ -64,18 +64,19 @@ function DayRoutines(props) {
       let curMonth = props.dateContext.get('month');
       let curYear = props.dateContext.get('year');
 
+      const tz = {
+        timeZone: this.props.timeZone,
+      };
+      console.log('day routines timezone ', tz);
       let CurrentDate = new Date(
-        new Date(curYear, curMonth, curDate).toLocaleString('en-US', {
-          timeZone: props.TimeZone,
-        })
+        new Date(curYear, curMonth, curDate).toLocaleString(tz, tz)
       );
       CurrentDate.setHours(0, 0, 0, 0);
-
+      console.log('day routines timezone ', CurrentDate);
       let startDate = new Date(
-        new Date(arr[i].start_day_and_time).toLocaleString('en-US', {
-          timeZone: props.TimeZone,
-        })
+        new Date(arr[i].start_day_and_time).toLocaleString(tz, tz)
       );
+      console.log('day routines timezone ', startDate);
       startDate.setHours(0, 0, 0, 0);
       let isDisplayedTodayCalculated = false;
 
@@ -86,9 +87,7 @@ function DayRoutines(props) {
       let repeatEnds = arr[i].repeat_type;
 
       let repeatEndsOn = new Date(
-        new Date(arr[i].repeat_ends_on).toLocaleString('en-US', {
-          timeZone: props.TimeZone,
-        })
+        new Date(arr[i].repeat_ends_on).toLocaleString(tz, tz)
       );
       repeatEndsOn.setHours(0, 0, 0, 0);
 
@@ -118,9 +117,8 @@ function DayRoutines(props) {
             } else if (repeatFrequency == 'Week') {
               let occurence_dates = [];
 
-              const start_day_and_time = arr[i].start_day_and_time.split(
-                ' '
-              )[0];
+              const start_day_and_time =
+                arr[i].start_day_and_time.split(' ')[0];
               // const initDate = start_day_and_time[1];
               //const initMonth = getMonthNumber(start_day_and_time[2]);
               //const initYear = start_day_and_time[3];
@@ -157,8 +155,8 @@ function DayRoutines(props) {
                 }
                 const new_date = moment(initFullDate, 'MM/DD/YYYY');
                 const nextDayOfTheWeek = getNextDayOfTheWeek(dow, new_date);
-                //console.log("NextDayOfWeek: ", nextDayOfTheWeek.format("L"));
-                //console.log("numberOfWeeks: ", numberOfWeek);
+                console.log('NextDayOfWeek: ', nextDayOfTheWeek.format('L'));
+                console.log('numberOfWeeks: ', numberOfWeek);
                 const date = nextDayOfTheWeek
                   .clone()
                   .add(numberOfWeek * repeatEvery, 'weeks')

@@ -112,9 +112,6 @@ export function Navigation() {
 
   //var taList = []
 
-  const API_URL =
-    'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/';
-
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
   ) {

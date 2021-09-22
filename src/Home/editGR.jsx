@@ -15,7 +15,6 @@ import axios from 'axios';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-
 export default class editGR extends Component {
   constructor(props) {
     super(props);
@@ -160,6 +159,7 @@ export default class editGR extends Component {
         timeZone: 'America/Los_Angeles',
       })
     );
+    console.log('timezone currentDate', CurrentDate);
     CurrentDate.setHours(0, 0, 0, 0);
 
     let startDate = new Date(

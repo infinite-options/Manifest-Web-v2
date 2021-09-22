@@ -35,7 +35,6 @@ const useStyles = makeStyles({
 
 /* Navigation Bar component function */
 export default function Login() {
-
   const classes = useStyles();
   const history = useHistory();
 
@@ -66,12 +65,7 @@ export default function Login() {
     event.preventDefault();
     console.log('event', event, email, password);
     axios
-      .get(
-        BASE_URL + 'loginTA/' +
-          email.toString() +
-          '/' +
-          password.toString()
-      )
+      .get(BASE_URL + 'loginTA/' + email.toString() + '/' + password.toString())
       .then((response) => {
         console.log('response', response.data);
         if (response.data.result !== false) {
@@ -133,18 +127,15 @@ export default function Login() {
 
   const handleSignUpDone = () => {
     axios
-      .post(
-        BASE_URL + 'addNewTA',
-        {
-          email_id: newEmail,
-          password: newPassword,
-          first_name: newFName,
-          last_name: newLName,
-          phone_number: newPhoneNumber,
-          employer: newEmployer,
-          ta_time_zone: moment.tz.guess(),
-        }
-      )
+      .post(BASE_URL + 'addNewTA', {
+        email_id: newEmail,
+        password: newPassword,
+        first_name: newFName,
+        last_name: newLName,
+        phone_number: newPhoneNumber,
+        employer: newEmployer,
+        ta_time_zone: moment.tz.guess(),
+      })
       .then((response) => {
         console.log(response.data);
         hideSignUp();
@@ -269,7 +260,7 @@ export default function Login() {
       console.log(e, at, rt, first_name, last_name);
       axios
         .get(
-          'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/loginSocialTA/' +
+          '
             e
         ) //, {
         // username: e,  1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com
@@ -309,12 +300,9 @@ export default function Login() {
       let last_name = response.profileObj.familyName;
       console.log(e, at, rt, first_name, last_name);
       axios
-        .post(
-          BASE_URL + 'TASocialLogIn/',
-          {
-            username: e,
-          }
-        )
+        .post(BASE_URL + 'TASocialLogIn/', {
+          username: e,
+        })
         .then((response) => {
           console.log(response.data);
           if (response.data !== false) {

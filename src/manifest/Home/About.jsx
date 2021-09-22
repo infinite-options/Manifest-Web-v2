@@ -610,8 +610,7 @@ export default function AboutModal(props) {
       body.photo_url = '';
     }
 
-    let url =
-      'https://3s3sftsr90.execute-api.us-west-1.amazonaws.com/dev/api/v2/updateAboutMe';
+    let url = BASE_URL + 'updateAboutMe';
 
     let formData = new FormData();
     Object.entries(body).forEach((entry) => {
