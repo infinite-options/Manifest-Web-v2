@@ -11,7 +11,7 @@ const Stripe = require('stripe');
 const app = express();
 
 const PORT = process.env.PORT || 5000;
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+//const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 app.use(express.static(path.join(__dirname, 'build')));
 
@@ -38,7 +38,7 @@ app.get('/stripe/payment-intent', async (req, res) => {
   res.json({ client_secret: intent.client_secret });
 });
 
-if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+if (process.env.REACT_APP_BASE_URL.substring(8, 18) == '3s3sftsr90') {
   var key_url = '/etc/letsencrypt/live/manifestmy.space/privkey.pem';
   var cert_url = '/etc/letsencrypt/live/manifestmy.space/cert.pem';
 } else {
