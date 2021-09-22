@@ -19,8 +19,8 @@ app.get('/*', function (req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-//var key_url = '/etc/letsencrypt/live/manifestmy.space/privkey.pem';
-//var cert_url = '/etc/letsencrypt/live/manifestmy.space/cert.pem';
+var key_url = '/etc/letsencrypt/live/manifestmy.space/privkey.pem';
+var cert_url = '/etc/letsencrypt/live/manifestmy.space/cert.pem';
 
 var options = {};
 
@@ -38,13 +38,13 @@ app.get('/stripe/payment-intent', async (req, res) => {
   res.json({ client_secret: intent.client_secret });
 });
 
-if (process.env.REACT_APP_BASE_URL.substring(8, 18) == '3s3sftsr90') {
-  var key_url = '/etc/letsencrypt/live/manifestmy.space/privkey.pem';
-  var cert_url = '/etc/letsencrypt/live/manifestmy.space/cert.pem';
-} else {
-  var key_url = '/etc/letsencrypt/live/manifestmy.life/privkey.pem';
-  var cert_url = '/etc/letsencrypt/live/manifestmy.life/cert.pem';
-}
+// if (process.env.REACT_APP_BASE_URL.substring(8, 18) == '3s3sftsr90') {
+//   var key_url = '/etc/letsencrypt/live/manifestmy.space/privkey.pem';
+//   var cert_url = '/etc/letsencrypt/live/manifestmy.space/cert.pem';
+// } else {
+//   var key_url = '/etc/letsencrypt/live/manifestmy.life/privkey.pem';
+//   var cert_url = '/etc/letsencrypt/live/manifestmy.life/cert.pem';
+// }
 
 if (process.env.SUDO_USER != undefined) {
   options['key'] = fs.readFileSync(key_url);
