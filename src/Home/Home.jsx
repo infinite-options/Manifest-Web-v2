@@ -1519,8 +1519,6 @@ export default function Home(props) {
               editingIS: editingIS,
               setEditingIS: setEditingIS,
             }}
-            stateValue={stateValue}
-            setStateValue={setStateValue}
           >
             <userContext.Provider
               value={
@@ -1748,6 +1746,8 @@ export default function Home(props) {
                         setGetStepsEndPoint={setGetStepsEndPoint}
                         getActionsEndPoint={getActionsEndPoint}
                         setGetActionsEndPoint={setGetActionsEndPoint}
+                        stateValue={stateValue}
+                        setStateValue={setStateValue}
                       />
                     ) : editingATS.editing ? (
                       <EditATS
@@ -1756,12 +1756,16 @@ export default function Home(props) {
                         getActionsEndPoint={getActionsEndPoint}
                         setGetActionsEndPoint={setGetActionsEndPoint}
                         getGoalsEndPoint={getGoalsEndPoint}
+                        stateValue={stateValue}
+                        setStateValue={setStateValue}
                       />
                     ) : editingRTS.editing ? (
                       <EditRTS
                         CurrentId={userID}
                         ta_ID={selectedUser}
                         setGetGoalsEndPoint={setGetGoalsEndPoint}
+                        stateValue={stateValue}
+                        setStateValue={setStateValue}
                       />
                     ) : (
                       showCalendarView()

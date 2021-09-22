@@ -230,6 +230,10 @@ import Nav from '../src/Nav';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 /* Main function for all the pages and elements */
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+function getFaviconEl() {
+  return document.getElementById('favicon');
+}
 export default function App() {
   const [loginState, setLoginState] = useState(LoginInitState);
   console.log('login State');
@@ -242,6 +246,21 @@ export default function App() {
     () => console.log('curUserTimeZone = ', loginState.curUserTimeZone),
     [loginState.curUserTimeZone]
   );
+  console.log('base_url', BASE_URL);
+  useEffect(() => {
+    const favicon = getFaviconEl();
+    console.log('base_url', favicon.href);
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      favicon.href = 'favicon.ico';
+      console.log('base_url', favicon.href);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      favicon.href = 'favicon-life.ico';
+      console.log('base_url', favicon.href);
+    }
+  }, []);
+
   return (
     <Router>
       <LoginContext.Provider
@@ -252,16 +271,13 @@ export default function App() {
       >
         <div>
           {/* <Link to="/login">Login </Link> */}
-
           {/* <Link to="/">Home</Link> */}
 
           <Navigation />
-
           {/* <Switch>
           <Route path="/"> */}
           <Nav />
           {/* </Route> */}
-
           {/* <Route path="/login">
             <Login />
           </Route> */}

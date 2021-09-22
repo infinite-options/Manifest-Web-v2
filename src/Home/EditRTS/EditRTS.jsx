@@ -14,47 +14,57 @@ const EditRTS = (props) => {
   const [photo, setPhoto] = useState(
     editingRTSContext.editingRTS.newItem.gr_photo
   );
+  console.log('obj. ', props);
   const [showUploadImage, toggleUploadImage] = useState(false);
   const [image, setImage] = useState(null);
   const [imageName, setImageName] = useState('');
   const [imageURL, setImageURL] = useState('');
 
   const getTimes = (a_day_time, b_day_time) => {
-    const [a_start_time, b_start_time] = [a_day_time.substring(10, a_day_time.length), b_day_time.substring(10, b_day_time.length)];
-    const [a_HMS, b_HMS] = [a_start_time.substring(0, a_start_time.length - 3).replace(/\s{1,}/, '').split(':'),
-      b_start_time.substring(0, b_start_time.length - 3).replace(/\s{1,}/, '').split(':')];
-    const [a_parity, b_parity] = [a_start_time.substring(a_start_time.length - 3, a_start_time.length).replace(/\s{1,}/, ''),
-      b_start_time.substring(b_start_time.length - 3, b_start_time.length).replace(/\s{1,}/, '')];
-    
+    const [a_start_time, b_start_time] = [
+      a_day_time.substring(10, a_day_time.length),
+      b_day_time.substring(10, b_day_time.length),
+    ];
+    const [a_HMS, b_HMS] = [
+      a_start_time
+        .substring(0, a_start_time.length - 3)
+        .replace(/\s{1,}/, '')
+        .split(':'),
+      b_start_time
+        .substring(0, b_start_time.length - 3)
+        .replace(/\s{1,}/, '')
+        .split(':'),
+    ];
+    const [a_parity, b_parity] = [
+      a_start_time
+        .substring(a_start_time.length - 3, a_start_time.length)
+        .replace(/\s{1,}/, ''),
+      b_start_time
+        .substring(b_start_time.length - 3, b_start_time.length)
+        .replace(/\s{1,}/, ''),
+    ];
+
     let [a_time, b_time] = [0, 0];
-    if (a_parity === 'PM' && a_HMS[0] !== '12')
-    {
+    if (a_parity === 'PM' && a_HMS[0] !== '12') {
       const hoursInt = parseInt(a_HMS[0]) + 12;
       a_HMS[0] = `${hoursInt}`;
-    }
-    else if (a_parity === 'AM' && a_HMS[0] === '12')
-      a_HMS[0] = '00';
+    } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
 
-    if (b_parity === 'PM' && b_HMS[0] !== '12')
-    {
+    if (b_parity === 'PM' && b_HMS[0] !== '12') {
       const hoursInt = parseInt(b_HMS[0]) + 12;
       b_HMS[0] = `${hoursInt}`;
-    }
-    else if (b_parity === 'AM' && b_HMS[0] === '12')
-      b_HMS[0] = '00';
+    } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
 
-    for (let i = 0; i < a_HMS.length; i++)
-    {
-      a_time += Math.pow(60, (a_HMS.length - i - 1)) * parseInt(a_HMS[i]);
-      b_time += Math.pow(60, (b_HMS.length - i - 1)) * parseInt(b_HMS[i]);
+    for (let i = 0; i < a_HMS.length; i++) {
+      a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+      b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
     }
-    
+
     return [a_time, b_time];
   };
 
   const convertMins = (mins) => {
-    if (mins === '')
-      return '00:00:00';
+    if (mins === '') return '00:00:00';
     console.log('before: mins = ', mins, ', mins / 60 = ', mins / 60);
     mins = parseInt(mins);
     console.log('after: mins = ', mins, ', mins / 60 = ', mins / 60);
@@ -69,41 +79,53 @@ const EditRTS = (props) => {
   console.log('Repeat', editingRTSContext.editingRTS.newItem.repeat);
   const updateRTS = (e) => {
     console.log('here: entering updateRTS function');
-    editingRTSContext.setEditingRTS(
-      {
-        ...editingRTSContext.editingRTS,
-        editing: true,
-      }
-    );
+    editingRTSContext.setEditingRTS({
+      ...editingRTSContext.editingRTS,
+      editing: true,
+    });
     // editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing;
-    e.stopPropagation()
-    let object = {...editingRTSContext.editingRTS.newItem};
+    e.stopPropagation();
+    let object = { ...editingRTSContext.editingRTS.newItem };
     const [ta_before, ta_during, ta_after] = [
       convertMins(object.ta_notifications.before.time),
       convertMins(object.ta_notifications.during.time),
       convertMins(object.ta_notifications.after.time),
-    ]
-    object.ta_notifications.before.time = convertMins(object.ta_notifications.before.time);
-    object.ta_notifications.during.time = convertMins(object.ta_notifications.during.time);
-    object.ta_notifications.after.time = convertMins(object.ta_notifications.after.time);
-    object.user_notifications.before.time = convertMins(object.user_notifications.before.time);
-    object.user_notifications.during.time = convertMins(object.user_notifications.during.time);
-    object.user_notifications.after.time = convertMins(object.user_notifications.after.time);
+    ];
+    object.ta_notifications.before.time = convertMins(
+      object.ta_notifications.before.time
+    );
+    object.ta_notifications.during.time = convertMins(
+      object.ta_notifications.during.time
+    );
+    object.ta_notifications.after.time = convertMins(
+      object.ta_notifications.after.time
+    );
+    object.user_notifications.before.time = convertMins(
+      object.user_notifications.before.time
+    );
+    object.user_notifications.during.time = convertMins(
+      object.user_notifications.during.time
+    );
+    object.user_notifications.after.time = convertMins(
+      object.user_notifications.after.time
+    );
     console.log('log-1: ta = ', {
-      'before': object.ta_notifications.before.time,
-      'during': object.ta_notifications.during.time,
-      'after': object.ta_notifications.after.time,
+      before: object.ta_notifications.before.time,
+      during: object.ta_notifications.during.time,
+      after: object.ta_notifications.after.time,
     });
     console.log('log-2: user = ', {
-      'before': object.user_notifications.before.time,
-      'during': object.user_notifications.during.time, 
-      'after': object.user_notifications.after.time});
+      before: object.user_notifications.before.time,
+      during: object.user_notifications.during.time,
+      after: object.user_notifications.after.time,
+    });
     // Get start_day_and_time
     const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
     const end_day_and_time_simple_string = `${object.end_day} ${object.end_time}:00`;
-    if (end_day_and_time_simple_string < start_day_and_time_simple_string)
-    {
-      alert("Routine must not end before it starts. Update the date and/or time of the routine.");
+    if (end_day_and_time_simple_string < start_day_and_time_simple_string) {
+      alert(
+        'Routine must not end before it starts. Update the date and/or time of the routine.'
+      );
       return;
     }
     console.log('obj.start = ', start_day_and_time_simple_string);
@@ -126,7 +148,7 @@ const EditRTS = (props) => {
     //object.id = Number(object.id);
     delete object.location;
     delete object.notification;
-   // object.is_available = 'True';
+    // object.is_available = 'True';
     // Get end_day_and_time
 
     console.log('end day', object.end_day);
@@ -140,187 +162,212 @@ const EditRTS = (props) => {
     delete object.end_day;
     delete object.end_time;
     // Get expected_completion_time
-    const numHours = object.numMins > 60 ? object.numMins / 60: '00';
+    const numHours = object.numMins > 60 ? object.numMins / 60 : '00';
     let numMins = object.numMins % 60;
-    if(numMins < 10)
-      numMins = '0' + numMins
-      object.expected_completion_time = `${numHours}:${numMins}:00`;
+    if (numMins < 10) numMins = '0' + numMins;
+    object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
     object.id = editingRTSContext.editingRTS.id;
     object.user_id = props.CurrentId; // editingRTSContext.editingRTS.currentUserId;
     object.ta_people_id = props.ta_ID;
     object.photo = image;
-    delete object.photo
+    delete object.photo;
     // if (image != null) {
     //   console.log('trying to upload',image)
     //   object.photo = image
     //   object.photo_url = null
     // }
-    
-    console.log("obj",object);
+
+    console.log('obj', object);
     let formData = new FormData();
     Object.entries(object).forEach((entry) => {
       console.log('test-entry: ', entry);
       // if (typeof entry[1].name == 'string'){
-      if (typeof entry[1] == 'string'){
-          formData.append(entry[0], entry[1]);
-      }
-      else if (entry[1] instanceof Object) {
-          entry[1] = JSON.stringify(entry[1])
-          formData.append(entry[0], entry[1]);
-      }
-      
-      else{
-          formData.append(entry[0], entry[1]);
+      if (typeof entry[1] == 'string') {
+        formData.append(entry[0], entry[1]);
+      } else if (entry[1] instanceof Object) {
+        entry[1] = JSON.stringify(entry[1]);
+        formData.append(entry[0], entry[1]);
+      } else {
+        formData.append(entry[0], entry[1]);
       }
     });
     console.log('photo: ', image);
     formData.append('photo', image);
 
     console.log('===================formData: for RTS=======================');
-    for(var pair of formData.entries()) {
+    for (var pair of formData.entries()) {
       console.log('formData: ', pair);
     }
-    console.log('object.id') 
-    console.log(object.id)
+    console.log('object.id');
+    console.log(object.id);
     if (object.id != '') {
       console.log('updateGR');
       console.log('here: About to post changes to db');
       async function updateDB() {
         await axios
-        .post(BASE_URL + 'updateGR', formData)
-        .then((_) => {
-          console.log('editrts', _)
-          const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
-          const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
-          new_gr_array[gr_array_index] = object;
-          console.log('here: Changes made to db');
-          editingRTSContext.setEditingRTS({
-            ...editingRTSContext.editingRTS,
-            gr_array: new_gr_array,
-            editing: false
+          .post(BASE_URL + 'updateGR', formData)
+          .then((_) => {
+            console.log('editrts', _);
+            const gr_array_index =
+              editingRTSContext.editingRTS.gr_array.findIndex(
+                (elt) => elt.id === editingRTSContext.editingRTS.id
+              );
+            const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
+            new_gr_array[gr_array_index] = object;
+            console.log('here: Changes made to db');
+            editingRTSContext.setEditingRTS({
+              ...editingRTSContext.editingRTS,
+              gr_array: new_gr_array,
+              editing: false,
+            });
+          })
+          .catch((err) => {
+            if (err.response) {
+              console.log(err.response);
+            }
+            console.log(err);
           });
-        })
-        .catch((err) => {
-          if(err.response) {
-            console.log(err.response);
-          }
-          console.log(err)
-        });
 
         await axios
-        .get(BASE_URL + "getgoalsandroutines/" + props.CurrentId)
-        .then((response) =>{
+          .get(BASE_URL + 'getgoalsandroutines/' + props.CurrentId)
+          .then((response) => {
             const temp = [];
-            for(var i=0; i <response.data.result.length; i++){
-                temp.push(response.data.result[i]);
+
+            const tz = {
+              timeZone: props.stateValue.currentUserTimeZone,
+              // add more here
+            };
+
+            let dateNew = new Date().toLocaleString(tz, tz);
+            let today = moment(dateNew);
+            for (var i = 0; i < response.data.result.length; i++) {
+              temp.push(response.data.result[i]);
             }
             temp.sort((a, b) => {
-              const [a_start, b_start] = [new Date(a.gr_start_day_and_time), new Date(b.gr_start_day_and_time)];
-              const [a_end, b_end] = [new Date(a.gr_end_day_and_time), new Date(b.gr_end_day_and_time)];
-  
-              const [a_start_time, b_start_time] = getTimes(a.gr_start_day_and_time, b.gr_start_day_and_time);
-              const [a_end_time, b_end_time] = getTimes(a.gr_end_day_and_time, b.gr_end_day_and_time);
-  
-              if (a_start_time < b_start_time)
-                return -1;
-              else if (a_start_time > b_start_time)
-                return 1;
+              const [a_start, b_start] = [
+                new Date(a.gr_start_day_and_time).toLocaleString(tz, tz),
+                new Date(b.gr_start_day_and_time).toLocaleString(tz, tz),
+              ];
+              const [a_end, b_end] = [
+                new Date(a.gr_end_day_and_time).toLocaleString(tz, tz),
+                new Date(b.gr_end_day_and_time).toLocaleString(tz, tz),
+              ];
+
+              const [a_start_time, b_start_time] = getTimes(
+                a.gr_start_day_and_time,
+                b.gr_start_day_and_time
+              );
+              const [a_end_time, b_end_time] = getTimes(
+                a.gr_end_day_and_time,
+                b.gr_end_day_and_time
+              );
+
+              if (a_start_time < b_start_time) return -1;
+              else if (a_start_time > b_start_time) return 1;
               else {
-                if (a_end_time < b_end_time)
-                  return -1;
-                else if (a_end_time > b_end_time)
-                  return 1;
+                if (a_end_time < b_end_time) return -1;
+                else if (a_end_time > b_end_time) return 1;
                 else {
-                  if (a_start < b_start)
-                    return -1;
-                  else if (a_start > b_start)
-                    return 1;
+                  if (a_start < b_start) return -1;
+                  else if (a_start > b_start) return 1;
                   else {
-                    if (a_end < b_end)
-                      return -1;
-                    else if (a_end > b_end)
-                      return 1;
+                    if (a_end < b_end) return -1;
+                    else if (a_end > b_end) return 1;
                   }
                 }
               }
-  
+
               return 0;
             });
             props.setGetGoalsEndPoint(temp);
-        })
-        .catch((error) => {
+          })
+          .catch((error) => {
             console.log(error);
-        });
+          });
       }
 
       updateDB();
     } else {
-      console.log('addGR')
+      console.log('addGR');
       const addToDB = async () => {
         await axios
-        .post(BASE_URL + 'addGR', formData)
-        .then((_) => {
-          console.log(_)
-          const gr_array_index = editingRTSContext.editingRTS.gr_array.findIndex((elt) => elt.id === editingRTSContext.editingRTS.id)
-          const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
-          new_gr_array[gr_array_index] = object;
-          editingRTSContext.setEditingRTS({
-            ...editingRTSContext.editingRTS,
-            gr_array: new_gr_array,
-            editing: false
+          .post(BASE_URL + 'addGR', formData)
+          .then((_) => {
+            console.log(_);
+            const gr_array_index =
+              editingRTSContext.editingRTS.gr_array.findIndex(
+                (elt) => elt.id === editingRTSContext.editingRTS.id
+              );
+            const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
+            new_gr_array[gr_array_index] = object;
+            editingRTSContext.setEditingRTS({
+              ...editingRTSContext.editingRTS,
+              gr_array: new_gr_array,
+              editing: false,
+            });
+          })
+          .catch((err) => {
+            if (err.response) {
+              console.log(err.response);
+            }
           });
-        })
-        .catch((err) => {
-          if(err.response) {
-            console.log(err.response);
-          }
-        });
 
         await axios
-        .get(BASE_URL + "getgoalsandroutines/" + props.CurrentId)
-        .then((response) =>{
+          .get(BASE_URL + 'getgoalsandroutines/' + props.CurrentId)
+          .then((response) => {
             const temp = [];
-            for(var i=0; i <response.data.result.length; i++){
-                temp.push(response.data.result[i]);
+            const tz = {
+              timeZone: props.stateValue.currentUserTimeZone,
+              // add more here
+            };
+
+            let dateNew = new Date().toLocaleString(tz, tz);
+            let today = moment(dateNew);
+            for (var i = 0; i < response.data.result.length; i++) {
+              temp.push(response.data.result[i]);
             }
             temp.sort((a, b) => {
-              const [a_start, b_start] = [new Date(a.gr_start_day_and_time), new Date(b.gr_start_day_and_time)];
-              const [a_end, b_end] = [new Date(a.gr_end_day_and_time), new Date(b.gr_end_day_and_time)];
-  
-              const [a_start_time, b_start_time] = getTimes(a.gr_start_day_and_time, b.gr_start_day_and_time);
-              const [a_end_time, b_end_time] = getTimes(a.gr_end_day_and_time, b.gr_end_day_and_time);
-  
-              if (a_start_time < b_start_time)
-                return -1;
-              else if (a_start_time > b_start_time)
-                return 1;
+              const [a_start, b_start] = [
+                new Date(a.gr_start_day_and_time).toLocaleString(tz, tz),
+                new Date(b.gr_start_day_and_time).toLocaleString(tz, tz),
+              ];
+              const [a_end, b_end] = [
+                new Date(a.gr_end_day_and_time).toLocaleString(tz, tz),
+                new Date(b.gr_end_day_and_time).toLocaleString(tz, tz),
+              ];
+
+              const [a_start_time, b_start_time] = getTimes(
+                a.gr_start_day_and_time,
+                b.gr_start_day_and_time
+              );
+              const [a_end_time, b_end_time] = getTimes(
+                a.gr_end_day_and_time,
+                b.gr_end_day_and_time
+              );
+
+              if (a_start_time < b_start_time) return -1;
+              else if (a_start_time > b_start_time) return 1;
               else {
-                if (a_end_time < b_end_time)
-                  return -1;
-                else if (a_end_time > b_end_time)
-                  return 1;
+                if (a_end_time < b_end_time) return -1;
+                else if (a_end_time > b_end_time) return 1;
                 else {
-                  if (a_start < b_start)
-                    return -1;
-                  else if (a_start > b_start)
-                    return 1;
+                  if (a_start < b_start) return -1;
+                  else if (a_start > b_start) return 1;
                   else {
-                    if (a_end < b_end)
-                      return -1;
-                    else if (a_end > b_end)
-                      return 1;
+                    if (a_end < b_end) return -1;
+                    else if (a_end > b_end) return 1;
                   }
                 }
               }
-  
+
               return 0;
             });
             props.setGetGoalsEndPoint(temp);
-        })
-        .catch((error) => {
+          })
+          .catch((error) => {
             console.log(error);
-        });
+          });
       };
 
       addToDB();
@@ -365,15 +412,15 @@ const EditRTS = (props) => {
               let image_name = image.name;
               image_name = image_name + salt.toString();
               setImageName(image_name);
-              setImageURL(URL.createObjectURL(image))
+              setImageURL(URL.createObjectURL(image));
               console.log('URL: ', URL.createObjectURL(image));
               editingRTSContext.setEditingRTS({
                 ...editingRTSContext.editingRTS,
                 newItem: {
                   ...editingRTSContext.editingRTS.newItem,
                   photo: image,
-                  photo_url: ''
-                }
+                  photo_url: '',
+                },
               });
             }}
           >
@@ -578,8 +625,7 @@ const EditRTS = (props) => {
               }}
               value={editingRTSContext.editingRTS.newItem.numMins}
               onChange={(e) => {
-                if (e.target.value < 0)
-                  return;
+                if (e.target.value < 0) return;
                 editingRTSContext.setEditingRTS({
                   ...editingRTSContext.editingRTS,
                   newItem: {
@@ -617,9 +663,13 @@ const EditRTS = (props) => {
                   type="date"
                   value={editingRTSContext.editingRTS.newItem.end_day}
                   onChange={(e) => {
-                    console.log("e.tar.val = ", e.target.value);
+                    console.log('e.tar.val = ', e.target.value);
                     const year = parseInt(e.target.value.substring(0, 4));
-                    if (e.target.value < editingRTSContext.editingRTS.newItem.start_day && year > 1000)
+                    if (
+                      e.target.value <
+                        editingRTSContext.editingRTS.newItem.start_day &&
+                      year > 1000
+                    )
                       return;
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
@@ -812,13 +862,17 @@ const EditRTS = (props) => {
                       fontSize: '12px',
                       fontWeight: 'bold',
                     }}
-                    value={(editingRTSContext.editingRTS.newItem.repeat === 'False' ||
-                      editingRTSContext.editingRTS.newItem.repeat === false) ?
-                      1 : editingRTSContext.editingRTS.newItem.repeat_every
+                    value={
+                      editingRTSContext.editingRTS.newItem.repeat === 'False' ||
+                      editingRTSContext.editingRTS.newItem.repeat === false
+                        ? 1
+                        : editingRTSContext.editingRTS.newItem.repeat_every
                     }
                     onChange={(e) => {
-                      if ((e.target.value !== '' && e.target.value < 1) ||
-                        editingRTSContext.editingRTS.newItem.repeat === 'False' ||
+                      if (
+                        (e.target.value !== '' && e.target.value < 1) ||
+                        editingRTSContext.editingRTS.newItem.repeat ===
+                          'False' ||
                         editingRTSContext.editingRTS.newItem.repeat === false
                       )
                         return;
@@ -955,7 +1009,10 @@ const EditRTS = (props) => {
                         });
                       }}
                     />
-                    {console.log('newItem: ', editingRTSContext.editingRTS.newItem)}
+                    {console.log(
+                      'newItem: ',
+                      editingRTSContext.editingRTS.newItem
+                    )}
                     <div style={{ float: 'left', width: '20%' }}>After</div>
                     <input
                       style={{
@@ -1053,9 +1110,13 @@ const EditRTS = (props) => {
                     }}
                   />
                   <span> Available to User </span>
-                  {console.log('is_avail? ', editingRTSContext.editingRTS.newItem.is_available)}
+                  {console.log(
+                    'is_avail? ',
+                    editingRTSContext.editingRTS.newItem.is_available
+                  )}
                   {editingRTSContext.editingRTS.newItem.is_available ===
-                  'True' || editingRTSContext.editingRTS.newItem.is_available === true ? (
+                    'True' ||
+                  editingRTSContext.editingRTS.newItem.is_available === true ? (
                     <input
                       type="checkbox"
                       style={{ width: '20px', height: '20px' }}
@@ -1133,8 +1194,7 @@ const EditRTS = (props) => {
                       .time
                   }
                   onChange={(e) => {
-                    if (e.target.value < 0)
-                      return;
+                    if (e.target.value < 0) return;
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {
@@ -1175,7 +1235,8 @@ const EditRTS = (props) => {
                   style={{ width: '20px', height: '20px' }}
                   checked={
                     editingRTSContext.editingRTS.newItem.user_notifications
-                      .before.is_enabled !== 'False' && editingRTSContext.editingRTS.newItem.user_notifications
+                      .before.is_enabled !== 'False' &&
+                    editingRTSContext.editingRTS.newItem.user_notifications
                       .before.is_enabled !== false
                   }
                   onChange={(e) => {
@@ -1240,7 +1301,8 @@ const EditRTS = (props) => {
                   style={{ width: '20px', height: '20px' }}
                   checked={
                     editingRTSContext.editingRTS.newItem.ta_notifications.before
-                      .is_enabled !== 'False' && editingRTSContext.editingRTS.newItem.ta_notifications.before
+                      .is_enabled !== 'False' &&
+                    editingRTSContext.editingRTS.newItem.ta_notifications.before
                       .is_enabled !== false
                   }
                   onChange={(e) => {
@@ -1315,8 +1377,7 @@ const EditRTS = (props) => {
                       .time
                   }
                   onChange={(e) => {
-                    if (e.target.value < 0)
-                      return;
+                    if (e.target.value < 0) return;
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {
@@ -1357,7 +1418,8 @@ const EditRTS = (props) => {
                   style={{ width: '20px', height: '20px' }}
                   checked={
                     editingRTSContext.editingRTS.newItem.user_notifications
-                      .during.is_enabled !== 'False' && editingRTSContext.editingRTS.newItem.user_notifications
+                      .during.is_enabled !== 'False' &&
+                    editingRTSContext.editingRTS.newItem.user_notifications
                       .during.is_enabled !== false
                   }
                   onChange={(e) => {
@@ -1422,7 +1484,8 @@ const EditRTS = (props) => {
                   style={{ width: '20px', height: '20px' }}
                   checked={
                     editingRTSContext.editingRTS.newItem.ta_notifications.during
-                      .is_enabled !== 'False' && editingRTSContext.editingRTS.newItem.ta_notifications.during
+                      .is_enabled !== 'False' &&
+                    editingRTSContext.editingRTS.newItem.ta_notifications.during
                       .is_enabled !== false
                   }
                   onChange={(e) => {
@@ -1497,8 +1560,7 @@ const EditRTS = (props) => {
                       .time
                   }
                   onChange={(e) => {
-                    if (e.target.value < 0)
-                      return;
+                    if (e.target.value < 0) return;
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {
@@ -1540,8 +1602,9 @@ const EditRTS = (props) => {
                   style={{ width: '20px', height: '20px' }}
                   checked={
                     editingRTSContext.editingRTS.newItem.user_notifications
-                      .after.is_enabled !== 'False' && editingRTSContext.editingRTS.newItem.user_notifications
-                      .after.is_enabled !== false 
+                      .after.is_enabled !== 'False' &&
+                    editingRTSContext.editingRTS.newItem.user_notifications
+                      .after.is_enabled !== false
                   }
                   onChange={(e) => {
                     editingRTSContext.setEditingRTS({
@@ -1605,7 +1668,8 @@ const EditRTS = (props) => {
                   style={{ width: '20px', height: '20px' }}
                   checked={
                     editingRTSContext.editingRTS.newItem.ta_notifications.after
-                      .is_enabled !== 'False' && editingRTSContext.editingRTS.newItem.ta_notifications.after
+                      .is_enabled !== 'False' &&
+                    editingRTSContext.editingRTS.newItem.ta_notifications.after
                       .is_enabled !== false
                   }
                   onChange={(e) => {
@@ -1636,7 +1700,8 @@ const EditRTS = (props) => {
                     fontWeight: 'bold',
                   }}
                   value={
-                    editingRTSContext.editingRTS.newItem.ta_notifications.after.message
+                    editingRTSContext.editingRTS.newItem.ta_notifications.after
+                      .message
                   }
                   onChange={(e) => {
                     editingRTSContext.setEditingRTS({
