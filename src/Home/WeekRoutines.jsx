@@ -489,10 +489,12 @@ export default class WeekRoutines extends Component {
                   parseInt(arr[i].datetime_completed.substring(8, 10)),
                 ];
                 const [todayYear, todayMonth, todayDay] = [
-                  today.format('Y'),
-                  today.format('M'),
-                  today.format('D'),
+                  parseInt(today.format('Y')),
+                  parseInt(today.format('M')),
+                  parseInt(today.format('D')),
                 ];
+                console.log('today year', todayYear, todayMonth, todayDay);
+
                 // const [started_year, started_month, started_day] = [parseInt(arr[i].datetime_started.substring(0, 4)),
                 //   parseInt(arr[i].datetime_started.substring(5, 7)), parseInt(arr[i].datetime_started.substring(8, 10))];
                 const [curr_year, curr_month, curr_day] = [
@@ -500,7 +502,7 @@ export default class WeekRoutines extends Component {
                   parseInt(curDate2.format('M')),
                   parseInt(curDate2.format('D')),
                 ];
-
+                console.log('today year', curr_year, curr_month, curr_day);
                 const start_time = arr[i].start_day_and_time
                   .substring(11)
                   .split(/[:\s+]/);
@@ -573,6 +575,7 @@ export default class WeekRoutines extends Component {
                                 ? `url(${greenTick})`
                                 : ''
                               : '',
+                          backgroundRepeat: 'no-repeat',
                         }}
                       ></div>
                     </div>
