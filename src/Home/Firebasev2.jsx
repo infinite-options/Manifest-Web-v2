@@ -1583,8 +1583,7 @@ export default function Firebasev2(props) {
 
   function formatDateTime(str) {
     let newTime = new Date(str.replace(/-/g, '/')).toLocaleTimeString();
-    newTime = newTime.substring(0, 5) + ' ' + newTime.slice(-2);
-    return newTime;
+    return newTime.replace(/:\d+ /, ' ');
   }
 
   //when clicking the subroutines button
@@ -2479,8 +2478,8 @@ export default function Firebasev2(props) {
                       color: '#F8BE28',
                     }}
                   >
-                    {formatDateTime('6/23/2021, 7:31:19 AM')}-
-                    {formatDateTime('6/23/2021, 8:31:56 AM')}
+                    {formatDateTime('2021-06-23, 7:31:19 AM')}-
+                    {formatDateTime('2021-06-23, 8:31:56 AM')}
                   </div>
                 ) : (
                   <Col> </Col>

@@ -1558,11 +1558,7 @@ export default function Home(props) {
                   <Button className={classes.buttonSelection} id="one">
                     Events
                   </Button>
-                  <Button
-                    className={classes.buttonSelection}
-                    onClick={() => history.push('/main')}
-                    id="one"
-                  >
+                  <Button className={classes.buttonSelection} id="one">
                     Goals
                   </Button>
                   <Button
