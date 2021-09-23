@@ -49,9 +49,12 @@ const convertDateToTimeString = (dateObject) => {
 const EditATS = (props) => {
   const editingATSContext = useContext(EditATSContext);
   console.log('action Props', props);
-  console.log('editATS gre = ', props.getGoalsEndPoint)
-  const routine = props.routineID.gr_unique_id ? props.routineID :
-    props.getGoalsEndPoint.filter(goal => goal.gr_unique_id === props.routineID.goal_routine_id)[0];
+  console.log('editATS gre = ', props.getGoalsEndPoint);
+  const routine = props.routineID.gr_unique_id
+    ? props.routineID
+    : props.getGoalsEndPoint.filter(
+        (goal) => goal.gr_unique_id === props.routineID.goal_routine_id
+      )[0];
   console.log('test-routine = ', routine);
 
   // console.log('action Props',  new Date((props.routineID.gr_start_day_and_time).replace(/-/g, '/')));
@@ -59,7 +62,6 @@ const EditATS = (props) => {
   // const endTime = new Date(props.routineID.gr_end_day_and_time);
   const startTime = new Date(routine.gr_start_day_and_time.replace(/-/g, '/'));
   const endTime = new Date(routine.gr_end_day_and_time.replace(/-/g, '/'));
-
 
   const startDay = convertDateToDayString(startTime);
   const endDay = convertDateToDayString(endTime);
@@ -89,7 +91,10 @@ const EditATS = (props) => {
         },
       });
     }
-  }, [editingATSContext.editingATS.newItem.start_day,editingATSContext.editingATS.newItem.end_day]);
+  }, [
+    editingATSContext.editingATS.newItem.start_day,
+    editingATSContext.editingATS.newItem.end_day,
+  ]);
 
   console.log(
     'action start_day',
@@ -142,7 +147,7 @@ const EditATS = (props) => {
     object.title = object.at_title;
     object.gr_id = routine.gr_unique_id;
     delete object.at_title;
-    const numHours = object.numMins > 60 ? object.numMins / 60: '00';
+    const numHours = object.numMins >= 60 ? object.numMins / 60 : '00';
     let numMins = object.numMins % 60;
     if (numMins < 10) numMins = '0' + numMins;
     object.expected_completion_time = `${numHours}:${numMins}:00`;
@@ -165,36 +170,39 @@ const EditATS = (props) => {
 
       const updateDB = async () => {
         await axios
-        .post(BASE_URL + 'updateAT', formData)
-        .then((response) => {
-          console.log(response);
-          const gr_array_index =
-            editingATSContext.editingATS.gr_array.findIndex(
-              (elt) => elt.id === editingATSContext.editingATS.id
-            );
-          const new_gr_array = [...editingATSContext.editingATS.gr_array];
-          new_gr_array[gr_array_index] = object;
-          editingATSContext.setEditingATS({
-            ...editingATSContext.editingATS,
-            gr_array: new_gr_array,
-            editing: false,
+          .post(BASE_URL + 'updateAT', formData)
+          .then((response) => {
+            console.log(response);
+            const gr_array_index =
+              editingATSContext.editingATS.gr_array.findIndex(
+                (elt) => elt.id === editingATSContext.editingATS.id
+              );
+            const new_gr_array = [...editingATSContext.editingATS.gr_array];
+            new_gr_array[gr_array_index] = object;
+            editingATSContext.setEditingATS({
+              ...editingATSContext.editingATS,
+              gr_array: new_gr_array,
+              editing: false,
+            });
+          })
+          .catch((err) => {
+            if (err.response) {
+              console.log(err.response);
+            }
+            console.log(err);
           });
-        })
-        .catch((err) => {
-          if (err.response) {
-            console.log(err.response);
-          }
-          console.log(err);
-        });
 
-        console.log('getting actionsTasks with full URL: ', BASE_URL + "actionsTasks/" + props.routineID.goal_routine_id);
+        console.log(
+          'getting actionsTasks with full URL: ',
+          BASE_URL + 'actionsTasks/' + props.routineID.goal_routine_id
+        );
         await axios
-        .get(BASE_URL + "actionsTasks/" + props.routineID.goal_routine_id)
-        .then((response) =>{
+          .get(BASE_URL + 'actionsTasks/' + props.routineID.goal_routine_id)
+          .then((response) => {
             console.log('actionsTasks-response: ', response);
             const temp = [];
-            for(var i=0; i <response.data.result.length; i++){
-                temp.push(response.data.result[i]);
+            for (var i = 0; i < response.data.result.length; i++) {
+              temp.push(response.data.result[i]);
             }
 
             const tempObj = {};
@@ -202,21 +210,23 @@ const EditATS = (props) => {
               tempObj[key] = props.getActionsEndPoint[key];
             }
             tempObj[props.routineID.goal_routine_id] = temp;
-            console.log('here 0: props.gaep = ', props.getActionsEndPoint, '\ntempObj = ', tempObj);
+            console.log(
+              'here 0: props.gaep = ',
+              props.getActionsEndPoint,
+              '\ntempObj = ',
+              tempObj
+            );
 
             props.setGetActionsEndPoint(tempObj);
           })
           .catch((error) => {
-              console.log('actionsTasks error = ', error);
+            console.log('actionsTasks error = ', error);
           });
       };
 
       updateDB();
-    }
-    else 
-    {
-      const addToDB = async () => 
-      {
+    } else {
+      const addToDB = async () => {
         await axios
           .post(BASE_URL + 'addAT', formData)
           .then((response) => {
@@ -241,12 +251,12 @@ const EditATS = (props) => {
           });
 
         await axios
-        .get(BASE_URL + "actionsTasks/" + props.routineID.gr_unique_id)
-        .then((response) =>{
+          .get(BASE_URL + 'actionsTasks/' + props.routineID.gr_unique_id)
+          .then((response) => {
             console.log('actionsTasks-response: ', response);
             const temp = [];
-            for(var i=0; i <response.data.result.length; i++){
-                temp.push(response.data.result[i]);
+            for (var i = 0; i < response.data.result.length; i++) {
+              temp.push(response.data.result[i]);
             }
 
             const tempObj = {};
@@ -254,14 +264,19 @@ const EditATS = (props) => {
               tempObj[key] = props.getActionsEndPoint[key];
             }
             tempObj[props.routineID.gr_unique_id] = temp;
-            console.log('here 0: props.gaep = ', props.getActionsEndPoint, '\ntempObj = ', tempObj);
+            console.log(
+              'here 0: props.gaep = ',
+              props.getActionsEndPoint,
+              '\ntempObj = ',
+              tempObj
+            );
 
             props.setGetActionsEndPoint(tempObj);
           })
           .catch((error) => {
-              console.log('actionsTasks error = ', error);
+            console.log('actionsTasks error = ', error);
           });
-      }
+      };
       addToDB();
     }
   };
@@ -398,7 +413,10 @@ const EditATS = (props) => {
                 type="date"
                 value={editingATSContext.editingATS.newItem.end_day}
                 onChange={(e) => {
-                  if (e.target.value < editingATSContext.editingATS.newItem.start_day)
+                  if (
+                    e.target.value <
+                    editingATSContext.editingATS.newItem.start_day
+                  )
                     return;
                   editingATSContext.setEditingATS({
                     ...editingATSContext.editingATS,
@@ -451,8 +469,7 @@ const EditATS = (props) => {
                 type="number"
                 value={editingATSContext.editingATS.newItem.numMins}
                 onChange={(e) => {
-                  if (e.target.value < 0)
-                    return;
+                  if (e.target.value < 0) return;
                   editingATSContext.setEditingATS({
                     ...editingATSContext.editingATS,
                     newItem: {
@@ -471,37 +488,37 @@ const EditATS = (props) => {
 
           <div style={{ display: 'flex', marginTop: '1rem' }}>
             <div style={{ fontSize: '12px' }}> Available to User </div>
-            {editingATSContext.editingATS.newItem.is_available ===
-                  'True' || editingATSContext.editingATS.newItem.is_available === true ? (
-                    <input
-                      type="checkbox"
-                      style={{ width: '20px', height: '20px' }}
-                      defaultChecked="true"
-                      onChange={(e) => {
-                        editingATSContext.setEditingATS({
-                          ...editingATSContext.editingATS,
-                          newItem: {
-                            ...editingATSContext.editingATS.newItem,
-                            is_available: e.target.checked,
-                          },
-                        });
-                      }}
-                    />
-                  ) : (
-                    <input
-                      type="checkbox"
-                      style={{ width: '20px', height: '20px' }}
-                      onChange={(e) => {
-                        editingATSContext.setEditingATS({
-                          ...editingATSContext.editingATS,
-                          newItem: {
-                            ...editingATSContext.editingATS.newItem,
-                            is_available: e.target.checked,
-                          },
-                        });
-                      }}
-                    />
-                  )}
+            {editingATSContext.editingATS.newItem.is_available === 'True' ||
+            editingATSContext.editingATS.newItem.is_available === true ? (
+              <input
+                type="checkbox"
+                style={{ width: '20px', height: '20px' }}
+                defaultChecked="true"
+                onChange={(e) => {
+                  editingATSContext.setEditingATS({
+                    ...editingATSContext.editingATS,
+                    newItem: {
+                      ...editingATSContext.editingATS.newItem,
+                      is_available: e.target.checked,
+                    },
+                  });
+                }}
+              />
+            ) : (
+              <input
+                type="checkbox"
+                style={{ width: '20px', height: '20px' }}
+                onChange={(e) => {
+                  editingATSContext.setEditingATS({
+                    ...editingATSContext.editingATS,
+                    newItem: {
+                      ...editingATSContext.editingATS.newItem,
+                      is_available: e.target.checked,
+                    },
+                  });
+                }}
+              />
+            )}
           </div>
 
           <Row
