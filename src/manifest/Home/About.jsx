@@ -970,6 +970,7 @@ export default function AboutModal(props) {
                           ...taObject,
                           time_zone: e.target.value,
                         });
+                                                
                       }}
                       renderValue={() => {
                         console.log('timeZone1 = ', taObject.time_zone);
@@ -1360,8 +1361,11 @@ export default function AboutModal(props) {
                     style={{
                       display: 'block',
                       float: 'right',
-                      width: '100px',
-                      height: '100px',
+                      width: '5rem',
+                      height: '5rem',
+                      objectFit:'fill',
+                      // width: '100px',
+                      // height: '100px',
                       border: 'none',
                       borderRadius: '10px',
                       backgroundColor: 'white',
@@ -1375,8 +1379,9 @@ export default function AboutModal(props) {
                       float: 'right',
                       marginLeft: 'auto',
                       marginRight: 'auto',
-                      width: '100%',
-                      height: '70px',
+                      width: '5rem',
+                      height: '5rem',
+                      objectFit:'cover',
                       marginBottom: '15px',
                     }}
                     src={aboutMeObject.pic}
@@ -2041,8 +2046,9 @@ export default function AboutModal(props) {
                     <div>
                       <img
                         style={{
-                          height: '5rem',
                           width: '5rem',
+                          height: '5rem',
+                          objectFit:'fill',
                           backgroundColor: '#ffffff',
                           borderRadius: '10px',
                         }}
