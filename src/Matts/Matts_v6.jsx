@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 //import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import moment from 'moment'
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -76,7 +77,7 @@ export default function MainPage(props) {
   // const currentUser = "100-000072";
   const loginContext = useContext(LoginContext);
   const [currentUser, setCU] = useState(loginContext.loginState.curUser);
-
+  const [currentTZ, setTZ] = useState(loginContext.loginState.curUserTimeZone);
   const [rows, setRows] = useState([]);
   const [historyGot, setHG] = useState([]);
 
@@ -104,14 +105,25 @@ export default function MainPage(props) {
     setHG([]);
     setRows([]);
     setCU(userID);
+    setTZ(userTime_zone)
   }
   console.log('currentUser: ' + currentUser);
 
   const inRange = [];
+
+  const tz = {
+    timeZone: userTime_zone,
+  };
+  console.log('hgot tz', tz, userTime_zone)
+  var time = new Date().toLocaleString(tz, tz).replace(/,/g, '');
+  var m = Moment(time).format('ddd MMM D YYYY HH:mm:ss [GMT]ZZ ')
+  var m = new Date(m);
+  console.log('hgot cu ti3 = ', m);
+
   var start = new Date();
-  start.setHours(0, 0, 0, 0);
-  console.log(start);
-  const [currentDate, setCurDate] = useState(start);
+  m.setHours(0, 0, 0, 0);
+  //console.log('hgot',start);
+  const [currentDate, setCurDate] = useState(m);
   const history = useHistory();
 
   //table things:
@@ -173,7 +185,7 @@ export default function MainPage(props) {
         }
         // setHG(historyGot);
         console.log('hgot = ', historyGot);
-        console.log(currentDate);
+        console.log('hgot currentDAte = ', currentDate);
         cleanData(historyGot, currentDate);
         // console.log(response.data.result[1].details);
         // cleanData(historyGot, currentDate);
@@ -268,8 +280,11 @@ export default function MainPage(props) {
             date: Moment(prevDate.getTime()).format('YYYY-MM-DD') + ' 00:00:00',
             details: '[]',
           });
+          console.log('separation: prevDate = ', inRange);
           map.set(Moment(prevDate.getTime()).format('YYYY-MM-DD'), true);
+
           prevDate = new Date(prevDate.getTime() + 86400000);
+          console.log('separation: prevDate = ', prevDate);
           j++;
         }
         inRange.push({
@@ -662,8 +677,14 @@ export default function MainPage(props) {
   }
 
   function getDayName(num) {
-    var d = new Date();
+
+    var time = new Date().toLocaleString(tz, tz).replace(/,/g, '');
+    var d = Moment(time).format('ddd MMM D YYYY HH:mm:ss [GMT]ZZ ');
+    var d = new Date(d);
     d.setDate(d.getDate() - num);
+
+    // var d = new Date();
+    // d.setDate(d.getDate() - num);
     switch (d.getDay()) {
       case 0:
         return 'SUN';
@@ -772,6 +793,19 @@ export default function MainPage(props) {
                             {Moment(currentDate.getTime() - 86400000).format(
                               'D, YYYY'
                             )}
+                            {console.log(
+                              'hgot',
+                              Moment(currentDate - 604800000).format('MMMM D'),
+                              Moment(currentDate - 86400000).format('D, YYYY')
+                            )}
+                            {console.log(
+                              'hgot line 819',
+                              new Date(currentDate).getDate()
+                            )}
+                            {console.log(
+                              'hgot currentDate.getDate()',
+                              m.getDate()
+                            )}
                           </p>
                           <p
                             style={{ textTransform: 'none', height: '19.5px' }}
@@ -780,8 +814,7 @@ export default function MainPage(props) {
                           </p>
                         </Col>
                         <Col style={{ justifyContent: 'right' }}>
-                          {new Date(Date.now()).getDate() !=
-                          currentDate.getDate() ? (
+                          {new Date(currentDate).getDate() != m.getDate() ? (
                             <FontAwesomeIcon
                               // style={{ marginLeft: "50%" }}
                               style={{ float: 'right' }}
@@ -817,6 +850,7 @@ export default function MainPage(props) {
                   </TableHead>
                   <TableBody>
                     {onlyAllowed().map((row) => {
+                      console.log('hgot line 842', currentDate);
                       const origin = currentDate.getTime() - 604800000;
                       const msInDay = 86400000;
                       const weekDays = [];

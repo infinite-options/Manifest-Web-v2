@@ -409,7 +409,7 @@ export default function AboutModal(props) {
 
   const tzMap = {
     'Pacific/Samoa': '(GMT-11:00)',
-    'America/Honolulu': '(GMT-10:00)',
+    'Pacific/Honolulu': '(GMT-10:00)',
     'Pacific/Marquesas': '(GMT-09:30)',
     'America/Juneau': '(GMT-09:00)',
     'America/Los_Angeles': '(GMT-08:00)',

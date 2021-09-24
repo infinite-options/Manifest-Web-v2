@@ -93,16 +93,14 @@ const VerticalRoutine = ({onlyAllowed, userID, sendRoutineToParent, allRows}) =>
     }
 
     function formatDateTime(str) {
-        let newTime = new Date(str.replace(/-/g, '/')).toLocaleTimeString();
+        /* let newTime = new Date(str.replace(/-/g, '/')).toLocaleTimeString();
         newTime = newTime.substring(0, 5) + " " + newTime.slice(-2);
-        return newTime;
+        return newTime; */
+        let newTime = new Date(str.replace(/-/g, '/')).toLocaleTimeString();
+        return newTime.replace(/:\d+ /, ' ');
     }
 
-    function formatDateTime(str) {
-        let newTime = new Date(str.replace(/-/g, '/')).toLocaleTimeString();
-        newTime = newTime.substring(0, 5) + " " + newTime.slice(-2);
-        return newTime;
-      }
+    
 
    
 

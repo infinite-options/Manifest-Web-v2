@@ -168,12 +168,16 @@ export function Navigation() {
           if (listOfUsers[0]) {
             console.log('document cookie set to first user');
             document.cookie = 'patient_name=' + listOfUsers[0].user_name;
+            document.cookie = 'patient_timeZone' + listOfUsers[0].time_zone;
+            document.cookie = 'patient_uid' + listOfUsers[0].user_unique_id;
           }
         }
       } else {
         if (listOfUsers[0]) {
           console.log('document cookie set to first user');
           document.cookie = 'patient_name=' + listOfUsers[0].user_name;
+          document.cookie = 'patient_timeZone' + listOfUsers[0].time_zone;
+          document.cookie = 'patient_uid' + listOfUsers[0].user_unique_id;
         } else {
           console.log('document cookie set to loading');
           document.cookie = 'patient_name=Loading';
