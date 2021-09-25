@@ -219,7 +219,7 @@ export default function MainPage(props) {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [currentUser]);
 
   function formatTime(dateTime) {
     var temp = new Date(dateTime);
