@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 //import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import moment from 'moment'
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -22,7 +21,6 @@ import {
 import Moment from 'moment';
 import VerticalRoutine from './verticalRoutine_v2';
 import LoginContext from '../LoginContext';
-
 import {
   Form,
   Container,
@@ -34,9 +32,7 @@ import {
   Spinner,
 } from 'react-bootstrap';
 import { wait } from '@testing-library/dom';
-
 const BASE_URL = process.env.REACT_APP_BASE_URL;
-
 const useStyles = makeStyles({
   table: {
     minWidth: 650,
@@ -64,13 +60,11 @@ const useStyles = makeStyles({
     // display: 'flex',
   },
 });
-
 export default function MainPage(props) {
   //    const { profile, setProfile } = useContext(AuthContext);
   //    console.log(props.location.state);
   //    console.log(props.location.routines);
   //    console.log(props.routines);
-
   console.log('here test');
   //----Change these commented lines to get userID from state being passed in/
   //const currentUser = props.location.state; //matts testing 72
@@ -80,7 +74,6 @@ export default function MainPage(props) {
   const [currentTZ, setTZ] = useState(loginContext.loginState.curUserTimeZone);
   const [rows, setRows] = useState([]);
   const [historyGot, setHG] = useState([]);
-
   // Kyle cookie code
   var userID = '';
   var userTime_zone = '';
@@ -89,10 +82,10 @@ export default function MainPage(props) {
       .split(';')
       .some((item) => item.trim().startsWith('patient_uid='))
   ) {
-    userID = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('patient_uid='))
-      .split('=')[1];
+     userID = document.cookie
+       .split('; ')
+       .find((row) => row.startsWith('patient_uid='))
+       .split('=')[1];
     userTime_zone = document.cookie
       .split('; ')
       .find((row) => row.startsWith('patient_timeZone='))
@@ -105,7 +98,7 @@ export default function MainPage(props) {
     setHG([]);
     setRows([]);
     setCU(userID);
-    setTZ(userTime_zone)
+    setTZ(userTime_zone);
   }
   console.log('currentUser: ' + currentUser);
 
@@ -114,18 +107,18 @@ export default function MainPage(props) {
   const tz = {
     timeZone: userTime_zone,
   };
-  console.log('hgot tz', tz, userTime_zone)
+  console.log('hgot tz', tz, userTime_zone);
   var time = new Date().toLocaleString(tz, tz).replace(/,/g, '');
-  var m = Moment(time).format('ddd MMM D YYYY HH:mm:ss [GMT]ZZ ')
+  var m = Moment(time).format('ddd MMM D YYYY HH:mm:ss [GMT]ZZ ');
   var m = new Date(m);
   console.log('hgot cu ti3 = ', m);
-
-  var start = new Date();
   m.setHours(0, 0, 0, 0);
-  //console.log('hgot',start);
+
+  // var start = new Date();
+  // start.setHours(0, 0, 0, 0);
+  // console.log(start);
   const [currentDate, setCurDate] = useState(m);
   const history = useHistory();
-
   //table things:
   const classes = useStyles();
 
@@ -185,7 +178,7 @@ export default function MainPage(props) {
         }
         // setHG(historyGot);
         console.log('hgot = ', historyGot);
-        console.log('hgot currentDAte = ', currentDate);
+        console.log(currentDate);
         cleanData(historyGot, currentDate);
         // console.log(response.data.result[1].details);
         // cleanData(historyGot, currentDate);
@@ -193,7 +186,6 @@ export default function MainPage(props) {
       .catch((error) => {
         console.log(error);
       });
-
     axios
       .get(
         BASE_URL +
@@ -213,9 +205,9 @@ export default function MainPage(props) {
             ...loginContext.loginState,
             usersOfTA: response.data.result,
             curUser: curUserID,
-            curUserTimeZone: curUserTZ,
+            curUserTimeZone:curUserTZ,
           });
-          console.log('curUser', curUserID);
+          console.log(curUserID);
           // setUserID(curUserID);
           // console.log(userID);
           // GrabFireBaseRoutinesGoalsData();
@@ -227,7 +219,7 @@ export default function MainPage(props) {
       .catch((error) => {
         console.log(error);
       });
-  }, [currentUser]);
+  }, []);
 
   function formatTime(dateTime) {
     var temp = new Date(dateTime);
@@ -236,7 +228,6 @@ export default function MainPage(props) {
     console.log(temp);
     return temp;
   }
-
   //-------- clean historyGot - just dates we want, just info we want, and structure vertical to horizontal   --------
   function cleanData(historyGot, useDate) {
     //go through at find historyGots that are within 7 days of useDate
@@ -246,6 +237,13 @@ export default function MainPage(props) {
     console.log('historyGot = ', historyGot);
     for (var i = 0; i < historyGot.length; i++) {
       var historyDate = new Date(historyGot[i].date_affected);
+      console.log(
+        'hgot history date',
+        i,
+        historyGot[i],
+        historyGot[i].date_affected,
+        historyDate
+      );
       if (
         historyDate.getTime() >= useDate.getTime() - 691200000 && //filter for within 7 datets
         historyDate.getTime() <= useDate.getTime() - 86400000
@@ -258,45 +256,18 @@ export default function MainPage(props) {
     //now temp has data we want
     // move temp to inRange with no repeats
     const map = new Map();
-    let j = 0;
     for (const item of temp) {
-      if (!map.has(item.date.substring(0, 10))) {
-        map.set(item.date.substring(0, 10), true);
-        let prevDate =
-          j === 0 ? null : new Date(inRange[j - 1].date.substring(0, 10));
-        const currDate = item.date.substring(0, 10);
-        while (
-          prevDate !== null &&
-          Moment(prevDate.getTime() + 86400000).format('YYYY-MM-DD') !==
-            Moment(currDate).format('YYYY-MM-DD')
-        ) {
-          console.log(
-            'separation: prevDate = ',
-            Moment(prevDate.getTime() + 86400000).format('YYYY-MM-DD'),
-            ', currDate = ',
-            Moment(currDate).format('YYYY-MM-DD')
-          );
-          inRange.push({
-            date: Moment(prevDate.getTime()).format('YYYY-MM-DD') + ' 00:00:00',
-            details: '[]',
-          });
-          console.log('separation: prevDate = ', inRange);
-          map.set(Moment(prevDate.getTime()).format('YYYY-MM-DD'), true);
-
-          prevDate = new Date(prevDate.getTime() + 86400000);
-          console.log('separation: prevDate = ', prevDate);
-          j++;
-        }
+      console.log('temp1.1: item = ', item);
+      if (!map.has(item.date)) {
+        map.set(item.date, true);
         inRange.push({
           date: item.date,
           details: item.details,
         });
-        j++;
       }
     }
     inRange.reverse(); //put latest day at end
-    console.log('inRange1 = ', inRange, ', map = ', map);
-
+    console.log('inRange1 = ', inRange);
     function custom_sort(a, b) {
       return (
         new Date(a.start_day_and_time).getHours() +
@@ -308,15 +279,20 @@ export default function MainPage(props) {
 
     //bigList will hold new data format sidewase
     var bigList = [];
+    // for (var d = (inRange.length - 1); d >= 0; d--){
     for (var d = 0; d < inRange.length; d++) {
       const obj = JSON.parse(inRange[d].details);
-      console.log('obj = ', obj);
 
       //sort obj by time of day
       obj.sort(custom_sort);
       for (var r = 0; r < obj.length; r++) {
         //FOR ROUTINES
+        // console.log(r);
+        if (obj[r].title === 'DP - Test routine 2 (repeats)') {
+          console.log('start obj[r] = ', obj[r]);
+        }
         if (obj[r].routine) {
+          // console.log("gere");
           var isNewR = true;
           for (var s = 0; s < bigList.length; s++) {
             //check through and see if this is a new routine
@@ -324,6 +300,9 @@ export default function MainPage(props) {
               bigList[s].type == 'Routine' &&
               bigList[s].number == obj[r].routine
             ) {
+              if (obj[r].title === 'DP - Test routine 2 (repeats)') {
+                console.log(obj[r].days, ', d = ', d, 'start obj[r].days = ');
+              }
               bigList[s].days[d] = obj[r].status; //if already there- just update that day status
               isNewR = false;
               break;
@@ -347,7 +326,6 @@ export default function MainPage(props) {
             currentR.days[d] = obj[r].status;
             bigList.push(currentR);
           }
-
           if (obj[r].actions != undefined) {
             var actions = obj[r].actions;
             console.log('ACTIONS:' + d);
@@ -378,8 +356,6 @@ export default function MainPage(props) {
                     is_sublist_available: actions[a].is_sublist_available,
                     is_available: actions[a].is_available,
                     number: actions[a].action,
-                    startTime: obj[r].start_day_and_time,
-                    endTime: obj[r].end_day_and_time,
                   };
                   currentA.days[d] = actions[a].status;
                   bigList.push(currentA);
@@ -411,8 +387,6 @@ export default function MainPage(props) {
                           photo: insts[i].photo,
                           is_available: insts[i].is_available,
                           number: insts[i].instruction,
-                          startTime: obj[r].start_day_and_time,
-                          endTime: obj[r].end_day_and_time,
                         };
                         currentI.days[d] = insts[i].status;
                         bigList.push(currentI);
@@ -424,6 +398,10 @@ export default function MainPage(props) {
             }
           }
         }
+
+        if (obj[r].title === 'DP - Test routine 2 (repeats)') {
+          console.log('end obj[r] = ', obj[r]);
+        }
       }
     }
 
@@ -432,27 +410,22 @@ export default function MainPage(props) {
     console.log('BIGLIST data before = ', bigList);
     bigList = addCircles(bigList);
     console.log('BIGLIST data after = ', bigList);
-
-    const dateIndexMapping = {};
-    const origin = useDate.getTime();
-    for (let k = 6; k >= 0; k--) {
-      const currDay = Moment(origin - 86400000 * (7 - k)).format('dddd');
-      dateIndexMapping[currDay] = 6 - k;
-    }
-
+    // console.log(bigList);
+    // bigList = addNames(bigList, routines);
+    // console.log(bigList);
     var tempRows = [];
     for (var i = 0; i < bigList.length; i++) {
       tempRows.push(
         createData(
           bigList[i].title,
           bigList[i].number,
-          bigList[i].days[dateIndexMapping['Sunday']],
-          bigList[i].days[dateIndexMapping['Monday']],
-          bigList[i].days[dateIndexMapping['Tuesday']],
-          bigList[i].days[dateIndexMapping['Wednesday']],
-          bigList[i].days[dateIndexMapping['Thursday']],
-          bigList[i].days[dateIndexMapping['Friday']],
-          bigList[i].days[dateIndexMapping['Saturday']],
+          bigList[i].days[6],
+          bigList[i].days[5],
+          bigList[i].days[4],
+          bigList[i].days[3],
+          bigList[i].days[2],
+          bigList[i].days[1],
+          bigList[i].days[0],
           bigList[i].show,
           bigList[i].under,
           bigList[i].photo,
@@ -470,7 +443,6 @@ export default function MainPage(props) {
     console.log(rows);
     return true;
   }
-
   // ------ just replaces days completed or not with appropriate circles to display ---------
   function addCircles(bigList) {
     for (var i = 0; i < bigList.length; i++) {
@@ -498,7 +470,7 @@ export default function MainPage(props) {
             } else {
               bigList[i].days[d] = <div className="nsA"></div>;
             }
-          } else if (bigList[i].days[d] == 'complete') {
+          } else if (bigList[i].days[d] == 'completed') {
             bigList[i].days[d] = <div className="cA"></div>;
           } else if (bigList[i].days[d] == 'in_progress') {
             bigList[i].days[d] = (
@@ -518,14 +490,13 @@ export default function MainPage(props) {
             } else {
               bigList[i].days[d] = <div className="nsI"></div>;
             }
-          } else if (bigList[i].days[d] == 'complete') {
+          } else if (bigList[i].days[d] == 'completed') {
             bigList[i].days[d] = <div className="cI"></div>;
           }
         }
       }
     }
     return bigList;
-
     function checkAbove(above, d, thing) {
       // console.log("checking" + above + " day: " + d + " thing: ");
       // console.log(thing);
@@ -553,10 +524,8 @@ export default function MainPage(props) {
       return false;
     }
   }
-
   // --------   when routine is clicked on. set children show to true, re-render with setRows ----------
   function clickHandle(number) {
-    console.log('logpog2');
     console.log(rows);
     var newRows = [];
     //take out duplicates of rows (copy into newRows)
@@ -588,51 +557,6 @@ export default function MainPage(props) {
     setRows(newRows); //update rows with newRows
     setChildIn('');
   }
-
-  const getTimes = (a_day_time, b_day_time) => {
-    if (a_day_time == undefined || b_day_time == undefined) return ['', ''];
-    const [a_start_time, b_start_time] = [
-      a_day_time.substring(10, a_day_time.length),
-      b_day_time.substring(10, b_day_time.length),
-    ];
-    const [a_HMS, b_HMS] = [
-      a_start_time
-        .substring(0, a_start_time.length - 3)
-        .replace(/\s{1,}/, '')
-        .split(':'),
-      b_start_time
-        .substring(0, b_start_time.length - 3)
-        .replace(/\s{1,}/, '')
-        .split(':'),
-    ];
-    const [a_parity, b_parity] = [
-      a_start_time
-        .substring(a_start_time.length - 3, a_start_time.length)
-        .replace(/\s{1,}/, ''),
-      b_start_time
-        .substring(b_start_time.length - 3, b_start_time.length)
-        .replace(/\s{1,}/, ''),
-    ];
-
-    let [a_time, b_time] = [0, 0];
-    if (a_parity === 'PM' && a_HMS[0] !== '12') {
-      const hoursInt = parseInt(a_HMS[0]) + 12;
-      a_HMS[0] = `${hoursInt}`;
-    } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
-
-    if (b_parity === 'PM' && b_HMS[0] !== '12') {
-      const hoursInt = parseInt(b_HMS[0]) + 12;
-      b_HMS[0] = `${hoursInt}`;
-    } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
-
-    for (let i = 0; i < a_HMS.length; i++) {
-      a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
-      b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
-    }
-
-    return [a_time, b_time];
-  };
-
   // -------    returns shortened version of rows with only those with show true ----------------------
   function onlyAllowed() {
     var newRows = [];
@@ -642,46 +566,22 @@ export default function MainPage(props) {
         newRows.push(rows[r]);
       }
     }
-
-    if (newRows.length === 0) return newRows;
     console.log('ROWS HERE: ', rows);
-    console.log('NEWROWS HERE: ', newRows);
     console.log('ONLY ALLOWED HERE:');
-    newRows.sort((a, b) => {
-      console.log('a = ', a, '\nb = ', b);
-      const [a_start, b_start] = [a.startTime, b.startTime];
-      const [a_end, b_end] = [a.endTime, b.endTime];
-
-      const [a_start_time, b_start_time] = getTimes(a.startTime, b.startTime);
-      const [a_end_time, b_end_time] = getTimes(a.endTime, b.endTime);
-
-      if (a_start_time < b_start_time) return -1;
-      else if (a_start_time > b_start_time) return 1;
-      else {
-        if (a_end_time < b_end_time) return -1;
-        else if (a_end_time > b_end_time) return 1;
-        else {
-          if (a_start < b_start) return -1;
-          else if (a_start > b_start) return 1;
-          else {
-            if (a_end < b_end) return -1;
-            else if (a_end > b_end) return 1;
-          }
-        }
-      }
-
-      return 0;
-    });
-    console.log('newRows after sort: newRows = ', newRows);
+    console.log(newRows);
     return newRows;
   }
-
   function getDayName(num) {
-
+    console.log('hgot num', num);
     var time = new Date().toLocaleString(tz, tz).replace(/,/g, '');
     var d = Moment(time).format('ddd MMM D YYYY HH:mm:ss [GMT]ZZ ');
     var d = new Date(d);
+    console.log('hgot num', d.getDate());
+    console.log('hgot num', d.getDate() - num);
+
     d.setDate(d.getDate() - num);
+    // var d = new Date();
+    // d.setDate(d.getDate() - num);
 
     // var d = new Date();
     // d.setDate(d.getDate() - num);
@@ -702,10 +602,10 @@ export default function MainPage(props) {
         return 'SAT';
     }
   }
-
   function prevWeek() {
     // TO DO! WEEKS
     // setRows([]);
+    console.log('clocked pre');
     setCurDate(new Date(currentDate.getTime() - 604800000));
     cleanData(historyGot, new Date(currentDate.getTime() - 604800000));
     // console.log((new Date(Date.now())).getTime());
@@ -728,9 +628,7 @@ export default function MainPage(props) {
     console.log(routine);
     //clickHandle(childIn);
   }
-
   //-----------------------
-
   if (isLoading) {
     return (
       <div>
@@ -743,7 +641,6 @@ export default function MainPage(props) {
   if (childIn != '') {
     clickHandle(childIn);
   }
-
   return (
     <Container fluid padding="0px">
       {/* <Navigation userID={currentUser} /> */}
@@ -793,19 +690,6 @@ export default function MainPage(props) {
                             {Moment(currentDate.getTime() - 86400000).format(
                               'D, YYYY'
                             )}
-                            {console.log(
-                              'hgot',
-                              Moment(currentDate - 604800000).format('MMMM D'),
-                              Moment(currentDate - 86400000).format('D, YYYY')
-                            )}
-                            {console.log(
-                              'hgot line 819',
-                              new Date(currentDate).getDate()
-                            )}
-                            {console.log(
-                              'hgot currentDate.getDate()',
-                              m.getDate()
-                            )}
                           </p>
                           <p
                             style={{ textTransform: 'none', height: '19.5px' }}
@@ -814,7 +698,8 @@ export default function MainPage(props) {
                           </p>
                         </Col>
                         <Col style={{ justifyContent: 'right' }}>
-                          {new Date(currentDate).getDate() != m.getDate() ? (
+                          {new Date(Date.now()).getDate() !=
+                          currentDate.getDate() ? (
                             <FontAwesomeIcon
                               // style={{ marginLeft: "50%" }}
                               style={{ float: 'right' }}
@@ -850,7 +735,6 @@ export default function MainPage(props) {
                   </TableHead>
                   <TableBody>
                     {onlyAllowed().map((row) => {
-                      console.log('hgot line 842', currentDate);
                       const origin = currentDate.getTime() - 604800000;
                       const msInDay = 86400000;
                       const weekDays = [];
@@ -863,7 +747,6 @@ export default function MainPage(props) {
                             ? 'thurs'
                             : dayOfWeek.toLowerCase().substring(0, 3);
                       }
-
                       return (
                         <TableRow key={row.number}>
                           {weekDays.map((weekDay) => (
