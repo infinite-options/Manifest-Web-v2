@@ -39,12 +39,20 @@ export default class WeekRoutines extends Component {
   sortRoutines = () => {
     var arr = this.props.routines;
     var dic = {};
+    const tz = {
+      timeZone: this.props.timeZone,
+      // add more here
+    };
     let startObject = this.props.dateContext.clone();
     let endObject = this.props.dateContext.clone();
     let startDay = startObject.startOf('week');
     let endDay = endObject.endOf('week');
+    console.log('endof temp timezone', endDay)
     let startDate = new Date(startDay.format('YYYY-MM-DD'));
-    let endDate = new Date(endDay.format('YYYY-MM-DD'));
+    let endDate = endDay.toDate();
+    //let endDate = new Date(endDay.format('YYYY-MM-DD'));
+    console.log('endof temp timezone', endDate);
+    //console.log('endof temp timezone', endDay.toDate());
     startDate.setHours(0, 0, 0);
     endDate.setHours(23, 59, 59);
     console.log(
@@ -60,20 +68,24 @@ export default class WeekRoutines extends Component {
     for (let i = 0; i < arr.length; i++) {
       let tempStart = arr[i].start_day_and_time;
       let tempEnd = arr[i].end_day_and_time;
-      let tempStartTime = new Date(
-        new Date(tempStart.replace(/-/g, '/')).toLocaleString({
-          timeZone: this.props.timeZone,
-        })
-      );
-      //console.log('timeZone', tempStartTime);
+      let tempStartTime = new Date(moment(tempStart).format(
+        'ddd MMM D YYYY HH:mm:ss [GMT]ZZ'
+      ));
+      // let tempStartTime = new Date(
+      //   new Date(tempStart.replace(/-/g, '/')).toLocaleString({
+      //     timeZone: this.props.timeZone,
+      //   })
+      // );
+      console.log('temp timeZone', arr[i].title, tempStartTime);
       let repeatOccurences = parseInt(arr[i]['repeat_occurences']);
       let repeatEvery = parseInt(arr[i]['repeat_every']);
       let repeatEnds = arr[i]['repeat_type'];
+      //console.log('temp timeZone', repeatEnds);
       let repeatEndsOn = new Date(
         new Date(arr[i]['repeat_ends_on'].replace(/-/g, '/')).toLocaleString({
           timeZone: this.props.timeZone,
-        })
-      );
+        }));
+      //console.log('temp timeZone', repeatEndsOn);
       repeatEndsOn.setHours(0, 0, 0, 0);
       let repeatFrequency = arr[i]['repeat_frequency'];
       let repeatWeekDays = [];
@@ -84,20 +96,37 @@ export default class WeekRoutines extends Component {
           }
         });
       }
-      // console.log(
-      //   arr[i].repeat, repeatOccurences, repeatEvery, repeatEnds, repeatEndsOn, repeatFrequency, repeatWeekDays
-      // )
+      console.log(
+        'temp Timezone',
+        arr[i].title,
+        arr[i].repeat,
+        repeatOccurences,
+        repeatEvery,
+        repeatEnds,
+        repeatEndsOn,
+        repeatFrequency,
+        repeatWeekDays
+      );
+      console.log('temp timezone', !arr[i].repeat)
       if (!arr[i].repeat) {
+        console.log('startDate temp timezone', arr[i].title, startDate, endDate);
         if (tempStartTime >= startDate && tempStartTime <= endDate) {
+          console.log('repeat temp timezone', arr[i].title);
+          console.log('temp timezone',tempStartTime);
+          console.log('temp timezone', tempStartTime.getDay());
+          console.log('temp timezone', tempStartTime.getHours());
           let key = tempStartTime.getDay() + '_' + tempStartTime.getHours();
+          console.log('repeat temp timzone', key);
           if (dic[key] == null) {
             dic[key] = [];
           }
           dic[key].push(arr[i]);
+          console.log('repeat temp timezone', dic[key])
         }
       } else {
         for (let j = 0; j < 7; j++) {
           let CurrentDate = new Date(startDate);
+          //console.log('repeat', CurrentDate)
           let isDisplayedTodayCalculated = false;
 
           CurrentDate.setDate(CurrentDate.getDate() + j);
@@ -130,12 +159,13 @@ export default class WeekRoutines extends Component {
               }
             } else if (repeatEnds == 'Never') {
               repeatEndsOn = CurrentDate;
+              console.log('repeat endson', arr[i].title,repeatEndsOn, CurrentDate)
             }
 
             // console.log(CurrentDate, repeatEndsOn, arr[i].title);
             if (CurrentDate <= repeatEndsOn) {
               if (repeatFrequency == 'Day') {
-                // console.log( CurrentDate, startDate, tempStartTime, arr[i].title)
+                console.log( CurrentDate, startDate, tempStartTime, arr[i].title)
                 isDisplayedTodayCalculated =
                   Math.floor(repeatEndsOn.getTime() - CurrentDate.getTime()) %
                     repeatEvery ==
@@ -170,7 +200,7 @@ export default class WeekRoutines extends Component {
             }
           }
           if (isDisplayedTodayCalculated) {
-            // console.log(arr[i]);
+            console.log('repeat title',arr[i].title);
             let key = j + '_' + tempStartTime.getHours();
             if (dic[key] == null) {
               dic[key] = [];
@@ -180,13 +210,13 @@ export default class WeekRoutines extends Component {
         }
       }
     }
-    console.log(dic);
+    console.log('repeat dict',dic);
     return dic;
   };
 
   getRoutineItemFromDic = (day, hour, dic) => {
     let startObject = this.props.dateContext.clone();
-    console.log('startObject = ', startObject);
+    
     let startDay = startObject.startOf('week');
     let curDate2 = startDay.clone();
     curDate2.add(day, 'days');
@@ -202,6 +232,7 @@ export default class WeekRoutines extends Component {
     var tempStart = null;
     var tempEnd = null;
     var arr = dic[day + '_' + hour];
+    console.log('startObject = ', arr);
     var sameTimeEventCount = 0;
     var addmarginLeft = 0;
     let itemWidth = this.state.eventBoxSize;
@@ -229,18 +260,18 @@ export default class WeekRoutines extends Component {
           timeZone: this.props.TimeZone,
         })
       );
-
+      console.log('repeat startDate2', CurrentDate);  
       CurrentDate.setHours(0, 0, 0, 0);
 
       let startDate2 = new Date(
         new Date(arr[i].start_day_and_time.replace(/-/g, '/')).toLocaleString(
-          'UTC',
+          
           {
             timeZone: this.props.TimeZone,
           }
         )
       );
-
+      //console.log('repeat startDate2', startDate2)
       startDate2.setHours(0, 0, 0, 0);
 
       let isDisplayedTodayCalculated = false;
@@ -259,7 +290,7 @@ export default class WeekRoutines extends Component {
           }
         )
       );
-
+      console.log('repeat ends on',  arr[i].title, repeatEndsOn)   
       repeatEndsOn.setHours(0, 0, 0, 0);
 
       let repeatFrequency = arr[i].repeat_frequency;
@@ -276,6 +307,8 @@ export default class WeekRoutines extends Component {
       if (!arr[i].repeat) {
         isDisplayedTodayCalculated =
           CurrentDate.getTime() - startDate2.getTime() == 0;
+          console.log('repeat',isDisplayedTodayCalculated =
+          CurrentDate.getTime() - startDate2.getTime() == 0)
       } else {
         if (CurrentDate >= startDate2) {
           if (repeatEnds == 'On') {
@@ -417,9 +450,9 @@ export default class WeekRoutines extends Component {
       }
 
       let startDate = moment(tempStartTime);
-      console.log(tempStartTime);
+      console.log('repeat',tempStartTime);
       let endDate = moment(tempEndTime);
-
+      console.log('repeat', tempStartTime);
       if (
         moment(curDate2).isSameOrAfter(startDate, 'day') &&
         moment(curDate2).isSameOrBefore(endDate, 'day')
@@ -560,7 +593,10 @@ export default class WeekRoutines extends Component {
                       }}
                     >
                       {/* insert border change here: */}
-                      <div>{arr[i].title}</div>
+                      <div>
+                        {arr[i].title}
+                        {console.log('repeat', arr[i].title)}
+                      </div>
                       <div
                         style={{
                           width: '21px',
