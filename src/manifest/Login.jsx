@@ -12,6 +12,7 @@ import Google from '../manifest/LoginAssets/Google.svg';
 import Apple from '../manifest/LoginAssets/Apple.svg';
 import SignUpImage from '../manifest/LoginAssets/SignUp.svg';
 import Cookies from 'js-cookie';
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import { GoogleLogin } from 'react-google-login';
 import axios from 'axios';
 import { useState, useContext } from 'react';
@@ -41,6 +42,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loggedIn, setLoggedIn] = useState();
   const [validation, setValidation] = useState('');
+  const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -50,17 +52,82 @@ export default function Login() {
     setPassword(event.target.value);
   };
 
+  const responseGoogle = (response) => {
+     // console.log(response);
+    if (response.profileObj) {
+      // console.log('Google login successful');
+      let email = response.profileObj.email;
+      let accessToken = response.accessToken;
+      let socialId = response.googleId;
+      _socialLoginAttempt(email, accessToken, socialId, 'GOOGLE');
+    }
+  };
+
+  const responseFacebook = (response) => {
+    // console.log(response);
+    if (response.email) {
+      // console.log('Facebook login successful');
+      let email = response.email;
+      let accessToken = response.accessToken;
+      let socialId = response.id;
+      _socialLoginAttempt(email, accessToken, socialId, 'FACEBOOK');
+    }
+  };
+
+  const _socialLoginAttempt = (email) => {
+    axios
+      .get(BASE_URL + 'loginSocialTA/' + email)
+      .then((res) => {
+        console.log(res);
+        if (res.data.result !== false) {
+          document.cookie = 'ta_uid=' + res.data.result;
+          document.cookie = 'ta_email=' + email;
+          document.cookie = 'patient_name=Loading';
+          loginContext.setLoginState({
+            ...loginContext.loginState,
+            loggedIn: true,
+            ta: {
+              ...loginContext.loginState.ta,
+              id: res.data.result,
+              email: email.toString(),
+            },
+            usersOfTA: [],
+            curUser: '',
+            curUserTimeZone: '',
+          });
+          console.log('Login successful');
+          console.log(email);
+          history.push({
+            pathname: '/home',
+            state: email,
+          });
+          // Successful log in, Try to update tokens, then continue to next page based on role
+        } else {
+          console.log('log in error');
+          history.push('/signup');
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+      });
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log('event', event, email, password);
     axios
       .get(BASE_URL + 'loginTA/' + email.toString() + '/' + password.toString())
       .then((response) => {
-        console.log('response', response.data);
-        document.cookie = 'ta_uid=' + response.data.result;
-        document.cookie = 'ta_email=' + email;
-        document.cookie = 'patient_name=Loading';
+        
         if (response.data.result !== false) {
+          console.log('respnse true', response.data.result)
+          console.log('response', response.data);
+          document.cookie = 'ta_uid=' + response.data.result;
+          document.cookie = 'ta_email=' + email;
+          document.cookie = 'patient_name=Loading';
           setLoggedIn(true);
           console.log('response id', response.data.result, loggedIn);
           loginContext.setLoginState({
@@ -80,6 +147,7 @@ export default function Login() {
             state: email.toString(),
           });
         } else {
+          console.log('respnse true', response.data.result);
           setLoggedIn(false);
           setValidation(response.data.message);
         }
@@ -89,7 +157,7 @@ export default function Login() {
       });
   };
 
-  const responseGoogle = (response) => {
+/*   const responseGoogle = (response) => {
     console.log('response', response);
     if (response.profileObj !== null || response.profileObj !== undefined) {
       let e = response.profileObj.email;
@@ -99,16 +167,14 @@ export default function Login() {
       let last_name = response.profileObj.familyName;
       console.log(e, at, rt, first_name, last_name);
       axios
-        .get(BASE_URL + 'loginSocialTA/' + e) //, {
-        // username: e,  1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com
-        //})
+        .get(BASE_URL + 'loginSocialTA/' + e)
         .then((response) => {
           console.log('social login');
           console.log(response.data.result);
-          document.cookie = 'ta_uid=' + response.data.result;
-          document.cookie = 'ta_email=' + e;
-          document.cookie = 'patient_name=Loading';
           if (response.data !== false) {
+            document.cookie = 'ta_uid=' + response.data.result;
+            document.cookie = 'ta_email=' + e;
+            document.cookie = 'patient_name=Loading';
             loginContext.setLoginState({
               ...loginContext.loginState,
               loggedIn: true,
@@ -133,6 +199,10 @@ export default function Login() {
               socialSignUpModalShow: true,
               newEmail: e,
             });
+            history.push({
+              pathname: '/signup',
+              state: '',
+            });
             console.log('social sign up modal displayed');
           }
         })
@@ -140,7 +210,7 @@ export default function Login() {
           console.log('error', error);
         });
     }
-  };
+  }; */
 
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))

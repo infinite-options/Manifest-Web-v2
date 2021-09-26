@@ -53,37 +53,7 @@ export default function Login() {
   const [newEmployer, setNewEmployer] = useState('');
   const [newClients, setNewClients] = useState([]);
 
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-  };
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log('event', event, email, password);
-    axios
-      .get(BASE_URL + 'loginTA/' + email.toString() + '/' + password.toString())
-      .then((response) => {
-        console.log('response', response.data);
-        if (response.data.result !== false) {
-          setLoggedIn(true);
-          console.log('response id', response.data.result, loggedIn);
-          history.push({
-            pathname: '/home',
-            state: email.toString(),
-          });
-        } else {
-          setLoggedIn(false);
-          setValidation(response.data.message);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
   const handleSignUp = (event) => {
     console.log('sign up clicked');
     setSignUpModalShow(true);
