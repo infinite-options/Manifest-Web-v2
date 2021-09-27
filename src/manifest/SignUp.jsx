@@ -51,44 +51,7 @@ export default function Login() {
   const [newFName, setNewFName] = useState('');
   const [newLName, setNewLName] = useState('');
   const [newEmployer, setNewEmployer] = useState('');
-  const [newClients, setNewClients] = useState([]);
-
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-  };
-
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log('event', event, email, password);
-    axios
-      .get(BASE_URL + 'loginTA/' + email.toString() + '/' + password.toString())
-      .then((response) => {
-        console.log('response', response.data);
-        if (response.data.result !== false) {
-          setLoggedIn(true);
-          console.log('response id', response.data.result, loggedIn);
-          history.push({
-            pathname: '/home',
-            state: email.toString(),
-          });
-        } else {
-          setLoggedIn(false);
-          setValidation(response.data.message);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-  const handleSignUp = (event) => {
-    console.log('sign up clicked');
-    setSignUpModalShow(true);
-    setSocialSignUpModalShow(false);
-  };
+  
   const hideSignUp = () => {
     //setSignUpModalShow(false);
     setSocialSignUpModalShow(false);
@@ -249,47 +212,7 @@ export default function Login() {
     );
   };
 
-  /* const responseGoogle = (response) => {
-    console.log('response', response);
-    if (response.profileObj !== null || response.profileObj !== undefined) {
-      let e = response.profileObj.email;
-      let at = response.accessToken;
-      let rt = response.googleId;
-      let first_name = response.profileObj.givenName;
-      let last_name = response.profileObj.familyName;
-      console.log(e, at, rt, first_name, last_name);
-      axios
-        .get(
-          '
-            e
-        ) //, {
-        // username: e,  1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com
-        //})
-        .then((response) => {
-          console.log(response.data);
-          if (response.data !== false) {
-            console.log('Login successful');
-            console.log(e);
-            history.push({
-              pathname: '/home',
-              state: e,
-            });
-          } else {
-            console.log('social sign up with', e);
-            setSocialSignUpModalShow(true);
-            setNewEmail(e);
-            /*  this.setState({
-              socialSignUpModal: true,
-              newEmail: e,
-            }); */
-  /* console.log('social sign up modal displayed');
-          }
-        })
-        .catch((error) => {
-          console.log('error', error);
-        });
-    } */
-  // }; */
+ 
   const responseGoogle = (response) => {
     console.log('clicked on sign up google');
     if (response.profileObj !== null || response.profileObj !== undefined) {
@@ -328,14 +251,7 @@ export default function Login() {
         <img src={Ellipse} alt="Ellipse" />
       </Box>
       <Box display="flex" marginTop="35%" marginLeft="30%">
-        {/* <Button
-          onClick={handleSignUp}
-          style={{
-            width: '7.5rem',
-            height: '7.5rem',
-            backgroundImage: `url(${SignUpImage})`,
-          }}
-        ></Button> */}
+       
       </Box>
 
       <Box
@@ -535,9 +451,7 @@ export default function Login() {
       </Box>
       {socialSignUpModal()}
 
-      {/* <Box hidden={loggedIn === true}>
-                  <Loading/>
-            </Box> */}
+    
     </Box>
   );
 }

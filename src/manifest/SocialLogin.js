@@ -11,12 +11,13 @@ import { withRouter } from 'react-router';
 import Facebook from '../manifest/LoginAssets/Facebook.svg';
 import Google from '../manifest/LoginAssets/Google.svg';
 import Apple from '../manifest/LoginAssets/Apple.svg';
-
+import LoginContext from 'LoginContext';
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 function SocialLogin(props) {
   // const Auth = useContext(AuthContext);
   const history = useHistory();
+  const loginContext = useContext(LoginContext);
   const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
   const [newEmail, setNewEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -24,36 +25,7 @@ function SocialLogin(props) {
   const [newFName, setNewFName] = useState('');
   const [newLName, setNewLName] = useState('');
   const [newEmployer, setNewEmployer] = useState('');
-  useEffect(() => {
-    if (
-      process.env.REACT_APP_APPLE_CLIENT_ID &&
-      process.env.REACT_APP_APPLE_REDIRECT_URI
-    ) {
-      window.AppleID.auth.init({
-        clientId: process.env.REACT_APP_APPLE_CLIENT_ID,
-        scope: 'email',
-        redirectURI: process.env.REACT_APP_APPLE_REDIRECT_URI,
-      });
-    }
-    let queryString = props.location.search;
-    let urlParams = new URLSearchParams(queryString);
-    // Clear Query parameters
-    window.history.pushState({}, document.title, window.location.pathname);
-    console.log(props, urlParams);
-    // Successful Log in with Apple, set cookies, context, redirect
-    if (urlParams.has('id')) {
-      let customerId = urlParams.get('id');
-      //  Auth.setIsAuth(true);
-      Cookies.set('login-session', 'good');
-      Cookies.set('customer_uid', customerId);
-      props.history.push('/admin');
-    }
-    // Log which media platform user should have signed in with instead of Apple
-    // May eventually implement to display the message for which platform to Login
-    else if (urlParams.has('media')) {
-      console.log(urlParams.get('media'));
-    }
-  }, [props]);// [Auth, props]);
+  
 
   const responseGoogle = (response) => {
     console.log('response', response.profileObj.email);
@@ -75,24 +47,46 @@ function SocialLogin(props) {
       let email = response.email;
       let accessToken = response.accessToken;
       let socialId = response.id;
-      _socialLoginAttempt(email, accessToken, socialId, 'FACEBOOK');
+      _socialLoginAttempt(email);
     } else {
       console.log('Facebook login unsuccessful');
     }
   };
 
-  const _socialLoginAttempt = (email, accessToken, socialId, platform) => {
+  const _socialLoginAttempt = (email) => {
     axios
-      .get(
-        BASE_URL + 'loginSocialTA/' +
-        email
-      )
-
+      .get(BASE_URL + 'loginSocialTA/' + email)
       .then((res) => {
-        console.log('res', res);
-        setNewEmail(email);
-        //props.history.push('/socialsignup');
-        setSocialSignUpModalShow(true);
+        console.log(res);
+        if (res.data.result !== false) {
+          document.cookie = 'ta_uid=' + res.data.result;
+          document.cookie = 'ta_email=' + email;
+          document.cookie = 'patient_name=Loading';
+          loginContext.setLoginState({
+            ...loginContext.loginState,
+            loggedIn: true,
+            ta: {
+              ...loginContext.loginState.ta,
+              id: res.data.result,
+              email: email.toString(),
+            },
+            usersOfTA: [],
+            curUser: '',
+            curUserTimeZone: '',
+          });
+          console.log('Login successful');
+          console.log(email);
+          history.push({
+            pathname: '/home',
+            state: email,
+          });
+          // Successful log in, Try to update tokens, then continue to next page based on role
+        } else {
+          console.log('log in error');
+          setNewEmail(email);
+          //props.history.push('/socialsignup');
+          setSocialSignUpModalShow(true);
+        }
       })
       .catch((err) => {
         if (err.response) {
@@ -324,8 +318,8 @@ function SocialLogin(props) {
       <Grid item xs={4}>
         <Button style={{}}>
           <GoogleLogin
-            clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-            //  clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
+            //clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+            clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
             isSignedIn={false}

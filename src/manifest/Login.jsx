@@ -13,6 +13,7 @@ import Apple from '../manifest/LoginAssets/Apple.svg';
 import SignUpImage from '../manifest/LoginAssets/SignUp.svg';
 import Cookies from 'js-cookie';
 import { GoogleLogin } from 'react-google-login';
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import axios from 'axios';
 import { useState, useContext } from 'react';
 import LoginContext from 'LoginContext';
@@ -56,11 +57,12 @@ export default function Login() {
     axios
       .get(BASE_URL + 'loginTA/' + email.toString() + '/' + password.toString())
       .then((response) => {
-        console.log('response', response.data);
-        document.cookie = 'ta_uid=' + response.data.result;
-        document.cookie = 'ta_email=' + email;
-        document.cookie = 'patient_name=Loading';
+        
         if (response.data.result !== false) {
+          console.log('response', response.data);
+          document.cookie = 'ta_uid=' + response.data.result;
+          document.cookie = 'ta_email=' + email;
+          document.cookie = 'patient_name=Loading';
           setLoggedIn(true);
           console.log('response id', response.data.result, loggedIn);
           loginContext.setLoginState({
@@ -89,7 +91,7 @@ export default function Login() {
       });
   };
 
-  const responseGoogle = (response) => {
+/*   const responseGoogle = (response) => {
     console.log('response', response);
     if (response.profileObj !== null || response.profileObj !== undefined) {
       let e = response.profileObj.email;
@@ -140,6 +142,68 @@ export default function Login() {
           console.log('error', error);
         });
     }
+  }; */
+  const responseGoogle = (response) => {
+    // console.log(response);
+    if (response.profileObj) {
+      // console.log('Google login successful');
+      let email = response.profileObj.email;
+      let accessToken = response.accessToken;
+      let socialId = response.googleId;
+      _socialLoginAttempt(email);
+    }
+  };
+
+  const responseFacebook = (response) => {
+    // console.log(response);
+    if (response.email) {
+      // console.log('Facebook login successful');
+      let email = response.email;
+      let accessToken = response.accessToken;
+      let socialId = response.id;
+      _socialLoginAttempt(email);
+    }
+  };
+
+  const _socialLoginAttempt = (email) => {
+    axios
+      .get(BASE_URL + 'loginSocialTA/' + email)
+      .then((res) => {
+        console.log(res);
+        if (res.data.result !== false) {
+          document.cookie = 'ta_uid=' + res.data.result;
+          document.cookie = 'ta_email=' + email;
+          document.cookie = 'patient_name=Loading';
+          loginContext.setLoginState({
+            ...loginContext.loginState,
+            loggedIn: true,
+            ta: {
+              ...loginContext.loginState.ta,
+              id: res.data.result,
+              email: email.toString(),
+            },
+            usersOfTA: [],
+            curUser: '',
+            curUserTimeZone: '',
+          });
+          console.log('Login successful');
+          console.log(email);
+          history.push({
+            pathname: '/home',
+            state: email,
+          });
+          // Successful log in, Try to update tokens, then continue to next page based on role
+        } else {
+          console.log('log in error');
+          history.push('/signup');
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+      });
   };
 
   if (
