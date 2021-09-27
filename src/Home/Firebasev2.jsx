@@ -1536,7 +1536,8 @@ export default function Firebasev2(props) {
                 displayActions(
                   props.getActionsEndPoint[
                     props.getGoalsEndPoint[i].gr_unique_id
-                  ][j]
+                  ][j],
+                  props.getGoalsEndPoint[i]
                 )
               );
               tempID.push(
@@ -1562,7 +1563,15 @@ export default function Firebasev2(props) {
                     if (
                       tempIsID.includes(currStepArr[k].is_unique_id) === false
                     ) {
-                      tempRows.push(displayInstructions(currStepArr[k]));
+                      tempRows.push(
+                        displayInstructions(
+                          currStepArr[k],
+                          props.getActionsEndPoint[
+                            props.getGoalsEndPoint[i].gr_unique_id
+                          ][j],
+                          props.getGoalsEndPoint[i]
+                        )
+                      );
                       tempIsID.push(currStepArr[k].is_unique_id);
                       console.log('only', tempIsID);
                     } else {
@@ -1653,7 +1662,7 @@ export default function Firebasev2(props) {
       return 'E';
     }
 
-    if (r.is_available == 'True') {
+    if (r.is_available == 'True' ) {
       // console.log('match true',GR[i].is_available)
       return (
         <div>
@@ -1879,7 +1888,7 @@ export default function Firebasev2(props) {
               <div style={{ flex: '1' }}>
                 <div>
                   <div>
-                    {r.is_available == 'True' ? (
+                    {(r.is_available == 'True') && (r.is_displayed_today == 'True') ? (
                       <div>
                         <FontAwesomeIcon
                           title="Available to the user"
@@ -2438,8 +2447,8 @@ export default function Firebasev2(props) {
     //    }
   }
 
-  function displayActions(a) {
-    console.log('displayActions', a);
+  function displayActions(a,r) {
+    console.log('displayActions', a,r);
     return (
       <div
         key={a.at_unique_id}
@@ -2496,6 +2505,7 @@ export default function Firebasev2(props) {
                 }}
               >
                 {a['at_title']}
+                
               </div>
 
               {/* ({date}) */}
@@ -2564,7 +2574,7 @@ export default function Firebasev2(props) {
             >
               <div>
                 <div>
-                  {a.is_available == 'True' ? (
+                  {(a.is_available == 'True') && (r.is_displayed_today == 'True') ? (
                     <div>
                       <FontAwesomeIcon
                         title="Available to the user"
@@ -2811,8 +2821,8 @@ export default function Firebasev2(props) {
     );
   }
 
-  function displayInstructions(i) {
-    console.log('displaySteps', i);
+  function displayInstructions(i,a,r) {
+    console.log('displaySteps', i, a,r);
     return (
       <div
         key={i.is_unique_id}
@@ -2909,7 +2919,8 @@ export default function Firebasev2(props) {
             >
               <div style={{ marginLeft: '1rem' }}>
                 <Row>
-                  {i.is_available == 'True' ? (
+                  {(i.is_available == 'True') &&
+                  (r.is_displayed_today == 'True') ? (
                     <div>
                       <FontAwesomeIcon
                         title="Available to the user"

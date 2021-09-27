@@ -1531,6 +1531,7 @@ export default function Home(props) {
                 stateValue.originalGoalsAndRoutineArr,
                 stateValue.showRoutineModal,
                 stateValue.itemToEdit.is_available,
+                stateValue.itemToEdit.is_displayed_today,
                 stateValue.itemToEdit.is_complete,
                 stateValue.addNewGRModalShow,
                 stateValue.dateContext,

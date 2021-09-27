@@ -1112,9 +1112,14 @@ const EditRTS = (props) => {
                     'is_avail? ',
                     editingRTSContext.editingRTS.newItem.is_available
                   )}
-                  {editingRTSContext.editingRTS.newItem.is_available ===
+                  {(editingRTSContext.editingRTS.newItem.is_available ===
                     'True' ||
-                  editingRTSContext.editingRTS.newItem.is_available === true ? (
+                    editingRTSContext.editingRTS.newItem.is_available ===
+                      true) &&
+                  (editingRTSContext.editingRTS.newItem.is_displayed_today ===
+                    'True' ||
+                    editingRTSContext.editingRTS.newItem.is_displayed_today ===
+                      true) ? (
                     <input
                       type="checkbox"
                       style={{ width: '20px', height: '20px' }}

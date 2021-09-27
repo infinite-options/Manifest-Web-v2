@@ -68,9 +68,12 @@ export default class WeekRoutines extends Component {
     for (let i = 0; i < arr.length; i++) {
       let tempStart = arr[i].start_day_and_time;
       let tempEnd = arr[i].end_day_and_time;
-      let tempStartTime = new Date(moment(tempStart).format(
-        'ddd MMM D YYYY HH:mm:ss [GMT]ZZ'
-      ));
+      console.log('temp timezone start',tempStart)
+      let tempStartTime = new Date(
+        moment(tempStart.replace(/-/g, '/')).format(
+          'ddd MMM D YYYY HH:mm:ss [GMT]ZZ'
+        )
+      );
       // let tempStartTime = new Date(
       //   new Date(tempStart.replace(/-/g, '/')).toLocaleString({
       //     timeZone: this.props.timeZone,

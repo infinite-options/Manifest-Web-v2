@@ -488,8 +488,12 @@ const EditATS = (props) => {
 
           <div style={{ display: 'flex', marginTop: '1rem' }}>
             <div style={{ fontSize: '12px' }}> Available to User </div>
-            {editingATSContext.editingATS.newItem.is_available === 'True' ||
-            editingATSContext.editingATS.newItem.is_available === true ? (
+            {(editingATSContext.editingATS.newItem.is_available === 'True' ||
+              editingATSContext.editingATS.newItem.is_available === true) &&
+            (editingATSContext.editingATS.newItem.is_displayed_today ===
+              'True' ||
+              editingATSContext.editingATS.newItem.is_displayed_today ===
+                true) ? (
               <input
                 type="checkbox"
                 style={{ width: '20px', height: '20px' }}

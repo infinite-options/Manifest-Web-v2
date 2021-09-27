@@ -417,8 +417,11 @@ const EditIS = (props) => {
             'editingISContext.editingIS.newItem.is_available = ',
             editingISContext.editingIS.newItem.is_available
           )}
-          {editingISContext.editingIS.newItem.is_available === 'True' ||
-          editingISContext.editingIS.newItem.is_available === true ? (
+          {(editingISContext.editingIS.newItem.is_available === 'True' ||
+            editingISContext.editingIS.newItem.is_available === true) &&
+          (editingISContext.editingIS.newItem.is_displayed_today === 'True' ||
+            editingISContext.editingIS.newItem.is_displayed_today ===
+              true) ? (
             <input
               type="checkbox"
               style={{ width: '20px', height: '20px' }}

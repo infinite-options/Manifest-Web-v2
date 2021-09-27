@@ -17,6 +17,7 @@ import { GoogleLogin } from 'react-google-login';
 import axios from 'axios';
 import { useState, useContext } from 'react';
 import LoginContext from 'LoginContext';
+import { AlternateEmail } from '@material-ui/icons';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -59,7 +60,7 @@ export default function Login() {
       let email = response.profileObj.email;
       let accessToken = response.accessToken;
       let socialId = response.googleId;
-      _socialLoginAttempt(email, accessToken, socialId, 'GOOGLE');
+      _socialLoginAttempt(email);
     }
   };
 
@@ -70,7 +71,7 @@ export default function Login() {
       let email = response.email;
       let accessToken = response.accessToken;
       let socialId = response.id;
-      _socialLoginAttempt(email, accessToken, socialId, 'FACEBOOK');
+      _socialLoginAttempt(email);
     }
   };
 

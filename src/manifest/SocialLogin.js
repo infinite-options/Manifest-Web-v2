@@ -34,7 +34,7 @@ function SocialLogin(props) {
       let email = response.profileObj.email;
       let accessToken = response.accessToken;
       let socialId = response.googleId;
-      _socialLoginAttempt(email, accessToken, socialId, 'GOOGLE');
+      _socialLoginAttempt(email);
     } else {
       console.log('Google login unsuccessful');
     }
@@ -47,13 +47,13 @@ function SocialLogin(props) {
       let email = response.email;
       let accessToken = response.accessToken;
       let socialId = response.id;
-      _socialLoginAttempt(email, accessToken, socialId, 'FACEBOOK');
+      _socialLoginAttempt(email);
     } else {
       console.log('Facebook login unsuccessful');
     }
   };
 
-  const _socialLoginAttempt = (email, accessToken, socialId, platform) => {
+  const _socialLoginAttempt = (email) => {
     axios
       .get(
         BASE_URL + 'loginSocialTA/' +
