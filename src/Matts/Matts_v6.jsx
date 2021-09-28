@@ -259,10 +259,10 @@ export default function MainPage(props) {
     const map = new Map();
     for (const item of temp) {
       console.log('temp1.1: item = ', item);
-      if (!map.has(item.date_affected)) {
-        map.set(item.date_affected, true);
+      if (!map.has(item.date)) {
+        map.set(item.date, true);
         inRange.push({
-          date: item.date_affected,
+          date: item.date,
           details: item.details,
         });
       }
@@ -283,9 +283,17 @@ export default function MainPage(props) {
     // for (var d = (inRange.length - 1); d >= 0; d--){
     for (var d = 0; d < inRange.length; d++) {
       const obj = JSON.parse(inRange[d].details);
+      // console.log(obj);
 
       //sort obj by time of day
       obj.sort(custom_sort);
+      /* for (var r = 0; r < obj.length; r++) {
+        //FOR ROUTINES
+        // console.log(obj[r]);
+        if (obj[r].routine) {
+          // console.log("gotem");
+        }
+      } */
       for (var r = 0; r < obj.length; r++) {
         //FOR ROUTINES
         // console.log(r);
@@ -327,6 +335,7 @@ export default function MainPage(props) {
             currentR.days[d] = obj[r].status;
             bigList.push(currentR);
           }
+
           if (obj[r].actions != undefined) {
             var actions = obj[r].actions;
             console.log('ACTIONS:' + d);
@@ -398,10 +407,6 @@ export default function MainPage(props) {
               }
             }
           }
-        }
-
-        if (obj[r].title === 'DP - Test routine 2 (repeats)') {
-          console.log('end obj[r] = ', obj[r]);
         }
       }
     }
@@ -738,54 +743,22 @@ export default function MainPage(props) {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {onlyAllowed().map((row) => {
-                      const origin = currentDate.getTime() - 691200000;
-                      console.log('hgot origin', currentDate);
-                      const msInDay = 86400000;
-                      const weekDays = [];
-                      for (let i = 0; i < 7; i++) {
-                        const dayOfWeek = Moment(origin + i * msInDay).format(
-                          'dddd'
-                        );
-                        //console.log('hgot origin', dayOfWeek);
-                        weekDays[i] =
-                          dayOfWeek === 'Thursday'
-                            ? 'thurs'
-                            : dayOfWeek.toLowerCase().substring(0, 3);
-                      }
-                      return (
-                        <TableRow key={row.number}>
-                          {weekDays.map((weekDay) => (
-                            <TableCell align="right" height="98px">
-                              {row[weekDay]}
-                              {/* {console.log('hgot origin', row,)} */}
-                            </TableCell>
-                          ))}
-                          <TableCell
-                            align="right"
-                            component="th"
-                            scope="row"
-                            onClick={() => clickHandle(row.number)}
-                          />
-                        </TableRow>
-                      );
-                      // return(
-                      //     <TableRow key={row.number}>
-                      //         <TableCell align="right" height="98px">{row.sun}</TableCell>
-                      //         <TableCell align="right">{row.mon}</TableCell>
-                      //         <TableCell align="right">{row.tue}</TableCell>
-                      //         <TableCell align="right">{row.wed}</TableCell>
-                      //         <TableCell align="right">{row.thurs}</TableCell>
-                      //         <TableCell align="right">{row.fri}</TableCell>
-                      //         <TableCell align="right">{row.sat}</TableCell>
-                      //         <TableCell align="right" component="th" scope="row"
-                      //         onClick = {() => clickHandle(row.number)}
-                      //         >
+                  {onlyAllowed().map((row) => (
+                      <TableRow key={row.number} >
+                          <TableCell align="right" height="98px">{row.sun}</TableCell>
+                          <TableCell align="right">{row.mon}</TableCell>
+                          <TableCell align="right">{row.tue}</TableCell>
+                          <TableCell align="right">{row.wed}</TableCell>
+                          <TableCell align="right">{row.thurs}</TableCell>
+                          <TableCell align="right">{row.fri}</TableCell>
+                          <TableCell align="right">{row.sat}</TableCell>
+                          <TableCell align="right" component="th" scope="row"
+                          onClick = {() => clickHandle(row.number)}
+                          >
 
-                      //         </TableCell>
-                      //     </TableRow>
-                      // )
-                    })}
+                          </TableCell>
+                      </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </TableContainer>
