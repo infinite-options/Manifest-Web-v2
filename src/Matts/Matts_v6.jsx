@@ -178,6 +178,7 @@ export default function MainPage(props) {
         }
         // setHG(historyGot);
         console.log('hgot = ', historyGot);
+        setCurDate(m)
         console.log(currentDate);
         cleanData(historyGot, currentDate);
         // console.log(response.data.result[1].details);
@@ -231,7 +232,7 @@ export default function MainPage(props) {
   //-------- clean historyGot - just dates we want, just info we want, and structure vertical to horizontal   --------
   function cleanData(historyGot, useDate) {
     //go through at find historyGots that are within 7 days of useDate
-    console.log('date:' + useDate);
+    console.log('hgot date:' + useDate);
     // console.log(new Date().toISOString());
     const temp = [];
     console.log('historyGot = ', historyGot);
@@ -252,16 +253,16 @@ export default function MainPage(props) {
         temp.push(historyGot[i]);
       }
     }
-    console.log('temp1 = ', temp);
+    console.log('hgot temp1 = ', temp);
     //now temp has data we want
     // move temp to inRange with no repeats
     const map = new Map();
     for (const item of temp) {
       console.log('temp1.1: item = ', item);
-      if (!map.has(item.date)) {
-        map.set(item.date, true);
+      if (!map.has(item.date_affected)) {
+        map.set(item.date_affected, true);
         inRange.push({
-          date: item.date,
+          date: item.date_affected,
           details: item.details,
         });
       }
@@ -562,7 +563,7 @@ export default function MainPage(props) {
     var newRows = [];
     for (var r = 0; r < rows.length; r++) {
       if (rows[r].show) {
-        //console.log("here: " + rows[r].name);
+        console.log("hgot here: " + rows[r].name);
         newRows.push(rows[r]);
       }
     }
@@ -572,12 +573,12 @@ export default function MainPage(props) {
     return newRows;
   }
   function getDayName(num) {
-    console.log('hgot num', num);
+    //console.log('hgot num', num);
     var time = new Date().toLocaleString(tz, tz).replace(/,/g, '');
     var d = Moment(time).format('ddd MMM D YYYY HH:mm:ss [GMT]ZZ ');
     var d = new Date(d);
-    console.log('hgot num', d.getDate());
-    console.log('hgot num', d.getDate() - num);
+    //console.log('hgot num', d.getDate());
+    //console.log('hgot num', d.getDate() - num);
 
     d.setDate(d.getDate() - num);
     // var d = new Date();
@@ -605,20 +606,20 @@ export default function MainPage(props) {
   function prevWeek() {
     // TO DO! WEEKS
     // setRows([]);
-    console.log('clocked pre');
+    console.log('hgot clocked pre');
     setCurDate(new Date(currentDate.getTime() - 604800000));
     cleanData(historyGot, new Date(currentDate.getTime() - 604800000));
-    // console.log((new Date(Date.now())).getTime());
-    // console.log(currentDate.getDate());
+    console.log('hgot',(new Date(Date.now())).getTime());
+    console.log('hgot', currentDate.getDate());
     setLoading(true);
     setLoading(false);
   }
   function nextWeek() {
-    console.log('clocked nex');
+    console.log('hgot clocked nex');
     cleanData(historyGot, new Date(currentDate.getTime() + 604800000));
     setCurDate(new Date(currentDate.getTime() + 604800000));
-    // console.log(Date(Date.now()));
-    // console.log(currentDate);
+    console.log('hgot', Date(Date.now()));
+    console.log('hgot', currentDate);
   }
 
   function sendRoutineToParent(routine) {
@@ -698,6 +699,7 @@ export default function MainPage(props) {
                           </p>
                         </Col>
                         <Col style={{ justifyContent: 'right' }}>
+                        
                           {new Date(Date.now()).getDate() !=
                           currentDate.getDate() ? (
                             <FontAwesomeIcon
@@ -711,7 +713,9 @@ export default function MainPage(props) {
                               }}
                             />
                           ) : (
-                            <div></div>
+                            <div>
+                              
+                            </div>
                           )}
                         </Col>
                       </Row>
@@ -735,13 +739,15 @@ export default function MainPage(props) {
                   </TableHead>
                   <TableBody>
                     {onlyAllowed().map((row) => {
-                      const origin = currentDate.getTime() - 604800000;
+                      const origin = currentDate.getTime() - 691200000;
+                      console.log('hgot origin', currentDate);
                       const msInDay = 86400000;
                       const weekDays = [];
                       for (let i = 0; i < 7; i++) {
                         const dayOfWeek = Moment(origin + i * msInDay).format(
                           'dddd'
                         );
+                        //console.log('hgot origin', dayOfWeek);
                         weekDays[i] =
                           dayOfWeek === 'Thursday'
                             ? 'thurs'
@@ -752,6 +758,7 @@ export default function MainPage(props) {
                           {weekDays.map((weekDay) => (
                             <TableCell align="right" height="98px">
                               {row[weekDay]}
+                              {/* {console.log('hgot origin', row,)} */}
                             </TableCell>
                           ))}
                           <TableCell

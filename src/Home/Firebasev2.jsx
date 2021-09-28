@@ -1719,6 +1719,7 @@ export default function Firebasev2(props) {
     // Need to strip trailing zeros because the data in the database
     // is inconsistent about this
     if (end_time[0][0] == '0') end_time[0] = end_time[0][1];
+    //console.log('displayActions', start_time, end_time);
     return (
       <ListGroup.Item
         key={r.gr_unique_id}
@@ -2391,8 +2392,8 @@ export default function Firebasev2(props) {
                             ) {
                               temp.push(response.data.result[i]);
                             }
+                              
                             const tempObj = {};
-
                             for (const key in props.getActionsEndPoint) {
                               tempObj[key] = props.getActionsEndPoint[key];
                             }
@@ -2407,6 +2408,7 @@ export default function Firebasev2(props) {
                               'here-1: gaep = ',
                               props.getActionsEndPoint
                             );
+                            
                             props.setGetActionsEndPoint(tempObj);
                           })
                           .catch((error) => {
@@ -2449,6 +2451,15 @@ export default function Firebasev2(props) {
 
   function displayActions(a,r) {
     console.log('displayActions', a,r);
+    /* const start_time = a.at_datetime_started.substring(11, 16).split(/[:\s+]/);
+    // Need to strip trailing zeros because the data in the database
+    // is inconsistent about this
+    //if (start_time[0][0] == '0') start_time[0] = start_time[0][1];
+    const end_time = a.at_datetime_completed.substring(11, 16).split(/[:\s+]/);
+    // Need to strip trailing zeros because the data in the database
+    // is inconsistent about this
+    //if (end_time[0][0] == '0') end_time[0] = end_time[0][1];
+    console.log('displayActions', start_time, end_time); */
     return (
       <div
         key={a.at_unique_id}
@@ -2846,37 +2857,34 @@ export default function Firebasev2(props) {
             }}
           >
             <div
-              flex="1"
               style={{
-                marginTop: '0.5rem',
                 display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'flex-start',
+                justifyContent: 'space-evenly',
+                marginTop: '1rem',
               }}
             >
-              <div style={{ marginLeft: '1rem' }}>
-                {true ? (
-                  <div
-                    style={{
-                      fontSize: '8px',
-                      color: '#67ABFC',
-                    }}
-                  >
-                    {formatDateTime('6/23/2021, 8:31:56 AM')}-
-                    {formatDateTime('6/23/2021, 8:31:56 AM')}
-                  </div>
-                ) : (
-                  <Col> </Col>
-                )}
+              <div
+                style={{
+                  borderRadius: '15px',
+                  border: '0px',
+                  fontSize: '18px',
+                  height: '2rem',
+                  width: '2rem',
+                  backgroundColor: '#ffffff',
+                  color: '#000000',
+                  fontWeight: 'bold',
+                  paddingLeft: '0.5rem',
+                }}
+              >
+                {i['is_sequence']}
               </div>
-
               <div
                 style={{
                   color: '#ffffff',
                   size: '24px',
                   textDecoration: 'underline',
                   fontWeight: 'bold',
-                  marginLeft: '10px',
+                  marginLeft: '0.5rem',
                 }}
               >
                 {i['is_title']}
@@ -2919,8 +2927,8 @@ export default function Firebasev2(props) {
             >
               <div style={{ marginLeft: '1rem' }}>
                 <Row>
-                  {(i.is_available == 'True') &&
-                  (r.is_displayed_today == 'True') ? (
+                  {i.is_available == 'True' &&
+                  r.is_displayed_today == 'True' ? (
                     <div>
                       <FontAwesomeIcon
                         title="Available to the user"

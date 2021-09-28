@@ -47,7 +47,7 @@ const EditIS = (props) => {
     object.is_id = object.is_unique_id;
     object.at_id = props.actionID.at_unique_id;
     delete object.is_unique_id;
-    object.is_sequence = 0;
+    object.is_sequence = object.is_sequence;
     object.is_in_progress = 'False';
     object.icon_type = '';
     // object.photo = image;
@@ -300,25 +300,7 @@ const EditIS = (props) => {
         <Row>
           <Col md={4}>
             <div style={{ display: 'flex' }}>
-              <div>
-                <div
-                  style={{
-                    marginTop: '1rem',
-                    borderRadius: '15px',
-                    border: '0px',
-                    fontSize: '18px',
-                    height: '2rem',
-                    width: '2rem',
-                    backgroundColor: '#ffffff',
-                    color: '#000000',
-                    fontWeight: 'bold',
-                    paddingLeft: '0.5rem',
-                  }}
-                >
-                  {' '}
-                  1{' '}
-                </div>
-              </div>
+              
               <div style={{ marginLeft: '2rem' }}>
                 <div style={{ fontWeight: 'bold' }}>Step Name </div>
                 <input
@@ -377,7 +359,35 @@ const EditIS = (props) => {
             </Col>
           </Row>
         </div>
-
+        <div style={{ display: 'flex', width: '100%' }}>
+          <div>
+            <div style={{ fontWeight: 'bold', display: 'flex' }}>
+              Instruction / Step Sequence
+            </div>
+            <input
+              style={{
+                borderRadius: '10px',
+                border: '0px',
+                fontSize: '12px',
+                height: '2rem',
+                width: '10rem',
+              }}
+              type="number"
+              value={editingISContext.editingIS.newItem.is_sequence}
+              onChange={(e) => {
+                if (e.target.value < 0) return;
+                editingISContext.setEditingIS({
+                  ...editingISContext.editingIS,
+                  newItem: {
+                    ...editingISContext.editingIS.newItem,
+                    is_sequence: e.target.value,
+                  },
+                });
+              }}
+            />
+          </div>
+          
+        </div>
         <div style={{ display: 'flex', width: '100%' }}>
           <div>
             <div style={{ fontWeight: 'bold', display: 'flex' }}>
@@ -420,8 +430,7 @@ const EditIS = (props) => {
           {(editingISContext.editingIS.newItem.is_available === 'True' ||
             editingISContext.editingIS.newItem.is_available === true) &&
           (editingISContext.editingIS.newItem.is_displayed_today === 'True' ||
-            editingISContext.editingIS.newItem.is_displayed_today ===
-              true) ? (
+            editingISContext.editingIS.newItem.is_displayed_today === true) ? (
             <input
               type="checkbox"
               style={{ width: '20px', height: '20px' }}
