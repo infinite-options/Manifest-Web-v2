@@ -20,7 +20,7 @@ app.get('/*', function (req, res) {
 });
 
 var key_url = '/etc/letsencrypt/live/manifestmy.space/privkey.pem';
-var cert_url = '/etc/letsencrypt/live/manifestmy.space/cert.pem';
+var cert_url = '/etc/letsencrypt/live/manifestmy.space/fullchain.pem';
 
 var options = {};
 
