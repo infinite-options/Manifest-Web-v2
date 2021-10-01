@@ -300,7 +300,6 @@ const EditIS = (props) => {
         <Row>
           <Col md={4}>
             <div style={{ display: 'flex' }}>
-              
               <div style={{ marginLeft: '2rem' }}>
                 <div style={{ fontWeight: 'bold' }}>Step Name </div>
                 <input
@@ -333,7 +332,11 @@ const EditIS = (props) => {
           <Row>
             <Col style={{ fontSize: '14px', textDecoration: 'underline' }}>
               <div
-                style={{ marginLeft: '1rem', marginBottom: '8px' }}
+                style={{
+                  marginLeft: '12px',
+                  marginBottom: '8px',
+                  cursor: 'pointer',
+                }}
                 onClick={() => setShowUploadImage(!showUploadImage)}
               >
                 Add icon to library
@@ -386,7 +389,6 @@ const EditIS = (props) => {
               }}
             />
           </div>
-          
         </div>
         <div style={{ display: 'flex', width: '100%' }}>
           <div>
@@ -449,6 +451,7 @@ const EditIS = (props) => {
             <input
               type="checkbox"
               style={{ width: '20px', height: '20px' }}
+              defaultChecked="true"
               onChange={(e) => {
                 editingISContext.setEditingIS({
                   ...editingISContext.editingIS,

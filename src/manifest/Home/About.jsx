@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
   FormControl,
-  InputLabel,
   Select,
   MenuItem,
 } from '@material-ui/core';
@@ -15,27 +14,21 @@ import {
   Col,
   Modal,
   Button,
-  Container,
-  Dropdown,
-  DropdownButton,
   FormLabel,
   ModalBody,
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faImage,
-  faTemperatureHigh,
   faEdit,
 } from '@fortawesome/free-solid-svg-icons';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-import DatePicker from 'react-datepicker';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { Input, TextField } from '@material-ui/core';
 import MiniNavigation from '../miniNavigation';
 import LoginContext from '../../LoginContext';
-import { useHistory, Redirect } from 'react-router-dom';
+import { useHistory, } from 'react-router-dom';
 import AddIconModal from '../../Home/AddIconModal';
 import UploadImage from '../../Home/UploadImage';
 const moment = require('moment');
@@ -77,7 +70,6 @@ export default function AboutModal(props) {
   const [saveConfirm, toggleSave] = useState(false);
   const [editPerson, setPerson] = useState(false);
   const [taObject, setTaObject] = useState({});
-  const [timeZone, setTimeZone] = useState('');
   //aboutMeObject states
   const [aboutMeObject, setAboutMeObject] = useState({
     birth_date: new Date(),
@@ -107,7 +99,19 @@ export default function AboutModal(props) {
   const [motivation2, setMotivation2] = useState('');
   const [motivation3, setMotivation3] = useState('');
   const [motivation4, setMotivation4] = useState('');
+
+  //console.log('props',userPhoto)
+  console.log('props', aboutMeObject.pic);
+  const [userPhoto, setUserPhoto] = useState(aboutMeObject.pic);
+  const [userImage, setUserImage] = useState(null);
+  const [userPhotoURL, setUserPhotoURL] = useState('');
+
+  const [taPhoto, setTaPhoto] = useState('');
+  const [taImage, setTaImage] = useState(null);
+  const [taPhotoURL, setTaPhotoURL] = useState('');
+
   const [showUploadImage, toggleUploadImage] = useState(false);
+  const [showImage, toggleImage] = useState(false);
 
   const [feelings0, setFeelings0] = useState('');
   const [feelings1, setFeelings1] = useState('');
@@ -153,6 +157,95 @@ export default function AboutModal(props) {
   const uploadImageModal = () => {
     return (
       <Modal
+        show={showImage}
+        onHide={() => {
+          toggleImage(false);
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Upload Image</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <div>Upload Image</div>
+          <input
+            type="file"
+            onChange={(e) => {
+              console.log('here: selecting image');
+              if (e.target.files[0]) {
+                const image1 = e.target.files[0];
+                // console.log(image1.name);
+                console.log('image1 = ', image1);
+                /* setAboutMeObject({
+                      ...aboutMeObject,
+                      pic: image1,
+                    }); */
+                setTaImage(image1);
+              }
+            }}
+          />
+          <Button
+            variant="dark"
+            onClick={() => {
+              console.log('here: uploading image');
+              if (taImage === null) {
+                alert('Please select an image to upload');
+                return;
+              }
+              const salt = Math.floor(Math.random() * 9999999999);
+              let image_name = taImage.name;
+              image_name = image_name + salt.toString();
+              setTaPhotoURL(URL.createObjectURL(taImage));
+              setTaObject({
+                ...taObject,
+                pic: taImage,
+                photo_url: '',
+              });
+              console.log('URL: ', taPhotoURL);
+            }}
+          >
+            Upload
+          </Button>
+          <img
+            src={taPhotoURL || 'http://via.placeholder.com/400x300'}
+            alt="Uploaded images"
+            height="300"
+            width="400"
+          />
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              toggleImage(false);
+            }}
+          >
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              console.log('here: Confirming changes');
+              setTaPhoto(taPhotoURL);
+              setTaObject({
+                ...taObject,
+                pic: taPhotoURL,
+                photo_url: '',
+              });
+              toggleImage(false);
+            }}
+          >
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  };
+
+  const uploadUserImageModal = () => {
+    return (
+      <Modal
         show={showUploadImage}
         onHide={() => {
           toggleUploadImage(false);
@@ -172,10 +265,11 @@ export default function AboutModal(props) {
                 const image1 = e.target.files[0];
                 // console.log(image1.name);
                 console.log('image1 = ', image1);
-                setTaObject({
-                  ...taObject,
+                /* setAboutMeObject({
+                  ...aboutMeObject,
                   pic: image1,
-                });
+                }); */
+                setUserImage(image1);
               }
             }}
           />
@@ -183,25 +277,26 @@ export default function AboutModal(props) {
             variant="dark"
             onClick={() => {
               console.log('here: uploading image');
-              if (taObject.pic === null) {
+              if (userImage === null) {
                 alert('Please select an image to upload');
                 return;
               }
               const salt = Math.floor(Math.random() * 9999999999);
-              let image_name = taObject.pic.name;
+              let image_name = userImage.name;
               image_name = image_name + salt.toString();
-              const imageLink = URL.createObjectURL(taObject.pic);
-              setTaObject({
-                ...taObject,
-                pic: imageLink,
+              setUserPhotoURL(URL.createObjectURL(userImage));
+              setAboutMeObject({
+                ...aboutMeObject,
+                pic: userPhotoURL,
+                photo_url: '',
               });
-              console.log('URL: ', imageLink);
+              console.log('URL: ', userPhotoURL);
             }}
           >
             Upload
           </Button>
           <img
-            src={taObject.pic || 'http://via.placeholder.com/400x300'}
+            src={userPhotoURL || 'http://via.placeholder.com/400x300'}
             alt="Uploaded images"
             height="300"
             width="400"
@@ -221,6 +316,12 @@ export default function AboutModal(props) {
             variant="primary"
             onClick={() => {
               console.log('here: Confirming changes');
+              setUserPhoto(userPhotoURL);
+              setAboutMeObject({
+                ...aboutMeObject,
+                pic: userPhotoURL,
+                photo_url: '',
+              });
               toggleUploadImage(false);
             }}
           >
@@ -241,6 +342,72 @@ export default function AboutModal(props) {
   console.log('userID', userID);
   console.log('ta_user_id', ta_user_id);
   console.log('taObject', taObject);
+  useEffect(() => {
+    setMotivation0('');
+    setMotivation1('');
+    setMotivation2('');
+    setMotivation3('');
+    setMotivation4('');
+
+    setFeelings0('');
+    setFeelings1('');
+    setFeelings2('');
+    setFeelings3('');
+    setFeelings4('');
+
+    setHappy0('');
+    setHappy1('');
+    setHappy2('');
+    setHappy3('');
+    setHappy4('');
+
+    grabFireBaseAboutMeData();
+
+    axios
+      .get(
+        BASE_URL +
+          'usersOfTA/' +
+          document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('ta_email='))
+            .split('=')[1]
+      )
+      .then((response) => {
+        console.log(response);
+        if (response.result !== false) {
+          const usersOfTA = response.data.result;
+          const curUserID = usersOfTA[0].user_unique_id;
+          const curUserTZ = usersOfTA[0].time_zone;
+          // console.log('pog', loginContext.loginState.curUser)
+          if (loginContext.loginState.curUser == '') {
+            // edge case on refresh
+            loginContext.setLoginState({
+              ...loginContext.loginState,
+              usersOfTA: response.data.result,
+              curUser: curUserID,
+              curUserTimeZone: curUserTZ,
+            });
+          } else {
+            loginContext.setLoginState({
+              ...loginContext.loginState,
+              usersOfTA: response.data.result,
+              //curUser: curUserID
+            });
+          }
+
+          console.log(curUserID);
+          // setUserID(curUserID);
+          // console.log(userID);
+          //GrabFireBaseRoutinesGoalsData();
+          // return userID;
+        } else {
+          console.log('No User Found');
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [userID,]);
 
   useEffect(() => {
     console.log('yayayayayay');
@@ -449,7 +616,7 @@ export default function AboutModal(props) {
     tzList2.push(moment().tz(`Etc/${offset}`).format('HH:MM') + ' ' + offset);
   }
 
-  function handleFileSelected(event) {
+  /* function handleFileSelected(event) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -475,82 +642,15 @@ export default function AboutModal(props) {
     }
     console.log(aboutMeObject.pic);
     console.log(event.target.files[0].name);
-  }
+  } */
 
   function componentDidMount() {
     grabFireBaseAboutMeData();
   }
 
-  useEffect(() => {
-    setMotivation0('');
-    setMotivation1('');
-    setMotivation2('');
-    setMotivation3('');
-    setMotivation4('');
-
-    setFeelings0('');
-    setFeelings1('');
-    setFeelings2('');
-    setFeelings3('');
-    setFeelings4('');
-
-    setHappy0('');
-    setHappy1('');
-    setHappy2('');
-    setHappy3('');
-    setHappy4('');
-
-    grabFireBaseAboutMeData();
-
-    axios
-      .get(
-        BASE_URL +
-          'usersOfTA/' +
-          document.cookie
-            .split('; ')
-            .find((row) => row.startsWith('ta_email='))
-            .split('=')[1]
-      )
-      .then((response) => {
-        console.log(response);
-        if (response.result !== false) {
-          const usersOfTA = response.data.result;
-          const curUserID = usersOfTA[0].user_unique_id;
-          const curUserTZ = usersOfTA[0].time_zone;
-          // console.log('pog', loginContext.loginState.curUser)
-          if (loginContext.loginState.curUser == '') {
-            // edge case on refresh
-            loginContext.setLoginState({
-              ...loginContext.loginState,
-              usersOfTA: response.data.result,
-              curUser: curUserID,
-              curUserTimeZone: curUserTZ,
-            });
-          } else {
-            loginContext.setLoginState({
-              ...loginContext.loginState,
-              usersOfTA: response.data.result,
-              //curUser: curUserID
-            });
-          }
-
-          console.log(curUserID);
-          // setUserID(curUserID);
-          // console.log(userID);
-          //GrabFireBaseRoutinesGoalsData();
-          // return userID;
-        } else {
-          console.log('No User Found');
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [userID]);
-
   useEffect(
     () => console.log('loggy1: aboutMeObj = ', aboutMeObject),
-    [aboutMeObject.message_card]
+    [aboutMeObject.message_card,]
   );
 
   function hideAboutForm(e) {
@@ -578,6 +678,7 @@ export default function AboutModal(props) {
       message_card: aboutMeObject.message_card,
       message_day: aboutMeObject.message_day,
       picture: aboutMeObject.pic,
+      //photo_url: userPhoto,
       timeSettings: aboutMeObject.timeSettings,
       history: aboutMeObject.history,
       major_events: aboutMeObject.major_events,
@@ -627,6 +728,7 @@ export default function AboutModal(props) {
         formData.append(entry[0], entry[1]);
       }
     });
+    formData.append('picture', userImage);
     for (let value of formData.values()) {
       console.log(value);
     }
@@ -638,7 +740,7 @@ export default function AboutModal(props) {
         } else {
           props.updateProfilePic(
             body.first_name + ' ' + body.last_name,
-            aboutMeObject.pic
+            userPhoto
           );
         }
         props.updateProfileTimeZone(aboutMeObject.timeSettings['timeZone']);
@@ -709,7 +811,7 @@ export default function AboutModal(props) {
       relationship: taObject.relationship,
       important: 'TRUE',
       picture: '',
-      photo_url: photo,
+      photo_url: taPhoto,
       ta_time_zone: taObject.time_zone,
       people_email: taObject.email,
       people_employer: taObject.employer,
@@ -747,15 +849,6 @@ export default function AboutModal(props) {
   }
 
   function UpdatePerson() {
-    /* if (
-      document.cookie
-        .split(";")
-        .some(item => item.trim().startsWith("ta_uid="))
-    ) {
-      selectedTAid = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
-    } else {
-    } */
-
     let body = {
       user_id: userID,
       ta_id: '',
@@ -799,7 +892,6 @@ export default function AboutModal(props) {
         console.log(error);
       });
   }
-  console.log('testetseetestest');
 
   const editPersonModal = (taObject) => {
     if (editPerson || addPerson) {
@@ -869,39 +961,42 @@ export default function AboutModal(props) {
                 style={{
                   textAlign: 'left',
                   float: 'left',
-                  marginTop: '1rem',
                   width: '100%',
                 }}
               >
-                <Row>
+                <Row
+                  style={{
+                    textAlign: 'left',
+                    float: 'left',
+                    marginTop: '1rem',
+                    width: '100%',
+                  }}
+                >
                   <Col
+                    xs={8}
                     style={{
                       textDecoration: 'underline',
                       paddingLeft: '0',
                       marginLeft: '0',
                       width: '70%',
+                      color: '#ffffff',
+                      fontSize: '14px',
                     }}
                   >
                     <div
                       onClick={() => {
-                        toggleUploadImage(!showUploadImage);
+                        toggleImage(!showImage);
+                      }}
+                      style={{
+                        marginLeft: '12px',
+                        cursor: 'pointer',
                       }}
                     >
-                      Add icon to library
-                    </div>
-                    <div style={{ paddingLeft: '0', marginLeft: '-1rem' }}>
-                      <UploadImage
-                        photoUrl={photo}
-                        setPhotoUrl={setPhoto}
-                        currentUserId={props.CurrentId}
-                      />
-                    </div>
-                    <div style={{ marginLeft: '-1rem' }}>
-                      <AddIconModal photoUrl={photo} setPhotoUrl={setPhoto} />
-                    </div>
+                      Upload from Computer
+                    </div>                  
                   </Col>
-                  <Col>
-                    <div style={{ marginLeft: '1rem' }}>
+                  <Col xs={4}>
+                    <div>
                       <img
                         style={{
                           height: '5rem',
@@ -970,7 +1065,6 @@ export default function AboutModal(props) {
                           ...taObject,
                           time_zone: e.target.value,
                         });
-                                                
                       }}
                       renderValue={() => {
                         console.log('timeZone1 = ', taObject.time_zone);
@@ -1248,6 +1342,7 @@ export default function AboutModal(props) {
   return (
     <div>
       {uploadImageModal()}
+      {uploadUserImageModal()}
       {editPersonModal(taObject)}
       {confirmedModal()}
       {confirmSaveModal()}
@@ -1322,7 +1417,71 @@ export default function AboutModal(props) {
             </Row>
             <br />
             <Row>
-              <Col style={{ color: 'white' }}>
+              <Col
+                xs={8}
+                style={{
+                  width: '70%',
+                  color: '#ffffff',
+                  fontSize: '14px',
+                }}
+              >
+                <h1
+                  style={{
+                    fontSize: '24px',
+                    font: 'SF-Compact-Text-Semibold',
+                  }}
+                >
+                  Change Image
+                </h1>
+                <div
+                  onClick={() => {
+                    toggleUploadImage(!showUploadImage);
+                  }}
+                  style={{
+                    //marginLeft: '10px',
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Upload from Computer
+                </div>
+              </Col>
+              <Col xs={4}>
+                {aboutMeObject.have_pic === false ? (
+                  <FontAwesomeIcon icon={faImage} size="6x" />
+                ) : aboutMeObject.pic === '' ? (
+                  <div
+                    style={{
+                      display: 'block',
+                      float: 'right',
+                      width: '5rem',
+                      height: '5rem',
+                      objectFit: 'fill',
+                      border: 'none',
+                      borderRadius: '10px',
+                      backgroundColor: 'white',
+                      marginBottom: '15px',
+                    }}
+                  ></div>
+                ) : (
+                  <img
+                    style={{
+                      display: 'block',
+                      float: 'right',
+                      width: '5rem',
+                      height: '5rem',
+                      objectFit: 'cover',
+                      marginBottom: '15px',
+                    }}
+                    src={aboutMeObject.pic}
+                    alt="Profile"
+                  />
+                )}
+              </Col>
+              {/* <Col style={{ float: 'right' }} xs={4}>
+                <img alt="icon" src={photo} style={{ width: '100%' }} />
+              </Col> */}
+              {/*  <Col style={{ color: 'white' }}>
                 <h1
                   style={{
                     fontSize: '24px',
@@ -1363,7 +1522,7 @@ export default function AboutModal(props) {
                       float: 'right',
                       width: '5rem',
                       height: '5rem',
-                      objectFit:'fill',
+                      objectFit: 'fill',
                       // width: '100px',
                       // height: '100px',
                       border: 'none',
@@ -1381,7 +1540,7 @@ export default function AboutModal(props) {
                       marginRight: 'auto',
                       width: '5rem',
                       height: '5rem',
-                      objectFit:'cover',
+                      objectFit: 'cover',
                       marginBottom: '15px',
                     }}
                     src={aboutMeObject.pic}
@@ -1406,7 +1565,7 @@ export default function AboutModal(props) {
                   onChange={handleFileSelected}
                   id="ProfileImage"
                 />
-              </Col>
+              </Col> */}
             </Row>
             <br />
             <Row>
@@ -2048,7 +2207,7 @@ export default function AboutModal(props) {
                         style={{
                           width: '5rem',
                           height: '5rem',
-                          objectFit:'fill',
+                          objectFit: 'fill',
                           backgroundColor: '#ffffff',
                           borderRadius: '10px',
                         }}

@@ -576,6 +576,7 @@ export default function Home(props) {
       is_timed: false,
       is_sublist_available: true,
       photo: '',
+      photo_url:''
     },
   };
 
@@ -606,6 +607,7 @@ export default function Home(props) {
       is_timed: false,
       is_sublist_available: true,
       photo: '',
+      photo_url:''
     },
   };
   const initialEditingISState = {
@@ -622,6 +624,7 @@ export default function Home(props) {
       is_complete: false,
       is_timed: false,
       photo: '',
+      photo_url:''
     },
   };
 
@@ -639,6 +642,7 @@ export default function Home(props) {
       is_complete: false,
       is_timed: false,
       photo: '',
+      photo_url:''
     },
   };
   const [editingRTS, setEditingRTS] = useState(initialEditingRTSState);

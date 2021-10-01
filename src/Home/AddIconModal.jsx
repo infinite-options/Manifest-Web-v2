@@ -221,7 +221,7 @@ export default class AddIconModal extends Component {
       <div>
         <Button
           variant="text"
-          style={{ textDecoration:'underline', color:'#ffffff', fontSize:'14px' }}
+          style={{ textDecoration:'underline', color:'#ffffff', fontSize:'14px', textAlign:'left' }}
           onClick={this.onHandleShowClick}
           children = "Use icon from library"
         />

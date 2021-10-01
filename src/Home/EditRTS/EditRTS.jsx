@@ -18,7 +18,7 @@ const EditRTS = (props) => {
   const tz = {
     timeZone: props.stateValue.currentUserTimeZone,
   };
-  const [showUploadImage, toggleUploadImage] = useState(false);
+  const [showUploadImage, setShowUploadImage] = useState(false);
   const [image, setImage] = useState(null);
   const [imageName, setImageName] = useState('');
   const [imageURL, setImageURL] = useState('');
@@ -80,6 +80,7 @@ const EditRTS = (props) => {
   };
 
   console.log('today timezone', editingRTSContext.editingRTS.newItem);
+  
   const updateRTS = (e) => {
     console.log(' today timezone here: entering updateRTS function');
     console.log('today timezone timezone', tz);
@@ -373,7 +374,7 @@ const EditRTS = (props) => {
       <Modal
         show={showUploadImage}
         onHide={() => {
-          toggleUploadImage(false);
+          setShowUploadImage(false);
         }}
       >
         <Modal.Header closeButton>
@@ -407,7 +408,7 @@ const EditRTS = (props) => {
               image_name = image_name + salt.toString();
               setImageName(image_name);
               setImageURL(URL.createObjectURL(image));
-              console.log('URL: ', URL.createObjectURL(image));
+              console.log('xxx URL: ', URL.createObjectURL(image));
               editingRTSContext.setEditingRTS({
                 ...editingRTSContext.editingRTS,
                 newItem: {
@@ -416,6 +417,7 @@ const EditRTS = (props) => {
                   photo_url: '',
                 },
               });
+              console.log('xxx RTS photo',editingRTSContext.editingRTS.newItem.photo);
             }}
           >
             Upload
@@ -426,13 +428,14 @@ const EditRTS = (props) => {
             height="300"
             width="400"
           />
+          {console.log('xxx RTS photo',editingRTSContext.editingRTS.newItem.photo)}
         </Modal.Body>
 
         <Modal.Footer>
           <Button
             variant="secondary"
             onClick={() => {
-              toggleUploadImage(false);
+              setShowUploadImage(false);
             }}
           >
             Close
@@ -442,7 +445,7 @@ const EditRTS = (props) => {
             onClick={() => {
               console.log('here: Confirming changes');
               setPhoto(imageURL);
-              toggleUploadImage(false);
+              setShowUploadImage(false);
             }}
           >
             Confirm
@@ -510,17 +513,22 @@ const EditRTS = (props) => {
 
           <Row>
             <Col
+              xs={8}
               style={{
                 width: '100%',
                 float: 'left',
                 fontSize: '14px',
-                textAlign: 'center',
+                textAlign: 'left',
                 textDecoration: 'underline',
               }}
             >
               <div
                 onClick={() => {
-                  toggleUploadImage(!showUploadImage);
+                  setShowUploadImage(!showUploadImage);
+                }}
+                style={{
+                  marginLeft: '12px',
+                  cursor: 'pointer',
                 }}
               >
                 Add icon to library
@@ -541,7 +549,7 @@ const EditRTS = (props) => {
                 currentUserId={editingRTSContext.editingRTS.currentUserId}
               />
             </Col>
-            <Col style={{ float: 'right' }}>
+            <Col style={{ float: 'right' }} xs={4}>
               <img alt="icon" src={photo} style={{ width: '100%' }} />
             </Col>
           </Row>

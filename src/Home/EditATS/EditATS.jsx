@@ -1,12 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
 import EditATSContext from './EditATSContext';
 import moment from 'moment';
 import axios from 'axios';
 import AddIconModal from '../AddIconModal';
 import UploadImage from '../UploadImage';
-
-import { propTypes } from 'react-bootstrap/esm/Image';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 const convertDateToDayString = (dateObject) => {
@@ -48,6 +46,19 @@ const convertDateToTimeString = (dateObject) => {
 
 const EditATS = (props) => {
   const editingATSContext = useContext(EditATSContext);
+
+  const [photo, setPhoto] = useState(
+    editingATSContext.editingATS.newItem.at_photo
+  );
+  console.log('obj. ', props);
+
+
+  
+  const [showUploadImage, setShowUploadImage] = useState(false);
+  const [image, setImage] = useState(null);
+  const [imageName, setImageName] = useState('');
+  const [imageURL, setImageURL] = useState('');
+
   console.log('action Props', props);
   console.log('editATS gre = ', props.getGoalsEndPoint);
   const routine = props.routineID.gr_unique_id
@@ -69,10 +80,6 @@ const EditATS = (props) => {
   console.log('action endTime', endTime);
   console.log('action startDay', startDay);
   console.log('action endDay', endDay);
-
-  const [photo, setPhoto] = useState(
-    editingATSContext.editingATS.newItem.at_photo
-  );
 
   const getTimes = (a_day_time, b_day_time) => {
     const [a_start_time, b_start_time] = [
@@ -154,7 +161,12 @@ const EditATS = (props) => {
 
   const updateATS = (e) => {
     e.stopPropagation();
+    editingATSContext.setEditingATS({
+      ...editingATSContext.editingATS,
+      editing: true,
+    });
     let object = { ...editingATSContext.editingATS.newItem };
+
     const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
     const start_day_and_time_string = new Date(
       start_day_and_time_simple_string
@@ -180,7 +192,7 @@ const EditATS = (props) => {
     delete object.at_datetime_started;
     object.expected_completion_time = object.at_expected_completion_time;
     delete object.at_expected_completion_time;
-    object.photo = '';
+    //
     object.photo_url = photo;
     object.type = '';
     delete object.at_photo;
@@ -204,6 +216,8 @@ const EditATS = (props) => {
     delete object.numMins;
     object.id = editingATSContext.editingATS.newItem.at_unique_id;
     console.log('obj', object);
+    object.photo = image;
+    delete object.photo;
     let formData = new FormData();
     Object.entries(object).forEach((entry) => {
       if (typeof entry[1] == 'string') {
@@ -215,6 +229,8 @@ const EditATS = (props) => {
         formData.append(entry[0], entry[1]);
       }
     });
+
+    formData.append('photo', image);
     if (object.id != undefined) {
       console.log('update AT');
 
@@ -401,6 +417,91 @@ const EditATS = (props) => {
       addToDB();
     }
   };
+
+  const uploadImageModal = () => {
+    return (
+      <Modal
+        show={showUploadImage}
+        onHide={() => {
+          setShowUploadImage(false);
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Upload Image</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <div>Upload Image</div>
+          <input
+            type="file"
+            onChange={(e) => {
+              console.log('here: selecting image');
+              if (e.target.files[0]) {
+                const image1 = e.target.files[0];
+                // console.log(image1.name);
+                console.log('image1 = ', image1);
+                setImage(image1);
+              }
+            }}
+          />
+          <Button
+            variant="dark"
+            onClick={() => {
+              console.log('here: uploading image');
+              if (image === null) {
+                alert('Please select an image to upload');
+                return;
+              }
+              const salt = Math.floor(Math.random() * 9999999999);
+              let image_name = image.name;
+              image_name = image_name + salt.toString();
+              setImageName(image_name);
+              setImageURL(URL.createObjectURL(image));
+              console.log('URL: ', URL.createObjectURL(image));
+              editingATSContext.setEditingATS({
+                ...editingATSContext.editingATS,
+                newItem: {
+                  ...editingATSContext.editingATS.newItem,
+                  photo: image,
+                  photo_url: '',
+                },
+              });
+              console.log('xxx ATS photo',editingATSContext.editingATS.newItem.photo);
+            }}
+          >
+            Upload
+          </Button>
+          <img
+            src={imageURL || 'http://via.placeholder.com/400x300'}
+            alt="Uploaded images"
+            height="300"
+            width="400"
+          />
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setShowUploadImage(false);
+            }}
+          >
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              console.log('here: Confirming changes');
+              setPhoto(imageURL);
+              setShowUploadImage(false);
+            }}
+          >
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  };
   return (
     <div
       style={{
@@ -412,6 +513,7 @@ const EditATS = (props) => {
         color: '#ffffff',
       }}
     >
+      {uploadImageModal()}
       <Container
         style={{
           padding: '2rem',
@@ -447,7 +549,14 @@ const EditATS = (props) => {
           <div style={{ textAlign: 'left', marginTop: '1rem' }}>
             <Row>
               <Col style={{ fontSize: '14px', textDecoration: 'underline' }}>
-                <div style={{ marginLeft: '1rem', marginBottom: '8px' }}>
+                <div
+                  onClick={() => setShowUploadImage(!showUploadImage)}
+                  style={{
+                    marginLeft: '12px',
+                    marginBottom: '8px',
+                    cursor: 'pointer',
+                  }}
+                >
                   Add icon to library
                 </div>
                 <AddIconModal photoUrl={photo} setPhotoUrl={setPhoto} />
@@ -609,6 +718,10 @@ const EditATS = (props) => {
 
           <div style={{ display: 'flex', marginTop: '1rem' }}>
             <div style={{ fontSize: '12px' }}> Available to User </div>
+            {console.log(
+              'editingATSContext.editingATS.newItem.is_available = ',
+              editingATSContext.editingATS.newItem.is_available
+            )}
             {(editingATSContext.editingATS.newItem.is_available === 'True' ||
               editingATSContext.editingATS.newItem.is_available === true) &&
             (editingATSContext.editingATS.newItem.is_displayed_today ===
