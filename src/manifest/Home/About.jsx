@@ -810,8 +810,9 @@ export default function AboutModal(props) {
       name: taObject.name,
       relationship: taObject.relationship,
       important: 'TRUE',
-      picture: '',
-      photo_url: taPhoto,
+      picture: taObject.pic,
+      //photo_url: userPhoto,,
+      photo_url: '',
       ta_time_zone: taObject.time_zone,
       people_email: taObject.email,
       people_employer: taObject.employer,
@@ -830,6 +831,7 @@ export default function AboutModal(props) {
         formData.append(entry[0], entry[1]);
       }
     });
+    formData.append('picture', taImage);
     axios
       .post(BASE_URL + 'addPeople', formData)
       .then((response) => {
@@ -860,8 +862,8 @@ export default function AboutModal(props) {
       people_email: taObject.email,
       people_important: 'True',
       people_have_pic: 'False',
-      people_pic: '',
-      photo_url: taObject.pic,
+      people_pic: taObject.pic,
+      photo_url: '',
       ta_time_zone: taObject.time_zone,
     };
     console.log('updatePerson', body);
@@ -882,6 +884,7 @@ export default function AboutModal(props) {
         formData.append(entry[0], entry[1]);
       }
     });
+    formData.append('people_pic', taImage);
     axios
       .post(BASE_URL + 'updatePeople', formData)
       .then((response) => {
