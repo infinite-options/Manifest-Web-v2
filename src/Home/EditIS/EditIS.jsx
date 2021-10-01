@@ -300,7 +300,7 @@ const EditIS = (props) => {
         <Row>
           <Col md={4}>
             <div style={{ display: 'flex' }}>
-              <div style={{ marginLeft: '2rem' }}>
+              <div >
                 <div style={{ fontWeight: 'bold' }}>Step Name </div>
                 <input
                   style={{
