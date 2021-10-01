@@ -2874,6 +2874,8 @@ export default function Firebasev2(props) {
                   color: '#000000',
                   fontWeight: 'bold',
                   paddingLeft: '0.5rem',
+                  marginLeft: '0.5rem',
+                  marginTop: '0.5rem',
                 }}
               >
                 {i['is_sequence']}

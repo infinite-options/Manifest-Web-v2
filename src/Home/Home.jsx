@@ -539,7 +539,7 @@ export default function Home(props) {
     editing: true,
     type: '',
     id: '',
-    user_id: props.location.state,
+    user_id: userID,
     gr_array: [],
     newItem: {
       audio: '',
@@ -562,7 +562,7 @@ export default function Home(props) {
       is_timed: false,
       is_sublist_available: true,
       photo: '',
-      photo_url:''
+      photo_url: '',
     },
   };
 
@@ -570,7 +570,7 @@ export default function Home(props) {
     editing: false,
     type: '',
     id: '',
-    user_id: props.location.state,
+    user_id: userID,
     gr_array: [],
     newItem: {
       audio: '',
@@ -600,7 +600,7 @@ export default function Home(props) {
     editing: false,
     type: '',
     id: '',
-    user_id: props.location.state,
+    user_id: userID,
     gr_array: [],
     newItem: {
       audio: '',
@@ -618,7 +618,7 @@ export default function Home(props) {
     editing: true,
     type: '',
     id: '',
-    user_id: props.location.state,
+    user_id: userID,
     gr_array: [],
     newItem: {
       audio: '',

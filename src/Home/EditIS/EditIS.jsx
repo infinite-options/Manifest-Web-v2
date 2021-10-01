@@ -46,6 +46,7 @@ const EditIS = (props) => {
     delete object.numMins;
     object.is_id = object.is_unique_id;
     object.at_id = props.actionID.at_unique_id;
+    object.user_id = props.CurrentId;
     delete object.is_unique_id;
     object.is_sequence = object.is_sequence;
     object.is_in_progress = 'False';

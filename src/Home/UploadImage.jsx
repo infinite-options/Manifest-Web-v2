@@ -8,7 +8,7 @@ const BASE_URL = process.env.REACT_APP_BASE_URL;
 export default class UploadImage extends Component {
   constructor(props) {
     super(props);
-    console.log('props', props.parentFunction);
+    console.log('props', this.props);
     this.state = {
       saltedImageName: '',
       show: false,

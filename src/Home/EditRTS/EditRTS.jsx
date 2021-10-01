@@ -14,7 +14,10 @@ const EditRTS = (props) => {
   const [photo, setPhoto] = useState(
     editingRTSContext.editingRTS.newItem.gr_photo
   );
-  console.log('obj. ', props);
+  
+  const user = props.CurrentId
+
+  console.log('obj. ', editingRTSContext.editingRTS.newItem.user_id);
   const tz = {
     timeZone: props.stateValue.currentUserTimeZone,
   };
@@ -88,6 +91,7 @@ const EditRTS = (props) => {
       ...editingRTSContext.editingRTS,
       editing: true,
     });
+    
     // editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing;
     e.stopPropagation();
     let object = { ...editingRTSContext.editingRTS.newItem };
@@ -546,7 +550,7 @@ const EditRTS = (props) => {
                 //  parentFunction={setPhotoURLFunction}
                 photoUrl={photo}
                 setPhotoUrl={setPhoto}
-                currentUserId={editingRTSContext.editingRTS.currentUserId}
+                currentUserId={user}
               />
             </Col>
             <Col style={{ float: 'right' }} xs={4}>
