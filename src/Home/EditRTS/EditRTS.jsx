@@ -531,7 +531,7 @@ const EditRTS = (props) => {
                   cursor: 'pointer',
                 }}
               >
-                Add icon to library
+                Upload from Computer
               </div>
               <AddIconModal
                 photoUrl={photo}

@@ -8,7 +8,7 @@ const BASE_URL = process.env.REACT_APP_BASE_URL;
 export default class UploadImage extends Component {
   constructor(props) {
     super(props);
-    // console.log(props.parentFunction);
+    console.log('props', props.parentFunction);
     this.state = {
       saltedImageName: '',
       show: false,
@@ -20,15 +20,19 @@ export default class UploadImage extends Component {
     };
   }
 
+ 
   onPhotoClick = (e) => {
     console.log('this is the E: ', e);
-    this.setState({ photo_url: e });
+    this.setState({ photo_url: e});
+
+    this.setState({border: !this.state.border})
+  
   };
 
   onChange = (e) => {
     if (e.target.files[0]) {
       const image = e.target.files[0];
-      console.log(  image.name);
+      console.log(image.name);
       this.setState({ image: image });
     }
   };
@@ -47,9 +51,11 @@ export default class UploadImage extends Component {
   };
 
   onClickConfirm = () => {
-    this.props.setPhotoUrl(this.state.photo_url)
+    this.props.setPhotoUrl(this.state.photo_url);
     let toggle = this.state.modal;
+    //let hide = this.state.show;
     this.setState({ modal: !toggle });
+    this.setState({ show: !toggle });
     // this.setState({ progress: 0 });
     // this.props.parentFunction(
     //   this.state.image,
@@ -60,8 +66,7 @@ export default class UploadImage extends Component {
   };
 
   onHandleShowClick = () => {
-    let url = BASE_URL 
-    + 'getImages/';
+    let url = BASE_URL + 'getImages/';
     let imageList = [];
     axios
       .get(url + this.props.currentUserId)
@@ -86,7 +91,8 @@ export default class UploadImage extends Component {
   onSubmitImage = () => {
     let toggle = this.state.show;
     this.setState({ show: !toggle });
-    this.props.parentFunction('', this.state.photo_url, this.state.type);
+    this.props.setPhotoUrl(this.state.photo_url);
+    //this.props.parentFunction('', this.state.photo_url, this.state.type);
   };
 
   render() {
@@ -95,11 +101,21 @@ export default class UploadImage extends Component {
       for (let i = 0; i < this.state.imageList.length; i++) {
         arrButtons.push(
           <button
-            style={{ borderRadius: '12px', borderWidth: '0px' }}
+            style={{
+              borderRadius: '12px',
+              margin: '5px',
+              border: this.state.imageList[i].url === this.state.photo_url 
+              ? '3px solid #FF6B4A'
+              : '1px solid #FF6B4A'              
+            }}
             onClick={(e) => this.onPhotoClick(this.state.imageList[i].url)}
           >
             <img
-              style={{ width: '100px', height: '70px' }}
+              style={{
+                width: '100px',
+                height: '70px',
+                
+              }}
               src={this.state.imageList[i].url}
             ></img>
           </button>
@@ -111,7 +127,11 @@ export default class UploadImage extends Component {
       <>
         <Button
           variant="text"
-          style={{ textDecoration:'underline', color:'#ffffff', fontSize:'14px' }}
+          style={{
+            textDecoration: 'underline',
+            color: '#ffffff',
+            fontSize: '14px',
+          }}
           onClick={this.onHandleShowClick}
         >
           User's Library

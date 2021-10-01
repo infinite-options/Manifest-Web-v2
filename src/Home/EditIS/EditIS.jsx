@@ -300,7 +300,7 @@ const EditIS = (props) => {
         <Row>
           <Col md={4}>
             <div style={{ display: 'flex' }}>
-              <div >
+              <div>
                 <div style={{ fontWeight: 'bold' }}>Step Name </div>
                 <input
                   style={{
@@ -339,7 +339,7 @@ const EditIS = (props) => {
                 }}
                 onClick={() => setShowUploadImage(!showUploadImage)}
               >
-                Add icon to library
+                Upload from Computer
               </div>
               <AddIconModal
                 photoUrl={photo}

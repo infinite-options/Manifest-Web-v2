@@ -557,7 +557,7 @@ const EditATS = (props) => {
                     cursor: 'pointer',
                   }}
                 >
-                  Add icon to library
+                  Upload from Computer
                 </div>
                 <AddIconModal photoUrl={photo} setPhotoUrl={setPhoto} />
                 <UploadImage
