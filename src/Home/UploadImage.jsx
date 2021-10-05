@@ -51,18 +51,19 @@ export default class UploadImage extends Component {
   };
 
   onClickConfirm = () => {
-    this.props.setPhotoUrl(this.state.photo_url);
+    //this.props.setPhotoUrl(this.state.photo_url);
     let toggle = this.state.modal;
     //let hide = this.state.show;
     this.setState({ modal: !toggle });
-    this.setState({ show: !toggle });
+    //this.setState({ show: !toggle });
+    this.props.setPhotoUrl(this.state.photo_url);
     // this.setState({ progress: 0 });
     // this.props.parentFunction(
     //   this.state.image,
     //   this.state.photo_url,
     //   this.state.type
     // );
-    // this.onHandleShowClick();
+    //this.onHandleShowClick();
   };
 
   onHandleShowClick = () => {
@@ -152,13 +153,13 @@ export default class UploadImage extends Component {
             <Button variant="secondary" onClick={this.onHandleShowClick}>
               Close
             </Button>
-            <Button variant="primary" onClick={this.onUploadImage}>
+           {/*  <Button variant="primary" onClick={this.onUploadImage}>
               Upload New Image
-            </Button>
+            </Button> */}
 
             {/* MODAL I WANT ON FIREBASE */}
 
-            <Modal show={this.state.modal} onHide={this.onUploadImage}>
+           {/*  <Modal show={this.state.modal} onHide={this.onUploadImage}>
               <Modal.Header closeButton>
                 <Modal.Title>Upload Image</Modal.Title>
               </Modal.Header>
@@ -187,7 +188,7 @@ export default class UploadImage extends Component {
                   Confirm
                 </Button>
               </Modal.Footer>
-            </Modal>
+            </Modal> */}
 
             {/* MODAL I WANT ON FIREBASE */}
 

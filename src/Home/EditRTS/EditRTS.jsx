@@ -673,14 +673,13 @@ const EditRTS = (props) => {
                   type="date"
                   value={editingRTSContext.editingRTS.newItem.end_day}
                   onChange={(e) => {
-                    console.log('e.tar.val = ', e.target.value);
-                    const year = parseInt(e.target.value.substring(0, 4));
-                    if (
-                      e.target.value <
-                        editingRTSContext.editingRTS.newItem.start_day &&
-                      year > 1000
-                    )
-                      return;
+                    // const year = parseInt(e.target.value.substring(0, 4));
+                    // if (
+                    //   e.target.value <
+                    //     editingRTSContext.editingRTS.newItem.start_day &&
+                    //   year > 1000
+                    // )
+                    //   return;
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {

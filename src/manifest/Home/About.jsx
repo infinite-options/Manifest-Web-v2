@@ -31,6 +31,7 @@ import LoginContext from '../../LoginContext';
 import { useHistory, } from 'react-router-dom';
 import AddIconModal from '../../Home/AddIconModal';
 import UploadImage from '../../Home/UploadImage';
+import TAUploadImage from '../../Home/TAUploadImage';
 const moment = require('moment');
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -54,16 +55,37 @@ const useStyles = makeStyles({
 
 export default function AboutModal(props) {
   const classes = useStyles();
+  const loginContext = useContext(LoginContext);
   //states
+    const [currentUser, setCU] = useState(loginContext.loginState.curUser);
+    // Kyle cookie code
+    var userID = '';
+    var userTime_zone = '';
+    if (
+      document.cookie
+        .split(';')
+        .some((item) => item.trim().startsWith('patient_uid='))
+    ) {
+      userID = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('patient_uid='))
+        .split('=')[1];
+      userTime_zone = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('patient_timeZone='))
+        .split('=')[1];
+    } else {
+      userID = loginContext.loginState.curUser;
+      userTime_zone = loginContext.loginState.curUserTimeZone;
+    }
+
   const [imageChanged, setImageChanged] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [showTimeModal, setShowTimeModal] = useState(false);
-  const [saveButtonEnabled, setSaveButtonEnabled] = useState(false);
   const [addPerson, setAddPerson] = useState(false);
   const [addPersonName, setAddPersonName] = useState('');
   const [ta_user_id, setTa_user_id] = useState('');
-  const [url, setUrl] = useState('');
   const [photo, setPhoto] = useState('');
   const [showConfirmed, toggleConfirmed] = useState(false);
   const [called, toggleCalled] = useState(false);
@@ -101,17 +123,6 @@ export default function AboutModal(props) {
   const [motivation4, setMotivation4] = useState('');
 
   //console.log('props',userPhoto)
-  console.log('props', aboutMeObject.pic);
-  const [userPhoto, setUserPhoto] = useState(aboutMeObject.pic);
-  const [userImage, setUserImage] = useState(null);
-  const [userPhotoURL, setUserPhotoURL] = useState('');
-
-  const [taPhoto, setTaPhoto] = useState('');
-  const [taImage, setTaImage] = useState(null);
-  const [taPhotoURL, setTaPhotoURL] = useState('');
-
-  const [showUploadImage, toggleUploadImage] = useState(false);
-  const [showImage, toggleImage] = useState(false);
 
   const [feelings0, setFeelings0] = useState('');
   const [feelings1, setFeelings1] = useState('');
@@ -126,30 +137,17 @@ export default function AboutModal(props) {
   const [happy4, setHappy4] = useState('');
 
   const [listPeople, setListPeople] = useState([]);
+  const [taPhoto, setTaPhoto] = useState(listPeople.pic);
+  const [taImage, setTaImage] = useState(null);
+  const [taPhotoURL, setTaPhotoURL] = useState('');
   const [people, togglePeople] = useState(false);
-  const loginContext = useContext(LoginContext);
+ const [userPhoto, setUserPhoto] = useState(aboutMeObject.pic);
+ const [userImage, setUserImage] = useState(null);
+ const [userPhotoURL, setUserPhotoURL] = useState('');
+
+ const [showUploadImage, toggleUploadImage] = useState(false);
+ const [showImage, toggleImage] = useState(false);
   //const userID = loginContext.loginState.curUser;
-  const [currentUser, setCU] = useState(loginContext.loginState.curUser);
-  // Kyle cookie code
-  var userID = '';
-  var userTime_zone = '';
-  if (
-    document.cookie
-      .split(';')
-      .some((item) => item.trim().startsWith('patient_uid='))
-  ) {
-    userID = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('patient_uid='))
-      .split('=')[1];
-    userTime_zone = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('patient_timeZone='))
-      .split('=')[1];
-  } else {
-    userID = loginContext.loginState.curUser;
-    userTime_zone = loginContext.loginState.curUserTimeZone;
-  }
 
   console.log('currentUser: ' + currentUser);
   //const userID = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1];
@@ -201,6 +199,7 @@ export default function AboutModal(props) {
                 pic: taImage,
                 photo_url: '',
               });
+              setTaPhoto(taPhotoURL)
               console.log('URL: ', taPhotoURL);
             }}
           >
@@ -290,6 +289,7 @@ export default function AboutModal(props) {
                 pic: userPhotoURL,
                 photo_url: '',
               });
+              setUserPhoto(userPhotoURL);
               console.log('URL: ', userPhotoURL);
             }}
           >
@@ -407,7 +407,7 @@ export default function AboutModal(props) {
       .catch((error) => {
         console.log(error);
       });
-  }, [userID,]);
+  }, [userID]);
 
   useEffect(() => {
     console.log('yayayayayay');
@@ -456,6 +456,7 @@ export default function AboutModal(props) {
           setAboutMeObject(x);
           setFirstName(details.user_first_name);
           setLastName(details.user_last_name);
+          setUserPhoto(details.user_picture)
         } else {
           console.log('No user details');
         }
@@ -650,7 +651,7 @@ export default function AboutModal(props) {
 
   useEffect(
     () => console.log('loggy1: aboutMeObj = ', aboutMeObject),
-    [aboutMeObject.message_card,]
+    [aboutMeObject.message_card]
   );
 
   function hideAboutForm(e) {
@@ -677,7 +678,7 @@ export default function AboutModal(props) {
       have_pic: aboutMeObject.have_pic,
       message_card: aboutMeObject.message_card,
       message_day: aboutMeObject.message_day,
-      picture: aboutMeObject.pic,
+      picture: userPhoto,
       //photo_url: userPhoto,
       timeSettings: aboutMeObject.timeSettings,
       history: aboutMeObject.history,
@@ -806,11 +807,10 @@ export default function AboutModal(props) {
   function AddPerson() {
     let body = {
       user_id: userID,
-      //ta_people_id: selectedTAid,
-      name: taObject.name,
-      relationship: taObject.relationship,
-      important: 'TRUE',
-      picture: taObject.pic,
+      people_name: taObject.name,
+      people_relationship: taObject.relationship,
+      people_important: 'TRUE',
+      people_pic: taObject.pic,
       //photo_url: userPhoto,,
       photo_url: '',
       ta_time_zone: taObject.time_zone,
@@ -831,19 +831,27 @@ export default function AboutModal(props) {
         formData.append(entry[0], entry[1]);
       }
     });
-    formData.append('picture', taImage);
+    formData.append('people_pic', taImage);
     axios
       .post(BASE_URL + 'addPeople', formData)
       .then((response) => {
         console.log('addPeople.response = ', response.data);
-        axios
-          .get(BASE_URL + 'listPeople/' + userID)
-          .then((response) => {
-            setListPeople(response.data.result.result);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+        if (response.data.message == 'TA already exists.') {
+          alert(response.data.message);
+          toggleConfirmed(false);
+        }
+        else{
+          toggleConfirmed(true);
+          axios
+              .get(BASE_URL + 'listPeople/' + userID)
+              .then((response) => {
+                setListPeople(response.data.result.result);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+        }
+        
       })
       .catch((error) => {
         console.log(error);
@@ -853,7 +861,6 @@ export default function AboutModal(props) {
   function UpdatePerson() {
     let body = {
       user_id: userID,
-      ta_id: '',
       ta_people_id: ta_user_id,
       people_name: taObject.name,
       people_relationship: taObject.relationship,
@@ -889,6 +896,7 @@ export default function AboutModal(props) {
       .post(BASE_URL + 'updatePeople', formData)
       .then((response) => {
         console.log(response.data);
+        toggleConfirmed(true);
         toggleCalled(!called);
       })
       .catch((error) => {
@@ -960,59 +968,67 @@ export default function AboutModal(props) {
               <div style={{ fontWeight: 'bold', marginTop: '10px' }}>
                 Change Icon
               </div>
-              <div
+
+              <Row
                 style={{
                   textAlign: 'left',
                   float: 'left',
+                  marginTop: '1rem',
                   width: '100%',
                 }}
               >
-                <Row
+                <Col
+                  xs={8}
                   style={{
-                    textAlign: 'left',
-                    float: 'left',
-                    marginTop: '1rem',
-                    width: '100%',
+                    textDecoration: 'underline',
+                    paddingLeft: '0',
+                    marginLeft: '0',
+                    width: '70%',
+                    color: '#ffffff',
+                    fontSize: '14px',
                   }}
                 >
-                  <Col
-                    xs={8}
-                    style={{
-                      textDecoration: 'underline',
-                      paddingLeft: '0',
-                      marginLeft: '0',
-                      width: '70%',
-                      color: '#ffffff',
-                      fontSize: '14px',
-                    }}
-                  >
+                  <Row>
                     <div
                       onClick={() => {
                         toggleImage(!showImage);
                       }}
                       style={{
-                        marginLeft: '12px',
+                        marginLeft: '10px',
+                        textDecoration: 'underline',
                         cursor: 'pointer',
                       }}
                     >
                       Upload from Computer
-                    </div>                  
-                  </Col>
-                  <Col xs={4}>
-                    <div>
-                      <img
-                        style={{
-                          height: '5rem',
-                          width: '5rem',
-                          backgroundColor: '#ffffff',
-                          borderRadius: '10px',
-                        }}
-                        src={taObject.pic}
+                    </div>
+                    <div
+                      style={{
+                        
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <TAUploadImage
+                        photoUrl={taPhoto}
+                        setPhotoUrl={setTaPhoto}
+                        currentUserId={taObject.ta_people_id}
                       />
                     </div>
-                  </Col>
-                </Row>
-              </div>
+                  </Row>
+                </Col>
+                <Col xs={4}>
+                  <div>
+                    <img
+                      style={{
+                        height: '5rem',
+                        width: '5rem',
+                        backgroundColor: '#ffffff',
+                        borderRadius: '10px',
+                      }}
+                      src={taPhoto}
+                    />
+                  </div>
+                </Col>
+              </Row>
 
               <br />
               <Row style={{ display: 'block' }}>
@@ -1200,10 +1216,9 @@ export default function AboutModal(props) {
                   marginRight: '5%',
                 }}
                 onClick={() => {
-                  console.log('');
                   if (addPerson) AddPerson();
                   else UpdatePerson();
-                  toggleConfirmed(true);
+                  
                   setPerson(false);
                   setAddPerson(false);
                 }}
@@ -1441,18 +1456,23 @@ export default function AboutModal(props) {
                     toggleUploadImage(!showUploadImage);
                   }}
                   style={{
-                    //marginLeft: '10px',
+                    marginLeft: '10px',
                     textDecoration: 'underline',
                     cursor: 'pointer',
                   }}
                 >
                   Upload from Computer
                 </div>
+                <UploadImage
+                  photoUrl={userPhoto}
+                  setPhotoUrl={setUserPhoto}
+                  currentUserId={userID}
+                />
               </Col>
               <Col xs={4}>
                 {aboutMeObject.have_pic === false ? (
                   <FontAwesomeIcon icon={faImage} size="6x" />
-                ) : aboutMeObject.pic === '' ? (
+                ) : userPhoto === '' ? (
                   <div
                     style={{
                       display: 'block',
@@ -1476,7 +1496,7 @@ export default function AboutModal(props) {
                       objectFit: 'cover',
                       marginBottom: '15px',
                     }}
-                    src={aboutMeObject.pic}
+                    src={userPhoto}
                     alt="Profile"
                   />
                 )}
