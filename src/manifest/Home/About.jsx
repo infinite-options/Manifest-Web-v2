@@ -141,17 +141,18 @@ export default function AboutModal(props) {
   const [taImage, setTaImage] = useState(null);
   const [taPhotoURL, setTaPhotoURL] = useState('');
   const [people, togglePeople] = useState(false);
- const [userPhoto, setUserPhoto] = useState(aboutMeObject.pic);
- const [userImage, setUserImage] = useState(null);
- const [userPhotoURL, setUserPhotoURL] = useState('');
+  const [userPhoto, setUserPhoto] = useState(aboutMeObject.pic);
+  const [userImage, setUserImage] = useState(null);
+  const [userPhotoURL, setUserPhotoURL] = useState('');
 
- const [showUploadImage, toggleUploadImage] = useState(false);
- const [showImage, toggleImage] = useState(false);
+  const [showUploadImage, toggleUploadImage] = useState(false);
+  const [showImage, toggleImage] = useState(false);
   //const userID = loginContext.loginState.curUser;
 
   console.log('currentUser: ' + currentUser);
   //const userID = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1];
 
+  //upload from computer for TA
   const uploadImageModal = () => {
     return (
       <Modal
@@ -196,7 +197,7 @@ export default function AboutModal(props) {
               setTaPhotoURL(URL.createObjectURL(taImage));
               setTaObject({
                 ...taObject,
-                pic: taImage,
+                pic: taPhotoURL,
                 photo_url: '',
               });
               setTaPhoto(taPhotoURL)
@@ -242,6 +243,7 @@ export default function AboutModal(props) {
     );
   };
 
+  //upload from computer for user
   const uploadUserImageModal = () => {
     return (
       <Modal
@@ -810,15 +812,22 @@ export default function AboutModal(props) {
       people_name: taObject.name,
       people_relationship: taObject.relationship,
       people_important: 'TRUE',
-      people_pic: taObject.pic,
+      people_pic: taPhoto,
       //photo_url: userPhoto,,
-      photo_url: '',
+      photo_url: taImage,
       ta_time_zone: taObject.time_zone,
       people_email: taObject.email,
       people_employer: taObject.employer,
       people_phone_number: taObject.phone_number.replace(/\D/g, ''),
     };
     console.log('addPerson.body = ', body);
+    if (typeof body.people_pic === 'string') {
+      body.photo_url = body.people_pic;
+      body.people_pic = '';
+    } else {
+      body.photo_url = '';
+    }
+
     let formData = new FormData();
     Object.entries(body).forEach((entry) => {
       // if (typeof entry[1].name == 'string'){
@@ -869,8 +878,8 @@ export default function AboutModal(props) {
       people_email: taObject.email,
       people_important: 'True',
       people_have_pic: 'False',
-      people_pic: taObject.pic,
-      photo_url: '',
+      people_pic: taPhoto,
+      photo_url: taImage,
       ta_time_zone: taObject.time_zone,
     };
     console.log('updatePerson', body);
@@ -878,6 +887,12 @@ export default function AboutModal(props) {
       body.phone_number = '';
     } else {
       body.phone_number = taObject.phone_number;
+    }
+    if (typeof body.people_pic === 'string') {
+      body.photo_url = body.people_pic;
+      body.people_pic = '';
+    } else {
+      body.photo_url = '';
     }
     let formData = new FormData();
     Object.entries(body).forEach((entry) => {
@@ -1218,7 +1233,6 @@ export default function AboutModal(props) {
                 onClick={() => {
                   if (addPerson) AddPerson();
                   else UpdatePerson();
-                  
                   setPerson(false);
                   setAddPerson(false);
                 }}
