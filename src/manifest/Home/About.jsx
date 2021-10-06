@@ -814,7 +814,7 @@ export default function AboutModal(props) {
       people_important: 'TRUE',
       people_pic: taPhoto,
       //photo_url: userPhoto,,
-      photo_url: taImage,
+      photo_url: '',
       ta_time_zone: taObject.time_zone,
       people_email: taObject.email,
       people_employer: taObject.employer,
