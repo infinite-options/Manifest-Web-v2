@@ -213,6 +213,14 @@ const EditRTS = (props) => {
     }
     console.log('object.id');
     console.log(object.id);
+    let url=''
+    if(object.is_persistent === 'true'){
+      url= 'getgoalsandroutine/'
+    }
+    else{
+      url='getgoals/'
+    }
+    console.log('url', object.is_persistent);
     if (object.id != '') {
       console.log('updateGR');
       console.log('here: About to post changes to db');
@@ -242,7 +250,7 @@ const EditRTS = (props) => {
           });
 
         await axios
-          .get(BASE_URL + 'getgoalsandroutines/' + props.CurrentId)
+          .get(BASE_URL + url + props.CurrentId)
           .then((response) => {
             const temp = [];
 
@@ -319,7 +327,7 @@ const EditRTS = (props) => {
           });
 
         await axios
-          .get(BASE_URL + 'getgoalsandroutines/' + props.CurrentId)
+          .get(BASE_URL + url + props.CurrentId)
           .then((response) => {
             const temp = [];
 

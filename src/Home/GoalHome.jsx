@@ -2,14 +2,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import Button from '@material-ui/core/Button';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { useHistory,} from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import './Home.css';
-import {
-  Container,
-  Row,
-  Col,
-} from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -19,7 +15,7 @@ import {
   faCalendar,
 } from '@fortawesome/free-solid-svg-icons';
 import 'react-datepicker/dist/react-datepicker.css';
-import FirebaseV2 from './Firebasev2';
+import GoalFirebaseV2 from './GoalFirebasev2';
 import DayEvents from './DayEvents';
 import DayRoutines from './DayRoutines.jsx';
 import WeekRoutines from './WeekRoutines.jsx';
@@ -398,7 +394,7 @@ export default function Home(props) {
       },
       location: '',
       is_available: true,
-      is_persistent: true,
+      is_persistent: false,
       is_complete: false,
       is_displayed_today: true,
       is_timed: false,
@@ -484,7 +480,7 @@ export default function Home(props) {
       },
       location: '',
       is_available: true,
-      is_persistent: true,
+      is_persistent: false,
       is_complete: false,
       is_in_progress: false,
       is_displayed_today: true,
@@ -556,7 +552,7 @@ export default function Home(props) {
       numMins: '',
       location: '',
       is_available: true,
-      is_persistent: true,
+      is_persistent: false,
       is_complete: false,
       is_displayed_today: true,
       is_timed: false,
@@ -587,13 +583,13 @@ export default function Home(props) {
       numMins: '',
       location: '',
       is_available: true,
-      is_persistent: true,
+      is_persistent: false,
       is_complete: false,
       is_displayed_today: true,
       is_timed: false,
       is_sublist_available: true,
       photo: '',
-      photo_url:''
+      photo_url: '',
     },
   };
   const initialEditingISState = {
@@ -610,7 +606,7 @@ export default function Home(props) {
       is_complete: false,
       is_timed: false,
       photo: '',
-      photo_url:''
+      photo_url: '',
     },
   };
 
@@ -628,7 +624,7 @@ export default function Home(props) {
       is_complete: false,
       is_timed: false,
       photo: '',
-      photo_url:''
+      photo_url: '',
     },
   };
   const [editingRTS, setEditingRTS] = useState(initialEditingRTSState);
@@ -676,25 +672,26 @@ export default function Home(props) {
 
   var onlyCal =
     !stateValue.showRoutineGoalModal &&
-    // !this.state.showGoalModal &&
-    !stateValue.showRoutineModal;
-  /*----------------------------toggleShowRoutine----------------------------*/
-  function toggleShowRoutine(props) {
+   
+    !stateValue.showGoalModal;
+  /*----------------------------toggleShowGoal----------------------------*/
+  function toggleShowGoal(props) {
     setStateValue((prevState) => {
       return {
         ...prevState,
-        showRoutineModal: !stateValue.showRoutineModal,
-        showGoalModal: false,
+        showRoutineModal: false,
+        showGoalModal: !stateValue.showGoalModal,
         showRoutineGoalModal: false,
       };
     });
-    
-    return stateValue.showRoutineModal;
+    // console.log('Home: Routine Modal', stateValue.showRoutineModal);
+    return stateValue.showGoalModal;
+  }
+  /*----------------------------toggleShowRoutine----------------------------*/
+  function toggleShowRoutine(props) {
+    history.push('/home')
   }
 
-  function toggleShowGoal() {
-    history.push('/goalhome');
-  }
   /*-----------------------------updateEventsArray:-----------------------------*/
   /*updates the array if the month view changes to a different month.*/
 
@@ -887,7 +884,7 @@ export default function Home(props) {
             dateContext={stateValue.dateContext}
             routine_ids={stateValue.routine_ids}
             routines={stateValue.routines}
-            dayRoutineClick={toggleShowRoutine}
+            dayRoutineClick={toggleShowGoal}
             theCurrentUserId={userID}
             originalGoalsAndRoutineArr={stateValue.originalGoalsAndRoutineArr}
             BASE_URL={stateValue.BASE_URL}
@@ -946,7 +943,7 @@ export default function Home(props) {
   causes alarms and excessive rendering */
 
   function GrabFireBaseRoutinesGoalsData() {
-    let url = BASE_URL + 'getgoalsandroutines/';
+    let url = BASE_URL + 'getgoals/';
 
     let routine = [];
     let routine_ids = [];
@@ -1104,7 +1101,7 @@ export default function Home(props) {
               gr.is_displayed_today =
                 x[i].is_displayed_today.toLowerCase() === 'true';
               gr.is_in_progress = x[i].is_in_progress.toLowerCase() === 'true';
-              gr.is_persistent = x[i].is_persistent.toLowerCase() === 'true';
+              gr.is_persistent = x[i].is_persistent.toLowerCase() === 'false';
               gr.is_sublist_available =
                 x[i].is_sublist_available.toLowerCase() === 'true';
               gr.is_timed = x[i].is_timed.toLowerCase() === 'true';
@@ -1384,16 +1381,16 @@ export default function Home(props) {
                   goalDate.getTime() > todayStartDate.getTime() &&
                   goalDate.getTime() < todayEndDate.getTime()
                 ) {
-                  goal_ids.push(gr['id']);
-                  goal.push(gr);
+                  routine_ids.push(gr['id']);
+                  routine.push(gr);
                 }
                 if (
                   stateValue.calendarView === 'Week' &&
                   goalDate.getTime() > startDate.getTime() &&
                   goalDate.getTime() < endDate.getTime()
                 ) {
-                  goal_ids.push(gr['id']);
-                  goal.push(gr);
+                  routine_ids.push(gr['id']);
+                  routine.push(gr);
                 }
                 // if (
                 //   this.state.calendarView === "Month" &&
@@ -1452,18 +1449,11 @@ export default function Home(props) {
 
   const updateFBGR = () => {
     GrabFireBaseRoutinesGoalsData();
-    // props.refresh();
-    // useEffect(() => {
-    // window.location.reload();
-    // }, []);
   };
 
   function ToggleShowAbout() {
     history.push('/about');
   }
-  // if (loginContext.loginState.loggedIn == false) {
-  //   history.push('/')
-  // }
 
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
@@ -1493,7 +1483,7 @@ export default function Home(props) {
     /*----------------------------button
         selection----------------------------*/
     <div>
-      {/* <Navigation userID= {stateValue.currentUserId}/> */}
+     
       <div style={{ height: '3px' }}></div>
       <EditRTSContext.Provider
         value={{
@@ -1522,7 +1512,7 @@ export default function Home(props) {
                 (stateValue.itemToEdit,
                 stateValue.routines,
                 stateValue.originalGoalsAndRoutineArr,
-                stateValue.showRoutineModal,
+                stateValue.showGoalModal,
                 stateValue.itemToEdit.is_available,
                 stateValue.itemToEdit.is_displayed_today,
                 stateValue.itemToEdit.is_complete,
@@ -1567,7 +1557,7 @@ export default function Home(props) {
                     Routines
                   </Button>
 
-                  {stateValue.showRoutineModal ? (
+                  {stateValue.showGoalModal ? (
                     <Button
                       className={classes.buttonSelection}
                       style={{
@@ -1582,7 +1572,7 @@ export default function Home(props) {
                         //console.log(editingRTS)
                       }}
                     >
-                      Add Routine +
+                      Add Goal +
                     </Button>
                   ) : (
                     <div
@@ -1594,7 +1584,7 @@ export default function Home(props) {
 
                   <div style={{ flex: '1' }}>
                     {userID != '' && (
-                      <FirebaseV2
+                      <GoalFirebaseV2
                         theCurrentUserID={userID}
                         sethighLight={setHightlight}
                         highLight={hightlight}
@@ -1620,11 +1610,6 @@ export default function Home(props) {
                       />
                     )}
                   </div>
-                  {/* <div style={{flex:'2'}}
-              >
-               {editingIS.editing ? <EditIS/> : editingATS.editing ? <EditATS/> : editingRTS.editing ? <EditRTS /> : showCalendarView()}
-           
-              </div> */}
                 </div>
                 <div style={{ width: '70%', float: 'left' }}>
                   {editingRTS.editing ? null : (
@@ -1784,7 +1769,7 @@ export default function Home(props) {
                 </div>
               </Box>
               {/* ----------------------------... Navigation--------------------------- */}
-         
+              
               {/* ---------------------------- Navigation--------------------------- */}
             </userContext.Provider>
           </EditISContext.Provider>

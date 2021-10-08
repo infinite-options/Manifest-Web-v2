@@ -38,6 +38,7 @@ export default class WeekRoutines extends Component {
 
   sortRoutines = () => {
     var arr = this.props.routines;
+    console.log(arr)
     var dic = {};
     const tz = {
       timeZone: this.props.timeZone,
