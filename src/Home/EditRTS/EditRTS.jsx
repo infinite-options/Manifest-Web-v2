@@ -215,7 +215,7 @@ const EditRTS = (props) => {
     console.log(object.id);
     let url=''
     if(object.is_persistent === 'true'){
-      url= 'getgoalsandroutine/'
+      url= 'getgoalsandroutines/'
     }
     else{
       url='getgoals/'
