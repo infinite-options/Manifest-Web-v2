@@ -214,13 +214,13 @@ const EditRTS = (props) => {
     console.log('object.id');
     console.log(object.id);
     let url=''
-    if(object.is_persistent === 'true'){
+    if(object.is_persistent == 'True'){
       url= 'getgoalsandroutines/'
     }
     else{
       url='getgoals/'
     }
-    console.log('url', object.is_persistent);
+    console.log('url', url, object.is_persistent);
     if (object.id != '') {
       console.log('updateGR');
       console.log('here: About to post changes to db');
@@ -303,6 +303,12 @@ const EditRTS = (props) => {
       updateDB();
     } else {
       console.log('addGR');
+      if (object.is_persistent) {
+        url = 'getgoalsandroutines/';
+      } else {
+        url = 'getgoals/';
+      }
+      console.log('url', url, typeof(object.is_persistent));
       const addToDB = async () => {
         await axios
           .post(BASE_URL + 'addGR', formData)
