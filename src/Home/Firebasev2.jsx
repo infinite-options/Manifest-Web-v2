@@ -454,7 +454,7 @@ export default function Firebasev2(props) {
                       .then((response) => {
                         toggleCopyModalConfirm(false);
                         axios
-                          .get(BASE_URL + 'getgoalsandroutines/' + currentUser)
+                          .get(BASE_URL + 'getroutines/' + currentUser)
                           .then((response) => {
                             const temp = [];
                             for (
@@ -1957,7 +1957,7 @@ export default function Firebasev2(props) {
                       await axios.post(BASE_URL + 'deleteGR', body);
 
                       await axios
-                        .get(BASE_URL + 'getgoalsandroutines/' + currentUser)
+                        .get(BASE_URL + 'getroutines/' + currentUser)
                         .then((response) => {
                           const temp = [];
                           for (

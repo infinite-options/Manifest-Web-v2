@@ -946,7 +946,7 @@ export default function Home(props) {
   causes alarms and excessive rendering */
 
   function GrabFireBaseRoutinesGoalsData() {
-    let url = BASE_URL + 'getgoalsandroutines/';
+    let url = BASE_URL + 'getroutines/';
 
     let routine = [];
     let routine_ids = [];
