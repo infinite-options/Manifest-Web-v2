@@ -480,7 +480,20 @@ const EditRTS = (props) => {
         marginLeft: '2rem',
         //marginRight: '3rem',
         width: '90%',
-        backgroundColor: '#F57045',
+        //backgroundColor: '#F57045',
+        backgroundColor: (() => {
+          if (editingRTSContext.editingRTS.newItem.is_persistent === true || editingRTSContext.editingRTS.newItem.is_persistent === 'true' || editingRTSContext.editingRTS.newItem.is_persistent === 'True' ) {
+            return '#F57045';
+          } else if (
+            editingRTSContext.editingRTS.newItem.is_persistent === false ||
+            editingRTSContext.editingRTS.newItem.is_persistent === 'false' ||
+            editingRTSContext.editingRTS.newItem.is_persistent === 'False'
+          ) {
+            return '#376DAC';
+          } else {
+            return '#F57045';
+          }
+        })(),
         color: '#ffffff',
       }}
     >
@@ -576,10 +589,11 @@ const EditRTS = (props) => {
           <Container>
             <Row>
               <Col
-                sm={7}
+                //sm={6}
                 style={{
                   margin: '0',
                   padding: '0',
+                  width: '50%',
                 }}
               >
                 <input
@@ -604,7 +618,14 @@ const EditRTS = (props) => {
                   }}
                 />
               </Col>
-              <Col sm={5}>
+              <Col
+                //sm={6}
+                style={{
+                  margin: '0',
+                  paddingRight: '0',
+                  width: '50%',
+                }}
+              >
                 <input
                   style={{
                     width: '100%',
@@ -669,10 +690,11 @@ const EditRTS = (props) => {
           <Container>
             <Row>
               <Col
-                sm={7}
+                //sm={7}
                 style={{
                   margin: '0',
                   padding: '0',
+                  width: '50%',
                 }}
               >
                 <input
@@ -704,7 +726,14 @@ const EditRTS = (props) => {
                   }}
                 />
               </Col>
-              <Col sm={5}>
+              <Col
+                //sm={5}
+                style={{
+                  margin: '0',
+                  paddingRight: '0',
+                  width: '50%',
+                }}
+              >
                 <input
                   style={{
                     width: '100%',

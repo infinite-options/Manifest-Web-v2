@@ -572,7 +572,6 @@ export default class DayRoutines extends Component {
           <Row
             ref={this.hourDisplay}
             noGutters={true}
-            // style={{ overflowY: 'scroll', maxHeight: '1350px' }}
             className="d-flex justify-content-end"
             
           >
