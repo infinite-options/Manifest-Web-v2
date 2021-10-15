@@ -23,13 +23,22 @@ export default function DayEvents(props) {
       arr.push(
         <Row key={'dayEvent' + i}>
           <Col
-          // style={{
-          //   borderTop: '1px solid lavender',
-          //   textAlign: 'left',
-          //   height: stateValue.pxPerHour,
-          // }}
+            style={{
+              // borderTop: '1px solid lavender',
+              // borderRight: '2px solid #b1b3b6',
+              textAlign: 'center',
+              // height: this.state.pxPerHour,
+              height: '55px',
+              // fluid: true,
+            }}
           >
-            {i}:00
+            {i == 0
+              ? '12am'
+              : i == 12
+              ? i + 'pm'
+              : i > 11
+              ? i - 12 + 'pm'
+              : i + 'am'}
           </Col>
         </Row>
       );
@@ -40,15 +49,14 @@ export default function DayEvents(props) {
 
   return (
     <div
-      style={
-        {
-          // padding: '80px',
-          // width: '5%',
-          // borderRadius: '20px',
-          // alignSelf: 'left',
-          // height: '360px',
-        }
-      }
+      style={{
+        margin: '20px',
+        // padding: '80px',
+        // width: '5%',
+        // borderRadius: '20px',
+        // alignSelf: 'left',
+        // height: '360px',
+      }}
     >
       Time:
       {/* <Container style={{}}> */}

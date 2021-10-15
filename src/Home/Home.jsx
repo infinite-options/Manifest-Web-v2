@@ -22,6 +22,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import FirebaseV2 from './Firebasev2';
 import DayEvents from './DayEvents';
 import DayRoutines from './DayRoutines.jsx';
+import DayGoals from './DayGoals.jsx';
 import WeekRoutines from './WeekRoutines.jsx';
 import userContext from './userContext';
 
@@ -161,6 +162,7 @@ export default function Home(props) {
   const [routineID, setRoutineID] = useState('');
   const [actionID, setActionID] = useState('');
   const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
+
   const [getActionsEndPoint, setGetActionsEndPoint] = useState({});
   const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
 
@@ -361,7 +363,7 @@ export default function Home(props) {
     // BASE_URL: getBaseUrl(),
     BASE_URL: BASE_URL,
   });
-  console.log('startObject = ', stateValue.currentUserTimeZone);
+  //console.log('startObject = ', stateValue.currentUserTimeZone);
   const initialEditingRTSState = {
     editing: false,
     type: '',
@@ -593,7 +595,7 @@ export default function Home(props) {
       is_timed: false,
       is_sublist_available: true,
       photo: '',
-      photo_url:''
+      photo_url: '',
     },
   };
   const initialEditingISState = {
@@ -610,7 +612,7 @@ export default function Home(props) {
       is_complete: false,
       is_timed: false,
       photo: '',
-      photo_url:''
+      photo_url: '',
     },
   };
 
@@ -628,7 +630,7 @@ export default function Home(props) {
       is_complete: false,
       is_timed: false,
       photo: '',
-      photo_url:''
+      photo_url: '',
     },
   };
   const [editingRTS, setEditingRTS] = useState(initialEditingRTSState);
@@ -674,10 +676,10 @@ export default function Home(props) {
   //     history.push("/routine");
   //   }
 
-  var onlyCal =
-    !stateValue.showRoutineGoalModal &&
-    // !this.state.showGoalModal &&
-    !stateValue.showRoutineModal;
+  // var onlyCal =
+  //   !stateValue.showRoutineGoalModal &&
+  //   // !this.state.showGoalModal &&
+  //   !stateValue.showRoutineModal;
   /*----------------------------toggleShowRoutine----------------------------*/
   function toggleShowRoutine(props) {
     setStateValue((prevState) => {
@@ -688,86 +690,48 @@ export default function Home(props) {
         showRoutineGoalModal: false,
       };
     });
-    
+
     return stateValue.showRoutineModal;
   }
 
   function toggleShowGoal() {
     history.push('/goalhome');
   }
-  /*-----------------------------updateEventsArray:-----------------------------*/
-  /*updates the array if the month view changes to a different month.*/
-
-  const updateEventsArray = () => {
-    if (stateValue.calendarView === 'Month') {
-      //The month view has transferred to a different month
-      let startObject = stateValue.dateContext.clone();
-      let endObject = stateValue.dateContext.clone();
-      let startDay = startObject.startOf('month');
-      let endDay = endObject.endOf('month');
-
-      let startDate = new Date(startDay.format('MM/DD/YYYY'));
-      console.log('startObject', startDate);
-      let endDate = new Date(endDay.format('MM/DD/YYYY'));
-      startDate.setHours(0, 0, 0);
-      endDate.setHours(23, 59, 59);
-      // getEventsByInterval(
-      //   LocalDateToISOString(startDate, stateValue.currentUserTimeZone),
-      //   LocalDateToISOString(endDate, stateValue.currentUserTimeZone)
-      // );
-    } else if (stateValue.calendarView === 'Day') {
-      let startObject = stateValue.dateContext.clone();
-      let endObject = stateValue.dateContext.clone();
-      // console.log(startObject, endObject);
-      let startDay = startObject.startOf('day');
-      let endDay = endObject.endOf('day');
-      // console.log(startDay, endDay);
-      let startDate = new Date(startDay.format('MM/DD/YYYY'));
-      let endDate = new Date(endDay.format('MM/DD/YYYY'));
-      startDate.setHours(0, 0, 0);
-      endDate.setHours(23, 59, 59);
-    } else if (this.state.calendarView === 'Week') {
-      let startObject = this.state.dateContext.clone();
-      let endObject = this.state.dateContext.clone();
-      let startDay = startObject.startOf('week');
-      let endDay = endObject.endOf('week');
-      let startDate = new Date(startDay.format('MM/DD/YYYY'));
-      let endDate = new Date(endDay.format('MM/DD/YYYY'));
-      startDate.setHours(0, 0, 0);
-      endDate.setHours(23, 59, 59);
-    }
-  };
 
   const nextDay = () => {
-    let newdateContext = Object.assign({}, stateValue.dateContext);
-    // console.log(newdateContext);
-    newdateContext = moment(newdateContext).add(1, 'day');
-    // console.log(newdateContext);
-
+    
+    let dateContext = Object.assign({}, stateValue.todayDateObject);
+    console.log(dateContext);
+    dateContext = moment(dateContext).add(1, 'days');
+    console.log('todayDateObject', dateContext);
+    console.log('todayDateObject', dateContext.toString());
+    //console.log(end.toString());
     setStateValue((prevState) => {
       return {
         ...prevState,
-        dateContext: newdateContext,
+        todayDateObject: dateContext,
         dayEvents: [],
       };
+      //updateEventsArray;
     });
+    console.log(stateValue.dateContext, stateValue.dayEvents);
   };
 
   const prevDay = () => {
-    let dateContext = Object.assign({}, stateValue.dateContext);
-    // console.log(dateContext);
-    dateContext = moment(dateContext).subtract(1, 'day');
-    // console.log(dateContext);
-
+    let dateContext = Object.assign({}, stateValue.todayDateObject);
+    
+    dateContext = moment(dateContext).subtract(1, 'days');
+    console.log('todayDateObject', dateContext);
+    console.log('todayDateObject', dateContext.toString());
     setStateValue((prevState) => {
       return {
         ...prevState,
-        dateContext: dateContext,
+        todayDateObject: dateContext,
         dayEvents: [],
       };
-      // updateEventsArray;
+      //updateEventsArray;
     });
-    // console.log(stateValuedateContext, stateValue.dayEvents);
+    console.log(stateValue.dateContext, stateValue.dayEvents);
   };
 
   const nextWeek = () => {
@@ -830,7 +794,48 @@ export default function Home(props) {
 
     console.log('today timezone curWeek');
   };
+  /*-----------------------------updateEventsArray:-----------------------------*/
+  /*updates the array if the month view changes to a different month.*/
 
+  const updateEventsArray = () => {
+    if (stateValue.calendarView === 'Month') {
+      //The month view has transferred to a different month
+      let startObject = stateValue.dateContext.clone();
+      let endObject = stateValue.dateContext.clone();
+      let startDay = startObject.startOf('month');
+      let endDay = endObject.endOf('month');
+
+      let startDate = new Date(startDay.format('MM/DD/YYYY'));
+      console.log('startObject', startDate);
+      let endDate = new Date(endDay.format('MM/DD/YYYY'));
+      startDate.setHours(0, 0, 0);
+      endDate.setHours(23, 59, 59);
+      // getEventsByInterval(
+      //   LocalDateToISOString(startDate, stateValue.currentUserTimeZone),
+      //   LocalDateToISOString(endDate, stateValue.currentUserTimeZone)
+      // );
+    } else if (stateValue.calendarView === 'Day') {
+      let startObject = stateValue.dateContext.clone();
+      let endObject = stateValue.dateContext.clone();
+      // console.log(startObject, endObject);
+      let startDay = startObject.startOf('day');
+      let endDay = endObject.endOf('day');
+      // console.log(startDay, endDay);
+      let startDate = new Date(startDay.format('MM/DD/YYYY'));
+      let endDate = new Date(endDay.format('MM/DD/YYYY'));
+      startDate.setHours(0, 0, 0);
+      endDate.setHours(23, 59, 59);
+    } else if (this.state.calendarView === 'Week') {
+      let startObject = stateValue.dateContext.clone();
+      let endObject = stateValue.dateContext.clone();
+      let startDay = startObject.startOf('week');
+      let endDay = endObject.endOf('week');
+      let startDate = new Date(startDay.format('MM/DD/YYYY'));
+      let endDate = new Date(endDay.format('MM/DD/YYYY'));
+      startDate.setHours(0, 0, 0);
+      endDate.setHours(23, 59, 59);
+    }
+  };
   const getDate = () => {
     stateValue.dateContext.format('dddd');
 
@@ -855,25 +860,71 @@ export default function Home(props) {
   };
 
   function dayViewAbstracted() {
+    //stateValue.dateContext = today;
+    console.log('Day view', stateValue.dateContext);
     return (
       <div
         style={{
-          borderRadius: '20px',
           background: 'white',
           width: '100%',
-          marginLeft: '10px',
           padding: '20px',
-          border: '1px black solid',
-          boxShadow:
-            '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)',
         }}
       >
+        <Container>
+          <Row style={{ marginTop: '0px' }}>
+            <Col>
+              <div>
+                <FontAwesomeIcon
+                  style={{ marginLeft: '100px', cursor: 'pointer' }}
+                  icon={faChevronLeft}
+                  size="2x"
+                  className="X"
+                  onClick={(e) => {
+                    prevDay();
+                  }}
+                />
+              </div>
+            </Col>
+            <Col
+              md="auto"
+              style={{ textAlign: 'center' }}
+              className="bigfancytext"
+            >
+              <p>
+                {stateValue.todayDateObject.format('dddd')} {stateValue.todayDateObject.get('date')} {getMonth()} {getYear()}{' '}
+              </p>
+              <p
+                style={{ marginBottom: '0', height: '19.5px' }}
+                className="normalfancytext"
+              >
+                {userTime_zone}
+              </p>
+            </Col>
+            <Col>
+              <FontAwesomeIcon
+                // style={{ marginLeft: "50%" }}
+                style={{
+                  float: 'right',
+                  marginRight: '100px',
+                  cursor: 'pointer',
+                }}
+                icon={faChevronRight}
+                size="2x"
+                className="X"
+                onClick={(e) => {
+                  nextDay();
+                }}
+              />
+            </Col>
+          </Row>
+        </Container>
         <Row>
           {/* {console.log("these are the events that are going to be passed in", this.state.dayEvents)} */}
-          {/* {console.log(this.state.dateContext)}
-          {console.log(this.state.dayEvents)} */}
+          {console.log('stateValue.todayDateObject',stateValue.todayDateObject)}
+          {console.log(stateValue.dayEvents)}
+
           <DayEvents
-            dateContext={stateValue.dateContext}
+            dateContext={stateValue.todayDateObject}
             // eventClickDayView={handleDayEventClick}
             // handleDateClick={handleDateClickOnDayView}
             dayEvents={stateValue.dayEvents}
@@ -884,11 +935,21 @@ export default function Home(props) {
           <DayRoutines
             // handleDateClick={this.handleDateClickOnDayView}
             timeZone={userTime_zone}
-            dateContext={stateValue.dateContext}
+            dateContext={stateValue.todayDateObject}
             routine_ids={stateValue.routine_ids}
             routines={stateValue.routines}
             dayRoutineClick={toggleShowRoutine}
             theCurrentUserId={userID}
+            originalGoalsAndRoutineArr={stateValue.originalGoalsAndRoutineArr}
+            BASE_URL={stateValue.BASE_URL}
+          />
+          <DayGoals
+            TimeZone={userTime_zone}
+            dateContext={stateValue.todayDateObject}
+            goal_ids={stateValue.goal_ids}
+            goals={stateValue.goals}
+            dayGoalClick={toggleShowGoal}
+            theCurrentUserId={stateValue.currentUserId}
             originalGoalsAndRoutineArr={stateValue.originalGoalsAndRoutineArr}
             BASE_URL={stateValue.BASE_URL}
           />
@@ -900,6 +961,7 @@ export default function Home(props) {
   const weekViewAbstracted = () => {
     // let startObject = stateValue.dateContext.clone();
     // let startWeek = startObject.startOf('week');
+    console.log('is_persistent', stateValue.routines);
     return (
       <div
         style={{
@@ -946,8 +1008,7 @@ export default function Home(props) {
   causes alarms and excessive rendering */
 
   function GrabFireBaseRoutinesGoalsData() {
-    let url = BASE_URL + 'getroutines/';
-
+    let url = BASE_URL + 'getgoalsandroutines/';
     let routine = [];
     let routine_ids = [];
     let goal = [];
@@ -1410,10 +1471,10 @@ export default function Home(props) {
               return {
                 ...prevState,
                 originalGoalsAndRoutineArr: gr_array,
-                // goals: goal,
+                goals: goal,
                 addNewGRModalShow: false,
                 routine_ids: routine_ids,
-                // goal_ids: goal_ids,
+                goal_ids: goal_ids,
                 routines: routine,
               };
             });
@@ -1430,10 +1491,10 @@ export default function Home(props) {
               return {
                 ...prevState,
                 originalGoalsAndRoutineArr: [],
-                // goals: goal,
+                goals: goal,
                 addNewGRModalShow: false,
                 routine_ids: routine_ids,
-                // goal_ids: goal_ids,
+                goal_ids: goal_ids,
                 routines: routine,
               };
             });
@@ -1637,111 +1698,279 @@ export default function Home(props) {
                       <Container
                         style={{ marginRight: '-10rem', width: '100%' }}
                       >
-                        <Row style={{ margin: '0px', width: '100%' }}>
-                          <Col
-                            style={{
-                              width: '10%',
-                              paddingTop: '1rem',
-                              marginLeft: '7rem',
-                            }}
-                          >
-                            <div>
-                              <FontAwesomeIcon
-                                style={{ cursor: 'pointer' }}
-                                icon={faChevronLeft}
-                                size="2x"
+                        {stateValue.calendarView === 'Week' ? (
+                          <Row style={{ margin: '0px', width: '100%' }}>
+                            <Col
+                              style={{
+                                width: '10%',
+                                paddingTop: '1rem',
+                              }}
+                            >
+                              <Button
+                                style={{
+                                  font: 'normal normal bold 20px SF Pro',
+                                  color: 'white',
+                                }}
                                 onClick={(e) => {
-                                  prevWeek();
+                                  stateValue.calendarView === 'Week'
+                                    ? setStateValue((prevState) => {
+                                        return {
+                                          ...prevState,
+                                          calendarView: 'Day',
+                                        };
+                                      })
+                                    : setStateValue((prevState) => {
+                                        return {
+                                          ...prevState,
+                                          calendarView: 'Week',
+                                        };
+                                      });
+                                }}
+                              >
+                                Week
+                              </Button>
+                            </Col>
+                            <Col
+                              style={{
+                                width: '10%',
+                                paddingTop: '1rem',
+                                marginLeft: '0rem',
+                              }}
+                            >
+                              <div>
+                                <FontAwesomeIcon
+                                  style={{ cursor: 'pointer' }}
+                                  icon={faChevronLeft}
+                                  size="2x"
+                                  onClick={(e) => {
+                                    prevWeek();
+                                  }}
+                                />
+                              </div>
+                            </Col>
+                            <Col
+                              md="auto"
+                              style={{ textAlign: 'center', width: '70%' }}
+                              className="bigfancytext"
+                            >
+                              {0 <= today.format('D') - curDate.format('D') &&
+                              today.format('D') - curDate.format('D') <= 6 &&
+                              today.format('M') - curDate.format('M') === 0 ? (
+                                <p
+                                  style={{
+                                    font: 'normal normal bold 28px SF Pro',
+                                    paddingBottom: '0px',
+                                  }}
+                                >
+                                  {console.log(
+                                    'today timezone',
+                                    today.format('D') - curDate.format('D')
+                                  )}
+                                  {console.log(
+                                    'today timezone',
+                                    today.format('D')
+                                  )}
+                                  {console.log(
+                                    'today timezone',
+                                    curDate.format('D')
+                                  )}
+                                  This week
+                                </p>
+                              ) : (
+                                <p
+                                  style={{
+                                    font: 'normal normal bold 28px SF Pro',
+                                    paddingBottom: '0px',
+                                  }}
+                                >
+                                  Week of {startWeek.format('D MMMM YYYY')}{' '}
+                                </p>
+                              )}
+                              <p
+                                style={{
+                                  font: 'normal normal bold 20px SF Pro',
+                                  paddingBottom: '0px',
+                                }}
+                                className="normalfancytext"
+                              >
+                                {userTime_zone}
+                              </p>
+                            </Col>
+                            <Col
+                              style={{
+                                width: '10%',
+                                textAlign: 'right',
+                                paddingTop: '1rem',
+                              }}
+                            >
+                              <FontAwesomeIcon
+                                // style={{ marginLeft: "50%" }}
+                                style={{ float: 'right', cursor: 'pointer' }}
+                                icon={faChevronRight}
+                                size="2x"
+                                className="X"
+                                onClick={(e) => {
+                                  nextWeek();
                                 }}
                               />
-                            </div>
-                          </Col>
-                          <Col
-                            md="auto"
-                            style={{ textAlign: 'center', width: '70%' }}
-                            className="bigfancytext"
-                          >
-                            {0 <= today.format('D') - curDate.format('D') &&
-                            today.format('D') - curDate.format('D') <= 6 &&
-                            today.format('M') - curDate.format('M') === 0 ? (
-                              <p
-                                style={{
-                                  font: 'normal normal bold 28px SF Pro',
-                                  paddingBottom: '0px',
-                                }}
-                              >
-                                {console.log(
-                                  'today timezone',
-                                  today.format('D') - curDate.format('D')
-                                )}
-                                {console.log(
-                                  'today timezone',
-                                  today.format('D')
-                                )}
-                                {console.log(
-                                  'today timezone',
-                                  curDate.format('D')
-                                )}
-                                This week
-                              </p>
-                            ) : (
-                              <p
-                                style={{
-                                  font: 'normal normal bold 28px SF Pro',
-                                  paddingBottom: '0px',
-                                }}
-                              >
-                                Week of {startWeek.format('D MMMM YYYY')}{' '}
-                              </p>
-                            )}
-                            <p
+                            </Col>
+                            <Col
                               style={{
-                                font: 'normal normal bold 20px SF Pro',
-                                paddingBottom: '0px',
+                                width: '10%',
+                                textAlign: 'right',
+                                paddingTop: '1rem',
+                                marginRight: '1rem',
                               }}
-                              className="normalfancytext"
                             >
-                              {userTime_zone}
-                            </p>
-                          </Col>
-                          <Col
-                            style={{
-                              width: '10%',
-                              textAlign: 'right',
-                              paddingTop: '1rem',
-                            }}
-                          >
-                            <FontAwesomeIcon
-                              // style={{ marginLeft: "50%" }}
-                              style={{ float: 'right', cursor: 'pointer' }}
-                              icon={faChevronRight}
-                              size="2x"
-                              className="X"
-                              onClick={(e) => {
-                                nextWeek();
+                              <FontAwesomeIcon
+                                // style={{ marginLeft: "50%" }}
+                                style={{ float: 'right', cursor: 'pointer' }}
+                                icon={faCalendar}
+                                size="2x"
+                                className="X"
+                                onClick={(e) => {
+                                  curWeek();
+                                }}
+                              />
+                            </Col>
+                          </Row>
+                        ) : (
+                          <Row style={{ margin: '0px', width: '100%' }}>
+                            <Col
+                              style={{
+                                width: '10%',
+                                paddingTop: '1rem',
                               }}
-                            />
-                          </Col>
-                          <Col
-                            style={{
-                              width: '10%',
-                              textAlign: 'right',
-                              paddingTop: '1rem',
-                              marginRight: '1rem',
-                            }}
-                          >
-                            <FontAwesomeIcon
-                              // style={{ marginLeft: "50%" }}
-                              style={{ float: 'right', cursor: 'pointer' }}
-                              icon={faCalendar}
-                              size="2x"
-                              className="X"
-                              onClick={(e) => {
-                                curWeek();
+                            >
+                              <Button
+                                style={{
+                                  font: 'normal normal bold 20px SF Pro',
+                                  color: 'white',
+                                }}
+                                onClick={(e) => {
+                                  stateValue.calendarView === 'Week'
+                                    ? setStateValue((prevState) => {
+                                        return {
+                                          ...prevState,
+                                          calendarView: 'Day',
+                                        };
+                                      })
+                                    : setStateValue((prevState) => {
+                                        return {
+                                          ...prevState,
+                                          calendarView: 'Week',
+                                        };
+                                      });
+                                }}
+                              >
+                                Day
+                              </Button>
+                            </Col>
+                            <Col
+                              style={{
+                                width: '10%',
+                                paddingTop: '1rem',
+                                marginLeft: '0rem',
                               }}
-                            />
-                          </Col>
-                        </Row>
+                            >
+                              <div>
+                                {/* <FontAwesomeIcon
+                                  style={{ cursor: 'pointer' }}
+                                  icon={faChevronLeft}
+                                  size="2x"
+                                  onClick={(e) => {
+                                    prevWeek();
+                                  }}
+                                /> */}
+                              </div>
+                            </Col>
+                            <Col
+                              md="auto"
+                              style={{ textAlign: 'center', width: '70%' }}
+                              className="bigfancytext"
+                            >
+                              {/* {0 <= today.format('D') - curDate.format('D') &&
+                              today.format('D') - curDate.format('D') <= 6 &&
+                              today.format('M') - curDate.format('M') === 0 ? (
+                                <p
+                                  style={{
+                                    font: 'normal normal bold 28px SF Pro',
+                                    paddingBottom: '0px',
+                                  }}
+                                >
+                                  {console.log(
+                                    'today timezone',
+                                    today.format('D') - curDate.format('D')
+                                  )}
+                                  {console.log(
+                                    'today timezone',
+                                    today.format('D')
+                                  )}
+                                  {console.log(
+                                    'today timezone',
+                                    curDate.format('D')
+                                  )}
+                                  This week
+                                </p>
+                              ) : (
+                                <p
+                                  style={{
+                                    font: 'normal normal bold 28px SF Pro',
+                                    paddingBottom: '0px',
+                                  }}
+                                >
+                                  Week of {startWeek.format('D MMMM YYYY')}{' '}
+                                </p>
+                              )}
+                              <p
+                                style={{
+                                  font: 'normal normal bold 20px SF Pro',
+                                  paddingBottom: '0px',
+                                }}
+                                className="normalfancytext"
+                              >
+                                {userTime_zone}
+                              </p> */}
+                            </Col>
+                            <Col
+                              style={{
+                                width: '10%',
+                                textAlign: 'right',
+                                paddingTop: '1rem',
+                              }}
+                            >
+                              {/* <FontAwesomeIcon
+                                // style={{ marginLeft: "50%" }}
+                                style={{ float: 'right', cursor: 'pointer' }}
+                                icon={faChevronRight}
+                                size="2x"
+                                className="X"
+                                onClick={(e) => {
+                                  nextWeek();
+                                }}
+                              /> */}
+                            </Col>
+                            <Col
+                              style={{
+                                width: '10%',
+                                textAlign: 'right',
+                                paddingTop: '1rem',
+                                marginRight: '1rem',
+                              }}
+                            >
+                              {/* <FontAwesomeIcon
+                                // style={{ marginLeft: "50%" }}
+                                style={{ float: 'right', cursor: 'pointer' }}
+                                icon={faCalendar}
+                                size="2x"
+                                className="X"
+                                onClick={(e) => {
+                                  curWeek();
+                                }}
+                              /> */}
+                            </Col>
+                          </Row>
+                        )}
                       </Container>
                     </Box>
                   )}
@@ -1784,7 +2013,7 @@ export default function Home(props) {
                 </div>
               </Box>
               {/* ----------------------------... Navigation--------------------------- */}
-         
+
               {/* ---------------------------- Navigation--------------------------- */}
             </userContext.Provider>
           </EditISContext.Provider>

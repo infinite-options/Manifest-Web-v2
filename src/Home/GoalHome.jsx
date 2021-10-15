@@ -897,6 +897,7 @@ export default function Home(props) {
   const weekViewAbstracted = () => {
     // let startObject = stateValue.dateContext.clone();
     // let startWeek = startObject.startOf('week');
+    console.log('is_persistent', stateValue.routines);
     return (
       <div
         style={{
@@ -906,7 +907,7 @@ export default function Home(props) {
         <Row style={{ float: 'right', width: '100%' }}>
           <WeekRoutines
             timeZone={userTime_zone}
-            routines={stateValue.routines}
+            routines={stateValue.goals}
             dateContext={stateValue.dateContext}
             BASE_URL={stateValue.BASE_URL}
             highLight={hightlight}
@@ -1101,7 +1102,7 @@ export default function Home(props) {
               gr.is_displayed_today =
                 x[i].is_displayed_today.toLowerCase() === 'true';
               gr.is_in_progress = x[i].is_in_progress.toLowerCase() === 'true';
-              gr.is_persistent = x[i].is_persistent.toLowerCase() === 'false';
+              gr.is_persistent = x[i].is_persistent.toLowerCase() === 'true';
               gr.is_sublist_available =
                 x[i].is_sublist_available.toLowerCase() === 'true';
               gr.is_timed = x[i].is_timed.toLowerCase() === 'true';
@@ -1381,16 +1382,16 @@ export default function Home(props) {
                   goalDate.getTime() > todayStartDate.getTime() &&
                   goalDate.getTime() < todayEndDate.getTime()
                 ) {
-                  routine_ids.push(gr['id']);
-                  routine.push(gr);
+                  goal_ids.push(gr['id']);
+                  goal.push(gr);
                 }
                 if (
                   stateValue.calendarView === 'Week' &&
                   goalDate.getTime() > startDate.getTime() &&
                   goalDate.getTime() < endDate.getTime()
                 ) {
-                  routine_ids.push(gr['id']);
-                  routine.push(gr);
+                  goal_ids.push(gr['id']);
+                  goal.push(gr);
                 }
                 // if (
                 //   this.state.calendarView === "Month" &&
@@ -1407,10 +1408,10 @@ export default function Home(props) {
               return {
                 ...prevState,
                 originalGoalsAndRoutineArr: gr_array,
-                // goals: goal,
+                goals: goal,
                 addNewGRModalShow: false,
                 routine_ids: routine_ids,
-                // goal_ids: goal_ids,
+                goal_ids: goal_ids,
                 routines: routine,
               };
             });
@@ -1427,10 +1428,10 @@ export default function Home(props) {
               return {
                 ...prevState,
                 originalGoalsAndRoutineArr: [],
-                // goals: goal,
+                goals: goal,
                 addNewGRModalShow: false,
                 routine_ids: routine_ids,
-                // goal_ids: goal_ids,
+                goal_ids: goal_ids,
                 routines: routine,
               };
             });
@@ -1510,7 +1511,7 @@ export default function Home(props) {
             <userContext.Provider
               value={
                 (stateValue.itemToEdit,
-                stateValue.routines,
+                stateValue.goals,
                 stateValue.originalGoalsAndRoutineArr,
                 stateValue.showGoalModal,
                 stateValue.itemToEdit.is_available,

@@ -1739,10 +1739,20 @@ export default function Firebasev2(props) {
               width: '65%',
               display: 'flex',
               justifyContent: 'space-between',
-              backgroundColor:
-                JSON.stringify(start_time) !== JSON.stringify(end_time)
-                  ? '#FF6B4A'
-                  : '#9b4aff',
+              backgroundColor: (() => {
+                if (
+                  r.is_persistent == 'True' &&
+                  JSON.stringify(start_time) !== JSON.stringify(end_time)
+                ) {
+                  console.log('this has to be block');
+                  return '#FF6B4A';
+                } else if (r.is_persistent == 'False') {
+                  console.log('this has to be none');
+                  return '#376DAC';
+                } else {
+                  return '#9b4aff';
+                }
+              })(),
               boxShadow:
                 '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.09)',
               zIndex: '50%',
