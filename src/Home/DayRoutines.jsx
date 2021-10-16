@@ -284,12 +284,12 @@ export default class DayRoutines extends Component {
                     }
                     onMouseOver={(e) => {
                       e.target.style.color = '#FFFFFF';
-                      e.target.style.background = '#FF6B4A';
+                      e.target.style.background = 'lightslategray';
                       e.target.style.zIndex = '2';
                     }}
                     onMouseOut={(e) => {
                       e.target.style.zIndex = '1';
-                      e.target.style.color = '#000000';
+                      e.target.style.color = '#FFFFFF';
                       e.target.style.background = color;
                     }}
                     key={i}
@@ -324,7 +324,7 @@ export default class DayRoutines extends Component {
             let minDiff = (tempEndTime.getMinutes()-tempStartTime.getMinutes()) / 60;
             let height =
               (hourDiff + minDiff) * this.state.pxPerHourForConversion;
-            let color = "lightslategray";
+            let color = '#ff6b4a';
             sameTimeEventCount++;
             for (let i = 0; i < arr.length; i++) {
               tempStart = arr[i].start_day_and_time;
@@ -352,11 +352,11 @@ export default class DayRoutines extends Component {
             }
             // change color if more than one event in same time.
             if (sameTimeEventCount <= 1) {
-              color = hour % 2 === 0 ? "lightslategray" : "#BBC7D7";
+              color = hour % 2 === 0 ? "#ff6b4a" : "#ff957d";
             } else if (sameTimeEventCount === 2) {
-              color = "#BBC7D7";
+              color = "#ff957d";
             } else {
-              color = "blue";
+              color = '#ff6b4a';
             }
             if (isDisplayedTodayCalculated) {
               let newElement = (
@@ -373,12 +373,12 @@ export default class DayRoutines extends Component {
                   }
                   onMouseOver={(e) => {
                     e.target.style.color = '#FFFFFF';
-                    e.target.style.background = '#FF6B4A';
+                    e.target.style.background = 'lightslategray';
                     e.target.style.zIndex = '2';
                   }}
                   onMouseOut={(e) => {
                     e.target.style.zIndex = '1';
-                    e.target.style.color = '#000000';
+                    e.target.style.color = '#FFFFFF';
                     e.target.style.border = '1px lightgray solid';
                     e.target.style.background = color;
                   }}
@@ -434,12 +434,12 @@ export default class DayRoutines extends Component {
                 }
                 onMouseOver={(e) => {
                   e.target.style.color = '#FFFFFF';
-                  e.target.style.background = '#FF6B4A';
+                  e.target.style.background = 'lightslategray';
                   e.target.style.zIndex = '2';
                 }}
                 onMouseOut={(e) => {
                   e.target.style.zIndex = '1';
-                  e.target.style.color = '#000000';
+                  e.target.style.color = '#FFFFFF';
                   e.target.style.background = color;
                 }}
                 key={i}
@@ -495,12 +495,12 @@ export default class DayRoutines extends Component {
                 }
                 onMouseOver={(e) => {
                   e.target.style.color = '#FFFFFF';
-                  e.target.style.background = '#FF6B4A';
+                  e.target.style.background = 'lightslategray';
                   e.target.style.zIndex = '2';
                 }}
                 onMouseOut={(e) => {
                   e.target.style.zIndex = '1';
-                  e.target.style.color = '#000000';
+                  e.target.style.color = '#FFFFFF';
                   e.target.style.background = color;
                 }}
                 key={i}

@@ -17,6 +17,8 @@ import {
   faChevronLeft,
   faChevronRight,
   faCalendar,
+  faCalendarDay,
+  faCalendarWeek
 } from '@fortawesome/free-solid-svg-icons';
 import 'react-datepicker/dist/react-datepicker.css';
 import FirebaseV2 from './Firebasev2';
@@ -2204,7 +2206,7 @@ function GrabFireBaseRoutinesData() {
                                 paddingTop: '1rem',
                               }}
                             >
-                              <Button
+                              {/* <Button
                                 style={{
                                   font: 'normal normal bold 20px SF Pro',
                                   color: 'white',
@@ -2226,7 +2228,27 @@ function GrabFireBaseRoutinesData() {
                                 }}
                               >
                                 Week
-                              </Button>
+                              </Button> */}
+                              <FontAwesomeIcon
+                                style={{ cursor: 'pointer' }}
+                                icon={faCalendarDay}
+                                size="2x"
+                                onClick={(e) => {
+                                  stateValue.calendarView === 'Week'
+                                    ? setStateValue((prevState) => {
+                                        return {
+                                          ...prevState,
+                                          calendarView: 'Day',
+                                        };
+                                      })
+                                    : setStateValue((prevState) => {
+                                        return {
+                                          ...prevState,
+                                          calendarView: 'Week',
+                                        };
+                                      });
+                                }}
+                              />
                             </Col>
                             <Col
                               style={{
@@ -2340,7 +2362,7 @@ function GrabFireBaseRoutinesData() {
                                 paddingTop: '1rem',
                               }}
                             >
-                              <Button
+                              {/* <Button
                                 style={{
                                   font: 'normal normal bold 20px SF Pro',
                                   color: 'white',
@@ -2362,7 +2384,27 @@ function GrabFireBaseRoutinesData() {
                                 }}
                               >
                                 Day
-                              </Button>
+                              </Button> */}
+                              <FontAwesomeIcon
+                                style={{ cursor: 'pointer' }}
+                                icon={faCalendarWeek}
+                                size="2x"
+                                onClick={(e) => {
+                                  stateValue.calendarView === 'Week'
+                                    ? setStateValue((prevState) => {
+                                        return {
+                                          ...prevState,
+                                          calendarView: 'Day',
+                                        };
+                                      })
+                                    : setStateValue((prevState) => {
+                                        return {
+                                          ...prevState,
+                                          calendarView: 'Week',
+                                        };
+                                      });
+                                }}
+                              />
                             </Col>
                             <Col
                               style={{

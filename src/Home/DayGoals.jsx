@@ -289,12 +289,12 @@ export default class DayGoals extends Component {
                     }
                     onMouseOver={(e) => {
                       e.target.style.color = '#FFFFFF';
-                      e.target.style.background = '#FF6B4A';
+                      e.target.style.background = 'lightslategray';
                       e.target.style.zIndex = '2';
                     }}
                     onMouseOut={(e) => {
                       e.target.style.zIndex = '1';
-                      e.target.style.color = '#000000';
+                      e.target.style.color = '#FFFFFF';
                       e.target.style.background = color;
                     }}
                     key={i}
@@ -330,7 +330,7 @@ export default class DayGoals extends Component {
               (tempEndTime.getMinutes() - tempStartTime.getMinutes()) / 60;
             let height =
               (hourDiff + minDiff) * this.state.pxPerHourForConversion;
-            let color = 'lightslategray';
+            let color = '#376DAC';
 
             sameTimeEventCount++;
             for (let i = 0; i < arr.length; i++) {
@@ -359,9 +359,9 @@ export default class DayGoals extends Component {
             }
             // change color if more than one event in same time.
             if (sameTimeEventCount <= 1) {
-              color = hour % 2 === 0 ? 'lightslategray' : '#BBC7D7';
+              color = hour % 2 === 0 ? '#376DAC' : '#739FD2';
             } else if (sameTimeEventCount === 2) {
-              color = '#BBC7D7';
+              color = '#739FD2';
             } else {
               color = 'blue';
             }
@@ -380,12 +380,12 @@ export default class DayGoals extends Component {
                   }
                   onMouseOver={(e) => {
                     e.target.style.color = '#FFFFFF';
-                    e.target.style.background = '#FF6B4A';
+                    e.target.style.background = 'lightslategray';
                     e.target.style.zIndex = '2';
                   }}
                   onMouseOut={(e) => {
                     e.target.style.zIndex = '1';
-                    e.target.style.color = '#000000';
+                    e.target.style.color = '#FFFFFF';
                     e.target.style.border = '1px lightgray solid';
                     e.target.style.background = color;
                   }}
@@ -441,12 +441,12 @@ export default class DayGoals extends Component {
                 }
                 onMouseOver={(e) => {
                   e.target.style.color = '#FFFFFF';
-                  e.target.style.background = '#FF6B4A';
+                  e.target.style.background = 'lightslategray';
                   e.target.style.zIndex = '2';
                 }}
                 onMouseOut={(e) => {
                   e.target.style.zIndex = '1';
-                  e.target.style.color = '#000000';
+                  e.target.style.color = '#FFFFFF';
                   e.target.style.background = color;
                 }}
                 key={i}
@@ -502,12 +502,12 @@ export default class DayGoals extends Component {
                 }
                 onMouseOver={(e) => {
                   e.target.style.color = '#FFFFFF';
-                  e.target.style.background = '#FF6B4A';
+                  e.target.style.background = 'lightslategray';
                   e.target.style.zIndex = '2';
                 }}
                 onMouseOut={(e) => {
                   e.target.style.zIndex = '1';
-                  e.target.style.color = '#000000';
+                  e.target.style.color = '#FFFFFF';
                   e.target.style.background = color;
                 }}
                 key={i}
