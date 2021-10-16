@@ -5,11 +5,7 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import { useHistory,} from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import './Home.css';
-import {
-  Container,
-  Row,
-  Col,
-} from 'react-bootstrap';
+import { Container,Row,Col} from 'react-bootstrap';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

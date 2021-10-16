@@ -13,11 +13,14 @@ import {
   faChevronLeft,
   faChevronRight,
   faCalendar,
+  faCalendarDay,
+  faCalendarWeek,
 } from '@fortawesome/free-solid-svg-icons';
 import 'react-datepicker/dist/react-datepicker.css';
 import GoalFirebaseV2 from './GoalFirebasev2';
 import DayEvents from './DayEvents';
 import DayRoutines from './DayRoutines.jsx';
+import DayGoals from './DayGoals.jsx';
 import WeekRoutines from './WeekRoutines.jsx';
 import userContext from './userContext';
 
@@ -33,7 +36,7 @@ import LoginContext from '../LoginContext';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-export default function Home(props) {
+export default function GoalHome(props) {
   console.log('In home');
   const loginContext = useContext(LoginContext);
   var selectedUser = loginContext.loginState.curUser;
@@ -157,6 +160,7 @@ export default function Home(props) {
   const [routineID, setRoutineID] = useState('');
   const [actionID, setActionID] = useState('');
   const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
+  const [getRoutinesEndPoint, setGetRoutinesEndPoint] = useState([]);
   const [getActionsEndPoint, setGetActionsEndPoint] = useState({});
   const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
 
@@ -736,35 +740,38 @@ export default function Home(props) {
   };
 
   const nextDay = () => {
-    let newdateContext = Object.assign({}, stateValue.dateContext);
-    // console.log(newdateContext);
-    newdateContext = moment(newdateContext).add(1, 'day');
-    // console.log(newdateContext);
-
+    let dateContext = Object.assign({}, stateValue.todayDateObject);
+    console.log(dateContext);
+    dateContext = moment(dateContext).add(1, 'days');
+    console.log('todayDateObject', dateContext);
+    console.log('todayDateObject', dateContext.toString());
+    //console.log(end.toString());
     setStateValue((prevState) => {
       return {
         ...prevState,
-        dateContext: newdateContext,
+        todayDateObject: dateContext,
         dayEvents: [],
       };
+      //updateEventsArray;
     });
+    console.log(stateValue.dateContext, stateValue.dayEvents);
   };
 
   const prevDay = () => {
-    let dateContext = Object.assign({}, stateValue.dateContext);
-    // console.log(dateContext);
-    dateContext = moment(dateContext).subtract(1, 'day');
-    // console.log(dateContext);
+    let dateContext = Object.assign({}, stateValue.todayDateObject);
 
+    dateContext = moment(dateContext).subtract(1, 'days');
+    console.log('todayDateObject', dateContext);
+    console.log('todayDateObject', dateContext.toString());
     setStateValue((prevState) => {
       return {
         ...prevState,
-        dateContext: dateContext,
+        todayDateObject: dateContext,
         dayEvents: [],
       };
-      // updateEventsArray;
+      //updateEventsArray;
     });
-    // console.log(stateValuedateContext, stateValue.dayEvents);
+    console.log(stateValue.dateContext, stateValue.dayEvents);
   };
 
   const nextWeek = () => {
@@ -855,22 +862,71 @@ export default function Home(props) {
     return (
       <div
         style={{
-          borderRadius: '20px',
           background: 'white',
           width: '100%',
-          marginLeft: '10px',
           padding: '20px',
-          border: '1px black solid',
-          boxShadow:
-            '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)',
         }}
       >
+        <Container>
+          <Row style={{ marginTop: '0px' }}>
+            <Col>
+              <div>
+                <FontAwesomeIcon
+                  style={{ marginLeft: '100px', cursor: 'pointer' }}
+                  icon={faChevronLeft}
+                  size="2x"
+                  className="X"
+                  onClick={(e) => {
+                    prevDay();
+                  }}
+                />
+              </div>
+            </Col>
+            <Col
+              md="auto"
+              style={{ textAlign: 'center' }}
+              className="bigfancytext"
+            >
+              <p>
+                {stateValue.todayDateObject.format('dddd')}{' '}
+                {stateValue.todayDateObject.get('date')} {getMonth()}{' '}
+                {getYear()}{' '}
+              </p>
+              <p
+                style={{ marginBottom: '0', height: '19.5px' }}
+                className="normalfancytext"
+              >
+                {userTime_zone}
+              </p>
+            </Col>
+            <Col>
+              <FontAwesomeIcon
+                // style={{ marginLeft: "50%" }}
+                style={{
+                  float: 'right',
+                  marginRight: '100px',
+                  cursor: 'pointer',
+                }}
+                icon={faChevronRight}
+                size="2x"
+                className="X"
+                onClick={(e) => {
+                  nextDay();
+                }}
+              />
+            </Col>
+          </Row>
+        </Container>
         <Row>
           {/* {console.log("these are the events that are going to be passed in", this.state.dayEvents)} */}
-          {/* {console.log(this.state.dateContext)}
-          {console.log(this.state.dayEvents)} */}
+          {console.log(
+            'stateValue.todayDateObject',
+            stateValue.todayDateObject
+          )}
+          {console.log(stateValue.dayEvents)}
+
           <DayEvents
-            dateContext={stateValue.dateContext}
+            dateContext={stateValue.todayDateObject}
             // eventClickDayView={handleDayEventClick}
             // handleDateClick={handleDateClickOnDayView}
             dayEvents={stateValue.dayEvents}
@@ -881,11 +937,21 @@ export default function Home(props) {
           <DayRoutines
             // handleDateClick={this.handleDateClickOnDayView}
             timeZone={userTime_zone}
-            dateContext={stateValue.dateContext}
+            dateContext={stateValue.todayDateObject}
             routine_ids={stateValue.routine_ids}
             routines={stateValue.routines}
-            dayRoutineClick={toggleShowGoal}
+            dayRoutineClick={toggleShowRoutine}
             theCurrentUserId={userID}
+            originalGoalsAndRoutineArr={stateValue.originalGoalsAndRoutineArr}
+            BASE_URL={stateValue.BASE_URL}
+          />
+          <DayGoals
+            TimeZone={userTime_zone}
+            dateContext={stateValue.todayDateObject}
+            goal_ids={stateValue.goal_ids}
+            goals={stateValue.goals}
+            dayGoalClick={toggleShowGoal}
+            theCurrentUserId={stateValue.currentUserId}
             originalGoalsAndRoutineArr={stateValue.originalGoalsAndRoutineArr}
             BASE_URL={stateValue.BASE_URL}
           />
@@ -944,7 +1010,7 @@ export default function Home(props) {
   causes alarms and excessive rendering */
 
   function GrabFireBaseRoutinesGoalsData() {
-    let url = BASE_URL + 'getgoals/';
+    let url = BASE_URL + 'getgoalsandroutines/';
 
     let routine = [];
     let routine_ids = [];
@@ -1446,6 +1512,508 @@ export default function Home(props) {
     }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
 
+  function GrabFireBaseGoalsData() {
+    let url = BASE_URL + 'getgoals/';
+    let routine = [];
+    let routine_ids = [];
+    let goal = [];
+    let goal_ids = [];
+
+    // console.log('base url ', url);
+    // console.log('base url id ', userID);
+
+    const getTimes = (a_day_time, b_day_time) => {
+      const [a_start_time, b_start_time] = [
+        a_day_time.substring(10, a_day_time.length),
+        b_day_time.substring(10, b_day_time.length),
+      ];
+      const [a_HMS, b_HMS] = [
+        a_start_time
+          .substring(0, a_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+        b_start_time
+          .substring(0, b_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+      ];
+      const [a_parity, b_parity] = [
+        a_start_time
+          .substring(a_start_time.length - 3, a_start_time.length)
+          .replace(/\s{1,}/, ''),
+        b_start_time
+          .substring(b_start_time.length - 3, b_start_time.length)
+          .replace(/\s{1,}/, ''),
+      ];
+
+      let [a_time, b_time] = [0, 0];
+      if (a_parity === 'PM' && a_HMS[0] !== '12') {
+        const hoursInt = parseInt(a_HMS[0]) + 12;
+        a_HMS[0] = `${hoursInt}`;
+      } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+
+      if (b_parity === 'PM' && b_HMS[0] !== '12') {
+        const hoursInt = parseInt(b_HMS[0]) + 12;
+        b_HMS[0] = `${hoursInt}`;
+      } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+
+      for (let i = 0; i < a_HMS.length; i++) {
+        a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+        b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+      }
+
+      return [a_time, b_time];
+    };
+
+    useEffect(() => {
+      if (userID == '') return;
+      console.log(
+        'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
+        [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
+      );
+
+      axios
+        .get(url + userID)
+        .then((response) => {
+          console.log(
+            'here: Obtained user information with res = ',
+            response.data.result
+          );
+          const temp = [];
+
+          for (let i = 0; i < response.data.result.length; i++) {
+            temp.push(response.data.result[i]);
+          }
+          temp.sort((a, b) => {
+            console.log('a = ', a, '\nb = ', b);
+            const [a_start, b_start] = [
+              a.gr_start_day_and_time,
+              b.gr_start_day_and_time,
+            ];
+            console.log('a_start = ', a_start, '\nb_start = ', b_start);
+            const [a_end, b_end] = [
+              a.gr_end_day_and_time,
+              b.gr_end_day_and_time,
+            ];
+
+            const [a_start_time, b_start_time] = getTimes(
+              a.gr_start_day_and_time,
+              b.gr_start_day_and_time
+            );
+            const [a_end_time, b_end_time] = getTimes(
+              a.gr_end_day_and_time,
+              b.gr_end_day_and_time
+            );
+
+            if (a_start_time < b_start_time) return -1;
+            else if (a_start_time > b_start_time) return 1;
+            else {
+              if (a_end_time < b_end_time) return -1;
+              else if (a_end_time > b_end_time) return 1;
+              else {
+                if (a_start < b_start) return -1;
+                else if (a_start > b_start) return 1;
+                else {
+                  if (a_end < b_end) return -1;
+                  else if (a_end > b_end) return 1;
+                }
+              }
+            }
+
+            return 0;
+          });
+
+          console.log('homeTemp = ', temp);
+
+          setGetRoutinesEndPoint(temp);
+          if (response.data.result && response.data.result.length !== 0) {
+            let x = response.data.result;
+            console.log('response', x);
+            x.sort((a, b) => {
+              // console.log(a);
+              // console.log(b);
+              let datetimeA = new Date(
+                a['gr_start_day_and_time'].replace(/-/g, '/')
+              );
+
+              let datetimeB = new Date(
+                b['gr_start_day_and_time'].replace(/-/g, '/')
+              );
+
+              let timeA =
+                new Date(datetimeA).getHours() * 60 +
+                new Date(datetimeA).getMinutes();
+
+              let timeB =
+                new Date(datetimeB).getHours() * 60 +
+                new Date(datetimeB).getMinutes();
+
+              return timeA - timeB;
+            });
+
+            let gr_array = [];
+
+            for (let i = 0; i < x.length; ++i) {
+              let gr = {};
+              gr.audio = '';
+              // gr.available_end_time = "23:59:59";
+              // gr.available_start_time = "00:00:00";
+              gr.datetime_completed = x[i].gr_datetime_completed;
+              gr.datetime_started = x[i].gr_datetime_started;
+              gr.end_day_and_time = x[i].gr_end_day_and_time;
+              gr.expected_completion_time = x[i].expected_completion_time;
+              gr.id = x[i].gr_unique_id;
+
+              gr.is_available = x[i].is_available.toLowerCase() === 'true';
+
+              gr.is_complete = x[i].is_complete.toLowerCase() === 'true';
+              gr.is_displayed_today =
+                x[i].is_displayed_today.toLowerCase() === 'true';
+              gr.is_in_progress = x[i].is_in_progress.toLowerCase() === 'true';
+              gr.is_persistent = x[i].is_persistent.toLowerCase() === 'true';
+              gr.is_sublist_available =
+                x[i].is_sublist_available.toLowerCase() === 'true';
+              gr.is_timed = x[i].is_timed.toLowerCase() === 'true';
+
+              gr.photo = x[i].photo;
+              gr.repeat = x[i].repeat.toLowerCase() === 'true';
+              gr.repeat_type = x[i].repeat_type || 'Never';
+              gr.repeat_ends_on = x[i].repeat_ends_on;
+              gr.repeat_every = x[i].repeat_every;
+              gr.repeat_frequency = x[i].repeat_frequency;
+              gr.repeat_occurences = x[i].repeat_occurences;
+
+              const repeat_week_days_json = JSON.parse(x[i].repeat_week_days);
+
+              if (repeat_week_days_json) {
+                gr.repeat_week_days = {
+                  0:
+                    repeat_week_days_json.Sunday &&
+                    repeat_week_days_json.Sunday.toLowerCase() === 'true'
+                      ? 'Sunday'
+                      : '',
+                  1:
+                    repeat_week_days_json.Monday &&
+                    repeat_week_days_json.Monday.toLowerCase() === 'true'
+                      ? 'Monday'
+                      : '',
+                  2:
+                    repeat_week_days_json.Tuesday &&
+                    repeat_week_days_json.Tuesday.toLowerCase() === 'true'
+                      ? 'Tuesday'
+                      : '',
+                  3:
+                    repeat_week_days_json.Wednesday &&
+                    repeat_week_days_json.Wednesday.toLowerCase() === 'true'
+                      ? 'Wednesday'
+                      : '',
+                  4:
+                    repeat_week_days_json.Thursday &&
+                    repeat_week_days_json.Thursday.toLowerCase() === 'true'
+                      ? 'Thursday'
+                      : '',
+                  5:
+                    repeat_week_days_json.Friday &&
+                    repeat_week_days_json.Friday.toLowerCase() === 'true'
+                      ? 'Friday'
+                      : '',
+                  6:
+                    repeat_week_days_json.Saturday &&
+                    repeat_week_days_json.Saturday.toLowerCase() === 'true'
+                      ? 'Saturday'
+                      : '',
+                };
+              } else {
+                gr.repeat_week_days = {
+                  0: '',
+                  1: '',
+                  2: '',
+                  3: '',
+                  4: '',
+                  5: '',
+                  6: '',
+                };
+              }
+
+              gr.start_day_and_time = x[i].gr_start_day_and_time;
+
+              // const first_notifications = x[i].notifications[0];
+              // const second_notifications = x[i].notifications[1];
+              // console.log(first_notifications);
+              // console.log(second_notifications);
+
+              for (let k = 0; k < x[i].notifications.length; ++k) {
+                const first_notifications = x[i].notifications[k];
+                if (first_notifications) {
+                  if (first_notifications.user_ta_id.charAt(0) === '1') {
+                    gr.user_notifications = {
+                      before: {
+                        is_enabled:
+                          first_notifications.before_is_enable.toLowerCase() ===
+                          'true',
+                        is_set:
+                          first_notifications.before_is_set.toLowerCase() ===
+                          'true',
+                        message: first_notifications.before_message,
+                        time: first_notifications.before_time,
+                      },
+                      during: {
+                        is_enabled:
+                          first_notifications.during_is_enable.toLowerCase() ===
+                          'true',
+                        is_set:
+                          first_notifications.during_is_set.toLowerCase() ===
+                          'true',
+                        message: first_notifications.during_message,
+                        time: first_notifications.during_time,
+                      },
+                      after: {
+                        is_enabled:
+                          first_notifications.after_is_enable.toLowerCase() ===
+                          'true',
+                        is_set: first_notifications.after_is_set.toLowerCase(),
+                        message: first_notifications.after_message,
+                        time: first_notifications.after_time,
+                      },
+                    };
+                  } else if (
+                    first_notifications.user_ta_id.charAt(0) === '2' &&
+                    first_notifications.user_ta_id === stateValue.ta_people_id
+                  ) {
+                    gr.ta_notifications = {
+                      before: {
+                        is_enabled:
+                          first_notifications.before_is_enable.toLowerCase() ===
+                          'true',
+                        is_set:
+                          first_notifications.before_is_set.toLowerCase() ===
+                          'true',
+                        message: first_notifications.before_message,
+                        time: first_notifications.before_time,
+                      },
+                      during: {
+                        is_enabled:
+                          first_notifications.during_is_enable.toLowerCase() ===
+                          'true',
+                        is_set: first_notifications.during_is_set.toLowerCase(),
+                        message: first_notifications.during_message,
+                        time: first_notifications.during_time,
+                      },
+                      after: {
+                        is_enabled:
+                          first_notifications.after_is_enable.toLowerCase() ===
+                          'true',
+                        is_set:
+                          first_notifications.after_is_set.toLowerCase() ===
+                          'true',
+                        message: first_notifications.after_message,
+                        time: first_notifications.after_time,
+                      },
+                    };
+                  }
+                }
+              }
+
+              // if (!gr.ta_notifications) {
+              //   gr.ta_notifications = {
+              //     before: {
+              //       is_enabled: false,
+              //       is_set: false,
+              //       message: "",
+              //       time: gr.user_notifications.before.time,
+              //     },
+              //     during: {
+              //       is_enabled: false,
+              //       is_set: false,
+              //       message: "",
+              //       time: gr.user_notifications.during.time,
+              //     },
+              //     after: {
+              //       is_enabled: false,
+              //       is_set: false,
+              //       message: "",
+              //       time: gr.user_notifications.after.time,
+              //     },
+              //   };
+              // }
+
+              // console.log(gr);
+              gr.title = x[i].gr_title;
+              // console.log('X', x);
+              // console.log(gr.title, gr.is_sublist_available);
+              var goalDate = new Date(gr.end_day_and_time.replace(/-/g, '/'));
+              console.log(goalDate);
+              //For Today Goals and Routines
+              let startOfDay = moment(goalDate);
+              let endOfDay = moment(goalDate);
+              let begOfTheDay = startOfDay.startOf('day');
+              let endOfTheDay = endOfDay.endOf('day');
+              // console.log(begOfTheDay);
+              // console.log(endOfTheDay);
+              let todayStartDate = new Date(begOfTheDay.format('MM/DD/YYYY'));
+              let todayEndDate = new Date(endOfTheDay.format('MM/DD/YYYY'));
+              todayStartDate.setHours(0, 0, 0);
+              todayEndDate.setHours(23, 59, 59);
+              // console.log(todayStartDate);
+              // console.log(todayEndDate);
+              // console.log(goalDate);
+
+              //For Week Goals and Routines
+              let startWeek = moment(goalDate);
+              let endWeek = moment(goalDate);
+              let startDay = startWeek.startOf('week');
+              let endDay = endWeek.endOf('week');
+              // console.log(startDay);
+              // console.log(endDay);
+              let startDate = new Date(startDay.format('MM/DD/YYYY'));
+              let endDate = new Date(endDay.format('MM/DD/YYYY'));
+              startDate.setHours(0, 0, 0);
+              endDate.setHours(23, 59, 59);
+              //console.log(startDate);
+              //console.log(endDate);
+
+              //For Months Goals and Routines
+              let startMonth = moment(goalDate);
+              let endMonth = moment(goalDate);
+              let startDayMonth = startMonth.startOf('month');
+              let endDayMonth = endMonth.endOf('month');
+              // console.log(startDayMonth);
+              // console.log(endDayMonth);
+              let monthStartDate = new Date(startDayMonth.format('MM/DD/YYYY'));
+              let monthEndDate = new Date(endDayMonth.format('MM/DD/YYYY'));
+              monthStartDate.setHours(0, 0, 0);
+              monthEndDate.setHours(23, 59, 59);
+              // console.log(monthStartDate);
+              // console.log(monthEndDate);
+
+              if (
+                stateValue.calendarView === 'Day' &&
+                goalDate.getTime() > todayStartDate.getTime() &&
+                goalDate.getTime() < todayEndDate.getTime()
+              ) {
+                gr_array.push(gr);
+              }
+              if (
+                stateValue.calendarView === 'Week' &&
+                goalDate.getTime() > startDate.getTime() &&
+                goalDate.getTime() < endDate.getTime()
+              ) {
+                gr_array.push(gr);
+              }
+              // if (
+              //   this.state.calendarView === "Month" &&
+              //   goalDate.getTime() > monthStartDate.getTime() &&
+              //   goalDate.getTime() < monthEndDate.getTime()
+              // ) {
+              //   gr_array.push(gr);
+              // }
+              // console.log(gr_array);
+              if (x[i]['is_persistent'].toLowerCase() === 'true') {
+                // routine_ids.push(i);
+
+                // routine_ids.push(x[i]["gr_unique_id"]);
+                // routine.push(x[i]);
+
+                if (
+                  stateValue.calendarView === 'Day' &&
+                  goalDate.getTime() > todayStartDate.getTime() &&
+                  goalDate.getTime() < todayEndDate.getTime()
+                ) {
+                  routine_ids.push(gr['id']);
+                  routine.push(gr);
+                }
+                if (
+                  stateValue.calendarView === 'Week' &&
+                  goalDate.getTime() > todayStartDate.getTime() &&
+                  goalDate.getTime() < todayEndDate.getTime()
+                ) {
+                  routine_ids.push(gr['id']);
+                  routine.push(gr);
+                }
+                // if (
+                //   this.state.calendarView === "Month" &&
+                //   goalDate.getTime() > monthStartDate.getTime() &&
+                //   goalDate.getTime() < monthEndDate.getTime()
+                // ) {
+                //   routine_ids.push(gr["id"]);
+                //   routine.push(gr);
+                // }
+              }
+              if (x[i]['is_persistent'].toLowerCase() === 'false') {
+                // goal_ids.push(i);
+
+                // goal_ids.push(x[i]["gr_unique_id"]);
+                // goal.push(x[i]);
+
+                if (
+                  stateValue.calendarView === 'Day' &&
+                  goalDate.getTime() > todayStartDate.getTime() &&
+                  goalDate.getTime() < todayEndDate.getTime()
+                ) {
+                  goal_ids.push(gr['id']);
+                  goal.push(gr);
+                }
+                if (
+                  stateValue.calendarView === 'Week' &&
+                  goalDate.getTime() > startDate.getTime() &&
+                  goalDate.getTime() < endDate.getTime()
+                ) {
+                  goal_ids.push(gr['id']);
+                  goal.push(gr);
+                }
+                // if (
+                //   this.state.calendarView === "Month" &&
+                //   goalDate.getTime() > monthStartDate.getTime() &&
+                //   goalDate.getTime() < monthEndDate.getTime()
+                // ) {
+                //   goal_ids.push(gr["id"]);
+                //   goal.push(gr);
+                // }
+              }
+            }
+
+            setStateValue((prevState) => {
+              return {
+                ...prevState,
+                originalGoalsAndRoutineArr: gr_array,
+                goals: goal,
+                addNewGRModalShow: false,
+                routine_ids: routine_ids,
+                goal_ids: goal_ids,
+                routines: routine,
+              };
+            });
+            setEditingRTS({
+              ...editingRTS,
+              gr_array: gr_array,
+            });
+            setEditingATS({
+              ...editingATS,
+              gr_array: gr_array,
+            });
+          } else {
+            setStateValue((prevState) => {
+              return {
+                ...prevState,
+                originalGoalsAndRoutineArr: [],
+                goals: goal,
+                addNewGRModalShow: false,
+                routine_ids: routine_ids,
+                goal_ids: goal_ids,
+                routines: routine,
+              };
+            });
+          }
+
+          // console.log(this.state.goals);
+          // console.log(stateValue);
+        })
+        .catch((error) => {
+          console.log('Error in getting goals and routines ' + error);
+        });
+    }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
+  }
+
   useEffect(() => console.log('here: 4'), [editingRTS.editing.item]);
 
   const updateFBGR = () => {
@@ -1484,7 +2052,6 @@ export default function Home(props) {
     /*----------------------------button
         selection----------------------------*/
     <div>
-     
       <div style={{ height: '3px' }}></div>
       <EditRTSContext.Provider
         value={{
@@ -1521,6 +2088,7 @@ export default function Home(props) {
                 stateValue.dateContext,
                 stateValue.closeRoutine,
                 GrabFireBaseRoutinesGoalsData(),
+                GrabFireBaseGoalsData(),
                 stateValue.BASE_URL)
               }
             >
@@ -1600,8 +2168,8 @@ export default function Home(props) {
                         editRTS={editingRTS.editing}
                         editATS={editingATS.editing}
                         editIS={editingIS.editing}
-                        getGoalsEndPoint={getGoalsEndPoint}
-                        setGetGoalsEndPoint={setGetGoalsEndPoint}
+                        getGoalsEndPoint={getRoutinesEndPoint}
+                        setGetGoalsEndPoint={setGetRoutinesEndPoint}
                         getActionsEndPoint={getActionsEndPoint}
                         setGetActionsEndPoint={setGetActionsEndPoint}
                         getStepsEndPoint={getStepsEndPoint}
@@ -1623,111 +2191,319 @@ export default function Home(props) {
                       <Container
                         style={{ marginRight: '-10rem', width: '100%' }}
                       >
-                        <Row style={{ margin: '0px', width: '100%' }}>
-                          <Col
-                            style={{
-                              width: '10%',
-                              paddingTop: '1rem',
-                              marginLeft: '7rem',
-                            }}
-                          >
-                            <div>
+                        {stateValue.calendarView === 'Week' ? (
+                          <Row style={{ margin: '0px', width: '100%' }}>
+                            <Col
+                              style={{
+                                width: '10%',
+                                paddingTop: '1rem',
+                              }}
+                            >
+                              {/* <Button
+                                style={{
+                                  font: 'normal normal bold 20px SF Pro',
+                                  color: 'white',
+                                }}
+                                onClick={(e) => {
+                                  stateValue.calendarView === 'Week'
+                                    ? setStateValue((prevState) => {
+                                        return {
+                                          ...prevState,
+                                          calendarView: 'Day',
+                                        };
+                                      })
+                                    : setStateValue((prevState) => {
+                                        return {
+                                          ...prevState,
+                                          calendarView: 'Week',
+                                        };
+                                      });
+                                }}
+                              >
+                                Week
+                              </Button> */}
                               <FontAwesomeIcon
                                 style={{ cursor: 'pointer' }}
-                                icon={faChevronLeft}
+                                icon={faCalendarDay}
                                 size="2x"
                                 onClick={(e) => {
-                                  prevWeek();
+                                  stateValue.calendarView === 'Week'
+                                    ? setStateValue((prevState) => {
+                                        return {
+                                          ...prevState,
+                                          calendarView: 'Day',
+                                        };
+                                      })
+                                    : setStateValue((prevState) => {
+                                        return {
+                                          ...prevState,
+                                          calendarView: 'Week',
+                                        };
+                                      });
                                 }}
                               />
-                            </div>
-                          </Col>
-                          <Col
-                            md="auto"
-                            style={{ textAlign: 'center', width: '70%' }}
-                            className="bigfancytext"
-                          >
-                            {0 <= today.format('D') - curDate.format('D') &&
-                            today.format('D') - curDate.format('D') <= 6 &&
-                            today.format('M') - curDate.format('M') === 0 ? (
-                              <p
-                                style={{
-                                  font: 'normal normal bold 28px SF Pro',
-                                  paddingBottom: '0px',
-                                }}
-                              >
-                                {console.log(
-                                  'today timezone',
-                                  today.format('D') - curDate.format('D')
-                                )}
-                                {console.log(
-                                  'today timezone',
-                                  today.format('D')
-                                )}
-                                {console.log(
-                                  'today timezone',
-                                  curDate.format('D')
-                                )}
-                                This week
-                              </p>
-                            ) : (
-                              <p
-                                style={{
-                                  font: 'normal normal bold 28px SF Pro',
-                                  paddingBottom: '0px',
-                                }}
-                              >
-                                Week of {startWeek.format('D MMMM YYYY')}{' '}
-                              </p>
-                            )}
-                            <p
+                            </Col>
+                            <Col
                               style={{
-                                font: 'normal normal bold 20px SF Pro',
-                                paddingBottom: '0px',
+                                width: '10%',
+                                paddingTop: '1rem',
+                                marginLeft: '0rem',
                               }}
-                              className="normalfancytext"
                             >
-                              {userTime_zone}
-                            </p>
-                          </Col>
-                          <Col
-                            style={{
-                              width: '10%',
-                              textAlign: 'right',
-                              paddingTop: '1rem',
-                            }}
-                          >
-                            <FontAwesomeIcon
-                              // style={{ marginLeft: "50%" }}
-                              style={{ float: 'right', cursor: 'pointer' }}
-                              icon={faChevronRight}
-                              size="2x"
-                              className="X"
-                              onClick={(e) => {
-                                nextWeek();
+                              <div>
+                                <FontAwesomeIcon
+                                  style={{ cursor: 'pointer' }}
+                                  icon={faChevronLeft}
+                                  size="2x"
+                                  onClick={(e) => {
+                                    prevWeek();
+                                  }}
+                                />
+                              </div>
+                            </Col>
+                            <Col
+                              md="auto"
+                              style={{ textAlign: 'center', width: '70%' }}
+                              className="bigfancytext"
+                            >
+                              {0 <= today.format('D') - curDate.format('D') &&
+                              today.format('D') - curDate.format('D') <= 6 &&
+                              today.format('M') - curDate.format('M') === 0 ? (
+                                <p
+                                  style={{
+                                    font: 'normal normal bold 28px SF Pro',
+                                    paddingBottom: '0px',
+                                  }}
+                                >
+                                  {console.log(
+                                    'today timezone',
+                                    today.format('D') - curDate.format('D')
+                                  )}
+                                  {console.log(
+                                    'today timezone',
+                                    today.format('D')
+                                  )}
+                                  {console.log(
+                                    'today timezone',
+                                    curDate.format('D')
+                                  )}
+                                  This week
+                                </p>
+                              ) : (
+                                <p
+                                  style={{
+                                    font: 'normal normal bold 28px SF Pro',
+                                    paddingBottom: '0px',
+                                  }}
+                                >
+                                  Week of {startWeek.format('D MMMM YYYY')}{' '}
+                                </p>
+                              )}
+                              <p
+                                style={{
+                                  font: 'normal normal bold 20px SF Pro',
+                                  paddingBottom: '0px',
+                                }}
+                                className="normalfancytext"
+                              >
+                                {userTime_zone}
+                              </p>
+                            </Col>
+                            <Col
+                              style={{
+                                width: '10%',
+                                textAlign: 'right',
+                                paddingTop: '1rem',
                               }}
-                            />
-                          </Col>
-                          <Col
-                            style={{
-                              width: '10%',
-                              textAlign: 'right',
-                              paddingTop: '1rem',
-                              marginRight: '1rem',
-                            }}
-                          >
-                            <FontAwesomeIcon
-                              // style={{ marginLeft: "50%" }}
-                              style={{ float: 'right', cursor: 'pointer' }}
-                              icon={faCalendar}
-                              size="2x"
-                              className="X"
-                              onClick={(e) => {
-                                curWeek();
+                            >
+                              <FontAwesomeIcon
+                                // style={{ marginLeft: "50%" }}
+                                style={{ float: 'right', cursor: 'pointer' }}
+                                icon={faChevronRight}
+                                size="2x"
+                                className="X"
+                                onClick={(e) => {
+                                  nextWeek();
+                                }}
+                              />
+                            </Col>
+                            <Col
+                              style={{
+                                width: '10%',
+                                textAlign: 'right',
+                                paddingTop: '1rem',
+                                marginRight: '1rem',
                               }}
-                            />
-                          </Col>
-                        </Row>
+                            >
+                              <FontAwesomeIcon
+                                // style={{ marginLeft: "50%" }}
+                                style={{ float: 'right', cursor: 'pointer' }}
+                                icon={faCalendar}
+                                size="2x"
+                                className="X"
+                                onClick={(e) => {
+                                  curWeek();
+                                }}
+                              />
+                            </Col>
+                          </Row>
+                        ) : (
+                          <Row style={{ margin: '0px', width: '100%' }}>
+                            <Col
+                              style={{
+                                width: '10%',
+                                paddingTop: '1rem',
+                              }}
+                            >
+                              {/* <Button
+                                style={{
+                                  font: 'normal normal bold 20px SF Pro',
+                                  color: 'white',
+                                }}
+                                onClick={(e) => {
+                                  stateValue.calendarView === 'Week'
+                                    ? setStateValue((prevState) => {
+                                        return {
+                                          ...prevState,
+                                          calendarView: 'Day',
+                                        };
+                                      })
+                                    : setStateValue((prevState) => {
+                                        return {
+                                          ...prevState,
+                                          calendarView: 'Week',
+                                        };
+                                      });
+                                }}
+                              >
+                                Day
+                              </Button> */}
+                              <FontAwesomeIcon
+                                style={{ cursor: 'pointer' }}
+                                icon={faCalendarWeek}
+                                size="2x"
+                                onClick={(e) => {
+                                  stateValue.calendarView === 'Week'
+                                    ? setStateValue((prevState) => {
+                                        return {
+                                          ...prevState,
+                                          calendarView: 'Day',
+                                        };
+                                      })
+                                    : setStateValue((prevState) => {
+                                        return {
+                                          ...prevState,
+                                          calendarView: 'Week',
+                                        };
+                                      });
+                                }}
+                              />
+                            </Col>
+                            <Col
+                              style={{
+                                width: '10%',
+                                paddingTop: '1rem',
+                                marginLeft: '0rem',
+                              }}
+                            >
+                              <div>
+                                {/* <FontAwesomeIcon
+                                  style={{ cursor: 'pointer' }}
+                                  icon={faChevronLeft}
+                                  size="2x"
+                                  onClick={(e) => {
+                                    prevWeek();
+                                  }}
+                                /> */}
+                              </div>
+                            </Col>
+                            <Col
+                              md="auto"
+                              style={{ textAlign: 'center', width: '70%' }}
+                              className="bigfancytext"
+                            >
+                              {/* {0 <= today.format('D') - curDate.format('D') &&
+                              today.format('D') - curDate.format('D') <= 6 &&
+                              today.format('M') - curDate.format('M') === 0 ? (
+                                <p
+                                  style={{
+                                    font: 'normal normal bold 28px SF Pro',
+                                    paddingBottom: '0px',
+                                  }}
+                                >
+                                  {console.log(
+                                    'today timezone',
+                                    today.format('D') - curDate.format('D')
+                                  )}
+                                  {console.log(
+                                    'today timezone',
+                                    today.format('D')
+                                  )}
+                                  {console.log(
+                                    'today timezone',
+                                    curDate.format('D')
+                                  )}
+                                  This week
+                                </p>
+                              ) : (
+                                <p
+                                  style={{
+                                    font: 'normal normal bold 28px SF Pro',
+                                    paddingBottom: '0px',
+                                  }}
+                                >
+                                  Week of {startWeek.format('D MMMM YYYY')}{' '}
+                                </p>
+                              )}
+                              <p
+                                style={{
+                                  font: 'normal normal bold 20px SF Pro',
+                                  paddingBottom: '0px',
+                                }}
+                                className="normalfancytext"
+                              >
+                                {userTime_zone}
+                              </p> */}
+                            </Col>
+                            <Col
+                              style={{
+                                width: '10%',
+                                textAlign: 'right',
+                                paddingTop: '1rem',
+                              }}
+                            >
+                              {/* <FontAwesomeIcon
+                                // style={{ marginLeft: "50%" }}
+                                style={{ float: 'right', cursor: 'pointer' }}
+                                icon={faChevronRight}
+                                size="2x"
+                                className="X"
+                                onClick={(e) => {
+                                  nextWeek();
+                                }}
+                              /> */}
+                            </Col>
+                            <Col
+                              style={{
+                                width: '10%',
+                                textAlign: 'right',
+                                paddingTop: '1rem',
+                                marginRight: '1rem',
+                              }}
+                            >
+                              {/* <FontAwesomeIcon
+                                // style={{ marginLeft: "50%" }}
+                                style={{ float: 'right', cursor: 'pointer' }}
+                                icon={faCalendar}
+                                size="2x"
+                                className="X"
+                                onClick={(e) => {
+                                  curWeek();
+                                }}
+                              /> */}
+                            </Col>
+                          </Row>
+                        )}
                       </Container>
                     </Box>
                   )}
@@ -1770,7 +2546,7 @@ export default function Home(props) {
                 </div>
               </Box>
               {/* ----------------------------... Navigation--------------------------- */}
-              
+
               {/* ---------------------------- Navigation--------------------------- */}
             </userContext.Provider>
           </EditISContext.Provider>
