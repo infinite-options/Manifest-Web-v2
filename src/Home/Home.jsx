@@ -936,7 +936,7 @@ export default function Home(props) {
                 // style={{ marginLeft: "50%" }}
                 style={{
                   float: 'right',
-                  marginRight: '100px',
+                  //marginRight: '100px',
                   cursor: 'pointer',
                 }}
                 icon={faChevronRight}
@@ -947,13 +947,7 @@ export default function Home(props) {
                 }}
               />
             </Col>
-            <Col
-              style={{
-                width: '10%',
-                //textAlign: 'right',
-                marginRight: '1rem',
-              }}
-            >
+            <Col >
               <FontAwesomeIcon
                 // style={{ marginLeft: "50%" }}
                 style={{ float: 'right', cursor: 'pointer' }}

@@ -774,6 +774,37 @@ export default function GoalHome(props) {
     console.log(stateValue.dateContext, stateValue.dayEvents);
   };
 
+  const curDay = () => {
+    let dateContext = Object.assign({}, stateValue.todayDateObject);
+    let today = new Date();
+    dateContext = moment(dateContext);
+    console.log('today timezone curDay', dateContext);
+
+    {
+      0 <= today.getDate().toString() - dateContext.format('D') &&
+      today.getDate().toString() - dateContext.format('D') <= 6 &&
+      (today.getMonth() + 1).toString() - dateContext.format('M') === 0
+        ? setStateValue((prevState) => {
+            return {
+              ...prevState,
+              todayDateObject: moment(today),
+              dayEvents: [],
+            };
+            // updateEventsArray();
+          })
+        : setStateValue((prevState) => {
+            return {
+              ...prevState,
+              todayDateObject: moment(today),
+              dayEvents: [],
+            };
+            // updateEventsArray();
+          });
+    }
+
+    console.log('today timezone curDay');
+  };
+
   const nextWeek = () => {
     let dateContext = Object.assign({}, stateValue.dateContext);
     console.log('today timezone nextWeek', dateContext);
@@ -904,7 +935,7 @@ export default function GoalHome(props) {
                 // style={{ marginLeft: "50%" }}
                 style={{
                   float: 'right',
-                  marginRight: '100px',
+                  //marginRight: '100px',
                   cursor: 'pointer',
                 }}
                 icon={faChevronRight}
@@ -912,6 +943,20 @@ export default function GoalHome(props) {
                 className="X"
                 onClick={(e) => {
                   nextDay();
+                }}
+              />
+            </Col>
+            <Col
+              
+            >
+              <FontAwesomeIcon
+                // style={{ marginLeft: "50%" }}
+                style={{ float: 'right', cursor: 'pointer' }}
+                icon={faCalendar}
+                size="2x"
+                className="X"
+                onClick={(e) => {
+                  curDay();
                 }}
               />
             </Col>
