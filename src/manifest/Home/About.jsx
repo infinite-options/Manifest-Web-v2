@@ -1009,7 +1009,7 @@ export default function AboutModal(props) {
                         toggleImage(!showImage);
                       }}
                       style={{
-                        marginLeft: '10px',
+                        marginLeft: '2rem',
                         textDecoration: 'underline',
                         cursor: 'pointer',
                       }}
@@ -1018,7 +1018,7 @@ export default function AboutModal(props) {
                     </div>
                     <div
                       style={{
-                        
+                        marginLeft: '1.2rem',
                         cursor: 'pointer',
                       }}
                     >
@@ -1470,7 +1470,7 @@ export default function AboutModal(props) {
                     toggleUploadImage(!showUploadImage);
                   }}
                   style={{
-                    marginLeft: '10px',
+                    marginLeft: '12px',
                     textDecoration: 'underline',
                     cursor: 'pointer',
                   }}
@@ -1484,7 +1484,7 @@ export default function AboutModal(props) {
                 />
               </Col>
               <Col xs={4}>
-                {aboutMeObject.have_pic === false ? (
+                {/* {aboutMeObject.have_pic === false ? (
                   <FontAwesomeIcon icon={faImage} size="6x" />
                 ) : userPhoto === '' ? (
                   <div
@@ -1500,7 +1500,7 @@ export default function AboutModal(props) {
                       marginBottom: '15px',
                     }}
                   ></div>
-                ) : (
+                ) : ( */}
                   <img
                     style={{
                       display: 'block',
@@ -1508,12 +1508,13 @@ export default function AboutModal(props) {
                       width: '5rem',
                       height: '5rem',
                       objectFit: 'cover',
-                      marginBottom: '15px',
+                      marginTop:'15px'
+                      //marginBottom: '15px',
                     }}
                     src={userPhoto}
                     alt="Profile"
                   />
-                )}
+                {/* )} */}
               </Col>
               {/* <Col style={{ float: 'right' }} xs={4}>
                 <img alt="icon" src={photo} style={{ width: '100%' }} />

@@ -732,6 +732,37 @@ export default function Home(props) {
     console.log(stateValue.dateContext, stateValue.dayEvents);
   };
 
+  const curDay = () => {
+    let dateContext = Object.assign({}, stateValue.todayDateObject);
+    let today = new Date();
+    dateContext = moment(dateContext);
+    console.log('today timezone curDay', dateContext);
+
+    {
+      0 <= today.getDate().toString() - dateContext.format('D') &&
+      today.getDate().toString() - dateContext.format('D') <= 6 &&
+      (today.getMonth() + 1).toString() - dateContext.format('M') === 0
+        ? setStateValue((prevState) => {
+            return {
+              ...prevState,
+              todayDateObject: moment(today),
+              dayEvents: [],
+            };
+            // updateEventsArray();
+          })
+        : setStateValue((prevState) => {
+            return {
+              ...prevState,
+              todayDateObject: moment(today),
+              dayEvents: [],
+            };
+            // updateEventsArray();
+          });
+    }
+
+    console.log('today timezone curDay');
+  };
+
   const nextWeek = () => {
     let dateContext = Object.assign({}, stateValue.dateContext);
     console.log('today timezone nextWeek', dateContext);
@@ -889,7 +920,9 @@ export default function Home(props) {
               className="bigfancytext"
             >
               <p>
-                {stateValue.todayDateObject.format('dddd')} {stateValue.todayDateObject.get('date')} {getMonth()} {getYear()}{' '}
+                {stateValue.todayDateObject.format('dddd')}{' '}
+                {stateValue.todayDateObject.get('date')} {getMonth()}{' '}
+                {getYear()}{' '}
               </p>
               <p
                 style={{ marginBottom: '0', height: '19.5px' }}
@@ -914,11 +947,32 @@ export default function Home(props) {
                 }}
               />
             </Col>
+            <Col
+              style={{
+                width: '10%',
+                //textAlign: 'right',
+                marginRight: '1rem',
+              }}
+            >
+              <FontAwesomeIcon
+                // style={{ marginLeft: "50%" }}
+                style={{ float: 'right', cursor: 'pointer' }}
+                icon={faCalendar}
+                size="2x"
+                className="X"
+                onClick={(e) => {
+                  curDay();
+                }}
+              />
+            </Col>
           </Row>
         </Container>
         <Row>
           {/* {console.log("these are the events that are going to be passed in", this.state.dayEvents)} */}
-          {console.log('stateValue.todayDateObject',stateValue.todayDateObject)}
+          {console.log(
+            'stateValue.todayDateObject',
+            stateValue.todayDateObject
+          )}
           {console.log(stateValue.dayEvents)}
 
           <DayEvents
