@@ -946,9 +946,7 @@ export default function GoalHome(props) {
                 }}
               />
             </Col>
-            <Col
-              
-            >
+            <Col>
               <FontAwesomeIcon
                 // style={{ marginLeft: "50%" }}
                 style={{ float: 'right', cursor: 'pointer' }}
