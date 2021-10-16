@@ -215,6 +215,7 @@ const EditATS = (props) => {
     object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
     object.id = editingATSContext.editingATS.newItem.at_unique_id;
+    object.user_id = props.CurrentId;
     console.log('obj', object);
     object.photo = image;
     delete object.photo;
@@ -557,7 +558,7 @@ const EditATS = (props) => {
                     cursor: 'pointer',
                   }}
                 >
-                  Add icon to library
+                  Upload from Computer
                 </div>
                 <AddIconModal photoUrl={photo} setPhotoUrl={setPhoto} />
                 <UploadImage

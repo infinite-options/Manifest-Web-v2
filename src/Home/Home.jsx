@@ -1,37 +1,23 @@
-import React, { Component, useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-
-import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import AppBar from '@material-ui/core/AppBar';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { useHistory, Redirect } from 'react-router-dom';
-import Typography from '@material-ui/core/Typography';
+import { useHistory,} from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import './Home.css';
-
 import {
-  Form,
   Container,
   Row,
   Col,
-  Modal,
-  Dropdown,
-  DropdownButton,
-  Spinner,
 } from 'react-bootstrap';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
-
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronLeft,
   faChevronRight,
   faCalendar,
-  faImage,
 } from '@fortawesome/free-solid-svg-icons';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import FirebaseV2 from './Firebasev2';
 import DayEvents from './DayEvents';
@@ -553,7 +539,7 @@ export default function Home(props) {
     editing: true,
     type: '',
     id: '',
-    user_id: props.location.state,
+    user_id: userID,
     gr_array: [],
     newItem: {
       audio: '',
@@ -576,7 +562,7 @@ export default function Home(props) {
       is_timed: false,
       is_sublist_available: true,
       photo: '',
-      photo_url:''
+      photo_url: '',
     },
   };
 
@@ -584,7 +570,7 @@ export default function Home(props) {
     editing: false,
     type: '',
     id: '',
-    user_id: props.location.state,
+    user_id: userID,
     gr_array: [],
     newItem: {
       audio: '',
@@ -614,7 +600,7 @@ export default function Home(props) {
     editing: false,
     type: '',
     id: '',
-    user_id: props.location.state,
+    user_id: userID,
     gr_array: [],
     newItem: {
       audio: '',
@@ -632,7 +618,7 @@ export default function Home(props) {
     editing: true,
     type: '',
     id: '',
-    user_id: props.location.state,
+    user_id: userID,
     gr_array: [],
     newItem: {
       audio: '',

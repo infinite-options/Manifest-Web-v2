@@ -14,7 +14,10 @@ const EditRTS = (props) => {
   const [photo, setPhoto] = useState(
     editingRTSContext.editingRTS.newItem.gr_photo
   );
-  console.log('obj. ', props);
+  
+  const user = props.CurrentId
+
+  console.log('obj. ', editingRTSContext.editingRTS.newItem.user_id);
   const tz = {
     timeZone: props.stateValue.currentUserTimeZone,
   };
@@ -88,6 +91,7 @@ const EditRTS = (props) => {
       ...editingRTSContext.editingRTS,
       editing: true,
     });
+    
     // editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing;
     e.stopPropagation();
     let object = { ...editingRTSContext.editingRTS.newItem };
@@ -531,7 +535,7 @@ const EditRTS = (props) => {
                   cursor: 'pointer',
                 }}
               >
-                Add icon to library
+                Upload from Computer
               </div>
               <AddIconModal
                 photoUrl={photo}
@@ -546,7 +550,7 @@ const EditRTS = (props) => {
                 //  parentFunction={setPhotoURLFunction}
                 photoUrl={photo}
                 setPhotoUrl={setPhoto}
-                currentUserId={editingRTSContext.editingRTS.currentUserId}
+                currentUserId={user}
               />
             </Col>
             <Col style={{ float: 'right' }} xs={4}>
@@ -669,14 +673,13 @@ const EditRTS = (props) => {
                   type="date"
                   value={editingRTSContext.editingRTS.newItem.end_day}
                   onChange={(e) => {
-                    console.log('e.tar.val = ', e.target.value);
-                    const year = parseInt(e.target.value.substring(0, 4));
-                    if (
-                      e.target.value <
-                        editingRTSContext.editingRTS.newItem.start_day &&
-                      year > 1000
-                    )
-                      return;
+                    // const year = parseInt(e.target.value.substring(0, 4));
+                    // if (
+                    //   e.target.value <
+                    //     editingRTSContext.editingRTS.newItem.start_day &&
+                    //   year > 1000
+                    // )
+                    //   return;
                     editingRTSContext.setEditingRTS({
                       ...editingRTSContext.editingRTS,
                       newItem: {

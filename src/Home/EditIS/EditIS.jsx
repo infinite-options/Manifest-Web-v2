@@ -46,6 +46,7 @@ const EditIS = (props) => {
     delete object.numMins;
     object.is_id = object.is_unique_id;
     object.at_id = props.actionID.at_unique_id;
+    object.user_id = props.CurrentId;
     delete object.is_unique_id;
     object.is_sequence = object.is_sequence;
     object.is_in_progress = 'False';
@@ -300,7 +301,7 @@ const EditIS = (props) => {
         <Row>
           <Col md={4}>
             <div style={{ display: 'flex' }}>
-              <div >
+              <div>
                 <div style={{ fontWeight: 'bold' }}>Step Name </div>
                 <input
                   style={{
@@ -339,7 +340,7 @@ const EditIS = (props) => {
                 }}
                 onClick={() => setShowUploadImage(!showUploadImage)}
               >
-                Add icon to library
+                Upload from Computer
               </div>
               <AddIconModal
                 photoUrl={photo}
