@@ -896,10 +896,10 @@ export default function Home(props) {
         style={{
           background: 'white',
           width: '100%',
-          padding: '20px',
+          //padding: '20px',
         }}
       >
-        <Container>
+        {/* <Container>
           <Row style={{ marginTop: '0px' }}>
             <Col>
               <div>
@@ -960,7 +960,7 @@ export default function Home(props) {
               />
             </Col>
           </Row>
-        </Container>
+        </Container> */}
         <Row>
           {/* {console.log("these are the events that are going to be passed in", this.state.dayEvents)} */}
           {console.log(
@@ -2458,14 +2458,14 @@ function GrabFireBaseRoutinesData() {
                               }}
                             >
                               <div>
-                                {/* <FontAwesomeIcon
+                                <FontAwesomeIcon
                                   style={{ cursor: 'pointer' }}
                                   icon={faChevronLeft}
                                   size="2x"
                                   onClick={(e) => {
-                                    prevWeek();
+                                    prevDay();
                                   }}
-                                /> */}
+                                />
                               </div>
                             </Col>
                             <Col
@@ -2473,39 +2473,18 @@ function GrabFireBaseRoutinesData() {
                               style={{ textAlign: 'center', width: '70%' }}
                               className="bigfancytext"
                             >
-                              {/* {0 <= today.format('D') - curDate.format('D') &&
-                              today.format('D') - curDate.format('D') <= 6 &&
-                              today.format('M') - curDate.format('M') === 0 ? (
+                              
                                 <p
                                   style={{
                                     font: 'normal normal bold 28px SF Pro',
                                     paddingBottom: '0px',
                                   }}
                                 >
-                                  {console.log(
-                                    'today timezone',
-                                    today.format('D') - curDate.format('D')
-                                  )}
-                                  {console.log(
-                                    'today timezone',
-                                    today.format('D')
-                                  )}
-                                  {console.log(
-                                    'today timezone',
-                                    curDate.format('D')
-                                  )}
-                                  This week
+                                  {stateValue.todayDateObject.format('dddd')}{' '}
+                                  {stateValue.todayDateObject.get('date')}{' '}
+                                  {getMonth()} {getYear()}{' '}
                                 </p>
-                              ) : (
-                                <p
-                                  style={{
-                                    font: 'normal normal bold 28px SF Pro',
-                                    paddingBottom: '0px',
-                                  }}
-                                >
-                                  Week of {startWeek.format('D MMMM YYYY')}{' '}
-                                </p>
-                              )}
+                              
                               <p
                                 style={{
                                   font: 'normal normal bold 20px SF Pro',
@@ -2514,7 +2493,7 @@ function GrabFireBaseRoutinesData() {
                                 className="normalfancytext"
                               >
                                 {userTime_zone}
-                              </p> */}
+                              </p>
                             </Col>
                             <Col
                               style={{
@@ -2523,16 +2502,16 @@ function GrabFireBaseRoutinesData() {
                                 paddingTop: '1rem',
                               }}
                             >
-                              {/* <FontAwesomeIcon
+                              <FontAwesomeIcon
                                 // style={{ marginLeft: "50%" }}
                                 style={{ float: 'right', cursor: 'pointer' }}
                                 icon={faChevronRight}
                                 size="2x"
                                 className="X"
                                 onClick={(e) => {
-                                  nextWeek();
+                                  nextDay();
                                 }}
-                              /> */}
+                              />
                             </Col>
                             <Col
                               style={{
@@ -2542,16 +2521,16 @@ function GrabFireBaseRoutinesData() {
                                 marginRight: '1rem',
                               }}
                             >
-                              {/* <FontAwesomeIcon
+                              <FontAwesomeIcon
                                 // style={{ marginLeft: "50%" }}
                                 style={{ float: 'right', cursor: 'pointer' }}
                                 icon={faCalendar}
                                 size="2x"
                                 className="X"
                                 onClick={(e) => {
-                                  curWeek();
+                                  curDay();
                                 }}
-                              /> */}
+                              />
                             </Col>
                           </Row>
                         )}

@@ -23,7 +23,7 @@ export default class DayRoutines extends Component {
         <Row key={'dayDayViewRoutines' + i}>
           <Col
             style={{
-              borderTop: '1px solid  mistyrose',
+              //borderTop: '1px solid  mistyrose',
               textAlign: 'right',
               //height: this.state.pxPerHour,
               textAlign: 'center',
@@ -562,8 +562,8 @@ export default class DayRoutines extends Component {
     return (
       <div
         style={{
-          margin: '20px',
-          paddingLeft: '20px',
+          //margin: '10px',
+          padding: '10px',
           width: '300px',
         }}
       >
