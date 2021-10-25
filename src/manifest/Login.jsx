@@ -60,7 +60,7 @@ export default function Login() {
       let email = response.profileObj.email;
       let accessToken = response.accessToken;
       let socialId = response.googleId;
-      _socialLoginAttempt(email);
+      _socialLoginAttempt(email, accessToken, socialId, 'GOOGLE');
     }
   };
 
@@ -71,11 +71,11 @@ export default function Login() {
       let email = response.email;
       let accessToken = response.accessToken;
       let socialId = response.id;
-      _socialLoginAttempt(email);
+      _socialLoginAttempt(email, accessToken, socialId, 'FACEBOOK');
     }
   };
 
-  const _socialLoginAttempt = (email) => {
+  const _socialLoginAttempt = (email, accessToken, socialId, platform) => {
     axios
       .get(BASE_URL + 'loginSocialTA/' + email)
       .then((res) => {

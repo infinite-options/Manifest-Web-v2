@@ -87,6 +87,7 @@ export default function SocialSignUp({ ...props }) {
           last_name: newLName,
           phone_number: newPhoneNumber,
           employer: newEmployer,
+          ta_time_zone: '',
         },
         {
           headers: {

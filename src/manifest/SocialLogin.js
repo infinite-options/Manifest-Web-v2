@@ -28,13 +28,13 @@ function SocialLogin(props) {
  
 
   const responseGoogle = (response) => {
-    console.log('response', response.profileObj.email);
+    console.log('response', response);
     if (response.profileObj) {
       console.log('Google login successful');
       let email = response.profileObj.email;
       let accessToken = response.accessToken;
       let socialId = response.googleId;
-      _socialLoginAttempt(email);
+      _socialLoginAttempt(email,accessToken,socialId);
     } else {
       console.log('Google login unsuccessful');
     }
@@ -47,13 +47,13 @@ function SocialLogin(props) {
       let email = response.email;
       let accessToken = response.accessToken;
       let socialId = response.id;
-      _socialLoginAttempt(email);
+      _socialLoginAttempt(email,accessToken,socialId);
     } else {
       console.log('Facebook login unsuccessful');
     }
   };
 
-  const _socialLoginAttempt = (email) => {
+  const _socialLoginAttempt = (email,accessToken,socialId) => {
     axios
       .get(
         BASE_URL + 'loginSocialTA/' +
@@ -129,18 +129,16 @@ function SocialLogin(props) {
   };
   const handleSocialSignUpDone = () => {
     axios
-      .post(
-        BASE_URL + 'addNewSocialTA',
-        {
-          email_id: newEmail,
-          first_name: newFName,
-          last_name: newLName,
-          phone_number: newPhoneNumber,
-          employer: newEmployer,
-        }
-      )
+      .post(BASE_URL + 'addNewSocialTA', {
+        email_id: newEmail,
+        first_name: newFName,
+        last_name: newLName,
+        phone_number: newPhoneNumber,
+        employer: newEmployer,
+        ta_time_zone: '',
+      })
       .then((response) => {
-        console.log(response.data);
+        console.log(response);
         hideSignUp();
       })
       .catch((error) => {

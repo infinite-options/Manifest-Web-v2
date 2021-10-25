@@ -17,7 +17,7 @@ import {
   faCalendarWeek,
 } from '@fortawesome/free-solid-svg-icons';
 import 'react-datepicker/dist/react-datepicker.css';
-import GoalFirebaseV2 from './GoalFirebasev2';
+import FirebaseV2 from './Firebasev2';
 import DayEvents from './DayEvents';
 import DayRoutines from './DayRoutines.jsx';
 import DayGoals from './DayGoals.jsx';
@@ -33,11 +33,12 @@ import EditATS from './EditATS/EditATS';
 import EditISContext from './EditIS/EditISContext';
 import EditIS from './EditIS/EditIS';
 import LoginContext from '../LoginContext';
+//import ApiCalendar from 'react-google-calendar-api';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-export default function GoalHome(props) {
-  console.log('In home');
+export default function Events(props) {
+  console.log('In events');
   const loginContext = useContext(LoginContext);
   var selectedUser = loginContext.loginState.curUser;
   console.log(loginContext.loginState.curUser);
@@ -361,7 +362,7 @@ export default function GoalHome(props) {
     // BASE_URL: getBaseUrl(),
     BASE_URL: BASE_URL,
   });
-  console.log('startObject = ', stateValue.currentUserTimeZone);
+  //console.log('startObject = ', stateValue.currentUserTimeZone);
   const initialEditingRTSState = {
     editing: false,
     type: '',
@@ -398,7 +399,7 @@ export default function GoalHome(props) {
       },
       location: '',
       is_available: true,
-      is_persistent: false,
+      is_persistent: true,
       is_complete: false,
       is_displayed_today: true,
       is_timed: false,
@@ -484,7 +485,7 @@ export default function GoalHome(props) {
       },
       location: '',
       is_available: true,
-      is_persistent: false,
+      is_persistent: true,
       is_complete: false,
       is_in_progress: false,
       is_displayed_today: true,
@@ -556,7 +557,7 @@ export default function GoalHome(props) {
       numMins: '',
       location: '',
       is_available: true,
-      is_persistent: false,
+      is_persistent: true,
       is_complete: false,
       is_displayed_today: true,
       is_timed: false,
@@ -587,7 +588,7 @@ export default function GoalHome(props) {
       numMins: '',
       location: '',
       is_available: true,
-      is_persistent: false,
+      is_persistent: true,
       is_complete: false,
       is_displayed_today: true,
       is_timed: false,
@@ -674,74 +675,31 @@ export default function GoalHome(props) {
   //     history.push("/routine");
   //   }
 
-  var onlyCal =
-    !stateValue.showRoutineGoalModal &&
-   
-    !stateValue.showGoalModal;
-  /*----------------------------toggleShowGoal----------------------------*/
-  function toggleShowGoal(props) {
+  // var onlyCal =
+  //   !stateValue.showRoutineGoalModal &&
+  //   // !this.state.showGoalModal &&
+  //   !stateValue.showRoutineModal;
+  /*----------------------------toggleShowRoutine----------------------------*/
+  function toggleShowEvents(props) {
     setStateValue((prevState) => {
       return {
         ...prevState,
-        showRoutineModal: false,
-        showGoalModal: !stateValue.showGoalModal,
+        showRoutineModal: !stateValue.showRoutineModal,
+        showGoalModal: false,
         showRoutineGoalModal: false,
       };
     });
-    // console.log('Home: Routine Modal', stateValue.showRoutineModal);
-    return stateValue.showGoalModal;
+
+    return stateValue.showRoutineModal;
   }
-  /*----------------------------toggleShowRoutine----------------------------*/
-  function toggleShowEvents(props) {
-    history.push('/events')
+
+  function toggleShowGoal() {
+    history.push('/goalhome');
   }
-  function toggleShowRoutine(props) {
+
+  function toggleShowRoutine() {
     history.push('/home');
   }
-
-
-  /*-----------------------------updateEventsArray:-----------------------------*/
-  /*updates the array if the month view changes to a different month.*/
-
-  const updateEventsArray = () => {
-    if (stateValue.calendarView === 'Month') {
-      //The month view has transferred to a different month
-      let startObject = stateValue.dateContext.clone();
-      let endObject = stateValue.dateContext.clone();
-      let startDay = startObject.startOf('month');
-      let endDay = endObject.endOf('month');
-
-      let startDate = new Date(startDay.format('MM/DD/YYYY'));
-      console.log('startObject', startDate);
-      let endDate = new Date(endDay.format('MM/DD/YYYY'));
-      startDate.setHours(0, 0, 0);
-      endDate.setHours(23, 59, 59);
-      // getEventsByInterval(
-      //   LocalDateToISOString(startDate, stateValue.currentUserTimeZone),
-      //   LocalDateToISOString(endDate, stateValue.currentUserTimeZone)
-      // );
-    } else if (stateValue.calendarView === 'Day') {
-      let startObject = stateValue.dateContext.clone();
-      let endObject = stateValue.dateContext.clone();
-      // console.log(startObject, endObject);
-      let startDay = startObject.startOf('day');
-      let endDay = endObject.endOf('day');
-      // console.log(startDay, endDay);
-      let startDate = new Date(startDay.format('MM/DD/YYYY'));
-      let endDate = new Date(endDay.format('MM/DD/YYYY'));
-      startDate.setHours(0, 0, 0);
-      endDate.setHours(23, 59, 59);
-    } else if (this.state.calendarView === 'Week') {
-      let startObject = this.state.dateContext.clone();
-      let endObject = this.state.dateContext.clone();
-      let startDay = startObject.startOf('week');
-      let endDay = endObject.endOf('week');
-      let startDate = new Date(startDay.format('MM/DD/YYYY'));
-      let endDate = new Date(endDay.format('MM/DD/YYYY'));
-      startDate.setHours(0, 0, 0);
-      endDate.setHours(23, 59, 59);
-    }
-  };
 
   const nextDay = () => {
     let dateContext = Object.assign({}, stateValue.todayDateObject);
@@ -869,7 +827,48 @@ export default function GoalHome(props) {
 
     console.log('today timezone curWeek');
   };
+  /*-----------------------------updateEventsArray:-----------------------------*/
+  /*updates the array if the month view changes to a different month.*/
 
+  const updateEventsArray = () => {
+    if (stateValue.calendarView === 'Month') {
+      //The month view has transferred to a different month
+      let startObject = stateValue.dateContext.clone();
+      let endObject = stateValue.dateContext.clone();
+      let startDay = startObject.startOf('month');
+      let endDay = endObject.endOf('month');
+
+      let startDate = new Date(startDay.format('MM/DD/YYYY'));
+      console.log('startObject', startDate);
+      let endDate = new Date(endDay.format('MM/DD/YYYY'));
+      startDate.setHours(0, 0, 0);
+      endDate.setHours(23, 59, 59);
+      // getEventsByInterval(
+      //   LocalDateToISOString(startDate, stateValue.currentUserTimeZone),
+      //   LocalDateToISOString(endDate, stateValue.currentUserTimeZone)
+      // );
+    } else if (stateValue.calendarView === 'Day') {
+      let startObject = stateValue.dateContext.clone();
+      let endObject = stateValue.dateContext.clone();
+      // console.log(startObject, endObject);
+      let startDay = startObject.startOf('day');
+      let endDay = endObject.endOf('day');
+      // console.log(startDay, endDay);
+      let startDate = new Date(startDay.format('MM/DD/YYYY'));
+      let endDate = new Date(endDay.format('MM/DD/YYYY'));
+      startDate.setHours(0, 0, 0);
+      endDate.setHours(23, 59, 59);
+    } else if (this.state.calendarView === 'Week') {
+      let startObject = stateValue.dateContext.clone();
+      let endObject = stateValue.dateContext.clone();
+      let startDay = startObject.startOf('week');
+      let endDay = endObject.endOf('week');
+      let startDate = new Date(startDay.format('MM/DD/YYYY'));
+      let endDate = new Date(endDay.format('MM/DD/YYYY'));
+      startDate.setHours(0, 0, 0);
+      endDate.setHours(23, 59, 59);
+    }
+  };
   const getDate = () => {
     stateValue.dateContext.format('dddd');
 
@@ -894,13 +893,14 @@ export default function GoalHome(props) {
   };
 
   function dayViewAbstracted() {
+    //stateValue.dateContext = today;
+    console.log('Day view', stateValue.dateContext);
     return (
       <div
         style={{
           background: 'white',
           width: '100%',
           //padding: '20px',
-          margin:'0px'
         }}
       >
         {/* <Container>
@@ -951,7 +951,7 @@ export default function GoalHome(props) {
                 }}
               />
             </Col>
-            <Col>
+            <Col >
               <FontAwesomeIcon
                 // style={{ marginLeft: "50%" }}
                 style={{ float: 'right', cursor: 'pointer' }}
@@ -1021,7 +1021,7 @@ export default function GoalHome(props) {
         <Row style={{ float: 'right', width: '100%' }}>
           <WeekRoutines
             timeZone={userTime_zone}
-            routines={stateValue.goals}
+            routines={stateValue.routines}
             dateContext={stateValue.dateContext}
             BASE_URL={stateValue.BASE_URL}
             highLight={hightlight}
@@ -1059,7 +1059,6 @@ export default function GoalHome(props) {
 
   function GrabFireBaseRoutinesGoalsData() {
     let url = BASE_URL + 'getgoalsandroutines/';
-
     let routine = [];
     let routine_ids = [];
     let goal = [];
@@ -1560,58 +1559,21 @@ export default function GoalHome(props) {
     }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
 
-  function GrabFireBaseGoalsData() {
-    let url = BASE_URL + 'getgoals/';
-    let routine = [];
-    let routine_ids = [];
-    let goal = [];
-    let goal_ids = [];
-
-    // console.log('base url ', url);
-    // console.log('base url id ', userID);
-
-    const getTimes = (a_day_time, b_day_time) => {
-      const [a_start_time, b_start_time] = [
-        a_day_time.substring(10, a_day_time.length),
-        b_day_time.substring(10, b_day_time.length),
-      ];
-      const [a_HMS, b_HMS] = [
-        a_start_time
-          .substring(0, a_start_time.length - 3)
-          .replace(/\s{1,}/, '')
-          .split(':'),
-        b_start_time
-          .substring(0, b_start_time.length - 3)
-          .replace(/\s{1,}/, '')
-          .split(':'),
-      ];
-      const [a_parity, b_parity] = [
-        a_start_time
-          .substring(a_start_time.length - 3, a_start_time.length)
-          .replace(/\s{1,}/, ''),
-        b_start_time
-          .substring(b_start_time.length - 3, b_start_time.length)
-          .replace(/\s{1,}/, ''),
-      ];
-
-      let [a_time, b_time] = [0, 0];
-      if (a_parity === 'PM' && a_HMS[0] !== '12') {
-        const hoursInt = parseInt(a_HMS[0]) + 12;
-        a_HMS[0] = `${hoursInt}`;
-      } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
-
-      if (b_parity === 'PM' && b_HMS[0] !== '12') {
-        const hoursInt = parseInt(b_HMS[0]) + 12;
-        b_HMS[0] = `${hoursInt}`;
-      } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
-
-      for (let i = 0; i < a_HMS.length; i++) {
-        a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
-        b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
-      }
-
-      return [a_time, b_time];
+    function GrabFireBaseRoutinesData() {
+    let url = BASE_URL + 'calenderEvents/';
+    let start= '2021-10-21T00:00:00-07:00';
+    let end = '2021-10-21T23:59:59-07:00';
+    let id = stateValue.currentUserId;
+    let body = {
+      id: stateValue.currentUserId,
+      start: '2021-10-21T00:00:00-07:00',
+      end: '2021-10-21T23:59:59-07:00',
     };
+    console.log(
+      'here base url ',
+      url + id.toString() + ',' + start.toString() + ',' + end.toString()
+    );
+    console.log('base url id ', body);
 
     useEffect(() => {
       if (userID == '') return;
@@ -1621,456 +1583,33 @@ export default function GoalHome(props) {
       );
 
       axios
-        .get(url + userID)
+        .post(
+          url + id.toString() + ',' + start.toString() + ',' + end.toString()
+        )
         .then((response) => {
-          console.log(
-            'here: Obtained user information with res = ',
-            response.data.result
-          );
-          const temp = [];
-
-          for (let i = 0; i < response.data.result.length; i++) {
-            temp.push(response.data.result[i]);
-          }
-          temp.sort((a, b) => {
-            console.log('a = ', a, '\nb = ', b);
-            const [a_start, b_start] = [
-              a.gr_start_day_and_time,
-              b.gr_start_day_and_time,
-            ];
-            console.log('a_start = ', a_start, '\nb_start = ', b_start);
-            const [a_end, b_end] = [
-              a.gr_end_day_and_time,
-              b.gr_end_day_and_time,
-            ];
-
-            const [a_start_time, b_start_time] = getTimes(
-              a.gr_start_day_and_time,
-              b.gr_start_day_and_time
-            );
-            const [a_end_time, b_end_time] = getTimes(
-              a.gr_end_day_and_time,
-              b.gr_end_day_and_time
-            );
-
-            if (a_start_time < b_start_time) return -1;
-            else if (a_start_time > b_start_time) return 1;
-            else {
-              if (a_end_time < b_end_time) return -1;
-              else if (a_end_time > b_end_time) return 1;
-              else {
-                if (a_start < b_start) return -1;
-                else if (a_start > b_start) return 1;
-                else {
-                  if (a_end < b_end) return -1;
-                  else if (a_end > b_end) return 1;
-                }
-              }
-            }
-
-            return 0;
-          });
-
-          console.log('homeTemp = ', temp);
-
-          setGetRoutinesEndPoint(temp);
-          if (response.data.result && response.data.result.length !== 0) {
-            let x = response.data.result;
-            console.log('response', x);
-            x.sort((a, b) => {
-              // console.log(a);
-              // console.log(b);
-              let datetimeA = new Date(
-                a['gr_start_day_and_time'].replace(/-/g, '/')
-              );
-
-              let datetimeB = new Date(
-                b['gr_start_day_and_time'].replace(/-/g, '/')
-              );
-
-              let timeA =
-                new Date(datetimeA).getHours() * 60 +
-                new Date(datetimeA).getMinutes();
-
-              let timeB =
-                new Date(datetimeB).getHours() * 60 +
-                new Date(datetimeB).getMinutes();
-
-              return timeA - timeB;
-            });
-
-            let gr_array = [];
-
-            for (let i = 0; i < x.length; ++i) {
-              let gr = {};
-              gr.audio = '';
-              // gr.available_end_time = "23:59:59";
-              // gr.available_start_time = "00:00:00";
-              gr.datetime_completed = x[i].gr_datetime_completed;
-              gr.datetime_started = x[i].gr_datetime_started;
-              gr.end_day_and_time = x[i].gr_end_day_and_time;
-              gr.expected_completion_time = x[i].expected_completion_time;
-              gr.id = x[i].gr_unique_id;
-
-              gr.is_available = x[i].is_available.toLowerCase() === 'true';
-
-              gr.is_complete = x[i].is_complete.toLowerCase() === 'true';
-              gr.is_displayed_today =
-                x[i].is_displayed_today.toLowerCase() === 'true';
-              gr.is_in_progress = x[i].is_in_progress.toLowerCase() === 'true';
-              gr.is_persistent = x[i].is_persistent.toLowerCase() === 'true';
-              gr.is_sublist_available =
-                x[i].is_sublist_available.toLowerCase() === 'true';
-              gr.is_timed = x[i].is_timed.toLowerCase() === 'true';
-
-              gr.photo = x[i].photo;
-              gr.repeat = x[i].repeat.toLowerCase() === 'true';
-              gr.repeat_type = x[i].repeat_type || 'Never';
-              gr.repeat_ends_on = x[i].repeat_ends_on;
-              gr.repeat_every = x[i].repeat_every;
-              gr.repeat_frequency = x[i].repeat_frequency;
-              gr.repeat_occurences = x[i].repeat_occurences;
-
-              const repeat_week_days_json = JSON.parse(x[i].repeat_week_days);
-
-              if (repeat_week_days_json) {
-                gr.repeat_week_days = {
-                  0:
-                    repeat_week_days_json.Sunday &&
-                    repeat_week_days_json.Sunday.toLowerCase() === 'true'
-                      ? 'Sunday'
-                      : '',
-                  1:
-                    repeat_week_days_json.Monday &&
-                    repeat_week_days_json.Monday.toLowerCase() === 'true'
-                      ? 'Monday'
-                      : '',
-                  2:
-                    repeat_week_days_json.Tuesday &&
-                    repeat_week_days_json.Tuesday.toLowerCase() === 'true'
-                      ? 'Tuesday'
-                      : '',
-                  3:
-                    repeat_week_days_json.Wednesday &&
-                    repeat_week_days_json.Wednesday.toLowerCase() === 'true'
-                      ? 'Wednesday'
-                      : '',
-                  4:
-                    repeat_week_days_json.Thursday &&
-                    repeat_week_days_json.Thursday.toLowerCase() === 'true'
-                      ? 'Thursday'
-                      : '',
-                  5:
-                    repeat_week_days_json.Friday &&
-                    repeat_week_days_json.Friday.toLowerCase() === 'true'
-                      ? 'Friday'
-                      : '',
-                  6:
-                    repeat_week_days_json.Saturday &&
-                    repeat_week_days_json.Saturday.toLowerCase() === 'true'
-                      ? 'Saturday'
-                      : '',
-                };
-              } else {
-                gr.repeat_week_days = {
-                  0: '',
-                  1: '',
-                  2: '',
-                  3: '',
-                  4: '',
-                  5: '',
-                  6: '',
-                };
-              }
-
-              gr.start_day_and_time = x[i].gr_start_day_and_time;
-
-              // const first_notifications = x[i].notifications[0];
-              // const second_notifications = x[i].notifications[1];
-              // console.log(first_notifications);
-              // console.log(second_notifications);
-
-              for (let k = 0; k < x[i].notifications.length; ++k) {
-                const first_notifications = x[i].notifications[k];
-                if (first_notifications) {
-                  if (first_notifications.user_ta_id.charAt(0) === '1') {
-                    gr.user_notifications = {
-                      before: {
-                        is_enabled:
-                          first_notifications.before_is_enable.toLowerCase() ===
-                          'true',
-                        is_set:
-                          first_notifications.before_is_set.toLowerCase() ===
-                          'true',
-                        message: first_notifications.before_message,
-                        time: first_notifications.before_time,
-                      },
-                      during: {
-                        is_enabled:
-                          first_notifications.during_is_enable.toLowerCase() ===
-                          'true',
-                        is_set:
-                          first_notifications.during_is_set.toLowerCase() ===
-                          'true',
-                        message: first_notifications.during_message,
-                        time: first_notifications.during_time,
-                      },
-                      after: {
-                        is_enabled:
-                          first_notifications.after_is_enable.toLowerCase() ===
-                          'true',
-                        is_set: first_notifications.after_is_set.toLowerCase(),
-                        message: first_notifications.after_message,
-                        time: first_notifications.after_time,
-                      },
-                    };
-                  } else if (
-                    first_notifications.user_ta_id.charAt(0) === '2' &&
-                    first_notifications.user_ta_id === stateValue.ta_people_id
-                  ) {
-                    gr.ta_notifications = {
-                      before: {
-                        is_enabled:
-                          first_notifications.before_is_enable.toLowerCase() ===
-                          'true',
-                        is_set:
-                          first_notifications.before_is_set.toLowerCase() ===
-                          'true',
-                        message: first_notifications.before_message,
-                        time: first_notifications.before_time,
-                      },
-                      during: {
-                        is_enabled:
-                          first_notifications.during_is_enable.toLowerCase() ===
-                          'true',
-                        is_set: first_notifications.during_is_set.toLowerCase(),
-                        message: first_notifications.during_message,
-                        time: first_notifications.during_time,
-                      },
-                      after: {
-                        is_enabled:
-                          first_notifications.after_is_enable.toLowerCase() ===
-                          'true',
-                        is_set:
-                          first_notifications.after_is_set.toLowerCase() ===
-                          'true',
-                        message: first_notifications.after_message,
-                        time: first_notifications.after_time,
-                      },
-                    };
-                  }
-                }
-              }
-
-              // if (!gr.ta_notifications) {
-              //   gr.ta_notifications = {
-              //     before: {
-              //       is_enabled: false,
-              //       is_set: false,
-              //       message: "",
-              //       time: gr.user_notifications.before.time,
-              //     },
-              //     during: {
-              //       is_enabled: false,
-              //       is_set: false,
-              //       message: "",
-              //       time: gr.user_notifications.during.time,
-              //     },
-              //     after: {
-              //       is_enabled: false,
-              //       is_set: false,
-              //       message: "",
-              //       time: gr.user_notifications.after.time,
-              //     },
-              //   };
-              // }
-
-              // console.log(gr);
-              gr.title = x[i].gr_title;
-              // console.log('X', x);
-              // console.log(gr.title, gr.is_sublist_available);
-              var goalDate = new Date(gr.end_day_and_time.replace(/-/g, '/'));
-              console.log(goalDate);
-              //For Today Goals and Routines
-              let startOfDay = moment(goalDate);
-              let endOfDay = moment(goalDate);
-              let begOfTheDay = startOfDay.startOf('day');
-              let endOfTheDay = endOfDay.endOf('day');
-              // console.log(begOfTheDay);
-              // console.log(endOfTheDay);
-              let todayStartDate = new Date(begOfTheDay.format('MM/DD/YYYY'));
-              let todayEndDate = new Date(endOfTheDay.format('MM/DD/YYYY'));
-              todayStartDate.setHours(0, 0, 0);
-              todayEndDate.setHours(23, 59, 59);
-              // console.log(todayStartDate);
-              // console.log(todayEndDate);
-              // console.log(goalDate);
-
-              //For Week Goals and Routines
-              let startWeek = moment(goalDate);
-              let endWeek = moment(goalDate);
-              let startDay = startWeek.startOf('week');
-              let endDay = endWeek.endOf('week');
-              // console.log(startDay);
-              // console.log(endDay);
-              let startDate = new Date(startDay.format('MM/DD/YYYY'));
-              let endDate = new Date(endDay.format('MM/DD/YYYY'));
-              startDate.setHours(0, 0, 0);
-              endDate.setHours(23, 59, 59);
-              //console.log(startDate);
-              //console.log(endDate);
-
-              //For Months Goals and Routines
-              let startMonth = moment(goalDate);
-              let endMonth = moment(goalDate);
-              let startDayMonth = startMonth.startOf('month');
-              let endDayMonth = endMonth.endOf('month');
-              // console.log(startDayMonth);
-              // console.log(endDayMonth);
-              let monthStartDate = new Date(startDayMonth.format('MM/DD/YYYY'));
-              let monthEndDate = new Date(endDayMonth.format('MM/DD/YYYY'));
-              monthStartDate.setHours(0, 0, 0);
-              monthEndDate.setHours(23, 59, 59);
-              // console.log(monthStartDate);
-              // console.log(monthEndDate);
-
-              if (
-                stateValue.calendarView === 'Day' &&
-                goalDate.getTime() > todayStartDate.getTime() &&
-                goalDate.getTime() < todayEndDate.getTime()
-              ) {
-                gr_array.push(gr);
-              }
-              if (
-                stateValue.calendarView === 'Week' &&
-                goalDate.getTime() > startDate.getTime() &&
-                goalDate.getTime() < endDate.getTime()
-              ) {
-                gr_array.push(gr);
-              }
-              // if (
-              //   this.state.calendarView === "Month" &&
-              //   goalDate.getTime() > monthStartDate.getTime() &&
-              //   goalDate.getTime() < monthEndDate.getTime()
-              // ) {
-              //   gr_array.push(gr);
-              // }
-              // console.log(gr_array);
-              if (x[i]['is_persistent'].toLowerCase() === 'true') {
-                // routine_ids.push(i);
-
-                // routine_ids.push(x[i]["gr_unique_id"]);
-                // routine.push(x[i]);
-
-                if (
-                  stateValue.calendarView === 'Day' &&
-                  goalDate.getTime() > todayStartDate.getTime() &&
-                  goalDate.getTime() < todayEndDate.getTime()
-                ) {
-                  routine_ids.push(gr['id']);
-                  routine.push(gr);
-                }
-                if (
-                  stateValue.calendarView === 'Week' &&
-                  goalDate.getTime() > todayStartDate.getTime() &&
-                  goalDate.getTime() < todayEndDate.getTime()
-                ) {
-                  routine_ids.push(gr['id']);
-                  routine.push(gr);
-                }
-                // if (
-                //   this.state.calendarView === "Month" &&
-                //   goalDate.getTime() > monthStartDate.getTime() &&
-                //   goalDate.getTime() < monthEndDate.getTime()
-                // ) {
-                //   routine_ids.push(gr["id"]);
-                //   routine.push(gr);
-                // }
-              }
-              if (x[i]['is_persistent'].toLowerCase() === 'false') {
-                // goal_ids.push(i);
-
-                // goal_ids.push(x[i]["gr_unique_id"]);
-                // goal.push(x[i]);
-
-                if (
-                  stateValue.calendarView === 'Day' &&
-                  goalDate.getTime() > todayStartDate.getTime() &&
-                  goalDate.getTime() < todayEndDate.getTime()
-                ) {
-                  goal_ids.push(gr['id']);
-                  goal.push(gr);
-                }
-                if (
-                  stateValue.calendarView === 'Week' &&
-                  goalDate.getTime() > startDate.getTime() &&
-                  goalDate.getTime() < endDate.getTime()
-                ) {
-                  goal_ids.push(gr['id']);
-                  goal.push(gr);
-                }
-                // if (
-                //   this.state.calendarView === "Month" &&
-                //   goalDate.getTime() > monthStartDate.getTime() &&
-                //   goalDate.getTime() < monthEndDate.getTime()
-                // ) {
-                //   goal_ids.push(gr["id"]);
-                //   goal.push(gr);
-                // }
-              }
-            }
-
-            setStateValue((prevState) => {
-              return {
-                ...prevState,
-                originalGoalsAndRoutineArr: gr_array,
-                goals: goal,
-                addNewGRModalShow: false,
-                routine_ids: routine_ids,
-                goal_ids: goal_ids,
-                routines: routine,
-              };
-            });
-            setEditingRTS({
-              ...editingRTS,
-              gr_array: gr_array,
-            });
-            setEditingATS({
-              ...editingATS,
-              gr_array: gr_array,
-            });
-          } else {
-            setStateValue((prevState) => {
-              return {
-                ...prevState,
-                originalGoalsAndRoutineArr: [],
-                goals: goal,
-                addNewGRModalShow: false,
-                routine_ids: routine_ids,
-                goal_ids: goal_ids,
-                routines: routine,
-              };
-            });
-          }
-
-          // console.log(this.state.goals);
-          // console.log(stateValue);
+          console.log('here: Obtained user information with res = ', response);
         })
         .catch((error) => {
-          console.log('Error in getting goals and routines ' + error);
+          console.log('here: Error in getting goals and routines ' + error);
         });
     }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
-
   useEffect(() => console.log('here: 4'), [editingRTS.editing.item]);
 
   const updateFBGR = () => {
     GrabFireBaseRoutinesGoalsData();
+    // props.refresh();
+    // useEffect(() => {
+    // window.location.reload();
+    // }, []);
   };
 
   function ToggleShowAbout() {
     history.push('/about');
   }
+  // if (loginContext.loginState.loggedIn == false) {
+  //   history.push('/')
+  // }
 
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
@@ -2100,6 +1639,7 @@ export default function GoalHome(props) {
     /*----------------------------button
         selection----------------------------*/
     <div>
+      {/* <Navigation userID= {stateValue.currentUserId}/> */}
       <div style={{ height: '3px' }}></div>
       <EditRTSContext.Provider
         value={{
@@ -2126,9 +1666,9 @@ export default function GoalHome(props) {
             <userContext.Provider
               value={
                 (stateValue.itemToEdit,
-                stateValue.goals,
+                stateValue.routines,
                 stateValue.originalGoalsAndRoutineArr,
-                stateValue.showGoalModal,
+                stateValue.showRoutineModal,
                 stateValue.itemToEdit.is_available,
                 stateValue.itemToEdit.is_displayed_today,
                 stateValue.itemToEdit.is_complete,
@@ -2136,7 +1676,7 @@ export default function GoalHome(props) {
                 stateValue.dateContext,
                 stateValue.closeRoutine,
                 GrabFireBaseRoutinesGoalsData(),
-                GrabFireBaseGoalsData(),
+                GrabFireBaseRoutinesData(),
                 stateValue.BASE_URL)
               }
             >
@@ -2178,7 +1718,7 @@ export default function GoalHome(props) {
                     Routines
                   </Button>
 
-                  {stateValue.showGoalModal ? (
+                  {/* {stateValue.showRoutineModal ? (
                     <Button
                       className={classes.buttonSelection}
                       style={{
@@ -2193,7 +1733,7 @@ export default function GoalHome(props) {
                         //console.log(editingRTS)
                       }}
                     >
-                      Add Goal +
+                      Add Routine +
                     </Button>
                   ) : (
                     <div
@@ -2201,11 +1741,11 @@ export default function GoalHome(props) {
                         width: '20%',
                       }}
                     ></div>
-                  )}
+                  )} */}
 
                   <div style={{ flex: '1' }}>
                     {userID != '' && (
-                      <GoalFirebaseV2
+                      <FirebaseV2
                         theCurrentUserID={userID}
                         sethighLight={setHightlight}
                         highLight={hightlight}
@@ -2231,6 +1771,11 @@ export default function GoalHome(props) {
                       />
                     )}
                   </div>
+                  {/* <div style={{flex:'2'}}
+              >
+               {editingIS.editing ? <EditIS/> : editingATS.editing ? <EditATS/> : editingRTS.editing ? <EditRTS /> : showCalendarView()}
+           
+              </div> */}
                 </div>
                 <div style={{ width: '70%', float: 'left' }}>
                   {editingRTS.editing ? null : (

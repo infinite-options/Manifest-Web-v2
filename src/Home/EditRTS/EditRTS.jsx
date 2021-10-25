@@ -508,7 +508,12 @@ const EditRTS = (props) => {
       >
         <Col style={{ float: 'left', width: '30%' }}>
           <div style={{ fontWeight: 'bold', fontSize: '20px' }}>
-            Routine Name{' '}
+            {
+              editingRTSContext.editingRTS.newItem.is_persistent === true 
+            ? "Routine"
+            : "Goal"
+              
+            } &nbsp;Name
           </div>
           <input
             style={{

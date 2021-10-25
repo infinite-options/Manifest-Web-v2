@@ -10,7 +10,6 @@ import Typography from '@material-ui/core/Typography';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import { GoogleLogin } from 'react-google-login';
 import TimezoneSelect from 'react-timezone-select';
-
 import LoginContext from '../LoginContext';
 import axios from 'axios';
 import { CompareSharp } from '@material-ui/icons';
@@ -101,8 +100,10 @@ export function Navigation() {
   );
   const [patientName, setPatiantName] = useState('');
   const [emailUser, setEmailUser] = useState('');
+  const [socialId, setSocialId] = useState('');
   const [refreshToken, setrefreshToken] = useState('');
   const [accessToken, setAccessToken] = useState('');
+  const [accessExpiresIn, setaccessExpiresIn] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
@@ -466,24 +467,31 @@ export function Navigation() {
     if (response.profileObj !== null || response.profileObj !== undefined) {
       let e = response.profileObj.email;
       let at = response.accessToken;
-      let rt = response.googleId;
+      let rt = response.tokenId;
+      let si = response.googleId;
+      let ax = response.tokenObj.expires_in.toString();
       let first_name = response.profileObj.givenName;
       let last_name = response.profileObj.familyName;
-      console.log(e, at, rt, first_name, last_name);
+      console.log(e, at, si, first_name, last_name);
       setEmailUser(e);
       toggleNewUser(!showNewUser);
       setAccessToken(at);
+      setSocialId(si);
       setrefreshToken(rt);
+      setaccessExpiresIn(ax);
       setFirstName(first_name);
       setLastName(last_name);
     }
   };
+   
 
   function onSubmitUser() {
     let body = {
       email_id: emailUser,
       google_auth_token: accessToken,
-      google_refresh_token: refreshToken,
+      google_refresh_token: '',
+      social_id: socialId,
+      access_expires_in: accessExpiresIn,
       first_name: firstName,
       last_name: lastName,
       time_zone: selectedTimezone.value,
@@ -784,7 +792,10 @@ export function Navigation() {
                         Create New User
                       </Button>
                     )}
+                    accessType="offline"
+                    prompt="consent"
                     buttonText="Log In"
+                    scope="https://www.googleapis.com/auth/calendar.events.readonly"
                     onSuccess={responseGoogle}
                     onFailure={responseGoogle}
                     isSignedIn={false}

@@ -696,6 +696,10 @@ export default function Home(props) {
     history.push('/goalhome');
   }
 
+  function toggleShowEvents() {
+    history.push('/events');
+  }
+
   const nextDay = () => {
     
     let dateContext = Object.assign({}, stateValue.todayDateObject);
@@ -2154,7 +2158,11 @@ function GrabFireBaseRoutinesData() {
                   >
                     About
                   </Button>
-                  <Button className={classes.buttonSelection} id="one">
+                  <Button
+                    className={classes.buttonSelection}
+                    onClick={toggleShowEvents}
+                    id="one"
+                  >
                     Events
                   </Button>
                   <Button
@@ -2473,18 +2481,17 @@ function GrabFireBaseRoutinesData() {
                               style={{ textAlign: 'center', width: '70%' }}
                               className="bigfancytext"
                             >
-                              
-                                <p
-                                  style={{
-                                    font: 'normal normal bold 28px SF Pro',
-                                    paddingBottom: '0px',
-                                  }}
-                                >
-                                  {stateValue.todayDateObject.format('dddd')}{' '}
-                                  {stateValue.todayDateObject.get('date')}{' '}
-                                  {getMonth()} {getYear()}{' '}
-                                </p>
-                              
+                              <p
+                                style={{
+                                  font: 'normal normal bold 28px SF Pro',
+                                  paddingBottom: '0px',
+                                }}
+                              >
+                                {stateValue.todayDateObject.format('dddd')}{' '}
+                                {stateValue.todayDateObject.get('date')}{' '}
+                                {getMonth()} {getYear()}{' '}
+                              </p>
+
                               <p
                                 style={{
                                   font: 'normal normal bold 20px SF Pro',
@@ -2573,6 +2580,7 @@ function GrabFireBaseRoutinesData() {
                       showCalendarView()
                     )}
                   </div>
+                  
                 </div>
               </Box>
               {/* ----------------------------... Navigation--------------------------- */}
