@@ -118,6 +118,7 @@ export function Navigation() {
     Intl.DateTimeFormat().resolvedOptions().timeZone
   );
   const [tokenInfo, setTokenInfo]=useState({});
+  const [userInfo, setUserInfo] = useState({});
   const [patientName, setPatiantName] = useState('');
   const [emailUser, setEmailUser] = useState('');
   const [socialId, setSocialId] = useState('');
@@ -529,22 +530,49 @@ export function Navigation() {
         console.log(err);
       });
     console.log('res', tokenInfo);
+    // fetch(
+    // `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${tokenInfo['access_token']}`,
+    // {
+    //   method: 'GET',
+    // })
+    //   .then(async (response) => {
+    //     // get json response here
+    //     let data = await response.json();
+
+    //     if (response.status === 200) {
+    //       // Process data here
+    //       setUserInfo(data)
+    //       console.log('res', userInfo);
+    //     } else {
+    //       // Rest of status codes (400,500,303), can be handled here appropriately
+    //       console.log('err');
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+    //let e = response.profileObj.email;
+    let at = tokenInfo['access_token'];
+    let rt = tokenInfo['refresh_token'];
+    let ax = tokenInfo['expires_in'].toString();
+    
+    setAccessToken(at);
+    setrefreshToken(rt);
+    setaccessExpiresIn(ax);
     fetch(
-    `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${tokenInfo['access_token']}`,
-    {
-      method: 'GET',
-    })
+      `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${accessToken}`,
+      {
+        method: 'GET',
+      }
+    )
       .then(async (response) => {
         // get json response here
         let data = await response.json();
 
         if (response.status === 200) {
           // Process data here
-          setEmailUser(data.email);
-          setFirstName(data.given_name);
-          setLastName(data.first_name);
-          setSocialId(data.id);
-          console.log('res', data);
+          setUserInfo(data);
+          console.log('res', userInfo);
         } else {
           // Rest of status codes (400,500,303), can be handled here appropriately
           console.log('err');
@@ -553,16 +581,20 @@ export function Navigation() {
       .catch((err) => {
         console.log(err);
       });
-    //let e = response.profileObj.email;
-    let at = tokenInfo['access_token'];
-    let rt = tokenInfo['refresh_token'];
-    let ax = tokenInfo['expires_in'].toString();
+
+    let e = userInfo['email'];
+    let fn = userInfo['given_name'];
+    let ln = userInfo['family_name'];
+    let si = userInfo['id'];
     console.log(at, rt);
-    toggleNewUser(!showNewUser);
-    setAccessToken(at);
-    setrefreshToken(rt);
-    setaccessExpiresIn(ax);
+
     
+   
+    setEmailUser(e);
+    setFirstName(fn);
+    setLastName(ln);
+    setSocialId(si);
+    toggleNewUser(!showNewUser);
   };
    
 
