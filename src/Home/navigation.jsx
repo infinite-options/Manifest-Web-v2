@@ -16,6 +16,9 @@ import { CompareSharp } from '@material-ui/icons';
 import { faYenSign } from '@fortawesome/free-solid-svg-icons';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
+const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
+
+const CLIENT_SECRET = process.env.REACT_APP_CLIENT_SECRET;
 
 /* Custom Hook to make styles */
 const useStyles = makeStyles({
@@ -76,6 +79,9 @@ const useStyles = makeStyles({
 
 /* Navigation Bar component function */
 export function Navigation() {
+  console.log('CLIENT ID', typeof CLIENT_ID, CLIENT_ID);
+  console.log('CLIENT ID', typeof CLIENT_SECRET, CLIENT_SECRET);
+  console.log('CLIENT ID', typeof BASE_URL, BASE_URL);
   const history = useHistory();
 
   const classes = useStyles();
@@ -88,6 +94,19 @@ export function Navigation() {
   var curUserID = '';
   var curUserTZ = '';
 
+  const client_id = CLIENT_ID;
+  const client_secret = CLIENT_SECRET;
+  const redirect_uris = [
+    'https://manifestmy.space/adduser',
+    'https://www.manifestmy.space/',
+    'https://manifestmy.space',
+    'https://manifestmy.life/adduser',
+    'https://www.manifestmy.life/',
+    'https://manifestmy.life',
+    'http://localhost:3000',
+    'http://localhost'
+  ];
+
   // const selectedUser = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
   // const [selectedUser, setSelectedUser] = useState('')
   const [showNewUser, toggleNewUser] = useState(false);
@@ -98,6 +117,7 @@ export function Navigation() {
   const [timezone, setTimezone] = useState(
     Intl.DateTimeFormat().resolvedOptions().timeZone
   );
+  const [tokenInfo, setTokenInfo]=useState({});
   const [patientName, setPatiantName] = useState('');
   const [emailUser, setEmailUser] = useState('');
   const [socialId, setSocialId] = useState('');
@@ -461,27 +481,88 @@ export function Navigation() {
   console.log(loginContext);
   getTAList();
   console.log(taList);
-
+  
   const responseGoogle = (response) => {
     console.log('response', response);
-    if (response.profileObj !== null || response.profileObj !== undefined) {
-      let e = response.profileObj.email;
-      let at = response.accessToken;
-      let rt = response.tokenId;
-      let si = response.googleId;
-      let ax = response.tokenObj.expires_in.toString();
-      let first_name = response.profileObj.givenName;
-      let last_name = response.profileObj.familyName;
-      console.log(e, at, si, first_name, last_name);
-      setEmailUser(e);
-      toggleNewUser(!showNewUser);
-      setAccessToken(at);
-      setSocialId(si);
-      setrefreshToken(rt);
-      setaccessExpiresIn(ax);
-      setFirstName(first_name);
-      setLastName(last_name);
+    
+    let auth_code = response.code;
+    let authorization_url = 'https://accounts.google.com/o/oauth2/token';
+    
+    console.log('auth_code', auth_code);
+    var details = {
+      code: auth_code,
+      client_id: client_id,
+      client_secret: client_secret,
+      redirect_uri: 'http://localhost:3000',
+      grant_type: 'authorization_code',
+    };
+
+    var formBody = [];
+    for (var property in details) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(details[property]);
+      formBody.push(encodedKey + '=' + encodedValue);
     }
+    formBody = formBody.join('&');
+    
+    fetch(authorization_url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+      body: formBody,
+    })
+      .then(async (response) => {
+        // get json response here
+        let data = await response.json();
+        
+        if (response.status === 200) {
+          // Process data here
+          setTokenInfo(data);
+          console.log('res', tokenInfo);
+        } else {
+          // Rest of status codes (400,500,303), can be handled here appropriately
+          console.log('err');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    console.log('res', tokenInfo);
+    fetch(
+    `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${tokenInfo['access_token']}`,
+    {
+      method: 'GET',
+    })
+      .then(async (response) => {
+        // get json response here
+        let data = await response.json();
+
+        if (response.status === 200) {
+          // Process data here
+          setEmailUser(data.email);
+          setFirstName(data.given_name);
+          setLastName(data.first_name);
+          setSocialId(data.id);
+          console.log('res', data);
+        } else {
+          // Rest of status codes (400,500,303), can be handled here appropriately
+          console.log('err');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    //let e = response.profileObj.email;
+    let at = tokenInfo['access_token'];
+    let rt = tokenInfo['refresh_token'];
+    let ax = tokenInfo['expires_in'].toString();
+    console.log(at, rt);
+    toggleNewUser(!showNewUser);
+    setAccessToken(at);
+    setrefreshToken(rt);
+    setaccessExpiresIn(ax);
+    
   };
    
 
@@ -489,7 +570,7 @@ export function Navigation() {
     let body = {
       email_id: emailUser,
       google_auth_token: accessToken,
-      google_refresh_token: '',
+      google_refresh_token: refreshToken,
       social_id: socialId,
       access_expires_in: accessExpiresIn,
       first_name: firstName,
@@ -794,8 +875,10 @@ export function Navigation() {
                     )}
                     accessType="offline"
                     prompt="consent"
+                    responseType="code"
                     buttonText="Log In"
-                    scope="https://www.googleapis.com/auth/calendar.events.readonly"
+                    redirectUri="http://localhost:3000"
+                    scope="https://www.googleapis.com/auth/calendar"
                     onSuccess={responseGoogle}
                     onFailure={responseGoogle}
                     isSignedIn={false}
