@@ -67,8 +67,8 @@ export default class DayRoutines extends Component {
       tempStart = arr[i].start_day_and_time;
       tempEnd = arr[i].end_day_and_time;
 
-      let tempStartTime = new Date(tempStart);
-      let tempEndTime = new Date(tempEnd);
+      let tempStartTime = new Date(tempStart.replace(/-/g, '/'));
+      let tempEndTime = new Date(tempEnd.replace(/-/g, '/'));
 
       let curDate = this.props.dateContext.get("date");
       let curMonth = this.props.dateContext.get("month");
@@ -82,9 +82,12 @@ export default class DayRoutines extends Component {
       CurrentDate.setHours(0, 0, 0, 0);
 
       let startDate = new Date(
-        new Date(arr[i].start_day_and_time).toLocaleString("en-US", {
-          timeZone: this.props.TimeZone,
-        })
+        new Date(arr[i].start_day_and_time.replace(/-/g, '/')).toLocaleString(
+          'en-US',
+          {
+            timeZone: this.props.TimeZone,
+          }
+        )
       );
       startDate.setHours(0, 0, 0, 0);
       let isDisplayedTodayCalculated = false;

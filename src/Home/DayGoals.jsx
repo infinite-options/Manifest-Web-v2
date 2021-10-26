@@ -71,9 +71,12 @@ export default class DayGoals extends Component {
     for (let i = 0; i < arr.length; i++) {
       tempStart = arr[i].start_day_and_time;
       tempEnd = arr[i].end_day_and_time;
-
-      let tempStartTime = new Date(tempStart);
-      let tempEndTime = new Date(tempEnd);
+      console.log('timezone date', tempStart)
+      console.log('timezone date', tempEnd);
+      let tempStartTime = new Date(tempStart.replace(/-/g, '/'));
+      let tempEndTime = new Date(tempEnd.replace(/-/g, '/'));
+      console.log('timezone date', tempStartTime);
+      console.log('timezone date', tempEndTime);
       let curDate = this.props.dateContext.get('date');
       let curMonth = this.props.dateContext.get('month');
       let curYear = this.props.dateContext.get('year');
@@ -83,13 +86,19 @@ export default class DayGoals extends Component {
           timeZone: this.props.TimeZone,
         })
       );
+      console.log('timezone date', CurrentDate);
+      
       CurrentDate.setHours(0, 0, 0, 0);
 
       let startDate = new Date(
-        new Date(arr[i].start_day_and_time).toLocaleString('en-US', {
-          timeZone: this.props.TimeZone,
-        })
+        new Date(arr[i].start_day_and_time.replace(/-/g, '/')).toLocaleString(
+          'en-US',
+          {
+            timeZone: this.props.TimeZone,
+          }
+        )
       );
+      console.log('timezone date', startDate);
       startDate.setHours(0, 0, 0, 0);
 
       let isDisplayedTodayCalculated = false;
@@ -105,6 +114,7 @@ export default class DayGoals extends Component {
           timeZone: this.props.TimeZone,
         })
       );
+      console.log('timezone date', repeatEndsOn);
       repeatEndsOn.setHours(0, 0, 0, 0);
 
       let repeatFrequency = arr[i].repeat_frequency;
