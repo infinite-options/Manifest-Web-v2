@@ -17,11 +17,11 @@ import {
   faCalendarWeek,
 } from '@fortawesome/free-solid-svg-icons';
 import 'react-datepicker/dist/react-datepicker.css';
-import FirebaseV2 from './Firebasev2';
+import WeekFirebaseV2 from './WeekFirebasev2';
 import DayEvents from './DayEvents';
 import DayRoutines from './DayRoutines.jsx';
 import DayGoals from './DayGoals.jsx';
-import WeekRoutines from './WeekRoutines.jsx';
+import WeekEvents from './WeekEvents.jsx';
 import userContext from './userContext';
 
 import EditRTSContext from './EditRTS/EditRTSContext';
@@ -145,7 +145,9 @@ export default function Events(props) {
           console.log('timezone', curUserTZ);
           // setUserID(curUserID);
           // console.log(userID);
-          GrabFireBaseRoutinesGoalsData();
+           GrabFireBaseRoutinesGoalsData();
+           GrabFireBaseRoutinesData();
+           GoogleEvents();
           // return userID;
         } else {
           console.log('No User Found');
@@ -164,7 +166,7 @@ export default function Events(props) {
   const [getRoutinesEndPoint, setGetRoutinesEndPoint] = useState([]);
   const [getActionsEndPoint, setGetActionsEndPoint] = useState({});
   const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
-
+  const [events, setEvents] = useState([]);
   const [hightlight, setHightlight] = useState('');
   const [stateValue, setStateValue] = useState({
     itemToEdit: {
@@ -713,6 +715,7 @@ export default function Events(props) {
         ...prevState,
         todayDateObject: dateContext,
         dayEvents: [],
+        events: [],
       };
       //updateEventsArray;
     });
@@ -730,6 +733,7 @@ export default function Events(props) {
         ...prevState,
         todayDateObject: dateContext,
         dayEvents: [],
+        events: [],
       };
       //updateEventsArray;
     });
@@ -751,6 +755,7 @@ export default function Events(props) {
               ...prevState,
               todayDateObject: moment(today),
               dayEvents: [],
+              events:[]
             };
             // updateEventsArray();
           })
@@ -759,6 +764,7 @@ export default function Events(props) {
               ...prevState,
               todayDateObject: moment(today),
               dayEvents: [],
+              events: [],
             };
             // updateEventsArray();
           });
@@ -826,6 +832,78 @@ export default function Events(props) {
     }
 
     console.log('today timezone curWeek');
+  };
+
+  
+  const handleWeekEventClick = (A) => {
+    var guestList = '';
+    if (A.attendees) {
+      guestList = A.attendees.reduce((guestList, nextGuest) => {
+        return guestList + ' ' + nextGuest.email;
+      }, '');
+      console.log('Guest List:', A.attendees, guestList);
+    }
+    this.setState({
+      newEventID: A.id,
+      newEventStart0: A.start.dateTime
+        ? new Date(A.start.dateTime)
+        : new Date(A.start.date),
+      newEventEnd0: A.end.dateTime
+        ? new Date(A.end.dateTime)
+        : new Date(A.end.date),
+      newEventName: A.summary,
+      newEventGuests: guestList,
+      newEventLocation: A.location ? A.location : '',
+      newEventNotification: A.reminders.overrides
+        ? A.reminders.overrides[0].minutes
+        : '',
+      newEventDescription: A.description ? A.description : '',
+      dayEventSelected: true,
+      isEvent: true,
+      showNoTitleError: '',
+      showDateError: '',
+      showRepeatModal: false,
+      showAboutModal: false,
+      noteToFuture: false,
+      showPeopleModal: false,
+      repeatOption: false,
+      repeatOptionDropDown: 'Does not repeat',
+      repeatDropDown: 'DAY',
+      repeatDropDown_temp: 'DAY',
+      repeatMonthlyDropDown: 'Monthly on day 13',
+      repeatInputValue: '1',
+      repeatInputValue_temp: '1',
+      repeatOccurrence: '1',
+      repeatOccurrence_temp: '1',
+      repeatRadio: 'Never',
+      repeatRadio_temp: 'Never',
+      repeatEndDate: '',
+      repeatEndDate_temp: '',
+      byDay: {
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
+      },
+      byDay_temp: {
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
+      },
+      repeatSummary: '',
+      recurrenceRule: '',
+      showDeleteRecurringModal: false,
+      deleteRecurringOption: 'This event',
+      showEditRecurringModal: false,
+      editRecurringOption: '',
+    });
   };
   /*-----------------------------updateEventsArray:-----------------------------*/
   /*updates the array if the month view changes to a different month.*/
@@ -896,76 +974,20 @@ export default function Events(props) {
     //stateValue.dateContext = today;
     console.log('Day view', stateValue.dateContext);
     return (
-      <div
+      <Container
         style={{
           background: 'white',
           width: '100%',
-          //padding: '20px',
+          margin: '0rem',
         }}
       >
-        {/* <Container>
-          <Row style={{ marginTop: '0px' }}>
-            <Col>
-              <div>
-                <FontAwesomeIcon
-                  style={{ marginLeft: '100px', cursor: 'pointer' }}
-                  icon={faChevronLeft}
-                  size="2x"
-                  className="X"
-                  onClick={(e) => {
-                    prevDay();
-                  }}
-                />
-              </div>
-            </Col>
-            <Col
-              md="auto"
-              style={{ textAlign: 'center' }}
-              className="bigfancytext"
-            >
-              <p>
-                {stateValue.todayDateObject.format('dddd')}{' '}
-                {stateValue.todayDateObject.get('date')} {getMonth()}{' '}
-                {getYear()}{' '}
-              </p>
-              <p
-                style={{ marginBottom: '0', height: '19.5px' }}
-                className="normalfancytext"
-              >
-                {userTime_zone}
-              </p>
-            </Col>
-            <Col>
-              <FontAwesomeIcon
-                // style={{ marginLeft: "50%" }}
-                style={{
-                  float: 'right',
-                  //marginRight: '100px',
-                  cursor: 'pointer',
-                }}
-                icon={faChevronRight}
-                size="2x"
-                className="X"
-                onClick={(e) => {
-                  nextDay();
-                }}
-              />
-            </Col>
-            <Col >
-              <FontAwesomeIcon
-                // style={{ marginLeft: "50%" }}
-                style={{ float: 'right', cursor: 'pointer' }}
-                icon={faCalendar}
-                size="2x"
-                className="X"
-                onClick={(e) => {
-                  curDay();
-                }}
-              />
-            </Col>
-          </Row>
-        </Container> */}
-        <Row>
+        <Row
+          
+          noGutters={true}
+          // style={{ overflowY: 'scroll', maxHeight: '1350px' }}
+          className="d-flex justify-content-end"
+          style={{ marginLeft: '-5rem', marginRight: '0rem' }}
+        >
           {/* {console.log("these are the events that are going to be passed in", this.state.dayEvents)} */}
           {console.log(
             'stateValue.todayDateObject',
@@ -977,7 +999,7 @@ export default function Events(props) {
             dateContext={stateValue.todayDateObject}
             // eventClickDayView={handleDayEventClick}
             // handleDateClick={handleDateClickOnDayView}
-            dayEvents={stateValue.dayEvents}
+            dayEvents={events}
             // getEventsByInterval={getEventsByIntervalDayVersion}
             timeZone={userTime_zone}
           />
@@ -1004,7 +1026,7 @@ export default function Events(props) {
             BASE_URL={stateValue.BASE_URL}
           />
         </Row>
-      </div>
+      </Container>
     );
   }
 
@@ -1019,12 +1041,12 @@ export default function Events(props) {
         }}
       >
         <Row style={{ float: 'right', width: '100%' }}>
-          <WeekRoutines
-            timeZone={userTime_zone}
-            routines={stateValue.routines}
+          <WeekEvents
+            weekEvents={events}
             dateContext={stateValue.dateContext}
-            BASE_URL={stateValue.BASE_URL}
-            highLight={hightlight}
+            eventClick={handleWeekEventClick}
+            //onDayClick={handleDateClickOnWeekView}
+            timeZone={userTime_zone}
           />
         </Row>
         {/* </Container> */}
@@ -1130,7 +1152,7 @@ export default function Events(props) {
             temp.push(response.data.result[i]);
           }
           temp.sort((a, b) => {
-            console.log('a = ', a, '\nb = ', b);
+            // console.log('a = ', a, '\nb = ', b);
             const [a_start, b_start] = [
               a.gr_start_day_and_time,
               b.gr_start_day_and_time,
@@ -1558,23 +1580,165 @@ export default function Events(props) {
         });
     }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
+function GoogleEvents() {
+  let url = BASE_URL + 'calenderEvents/';
+  let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+  let endofWeek = moment(stateValue.dateContext).add(6, 'days');
+  let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
+  let id = userID;
 
+  const getTimes = (a_day_time, b_day_time) => {
+    const [a_start_time, b_start_time] = [
+      a_day_time.substring(10, a_day_time.length),
+      b_day_time.substring(10, b_day_time.length),
+    ];
+    const [a_HMS, b_HMS] = [
+      a_start_time
+        .substring(0, a_start_time.length - 3)
+        .replace(/\s{1,}/, '')
+        .split(':'),
+      b_start_time
+        .substring(0, b_start_time.length - 3)
+        .replace(/\s{1,}/, '')
+        .split(':'),
+    ];
+    const [a_parity, b_parity] = [
+      a_start_time
+        .substring(a_start_time.length - 3, a_start_time.length)
+        .replace(/\s{1,}/, ''),
+      b_start_time
+        .substring(b_start_time.length - 3, b_start_time.length)
+        .replace(/\s{1,}/, ''),
+    ];
+
+    let [a_time, b_time] = [0, 0];
+    if (a_parity === 'PM' && a_HMS[0] !== '12') {
+      const hoursInt = parseInt(a_HMS[0]) + 12;
+      a_HMS[0] = `${hoursInt}`;
+    } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+
+    if (b_parity === 'PM' && b_HMS[0] !== '12') {
+      const hoursInt = parseInt(b_HMS[0]) + 12;
+      b_HMS[0] = `${hoursInt}`;
+    } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+
+    for (let i = 0; i < a_HMS.length; i++) {
+      a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+      b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+    }
+
+    return [a_time, b_time];
+  };
+  useEffect(() => {
+    if (userID == '') return;
+    console.log(
+      'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
+      [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
+    );
+
+    axios
+      .post(url + id.toString() + ',' + start.toString() + ',' + end.toString())
+      .then((response) => {
+        console.log('day events ', response.data);
+        const temp = [];
+
+        for (let i = 0; i < response.data.length; i++) {
+          temp.push(response.data[i]);
+        }
+        temp.sort((a, b) => {
+          // console.log('a = ', a, '\nb = ', b);
+          const [a_start, b_start] = [
+            a['start']['dateTime'],
+            b['start']['dateTime'],
+          ];
+          console.log('a_start = ', a_start, '\nb_start = ', b_start);
+          const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
+
+          const [a_start_time, b_start_time] = getTimes(
+            a['start']['dateTime'],
+            b['start']['dateTime']
+          );
+          const [a_end_time, b_end_time] = getTimes(
+            a['end']['dateTime'],
+            b['end']['dateTime']
+          );
+
+          if (a_start_time < b_start_time) return -1;
+          else if (a_start_time > b_start_time) return 1;
+          else {
+            if (a_end_time < b_end_time) return -1;
+            else if (a_end_time > b_end_time) return 1;
+            else {
+              if (a_start < b_start) return -1;
+              else if (a_start > b_start) return 1;
+              else {
+                if (a_end < b_end) return -1;
+                else if (a_end > b_end) return 1;
+              }
+            }
+          }
+
+          return 0;
+        });
+
+        console.log('homeTemp = ', temp);
+
+        setEvents(temp);
+      })
+      .catch((error) => {
+        console.log('here: Error in getting goals and routines ' + error);
+      });
+  }, [userID]);
+}
     function GrabFireBaseRoutinesData() {
     let url = BASE_URL + 'calenderEvents/';
-    let start= '2021-10-21T00:00:00-07:00';
-    let end = '2021-10-21T23:59:59-07:00';
-    let id = stateValue.currentUserId;
-    let body = {
-      id: stateValue.currentUserId,
-      start: '2021-10-21T00:00:00-07:00',
-      end: '2021-10-21T23:59:59-07:00',
-    };
-    console.log(
-      'here base url ',
-      url + id.toString() + ',' + start.toString() + ',' + end.toString()
-    );
-    console.log('base url id ', body);
+    let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+    let endofWeek = moment(stateValue.dateContext).add(6, 'days');
+    let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
+    let id = userID;
 
+    const getTimes = (a_day_time, b_day_time) => {
+      const [a_start_time, b_start_time] = [
+        a_day_time.substring(10, a_day_time.length),
+        b_day_time.substring(10, b_day_time.length),
+      ];
+      const [a_HMS, b_HMS] = [
+        a_start_time
+          .substring(0, a_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+        b_start_time
+          .substring(0, b_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+      ];
+      const [a_parity, b_parity] = [
+        a_start_time
+          .substring(a_start_time.length - 3, a_start_time.length)
+          .replace(/\s{1,}/, ''),
+        b_start_time
+          .substring(b_start_time.length - 3, b_start_time.length)
+          .replace(/\s{1,}/, ''),
+      ];
+
+      let [a_time, b_time] = [0, 0];
+      if (a_parity === 'PM' && a_HMS[0] !== '12') {
+        const hoursInt = parseInt(a_HMS[0]) + 12;
+        a_HMS[0] = `${hoursInt}`;
+      } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+
+      if (b_parity === 'PM' && b_HMS[0] !== '12') {
+        const hoursInt = parseInt(b_HMS[0]) + 12;
+        b_HMS[0] = `${hoursInt}`;
+      } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+
+      for (let i = 0; i < a_HMS.length; i++) {
+        a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+        b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+      }
+
+      return [a_time, b_time];
+    };
     useEffect(() => {
       if (userID == '') return;
       console.log(
@@ -1587,7 +1751,51 @@ export default function Events(props) {
           url + id.toString() + ',' + start.toString() + ',' + end.toString()
         )
         .then((response) => {
-          console.log('here: Obtained user information with res = ', response);
+          console.log('day events ', response.data);
+          const temp = [];
+
+          for (let i = 0; i < response.data.length; i++) {
+            temp.push(response.data[i]);
+          }
+          temp.sort((a, b) => {
+            console.log('a = ', a, '\nb = ', b);
+            const [a_start, b_start] = [
+              a['start']['dateTime'],
+              b['start']['dateTime'],
+            ];
+            console.log('a_start = ', a_start, '\nb_start = ', b_start);
+            const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
+
+            const [a_start_time, b_start_time] = getTimes(
+              a['start']['dateTime'],
+              b['start']['dateTime']
+            );
+            const [a_end_time, b_end_time] = getTimes(
+              a['end']['dateTime'],
+              b['end']['dateTime']
+            );
+
+            if (a_start_time < b_start_time) return -1;
+            else if (a_start_time > b_start_time) return 1;
+            else {
+              if (a_end_time < b_end_time) return -1;
+              else if (a_end_time > b_end_time) return 1;
+              else {
+                if (a_start < b_start) return -1;
+                else if (a_start > b_start) return 1;
+                else {
+                  if (a_end < b_end) return -1;
+                  else if (a_end > b_end) return 1;
+                }
+              }
+            }
+
+            return 0;
+          });
+
+          console.log('homeTemp = ', temp);
+
+          setEvents(temp);
         })
         .catch((error) => {
           console.log('here: Error in getting goals and routines ' + error);
@@ -1677,6 +1885,7 @@ export default function Events(props) {
                 stateValue.closeRoutine,
                 GrabFireBaseRoutinesGoalsData(),
                 GrabFireBaseRoutinesData(),
+                GoogleEvents(),
                 stateValue.BASE_URL)
               }
             >
@@ -1744,33 +1953,35 @@ export default function Events(props) {
                   )} */}
 
                   <div style={{ flex: '1' }}>
-                    {userID != '' && (
-                      <FirebaseV2
+                     {userID != '' && (
+                      <WeekFirebaseV2
                         theCurrentUserID={userID}
                         sethighLight={setHightlight}
                         highLight={hightlight}
-                        setATS={setEditingATS}
-                        newATS={newEditingATSState}
-                        rID={routineID}
-                        setrID={setRoutineID}
-                        newIS={newEditingISState}
-                        setIS={setEditingIS}
-                        aID={actionID}
-                        setaID={setActionID}
-                        editRTS={editingRTS.editing}
-                        editATS={editingATS.editing}
-                        editIS={editingIS.editing}
-                        getGoalsEndPoint={getRoutinesEndPoint}
-                        setGetGoalsEndPoint={setGetRoutinesEndPoint}
-                        getActionsEndPoint={getActionsEndPoint}
-                        setGetActionsEndPoint={setGetActionsEndPoint}
-                        getStepsEndPoint={getStepsEndPoint}
-                        setGetStepsEndPoint={setGetStepsEndPoint}
+                        events={events}
+                        setEvents={setEvents}
+                        // setATS={setEditingATS}
+                        // newATS={newEditingATSState}
+                        // rID={routineID}
+                        // setrID={setRoutineID}
+                        // newIS={newEditingISState}
+                        // setIS={setEditingIS}
+                        // aID={actionID}
+                        // setaID={setActionID}
+                        // editRTS={editingRTS.editing}
+                        // editATS={editingATS.editing}
+                        // editIS={editingIS.editing}
+                        // getGoalsEndPoint={events}
+                        // setGetGoalsEndPoint={setEvents}
+                        // getActionsEndPoint={getActionsEndPoint}
+                        // setGetActionsEndPoint={setGetActionsEndPoint}
+                        // getStepsEndPoint={getStepsEndPoint}
+                        // setGetStepsEndPoint={setGetStepsEndPoint}
                         stateValue={stateValue}
                         setStateValue={setStateValue}
                       />
-                    )}
-                  </div>
+                    )} 
+                  </div> 
                   {/* <div style={{flex:'2'}}
               >
                {editingIS.editing ? <EditIS/> : editingATS.editing ? <EditATS/> : editingRTS.editing ? <EditRTS /> : showCalendarView()}

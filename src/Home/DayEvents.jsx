@@ -58,7 +58,7 @@ export default class DayEvents extends Component {
 
   sortEvents = () => {
     var arr = this.props.dayEvents;
-    console.log(arr);
+    console.log('day events goals',arr);
     var dic = {};
     let id = 0;
     let nextnexttempStart;
@@ -131,9 +131,9 @@ export default class DayEvents extends Component {
     var res = [];
     var tempStart = null;
     var tempEnd = null;
-    console.log(dic);
+    console.log('Day Events', dic);
     let arr = [];
-    console.log('Day Event 120 ', arr);
+    console.log('Day Events', arr);
     var sameTimeEventCount = 0;
     var addmarginLeft = 0;
     let itemWidth = this.state.eventBoxSize;
@@ -492,10 +492,10 @@ export default class DayEvents extends Component {
               position: 'relative',
               //borderTop: '1px solid lavender',
               borderBottom: '2px solid #b1b3b6',
-              width: '180px', //lyman change width to adjust
+              width: '250px', //lyman change width to adjust
               //background: 'aliceblue',
               //height: this.state.pxPerHour,
-              margin:0,
+              marginLeft:'0',
               height: '55px',
             }}
             onClick={(e) => this.onDayClick(e, i)}
@@ -510,32 +510,25 @@ export default class DayEvents extends Component {
 
   render() {
     return (
-      <div
-        style={{
-          padding: '10px',
-          width: '300px',
-          //borderRadius: '20px',
-        }}
-      >
-        <div
-          style={{
-            paddingLeft: '90px',
-          }}
-        >
-          Today's Events:
-        </div>
+      <div style={{ padding: '10px', width: '350px', marginLeft: '-35px' }}>
+        <div style={{ paddingLeft: '90px' }}>Today's Events:</div>
 
-        <Container style={{ margin: '0' }}>
-          <Row>
+        <Container>
+          <Row
+            ref={this.hourDisplay}
+            noGutters={true}
+            className="d-flex justify-content-end"
+            style={{marginLeft:'-10px'}}
+          >
             <Col>
               {/* this is Just for the time */}
-              <Container style={{ margin: '0', padding: '0' }}>
+              <Container style={{  padding: '0' }}>
                 {this.timeDisplay()}
               </Container>
             </Col>
             <Col>
               {/* this is for the actual event slots */}
-              <Container style={{ margin: '0', padding: '0' }}>
+              <Container style={{ margin: '0px', padding: '0' }}>
                 {this.dayViewItems()}
               </Container>
             </Col>

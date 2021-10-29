@@ -581,8 +581,8 @@ export default class DayGoals extends Component {
         style={{
           //margin: '10px',
           padding: '10px',
-          width: '300px',
-          marginRight:'-30px'
+          width: '280px',
+          //marginRight:'-60px'
         }}
       >
         Today's Goals:

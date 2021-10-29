@@ -51,7 +51,7 @@ export default function MiniNavigation() {
     history.push('/goalhome');
   }
   function eventNavigation() {
-    history.push('/event');
+    history.push('/events');
   }
 
   function aboutNavigation() {

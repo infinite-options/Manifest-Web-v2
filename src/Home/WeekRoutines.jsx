@@ -907,29 +907,6 @@ export default class WeekRoutines extends Component {
           </Col>
         </Row>
       );
-      // } else {
-      //   arr.push(
-      //     <Row key={'weekEvent' + i}>
-      //       <Col
-      //         style={{
-      //           // borderTop: '1px solid lavender',
-      //           // borderRight: '2px solid #b1b3b6',
-      //           textAlign: 'right',
-      //           // height: this.state.pxPerHour,
-      //           height: '55px',
-      //           // fluid: true,
-      //         }}
-      //       >
-      //         {i - 12} PM
-      //       </Col>
-      //     </Row>
-      //   );
-      // }
-      // if (i === 0 || i === 12) {
-      //   arr[0] = 12;
-      //   arr[12] = 12;
-      //   console.log('we found it', arr[0]);
-      // }
     }
     // console.log('12 @', arr.valueOf());
     return arr;
@@ -1036,6 +1013,7 @@ export default class WeekRoutines extends Component {
             style={{
               textAlign: 'center',
               fontWeight: 'bold',
+              padding:'0',
               color:
                 (curDate.format('D') === dateNew.format('D')) &
                 (curDate.format('dddd') === dateNew.format('dddd')) &
@@ -1101,9 +1079,10 @@ export default class WeekRoutines extends Component {
 
     return (
       <Container style={{ margin: '0rem' }}>
-        <Row style={{ marginLeft: '3rem', marginRight: '-1rem' }}>
+        <Row style={{ marginLeft: '3rem'}}>
           <Row
             style={{
+              
               overflowX: 'hidden',
               overflowY: 'visible',
               width: '100%',

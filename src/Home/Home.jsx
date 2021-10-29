@@ -145,6 +145,8 @@ export default function Home(props) {
           // setUserID(curUserID);
           // console.log(userID);
           GrabFireBaseRoutinesGoalsData();
+          GrabFireBaseRoutinesData();
+          GoogleEvents()
           // return userID;
         } else {
           console.log('No User Found');
@@ -163,7 +165,7 @@ export default function Home(props) {
   const [getRoutinesEndPoint, setGetRoutinesEndPoint] = useState([]);
   const [getActionsEndPoint, setGetActionsEndPoint] = useState({});
   const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
-
+  const [events, setEvents] = useState({})
   const [hightlight, setHightlight] = useState('');
   const [stateValue, setStateValue] = useState({
     itemToEdit: {
@@ -714,7 +716,7 @@ export default function Home(props) {
         todayDateObject: dateContext,
         dayEvents: [],
       };
-      //updateEventsArray;
+      //updateEventsArray();
     });
     console.log(stateValue.dateContext, stateValue.dayEvents);
   };
@@ -731,7 +733,7 @@ export default function Home(props) {
         todayDateObject: dateContext,
         dayEvents: [],
       };
-      //updateEventsArray;
+      //updateEventsArray();
     });
     console.log(stateValue.dateContext, stateValue.dayEvents);
   };
@@ -752,7 +754,7 @@ export default function Home(props) {
               todayDateObject: moment(today),
               dayEvents: [],
             };
-            // updateEventsArray();
+            //updateEventsArray();
           })
         : setStateValue((prevState) => {
             return {
@@ -760,7 +762,7 @@ export default function Home(props) {
               todayDateObject: moment(today),
               dayEvents: [],
             };
-            // updateEventsArray();
+            //updateEventsArray();
           });
     }
 
@@ -896,88 +898,24 @@ export default function Home(props) {
     //stateValue.dateContext = today;
     console.log('Day view', stateValue.dateContext);
     return (
-      <div
-        style={{
-          background: 'white',
-          width: '100%',
-          //padding: '20px',
-        }}
-      >
-        {/* <Container>
-          <Row style={{ marginTop: '0px' }}>
-            <Col>
-              <div>
-                <FontAwesomeIcon
-                  style={{ marginLeft: '100px', cursor: 'pointer' }}
-                  icon={faChevronLeft}
-                  size="2x"
-                  className="X"
-                  onClick={(e) => {
-                    prevDay();
-                  }}
-                />
-              </div>
-            </Col>
-            <Col
-              md="auto"
-              style={{ textAlign: 'center' }}
-              className="bigfancytext"
-            >
-              <p>
-                {stateValue.todayDateObject.format('dddd')}{' '}
-                {stateValue.todayDateObject.get('date')} {getMonth()}{' '}
-                {getYear()}{' '}
-              </p>
-              <p
-                style={{ marginBottom: '0', height: '19.5px' }}
-                className="normalfancytext"
-              >
-                {userTime_zone}
-              </p>
-            </Col>
-            <Col>
-              <FontAwesomeIcon
-                // style={{ marginLeft: "50%" }}
-                style={{
-                  float: 'right',
-                  //marginRight: '100px',
-                  cursor: 'pointer',
-                }}
-                icon={faChevronRight}
-                size="2x"
-                className="X"
-                onClick={(e) => {
-                  nextDay();
-                }}
-              />
-            </Col>
-            <Col >
-              <FontAwesomeIcon
-                // style={{ marginLeft: "50%" }}
-                style={{ float: 'right', cursor: 'pointer' }}
-                icon={faCalendar}
-                size="2x"
-                className="X"
-                onClick={(e) => {
-                  curDay();
-                }}
-              />
-            </Col>
-          </Row>
-        </Container> */}
-        <Row>
+      <div style={{ width: '100%' }}>
+        <Row
+          style={{ float: 'right', width: '100%', padding: '0', margin: '0' }}
+        >
           {/* {console.log("these are the events that are going to be passed in", this.state.dayEvents)} */}
           {console.log(
             'stateValue.todayDateObject',
             stateValue.todayDateObject
           )}
-          {console.log(stateValue.dayEvents)}
+          {console.log('day events goals ', events)}
+          {console.log('day events goals', stateValue.goals)}
 
           <DayEvents
             dateContext={stateValue.todayDateObject}
             // eventClickDayView={handleDayEventClick}
             // handleDateClick={handleDateClickOnDayView}
-            dayEvents={stateValue.dayEvents}
+            dayEvents={events}
+            //theCurrentUserId={userID}
             // getEventsByInterval={getEventsByIntervalDayVersion}
             timeZone={userTime_zone}
           />
@@ -999,7 +937,7 @@ export default function Home(props) {
             goal_ids={stateValue.goal_ids}
             goals={stateValue.goals}
             dayGoalClick={toggleShowGoal}
-            theCurrentUserId={stateValue.currentUserId}
+            theCurrentUserId={userID}
             originalGoalsAndRoutineArr={stateValue.originalGoalsAndRoutineArr}
             BASE_URL={stateValue.BASE_URL}
           />
@@ -1558,6 +1496,117 @@ export default function Home(props) {
         });
     }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
+
+function GoogleEvents() {
+  let url = BASE_URL + 'calenderEvents/';
+  let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+  let endofWeek = moment(stateValue.dateContext).add(6, 'days');
+  let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
+  let id = userID;
+  
+  const getTimes = (a_day_time, b_day_time) => {
+    const [a_start_time, b_start_time] = [
+      a_day_time.substring(10, a_day_time.length),
+      b_day_time.substring(10, b_day_time.length),
+    ];
+    const [a_HMS, b_HMS] = [
+      a_start_time
+        .substring(0, a_start_time.length - 3)
+        .replace(/\s{1,}/, '')
+        .split(':'),
+      b_start_time
+        .substring(0, b_start_time.length - 3)
+        .replace(/\s{1,}/, '')
+        .split(':'),
+    ];
+    const [a_parity, b_parity] = [
+      a_start_time
+        .substring(a_start_time.length - 3, a_start_time.length)
+        .replace(/\s{1,}/, ''),
+      b_start_time
+        .substring(b_start_time.length - 3, b_start_time.length)
+        .replace(/\s{1,}/, ''),
+    ];
+
+    let [a_time, b_time] = [0, 0];
+    if (a_parity === 'PM' && a_HMS[0] !== '12') {
+      const hoursInt = parseInt(a_HMS[0]) + 12;
+      a_HMS[0] = `${hoursInt}`;
+    } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+
+    if (b_parity === 'PM' && b_HMS[0] !== '12') {
+      const hoursInt = parseInt(b_HMS[0]) + 12;
+      b_HMS[0] = `${hoursInt}`;
+    } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+
+    for (let i = 0; i < a_HMS.length; i++) {
+      a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+      b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+    }
+
+    return [a_time, b_time];
+  };
+  useEffect(() => {
+    if (userID == '') return;
+    console.log(
+      'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
+      [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
+    );
+
+    axios
+      .post(url + id.toString() + ',' + start.toString() + ',' + end.toString())
+      .then((response) => {
+        console.log('day events ', response.data);
+        const temp = [];
+
+        for (let i = 0; i < response.data.length; i++) {
+          temp.push(response.data[i]);
+        }
+        temp.sort((a, b) => {
+          console.log('a = ', a, '\nb = ', b);
+          const [a_start, b_start] = [
+            a['start']['dateTime'],
+            b['start']['dateTime'],
+          ];
+          console.log('a_start = ', a_start, '\nb_start = ', b_start);
+          const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
+
+          const [a_start_time, b_start_time] = getTimes(
+            a['start']['dateTime'],
+            b['start']['dateTime']
+          );
+          const [a_end_time, b_end_time] = getTimes(
+            a['end']['dateTime'],
+            b['end']['dateTime']
+          );
+
+          if (a_start_time < b_start_time) return -1;
+          else if (a_start_time > b_start_time) return 1;
+          else {
+            if (a_end_time < b_end_time) return -1;
+            else if (a_end_time > b_end_time) return 1;
+            else {
+              if (a_start < b_start) return -1;
+              else if (a_start > b_start) return 1;
+              else {
+                if (a_end < b_end) return -1;
+                else if (a_end > b_end) return 1;
+              }
+            }
+          }
+
+          return 0;
+        });
+
+        console.log('homeTemp = ', temp);
+
+        setEvents(temp);
+      })
+      .catch((error) => {
+        console.log('here: Error in getting goals and routines ' + error);
+      });
+  }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
+}
 function GrabFireBaseRoutinesData() {
   let url = BASE_URL + 'getroutines/';
   let routine = [];
@@ -1678,11 +1727,11 @@ function GrabFireBaseRoutinesData() {
             let datetimeA = new Date(
               a['gr_start_day_and_time'].replace(/-/g, '/')
             );
-
+            console.log('datetimeA', datetimeA);  
             let datetimeB = new Date(
               b['gr_start_day_and_time'].replace(/-/g, '/')
             );
-
+            console.log('datetimeB', datetimeB);     
             let timeA =
               new Date(datetimeA).getHours() * 60 +
               new Date(datetimeA).getMinutes();
@@ -1698,6 +1747,7 @@ function GrabFireBaseRoutinesData() {
 
           for (let i = 0; i < x.length; ++i) {
             let gr = {};
+            //console.log('day events', x[i]);
             gr.audio = '';
             // gr.available_end_time = "23:59:59";
             // gr.available_start_time = "00:00:00";
@@ -2139,6 +2189,7 @@ function GrabFireBaseRoutinesData() {
                 stateValue.closeRoutine,
                 GrabFireBaseRoutinesGoalsData(),
                 GrabFireBaseRoutinesData(),
+                GoogleEvents(),
                 stateValue.BASE_URL)
               }
             >
@@ -2292,6 +2343,7 @@ function GrabFireBaseRoutinesData() {
                                           ...prevState,
                                           calendarView: 'Day',
                                         };
+                                        
                                       })
                                     : setStateValue((prevState) => {
                                         return {
@@ -2299,6 +2351,7 @@ function GrabFireBaseRoutinesData() {
                                           calendarView: 'Week',
                                         };
                                       });
+                                      
                                 }}
                               />
                             </Col>

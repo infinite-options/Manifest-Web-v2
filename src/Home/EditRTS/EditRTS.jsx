@@ -482,7 +482,11 @@ const EditRTS = (props) => {
         width: '90%',
         //backgroundColor: '#F57045',
         backgroundColor: (() => {
-          if (editingRTSContext.editingRTS.newItem.is_persistent === true || editingRTSContext.editingRTS.newItem.is_persistent === 'true' || editingRTSContext.editingRTS.newItem.is_persistent === 'True' ) {
+          if (
+            editingRTSContext.editingRTS.newItem.is_persistent === true ||
+            editingRTSContext.editingRTS.newItem.is_persistent === 'true' ||
+            editingRTSContext.editingRTS.newItem.is_persistent === 'True'
+          ) {
             return '#F57045';
           } else if (
             editingRTSContext.editingRTS.newItem.is_persistent === false ||
@@ -508,12 +512,11 @@ const EditRTS = (props) => {
       >
         <Col style={{ float: 'left', width: '30%' }}>
           <div style={{ fontWeight: 'bold', fontSize: '20px' }}>
-            {
-              editingRTSContext.editingRTS.newItem.is_persistent === true 
-            ? "Routine"
-            : "Goal"
-              
-            } &nbsp;Name
+            {editingRTSContext.editingRTS.newItem.is_persistent === 'True' ||
+            editingRTSContext.editingRTS.newItem.is_persistent === true
+              ? 'Routine'
+              : 'Goal'}{' '}
+            &nbsp;Name
           </div>
           <input
             style={{

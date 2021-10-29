@@ -145,6 +145,8 @@ export default function GoalHome(props) {
           // setUserID(curUserID);
           // console.log(userID);
           GrabFireBaseRoutinesGoalsData();
+          GrabFireBaseGoalsData();
+          GoogleEvents();
           // return userID;
         } else {
           console.log('No User Found');
@@ -163,7 +165,7 @@ export default function GoalHome(props) {
   const [getRoutinesEndPoint, setGetRoutinesEndPoint] = useState([]);
   const [getActionsEndPoint, setGetActionsEndPoint] = useState({});
   const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
-
+  const [events, setEvents] = useState({});
   const [hightlight, setHightlight] = useState('');
   const [stateValue, setStateValue] = useState({
     itemToEdit: {
@@ -756,7 +758,7 @@ export default function GoalHome(props) {
         todayDateObject: dateContext,
         dayEvents: [],
       };
-      //updateEventsArray;
+      // updateEventsArray();
     });
     console.log(stateValue.dateContext, stateValue.dayEvents);
   };
@@ -773,7 +775,7 @@ export default function GoalHome(props) {
         todayDateObject: dateContext,
         dayEvents: [],
       };
-      //updateEventsArray;
+      // updateEventsArray();
     });
     console.log(stateValue.dateContext, stateValue.dayEvents);
   };
@@ -895,77 +897,10 @@ export default function GoalHome(props) {
 
   function dayViewAbstracted() {
     return (
-      <div
-        style={{
-          background: 'white',
-          width: '100%',
-          //padding: '20px',
-          margin:'0px'
-        }}
-      >
-        {/* <Container>
-          <Row style={{ marginTop: '0px' }}>
-            <Col>
-              <div>
-                <FontAwesomeIcon
-                  style={{ marginLeft: '100px', cursor: 'pointer' }}
-                  icon={faChevronLeft}
-                  size="2x"
-                  className="X"
-                  onClick={(e) => {
-                    prevDay();
-                  }}
-                />
-              </div>
-            </Col>
-            <Col
-              md="auto"
-              style={{ textAlign: 'center' }}
-              className="bigfancytext"
-            >
-              <p>
-                {stateValue.todayDateObject.format('dddd')}{' '}
-                {stateValue.todayDateObject.get('date')} {getMonth()}{' '}
-                {getYear()}{' '}
-              </p>
-              <p
-                style={{ marginBottom: '0', height: '19.5px' }}
-                className="normalfancytext"
-              >
-                {userTime_zone}
-              </p>
-            </Col>
-            <Col>
-              <FontAwesomeIcon
-                // style={{ marginLeft: "50%" }}
-                style={{
-                  float: 'right',
-                  //marginRight: '100px',
-                  cursor: 'pointer',
-                }}
-                icon={faChevronRight}
-                size="2x"
-                className="X"
-                onClick={(e) => {
-                  nextDay();
-                }}
-              />
-            </Col>
-            <Col>
-              <FontAwesomeIcon
-                // style={{ marginLeft: "50%" }}
-                style={{ float: 'right', cursor: 'pointer' }}
-                icon={faCalendar}
-                size="2x"
-                className="X"
-                onClick={(e) => {
-                  curDay();
-                }}
-              />
-            </Col>
-          </Row>
-        </Container> */}
-        <Row>
+      <div style={{ width: '100%' }}>
+        <Row
+          style={{ float: 'right', width: '100%', padding: '0', margin: '0' }}
+        >
           {/* {console.log("these are the events that are going to be passed in", this.state.dayEvents)} */}
           {console.log(
             'stateValue.todayDateObject',
@@ -977,7 +912,8 @@ export default function GoalHome(props) {
             dateContext={stateValue.todayDateObject}
             // eventClickDayView={handleDayEventClick}
             // handleDateClick={handleDateClickOnDayView}
-            dayEvents={stateValue.dayEvents}
+            dayEvents={events}
+            theCurrentUserId={userID}
             // getEventsByInterval={getEventsByIntervalDayVersion}
             timeZone={userTime_zone}
           />
@@ -999,7 +935,7 @@ export default function GoalHome(props) {
             goal_ids={stateValue.goal_ids}
             goals={stateValue.goals}
             dayGoalClick={toggleShowGoal}
-            theCurrentUserId={stateValue.currentUserId}
+            theCurrentUserId={userID}
             originalGoalsAndRoutineArr={stateValue.originalGoalsAndRoutineArr}
             BASE_URL={stateValue.BASE_URL}
           />
@@ -1556,6 +1492,35 @@ export default function GoalHome(props) {
         })
         .catch((error) => {
           console.log('Error in getting goals and routines ' + error);
+        });
+    }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
+  }
+
+  function GoogleEvents() {
+    let url = BASE_URL + 'calenderEvents/';
+    let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+     let endofWeek = moment(stateValue.dateContext).add(6, 'days');
+     let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
+    let id = userID;
+
+    useEffect(() => {
+      if (userID == '') return;
+      console.log(
+        'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
+        [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
+      );
+
+      axios
+        .post(
+          url + id.toString() + ',' + start.toString() + ',' + end.toString()
+        )
+        .then((response) => {
+          console.log('day events ', response.data);
+          
+          setEvents(response.data);
+        })
+        .catch((error) => {
+          console.log('here: Error in getting goals and routines ' + error);
         });
     }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
@@ -2137,6 +2102,7 @@ export default function GoalHome(props) {
                 stateValue.closeRoutine,
                 GrabFireBaseRoutinesGoalsData(),
                 GrabFireBaseGoalsData(),
+                GoogleEvents(),
                 stateValue.BASE_URL)
               }
             >
