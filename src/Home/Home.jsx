@@ -1605,7 +1605,7 @@ function GoogleEvents() {
       .catch((error) => {
         console.log('here: Error in getting goals and routines ' + error);
       });
-  }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
+  }, [userID, stateValue.dateContext]);
 }
 function GrabFireBaseRoutinesData() {
   let url = BASE_URL + 'getroutines/';
@@ -2542,7 +2542,8 @@ function GrabFireBaseRoutinesData() {
                               >
                                 {stateValue.todayDateObject.format('dddd')}{' '}
                                 {stateValue.todayDateObject.get('date')}{' '}
-                                {getMonth()} {getYear()}{' '}
+                                {stateValue.todayDateObject.format('MMMM')}{' '}
+                                {getYear()}{' '}
                               </p>
 
                               <p
@@ -2633,7 +2634,7 @@ function GrabFireBaseRoutinesData() {
                       showCalendarView()
                     )}
                   </div>
-                  
+
                 </div>
               </Box>
               {/* ----------------------------... Navigation--------------------------- */}

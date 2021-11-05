@@ -963,7 +963,7 @@ export default function Events(props) {
   };
 
   const getMonth = () => {
-    return stateValue.dateContext.format('MMMM');
+    return stateValue.dateContext.add(1, 'M').format('MMMM');
   };
 
   const getDay = () => {
@@ -1688,7 +1688,7 @@ function GoogleEvents() {
       .catch((error) => {
         console.log('here: Error in getting goals and routines ' + error);
       });
-  }, [userID]);
+  }, [userID, stateValue.dateContext]);
 }
     function GrabFireBaseRoutinesData() {
     let url = BASE_URL + 'calenderEvents/';
@@ -2238,7 +2238,8 @@ function GoogleEvents() {
                               >
                                 {stateValue.todayDateObject.format('dddd')}{' '}
                                 {stateValue.todayDateObject.get('date')}{' '}
-                                {getMonth()} {getYear()}{' '}
+                                {stateValue.todayDateObject.format('MMMM')}{' '}
+                                {getYear()}{' '}
                               </p>
 
                               <p

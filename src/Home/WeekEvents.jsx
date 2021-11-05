@@ -66,6 +66,14 @@ export default class WeekEvents extends Component {
     let startObject = this.props.dateContext.clone();
     let startDay = startObject.startOf('week');
     let curDate = startDay.clone();
+    const tz = {
+      timeZone: this.props.timeZone,
+      // add more here
+    };
+
+    let today = new Date().toLocaleString(tz, tz);
+    //let today = new Date();
+    let dateNew = moment(today);
     for (let i = 0; i < 7; i++) {
       arr.push(
         <Col key={'day' + i}>
@@ -73,7 +81,11 @@ export default class WeekEvents extends Component {
             style={{
               textAlign: 'center',
               height: this.state.pxPerHour,
-              
+              color:
+                (curDate.format('D') === dateNew.format('D')) &
+                (curDate.format('M') === dateNew.format('M'))
+                  ? 'RebeccaPurple'
+                  : '',
             }}
           >
             {curDate.format('MMM' + ' ' + 'D')}
@@ -156,8 +168,7 @@ export default class WeekEvents extends Component {
     }
     return dic;
   };
-
-  getEventItemFromDic = (day, hour, dic) => {
+   getEventItemFromDic = (day, hour, dic) => {
     let startObject = this.props.dateContext.clone();
     let startDay = startObject.startOf('week');
     let curDate = startDay.clone();
@@ -516,7 +527,12 @@ export default class WeekEvents extends Component {
             style={{
               textAlign: 'center',
               fontWeight: 'bold',
-              
+              color:
+                (curDate.format('D') === dateNew.format('D')) &
+                (curDate.format('dddd') === dateNew.format('dddd')) &
+                (curDate.format('M') === dateNew.format('M'))
+                  ? 'RebeccaPurple'
+                  : '',
               padding: '0',
             }}
           >
@@ -538,7 +554,7 @@ export default class WeekEvents extends Component {
     });
     return (
       <Container style={{ margin: '0rem' }}>
-        <Row style={{ marginLeft: '3rem'}}>
+        <Row style={{ marginLeft: '3rem' }}>
           <Row
             style={{
               overflowX: 'hidden',
@@ -561,7 +577,9 @@ export default class WeekEvents extends Component {
           style={{ marginLeft: '-4rem', marginRight: '0rem' }}
         >
           <Col>
-            <Container style={{ marginRight: '-3px', padding: '0', width: '6px' }}>
+            <Container
+              style={{ marginRight: '-3px', padding: '0', width: '6px' }}
+            >
               {this.timeDisplay()}
             </Container>
           </Col>
