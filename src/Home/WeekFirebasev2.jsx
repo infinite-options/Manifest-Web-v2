@@ -201,7 +201,20 @@ export default function Firebasev2(props) {
         for (let i = 0; i < response.data.length; i++) {
           temp.push(response.data[i]);
         }
-        temp.sort((a, b) => {
+
+        const filteredRecEvents = Array.from(
+          new Set(temp.map((a) => a.recurringEventId))
+        ).map((recurringEventId) => {
+          return temp.find((a) => a.recurringEventId === recurringEventId);
+        });
+        const filteredNonRecEvents = Array.from(
+          new Set(temp.filter((a) => !a.recurringEventId))
+        );
+        const filteredEvents = filteredRecEvents.concat(filteredNonRecEvents);
+        console.log('recurring', filteredRecEvents);
+        console.log('recurring', filteredNonRecEvents);
+        console.log('recurring', filteredEvents);
+        filteredEvents.sort((a, b) => {
           // console.log('a = ', a, '\nb = ', b);
           const [a_start, b_start] = [
             a['start']['dateTime'],
@@ -237,9 +250,7 @@ export default function Firebasev2(props) {
           return 0;
         });
 
-        console.log('homeTemp = ', temp);
-
-        setActions(temp);
+      setActions(filteredEvents);
       })
       .catch((error) => {
         console.log('here: Error in getting goals and routines ' + error);
