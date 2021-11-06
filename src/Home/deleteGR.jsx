@@ -1,9 +1,8 @@
-import React, { useEffect, Component } from 'react';
+import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-import userContext from '../Home/userContext';
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const deleteGR = (props) => {
   const submitRequest = () => {

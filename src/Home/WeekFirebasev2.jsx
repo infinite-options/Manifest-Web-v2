@@ -1,27 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
 import axios from 'axios';
 import moment from 'moment';
 import {
   faUser,
   faUserAltSlash,
-  faTrophy,
-  faRunning,
-  faBookmark,
-  faEdit,
-  faList,
-  faCopy,
-  faAlignCenter,
 } from '@fortawesome/free-solid-svg-icons';
-import { useHistory, Redirect } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import {
   ListGroup,
-  Row,
   Col,
-  Modal,
-  InputGroup,
-  FormControl,
-  Table,
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
@@ -29,13 +17,8 @@ import EditIcon from './EditRTS/EditIcon.jsx';
 import {
   faCalendarDay,
 } from '@fortawesome/free-solid-svg-icons';
-import EditActionIcon from './EditATS/EditIcon.jsx';
-import EditStepsIcon from './EditIS/EditIcon.jsx';
-import Button from '@material-ui/core/Button';
-import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
-import { Footer } from 'rsuite';
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const useStyles = makeStyles({
   table: {
@@ -104,7 +87,7 @@ export default function Firebasev2(props) {
     // props.setGetActionsEndPoint({});
     // props.setGetStepsEndPoint({});
     props.setEvents({});
-  }, [props.theCurrentUserID]);
+  }, [props.theCurrentUserID, props.dateContext]);
 
   useEffect(() => {
     makeActionDisplays();

@@ -6,7 +6,7 @@ import axios from 'axios';
 import AddIconModal from '../AddIconModal';
 import UploadImage from '../UploadImage';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 const convertDateToDayString = (dateObject) => {
   //console.log(dateObject);
   const year = dateObject.getFullYear();

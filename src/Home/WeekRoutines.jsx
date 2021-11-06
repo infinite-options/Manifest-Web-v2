@@ -978,11 +978,6 @@ export default class WeekRoutines extends Component {
                 (curDate.format('M') === dateNew.format('M'))
                   ? this.chooseColor()
                   : '',
-              /* color:
-                (curDate.format('D') === today.getDate().toString()) &
-                (curDate.format('M') === (today.getMonth() + 1).toString())
-                  ? '#FF6B4A'
-                  : '', */
             }}
           >
             {curDate.format('MMM' + ' ' + 'D')}

@@ -33,7 +33,7 @@ import axios from 'axios';
 /*Use states to define variables */
 
 /* Custom Hook to make styles */
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const useStyles = makeStyles({
   buttonSelection: {

@@ -1,16 +1,7 @@
 import React, {useEffect, useState} from 'react';
-//import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import DayRoutines from '../Home/DayRoutines';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
   
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 export function MainPage() {
 //    const { profile, setProfile } = useContext(AuthContext);

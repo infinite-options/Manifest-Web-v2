@@ -15,10 +15,10 @@ import axios from 'axios';
 import { CompareSharp } from '@material-ui/icons';
 import { faYenSign } from '@fortawesome/free-solid-svg-icons';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
-const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
+const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
-const CLIENT_SECRET = process.env.REACT_APP_CLIENT_SECRET;
+const CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
 
 /* Custom Hook to make styles */
 const useStyles = makeStyles({

@@ -22,7 +22,6 @@ import {
   Table,
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-//import DeleteAT from "../manifest/OldManifest";
 import DeleteGR from '../manifest/OldManifest/deleteGR.jsx';
 import EditIcon from '../manifest/OldManifest/EditIcon.jsx';
 import CopyIcon from '../manifest/OldManifest/CopyIcon.jsx';
@@ -30,7 +29,7 @@ import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const useStyles = makeStyles({
   table: {

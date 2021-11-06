@@ -34,7 +34,7 @@ import EditISContext from './EditIS/EditISContext';
 import EditIS from './EditIS/EditIS';
 import LoginContext from '../LoginContext';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 export default function Home(props) {
   console.log('In home');
@@ -264,6 +264,7 @@ export default function Home(props) {
     showRoutineGoalModal: false,
     showGoalModal: false,
     showRoutineModal: false,
+    showEventModal: false,
     showAboutModal: false,
     noteToFuture: false,
     showPeopleModal: false,
@@ -686,6 +687,7 @@ export default function Home(props) {
       return {
         ...prevState,
         showRoutineModal: !stateValue.showRoutineModal,
+        showEventModal: false,
         showGoalModal: false,
         showRoutineGoalModal: false,
       };

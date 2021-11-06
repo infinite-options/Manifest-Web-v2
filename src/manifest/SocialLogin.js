@@ -12,8 +12,8 @@ import Facebook from '../manifest/LoginAssets/Facebook.svg';
 import Google from '../manifest/LoginAssets/Google.svg';
 import Apple from '../manifest/LoginAssets/Apple.svg';
 import LoginContext from 'LoginContext';
-const BASE_URL = process.env.REACT_APP_BASE_URL;
-
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
+const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 function SocialLogin(props) {
   // const Auth = useContext(AuthContext);
   const loginContext = useContext(LoginContext);
@@ -320,7 +320,7 @@ function SocialLogin(props) {
         <Button style={{}}>
           <GoogleLogin
             //clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-            clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
+            clientId={CLIENT_ID}
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
             isSignedIn={false}

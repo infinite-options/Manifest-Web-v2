@@ -19,7 +19,7 @@ import { useState, useContext } from 'react';
 import LoginContext from 'LoginContext';
 import { AlternateEmail } from '@material-ui/icons';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 /* Custom Hook to make styles */
 const useStyles = makeStyles({

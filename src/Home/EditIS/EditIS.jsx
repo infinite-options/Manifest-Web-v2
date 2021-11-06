@@ -6,7 +6,7 @@ import AddIconModal from '../AddIconModal';
 import UploadImage from '../UploadImage';
 import { useEffect } from 'react';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const EditIS = (props) => {
   const editingISContext = useContext(EditISContext);

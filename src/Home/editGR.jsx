@@ -13,7 +13,7 @@ import AddIconModal from './AddIconModal';
 import UploadImage from './UploadImage';
 import axios from 'axios';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 export default class editGR extends Component {
   constructor(props) {

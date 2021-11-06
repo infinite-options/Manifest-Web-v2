@@ -22,7 +22,7 @@ import UploadImage from './UploadImage';
 import axios from 'axios';
 import { Switch } from 'react-router';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 
 export default class CopyGR extends Component {

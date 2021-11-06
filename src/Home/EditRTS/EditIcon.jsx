@@ -7,7 +7,7 @@ import DayRoutines from 'Home/DayRoutines';
 import { Step } from '@material-ui/core';
 import moment from 'moment';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const convertDateToDayString = (dateObject) => {
   // console.log(dateObject)

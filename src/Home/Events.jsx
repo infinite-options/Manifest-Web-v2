@@ -35,7 +35,7 @@ import EditIS from './EditIS/EditIS';
 import LoginContext from '../LoginContext';
 //import ApiCalendar from 'react-google-calendar-api';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 export default function Events(props) {
   console.log('In events');
@@ -262,6 +262,7 @@ export default function Events(props) {
     routines: [],
     routine_ids: [],
     goal_ids: [],
+    showEventModal: false,
     showRoutineGoalModal: false,
     showGoalModal: false,
     showRoutineModal: false,
@@ -686,13 +687,14 @@ export default function Events(props) {
     setStateValue((prevState) => {
       return {
         ...prevState,
-        showRoutineModal: !stateValue.showRoutineModal,
+        showEventModal: !stateValue.showEventModal,
+        showRoutineModal: false,
         showGoalModal: false,
         showRoutineGoalModal: false,
       };
     });
 
-    return stateValue.showRoutineModal;
+    return stateValue.showEventModal;
   }
 
   function toggleShowGoal() {
@@ -843,7 +845,7 @@ export default function Events(props) {
       }, '');
       console.log('Guest List:', A.attendees, guestList);
     }
-    this.setState({
+    setStateValue({
       newEventID: A.id,
       newEventStart0: A.start.dateTime
         ? new Date(A.start.dateTime)
@@ -1876,6 +1878,7 @@ function GoogleEvents() {
                 (stateValue.itemToEdit,
                 stateValue.routines,
                 stateValue.originalGoalsAndRoutineArr,
+                stateValue.showEventModal,
                 stateValue.showRoutineModal,
                 stateValue.itemToEdit.is_available,
                 stateValue.itemToEdit.is_displayed_today,
@@ -1927,7 +1930,7 @@ function GoogleEvents() {
                     Routines
                   </Button>
 
-                  {/* {stateValue.showRoutineModal ? (
+                  {stateValue.showEventModal ? (
                     <Button
                       className={classes.buttonSelection}
                       style={{
@@ -1935,14 +1938,10 @@ function GoogleEvents() {
                       }}
                       id="one"
                       onClick={() => {
-                        // e.stopPropagation()
-                        console.log('Clicked add RTS');
-                        //console.log(editingRTS)
-                        setEditingRTS(newRTSState);
-                        //console.log(editingRTS)
+                        history.push('/createevents');
                       }}
                     >
-                      Add Routine +
+                      Add Event +
                     </Button>
                   ) : (
                     <div
@@ -1950,10 +1949,10 @@ function GoogleEvents() {
                         width: '20%',
                       }}
                     ></div>
-                  )} */}
+                  )}
 
                   <div style={{ flex: '1' }}>
-                     {userID != '' && (
+                    {userID != '' && (
                       <WeekFirebaseV2
                         theCurrentUserID={userID}
                         sethighLight={setHightlight}
@@ -1980,8 +1979,8 @@ function GoogleEvents() {
                         stateValue={stateValue}
                         setStateValue={setStateValue}
                       />
-                    )} 
-                  </div> 
+                    )}
+                  </div>
                   {/* <div style={{flex:'2'}}
               >
                {editingIS.editing ? <EditIS/> : editingATS.editing ? <EditATS/> : editingRTS.editing ? <EditRTS /> : showCalendarView()}

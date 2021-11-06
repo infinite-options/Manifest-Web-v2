@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import { Button, Modal } from 'react-bootstrap';
-import { Form, Row, Col } from 'react-bootstrap';
-import ButtonMaterialUI from '@material-ui/core/Button';
 import axios from 'axios';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 export default class AddIconModal extends Component {
   constructor(props) {

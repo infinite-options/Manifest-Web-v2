@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from 'react';
-//import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -32,7 +31,7 @@ import {
   Spinner,
 } from 'react-bootstrap';
 import { wait } from '@testing-library/dom';
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 const useStyles = makeStyles({
   table: {
     minWidth: 650,

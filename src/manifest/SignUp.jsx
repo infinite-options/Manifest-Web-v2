@@ -20,7 +20,7 @@ import { useState, useContext } from 'react';
 import SocialLogin from './SocialLogin';
 const moment = require('moment');
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 /* Custom Hook to make styles */
 const useStyles = makeStyles({

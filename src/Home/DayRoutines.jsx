@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-//import firebase from "./firebase";
 import moment from "moment";
 import { Container, Row, Col } from "react-bootstrap";
 

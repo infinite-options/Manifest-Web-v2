@@ -3,7 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import moment from 'moment';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const AddRTS = () => {
   const updateRTS = (e) => {

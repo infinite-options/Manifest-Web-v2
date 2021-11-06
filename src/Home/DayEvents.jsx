@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-// import axios from 'axios';
-// import moment from "moment";
 import { Container, Row, Col } from 'react-bootstrap';
 
 export default class DayEvents extends Component {

@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-//import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
-import DayRoutines from '../Home/DayRoutines';
 import { Row, Col } from 'react-bootstrap';
 import FirebaseV2 from '../Home/Firebasev2';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const MainPage = ({ ...props }) => {
   //    const { profile, setProfile } = useContext(AuthContext);
