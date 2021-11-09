@@ -76,6 +76,7 @@ function SocialLogin(props) {
             usersOfTA: [],
             curUser: '',
             curUserTimeZone: '',
+            curUserEmail: '',
           });
           console.log('Login successful');
           console.log(email);

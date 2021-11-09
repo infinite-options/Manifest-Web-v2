@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useState } from 'react';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
@@ -192,11 +192,13 @@ export function Navigation() {
             document.cookie = 'patient_name=' + listOfUsers[0].user_name;
             document.cookie = 'patient_timeZone' + listOfUsers[0].time_zone;
             document.cookie = 'patient_uid' + listOfUsers[0].user_unique_id;
+            document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
           }
         }
       } else {
         if (listOfUsers[0]) {
           console.log('document cookie set to first user');
+          document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
           document.cookie = 'patient_name=' + listOfUsers[0].user_name;
           document.cookie = 'patient_timeZone' + listOfUsers[0].time_zone;
           document.cookie = 'patient_uid' + listOfUsers[0].user_unique_id;
@@ -223,11 +225,14 @@ export function Navigation() {
                 'patient_name=' + JSON.parse(e.target.value).user_name;
               document.cookie =
                 'patient_timeZone=' + JSON.parse(e.target.value).time_zone;
+              document.cookie =
+                  'patient_email=' + JSON.parse(e.target.value).user_email_id;
               console.log(document.cookie);
               loginContext.setLoginState({
                 ...loginContext.loginState,
                 curUser: JSON.parse(e.target.value).user_unique_id,
                 curUserTimeZone: JSON.parse(e.target.value).time_zone,
+                curUserEmail: JSON.parse(e.target.value).user_email_id,
               });
               toggleGetTAList(false);
 
@@ -482,8 +487,49 @@ export function Navigation() {
   console.log(loginContext);
   getTAList();
   console.log(taList);
+  // const info = (accessToken) =>{
+  //   fetch(
+  //     `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${accessToken}`,
+  //     {
+  //       method: 'GET',
+  //     }
+  //   )
+  //     .then(async (response) => {
+  //       // get json response here
+  //       let data = await response.json();
+
+  //       if (response.status === 200) {
+  //         // Process data here
+  //         setUserInfo(data);
+  //         console.log('res', userInfo);
+  //       } else {
+  //         // Rest of status codes (400,500,303), can be handled here appropriately
+  //         console.log('err');
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+
+  //   let e = userInfo['email'];
+  //   let fn = userInfo['given_name'];
+  //   let ln = userInfo['family_name'];
+  //   let si = userInfo['id'];
+   
+
+  //   setEmailUser(e);
+  //   setFirstName(fn);
+  //   setLastName(ln);
+  //   setSocialId(si);
+
+  //   document.cookie = 'patient_name=' + firstName + ' ' + lastName;
+  //   document.cookie = 'patient_email=' + emailUser;
+  //   //document.cookie = 'patient_name=Loading';
+  // }
+
   
   const responseGoogle = (response) => {
+    
     console.log('response', response);
     
     let auth_code = response.code;
@@ -513,88 +559,65 @@ export function Navigation() {
       },
       body: formBody,
     })
-      .then(async (response) => {
-        // get json response here
-        let data = await response.json();
-        
-        if (response.status === 200) {
-          // Process data here
-          setTokenInfo(data);
-          console.log('res', tokenInfo);
-        } else {
-          // Rest of status codes (400,500,303), can be handled here appropriately
-          console.log('err');
-        }
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        console.log(responseData);
+        return responseData;
+      })
+      .then((data) => {
+        console.log(data);
+        let at = data['access_token'];
+        let rt = data['refresh_token'];
+        let ax = data['expires_in'].toString();
+        setAccessToken(at);
+        setrefreshToken(rt);
+        setaccessExpiresIn(ax);
+        console.log('res', at, rt);
+
+         axios
+           .get(
+             'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' +
+               at
+           )
+           .then((response) => {
+             console.log(response.data);
+
+             let data = response.data;
+             //setUserInfo(data);
+             let e = data['email'];
+             let fn = data['given_name'];
+             let ln = data['family_name'];
+             let si = data['id'];
+
+             setEmailUser(e);
+             setFirstName(fn);
+             setLastName(ln);
+             setSocialId(si);
+           })
+           .catch((error) => {
+             console.log('its in landing page');
+             console.log(error);
+           });
+
+         //console.log('res', userInfo);
+        //  let e = userInfo['email'];
+        //  let fn = userInfo['given_name'];
+        //  let ln = userInfo['family_name'];
+        //  let si = userInfo['id'];
+
+        //  setEmailUser(e);
+        //  setFirstName(fn);
+        //  setLastName(ln);
+        //  setSocialId(si);
+         toggleNewUser(!showNewUser);
+
+        return accessToken,refreshToken,accessExpiresIn,emailUser,firstName,lastName,socialId
       })
       .catch((err) => {
         console.log(err);
       });
-    console.log('res', tokenInfo);
-    // fetch(
-    // `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${tokenInfo['access_token']}`,
-    // {
-    //   method: 'GET',
-    // })
-    //   .then(async (response) => {
-    //     // get json response here
-    //     let data = await response.json();
-
-    //     if (response.status === 200) {
-    //       // Process data here
-    //       setUserInfo(data)
-    //       console.log('res', userInfo);
-    //     } else {
-    //       // Rest of status codes (400,500,303), can be handled here appropriately
-    //       console.log('err');
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-    //let e = response.profileObj.email;
-    let at = tokenInfo['access_token'];
-    let rt = tokenInfo['refresh_token'];
-    let ax = tokenInfo['expires_in'].toString();
-    
-    setAccessToken(at);
-    setrefreshToken(rt);
-    setaccessExpiresIn(ax);
-    fetch(
-      `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${accessToken}`,
-      {
-        method: 'GET',
-      }
-    )
-      .then(async (response) => {
-        // get json response here
-        let data = await response.json();
-
-        if (response.status === 200) {
-          // Process data here
-          setUserInfo(data);
-          console.log('res', userInfo);
-        } else {
-          // Rest of status codes (400,500,303), can be handled here appropriately
-          console.log('err');
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    let e = userInfo['email'];
-    let fn = userInfo['given_name'];
-    let ln = userInfo['family_name'];
-    let si = userInfo['id'];
-    console.log(at, rt);
-
-    
-   
-    setEmailUser(e);
-    setFirstName(fn);
-    setLastName(ln);
-    setSocialId(si);
-    toggleNewUser(!showNewUser);
   };
    
 
@@ -825,6 +848,7 @@ export function Navigation() {
                       document.cookie = 'ta_email=1;max-age=0';
                       document.cookie = 'patient_uid=1;max-age=0';
                       document.cookie = 'patient_name=1;max-age=0';
+                      document.cookie = 'patient_email=1;max-age=0';
                       loginContext.setLoginState({
                         ...loginContext.loginState,
                         loggedIn: false,
@@ -836,6 +860,7 @@ export function Navigation() {
                         usersOfTA: [],
                         curUser: '',
                         curUserTimeZone: '',
+                        curUserEmail:'',
                       });
                       history.push('/');
                     }}

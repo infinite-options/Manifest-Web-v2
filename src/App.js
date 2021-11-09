@@ -230,6 +230,10 @@ export default function App() {
     () => console.log('curUserTimeZone = ', loginState.curUserTimeZone),
     [loginState.curUserTimeZone]
   );
+  useEffect(
+    () => console.log('curUserEmail = ', loginState.curUserEmail),
+    [loginState.curUserEmail]
+  );
   console.log('base_url', BASE_URL);
   useEffect(() => {
     const favicon = getFaviconEl();

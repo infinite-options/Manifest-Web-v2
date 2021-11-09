@@ -52,6 +52,7 @@ export default function GoalHome(props) {
 
   var userID = '';
   var userTime_zone = '';
+  var userEmail='';
   if (
     document.cookie
       .split(';')
@@ -65,6 +66,10 @@ export default function GoalHome(props) {
     userTime_zone = document.cookie
       .split('; ')
       .find((row) => row.startsWith('patient_timeZone='))
+      .split('=')[1];
+    userEmail = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_email='))
       .split('=')[1];
     // document.cookie = 'patient_timeZone=test'
   } else {
@@ -133,12 +138,14 @@ export default function GoalHome(props) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;
+          const curUserEI = usersOfTA[0].user_email_id;
           console.log('timezone', curUserTZ);
           loginContext.setLoginState({
             ...loginContext.loginState,
             usersOfTA: response.data.result,
             curUser: curUserID,
             curUserTimeZone: curUserTZ,
+            curUserEmail: curUserEI,
           });
           console.log(curUserID);
           console.log('timezone', curUserTZ);
@@ -356,7 +363,7 @@ export default function GoalHome(props) {
 
     ta_people_id: '',
     emailIdObject: {},
-    theCurrentUserEmail: {},
+    theCurrentUserEmail: userEmail,
     newAccountID: '',
 
     // versionNumber: this.getVersionNumber(),

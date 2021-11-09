@@ -30,6 +30,8 @@ import { useHistory, } from 'react-router-dom';
 import AddIconModal from '../../Home/AddIconModal';
 import UploadImage from '../../Home/UploadImage';
 import TAUploadImage from '../../Home/TAUploadImage';
+import momentTZ from 'moment-timezone';
+
 const moment = require('moment');
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
@@ -59,6 +61,7 @@ export default function AboutModal(props) {
     // Kyle cookie code
     var userID = '';
     var userTime_zone = '';
+    var userEmail='';
     if (
       document.cookie
         .split(';')
@@ -72,9 +75,14 @@ export default function AboutModal(props) {
         .split('; ')
         .find((row) => row.startsWith('patient_timeZone='))
         .split('=')[1];
+      userEmail = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('patient_email='))
+        .split('=')[1];
     } else {
       userID = loginContext.loginState.curUser;
       userTime_zone = loginContext.loginState.curUserTimeZone;
+      userEmail = loginContext.loginState.curUserEmail;
     }
 
   const [imageChanged, setImageChanged] = useState(false);
@@ -378,6 +386,7 @@ export default function AboutModal(props) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;
+          const curUserEI = usersOfTA[0].user_email_id;
           // console.log('pog', loginContext.loginState.curUser)
           if (loginContext.loginState.curUser == '') {
             // edge case on refresh
@@ -386,6 +395,7 @@ export default function AboutModal(props) {
               usersOfTA: response.data.result,
               curUser: curUserID,
               curUserTimeZone: curUserTZ,
+              curUserEmail: curUserEI,
             });
           } else {
             loginContext.setLoginState({

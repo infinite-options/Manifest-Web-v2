@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
-import moment, { weekdays } from 'moment';
+import moment from 'moment';
 import { Container, Row, Col } from 'react-bootstrap';
 import './Home.css';
-import { BorderColor } from '@material-ui/icons';
-import zIndex from '@material-ui/core/styles/zIndex';
 import greenTick from '../manifest/LoginAssets/GreenTick.svg';
 import yelloTick from '../manifest/LoginAssets/YellowTick.svg';
-import { columnsTotalWidthSelector } from '@material-ui/data-grid';
 
 export default class WeekRoutines extends Component {
   constructor(props) {
@@ -23,11 +20,6 @@ export default class WeekRoutines extends Component {
     this.weekViewItems = this.weekViewItems.bind(this);
   }
 
-  checkClick = () => {
-    if (this.state.clickButton) {
-      BorderColor = 'blue';
-    }
-  };
   componentDidMount() {
     // Set top most time to be current hour
     // Browser scrolls to the bottom if hour >= 18

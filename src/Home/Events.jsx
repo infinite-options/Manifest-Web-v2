@@ -27,6 +27,9 @@ import userContext from './userContext';
 import EditRTSContext from './EditRTS/EditRTSContext';
 import EditRTS from './EditRTS/EditRTS';
 
+import EditEventContext from './EditEventContext';
+import GoogleEventComponent from './GoogleEventComponent';
+
 import EditATSContext from './EditATS/EditATSContext';
 import EditATS from './EditATS/EditATS';
 
@@ -41,7 +44,7 @@ export default function Events(props) {
   console.log('In events');
   const loginContext = useContext(LoginContext);
   var selectedUser = loginContext.loginState.curUser;
-  console.log(loginContext.loginState.curUser);
+  console.log(selectedUser);
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
   ) {
@@ -53,6 +56,7 @@ export default function Events(props) {
 
   var userID = '';
   var userTime_zone = '';
+  var userEmail = '';
   if (
     document.cookie
       .split(';')
@@ -66,6 +70,10 @@ export default function Events(props) {
     userTime_zone = document.cookie
       .split('; ')
       .find((row) => row.startsWith('patient_timeZone='))
+      .split('=')[1];
+    userEmail = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_email='))
       .split('=')[1];
     // document.cookie = 'patient_timeZone=test'
   } else {
@@ -87,26 +95,13 @@ export default function Events(props) {
     console.log('curUser', userTime_zone);
     // document.cookie = 'patient_name=test'
   }
-
+  console.log('curUser', loginContext.loginState);
   const history = useHistory();
   //console.log('curUser timezone', userTime_zone);
   /* useEffect() is used to render API calls as minimumly 
   as possible based on past experience, if not included 
   causes alarms and excessive rendering */
-  function GetBaseUrl() {
-    useEffect(() => {
-      axios.get('/base_url', {}).then((response) => {
-        console.log('getBaseUrl', response);
-
-        setStateValue((prevState) => {
-          return {
-            ...prevState,
-            BASE_URL: response['data'],
-          };
-        });
-      });
-    }, []);
-  }
+  
 
   // const [userID, setUserID] = useState(" ");
 
@@ -134,12 +129,14 @@ export default function Events(props) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;
+          const curUserEI = usersOfTA[0].user_email_id;
           console.log('timezone', curUserTZ);
           loginContext.setLoginState({
             ...loginContext.loginState,
             usersOfTA: response.data.result,
             curUser: curUserID,
             curUserTimeZone: curUserTZ,
+            curUserEmail:curUserEI,
           });
           console.log(curUserID);
           console.log('timezone', curUserTZ);
@@ -158,7 +155,8 @@ export default function Events(props) {
       });
   }, [loginContext.loginState.reload]);
   // }
-  console.log(loginContext.loginState.curUserTimeZone);
+  console.log(loginContext.loginState.curUserEmail);
+  console.log(document.cookie);
   /*----------------------------Use states to define variables----------------------------*/
   const [routineID, setRoutineID] = useState('');
   const [actionID, setActionID] = useState('');
@@ -357,7 +355,7 @@ export default function Events(props) {
 
     ta_people_id: '',
     emailIdObject: {},
-    theCurrentUserEmail: {},
+    theCurrentUserEmail: userEmail,
     newAccountID: '',
 
     // versionNumber: this.getVersionNumber(),
@@ -366,6 +364,121 @@ export default function Events(props) {
     BASE_URL: BASE_URL,
   });
   //console.log('startObject = ', stateValue.currentUserTimeZone);
+  const initialEditingEventState = {
+    editing: false,
+    user_id: userID,
+    theCurrentUserEmail: userEmail,
+    newItem: {
+      newEventID: '', //save the event ID for possible future use
+      newEventRecurringID: '',
+      newEventName: '',
+      newEventGuests: '',
+      newEventLocation: '',
+      newEventNotification: 30,
+      newEventDescription: '',
+      newEventStart0: new Date(), //start and end for a event... it's currently set to today
+      newEventEnd0: new Date(), //start and end for a event... it's currently set to today
+      isEvent: false, // use to check whether we clicked on a event and populate extra buttons in event form
+      repeatOption: false,
+      repeatOptionDropDown: 'Does not repeat',
+      repeatDropDown: 'DAY',
+      repeatDropDown_temp: 'DAY',
+      repeatMonthlyDropDown: 'Monthly on day 13',
+      repeatInputValue: '1',
+      repeatInputValue_temp: '1',
+      repeatOccurrence: '1',
+      repeatOccurrence_temp: '1',
+      repeatRadio: 'Never',
+      repeatRadio_temp: 'Never',
+      repeatEndDate: '',
+      repeatEndDate_temp: '',
+      showNoTitleError: '',
+      showDateError: '',
+      byDay: {
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
+      },
+      byDay_temp: {
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
+      },
+      repeatSummary: '',
+      recurrenceRule: '',
+      eventNotifications: {},
+      showDeleteRecurringModal: false,
+      deleteRecurringOption: 'This event',
+      showEditRecurringModal: false,
+      editRecurringOption: '',
+    },
+  };
+  const newEditingEventState = {
+    editing: true,
+    user_id: userID,
+    theCurrentUserEmail: userEmail,
+    newItem: {
+      newEventID: '', //save the event ID for possible future use
+      newEventRecurringID: '',
+      newEventName: '',
+      newEventGuests: '',
+      newEventLocation: '',
+      newEventNotification: 30,
+      newEventDescription: '',
+      newEventStart0: new Date(), //start and end for a event... it's currently set to today
+      newEventEnd0: new Date(), //start and end for a event... it's currently set to today
+      isEvent: false, // use to check whether we clicked on a event and populate extra buttons in event form
+      repeatOption: false,
+      repeatOptionDropDown: 'Does not repeat',
+      repeatDropDown: 'DAY',
+      repeatDropDown_temp: 'DAY',
+      repeatMonthlyDropDown: 'Monthly on day 13',
+      repeatInputValue: '1',
+      repeatInputValue_temp: '1',
+      repeatOccurrence: '1',
+      repeatOccurrence_temp: '1',
+      repeatRadio: 'Never',
+      repeatRadio_temp: 'Never',
+      repeatEndDate: '',
+      repeatEndDate_temp: '',
+      showNoTitleError: '',
+      showDateError: '',
+      byDay: {
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
+      },
+      byDay_temp: {
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
+      },
+      repeatSummary: '',
+      recurrenceRule: '',
+      eventNotifications: {},
+      showDeleteRecurringModal: false,
+      deleteRecurringOption: 'This event',
+      showEditRecurringModal: false,
+      editRecurringOption: '',
+    },
+  };
+
   const initialEditingRTSState = {
     editing: false,
     type: '',
@@ -638,6 +751,7 @@ export default function Events(props) {
   const [editingRTS, setEditingRTS] = useState(initialEditingRTSState);
   const [editingATS, setEditingATS] = useState(initialEditingATSState);
   const [editingIS, setEditingIS] = useState(initialEditingISState);
+  const [editingEvent, setEditingEvent] = useState(initialEditingEventState);
 
   // console.log(calendarView);
   /*----------------------------Custom Hook to make styles----------------------------*/
@@ -1938,8 +2052,7 @@ function GoogleEvents() {
                       }}
                       id="one"
                       onClick={() => {
-                        history.push('/createevents');
-                      }}
+                      setEditingEvent(newEditingEventState);                      }}
                     >
                       Add Event +
                     </Button>
@@ -2325,7 +2438,12 @@ function GoogleEvents() {
                         stateValue={stateValue}
                         setStateValue={setStateValue}
                       />
-                    ) : (
+                    ) : editingEvent.editing ? (
+                        <GoogleEventComponent
+                        currentEmail={userEmail}
+                        stateValue={stateValue}
+                        setStateValue={setStateValue} />
+                      ) : (
                       showCalendarView()
                     )}
                   </div>

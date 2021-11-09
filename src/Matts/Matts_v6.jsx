@@ -76,6 +76,7 @@ export default function MainPage(props) {
   // Kyle cookie code
   var userID = '';
   var userTime_zone = '';
+  var userEmail='';
   if (
     document.cookie
       .split(';')
@@ -88,6 +89,10 @@ export default function MainPage(props) {
     userTime_zone = document.cookie
       .split('; ')
       .find((row) => row.startsWith('patient_timeZone='))
+      .split('=')[1];
+    userEmail = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_email='))
       .split('=')[1];
   } else {
     userID = loginContext.loginState.curUser;
@@ -201,11 +206,13 @@ export default function MainPage(props) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;
+          const curUserEI = usersOfTA[0].user_email_id;
           loginContext.setLoginState({
             ...loginContext.loginState,
             usersOfTA: response.data.result,
             curUser: curUserID,
-            curUserTimeZone:curUserTZ,
+            curUserTimeZone: curUserTZ,
+            curUserEmail: curUserEI,
           });
           console.log(curUserID);
           // setUserID(curUserID);

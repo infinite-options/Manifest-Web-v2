@@ -95,6 +95,7 @@ export default function Login() {
             usersOfTA: [],
             curUser: '',
             curUserTimeZone: '',
+            curUserEmail:'',
           });
           console.log('Login successful');
           console.log(email);
@@ -142,6 +143,7 @@ export default function Login() {
             usersOfTA: [],
             curUser: '',
             curUserTimeZone: '',
+            curUserEmail: '',
           });
           history.push({
             pathname: '/home',

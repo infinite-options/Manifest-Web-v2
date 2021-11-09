@@ -87,7 +87,7 @@ export default function Firebasev2(props) {
     // props.setGetActionsEndPoint({});
     // props.setGetStepsEndPoint({});
     props.setEvents({});
-  }, [props.theCurrentUserID, props.dateContext]);
+  }, [props.theCurrentUserID, props.stateValue.dateContext]);
 
   useEffect(() => {
     makeActionDisplays();
@@ -197,42 +197,42 @@ export default function Firebasev2(props) {
         console.log('recurring', filteredRecEvents);
         console.log('recurring', filteredNonRecEvents);
         console.log('recurring', filteredEvents);
-        filteredEvents.sort((a, b) => {
-          // console.log('a = ', a, '\nb = ', b);
-          const [a_start, b_start] = [
-            a['start']['dateTime'],
-            b['start']['dateTime'],
-          ];
-          console.log('a_start = ', a_start, '\nb_start = ', b_start);
-          const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
+        // filteredEvents.sort((a, b) => {
+        //   // console.log('a = ', a, '\nb = ', b);
+        //   const [a_start, b_start] = [
+        //     a['start']['dateTime'],
+        //     b['start']['dateTime'],
+        //   ];
+        //   console.log('a_start = ', a_start, '\nb_start = ', b_start);
+        //   const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
 
-          const [a_start_time, b_start_time] = getTimes(
-            a['start']['dateTime'],
-            b['start']['dateTime']
-          );
-          const [a_end_time, b_end_time] = getTimes(
-            a['end']['dateTime'],
-            b['end']['dateTime']
-          );
+        //   const [a_start_time, b_start_time] = getTimes(
+        //     a['start']['dateTime'],
+        //     b['start']['dateTime']
+        //   );
+        //   const [a_end_time, b_end_time] = getTimes(
+        //     a['end']['dateTime'],
+        //     b['end']['dateTime']
+        //   );
 
-          if (a_start_time < b_start_time) return -1;
-          else if (a_start_time > b_start_time) return 1;
-          else {
-            if (a_end_time < b_end_time) return -1;
-            else if (a_end_time > b_end_time) return 1;
-            else {
-              if (a_start < b_start) return -1;
-              else if (a_start > b_start) return 1;
-              else {
-                if (a_end < b_end) return -1;
-                else if (a_end > b_end) return 1;
-              }
-            }
-          }
+        //   if (a_start_time < b_start_time) return -1;
+        //   else if (a_start_time > b_start_time) return 1;
+        //   else {
+        //     if (a_end_time < b_end_time) return -1;
+        //     else if (a_end_time > b_end_time) return 1;
+        //     else {
+        //       if (a_start < b_start) return -1;
+        //       else if (a_start > b_start) return 1;
+        //       else {
+        //         if (a_end < b_end) return -1;
+        //         else if (a_end > b_end) return 1;
+        //       }
+        //     }
+        //   }
 
-          return 0;
-        });
-
+        //   return 0;
+        // });
+      console.log('recurring', filteredEvents);
       setActions(filteredEvents);
       })
       .catch((error) => {

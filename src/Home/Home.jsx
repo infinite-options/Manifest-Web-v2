@@ -52,6 +52,7 @@ export default function Home(props) {
 
   var userID = '';
   var userTime_zone = '';
+  var userEmail='';
   if (
     document.cookie
       .split(';')
@@ -65,6 +66,10 @@ export default function Home(props) {
     userTime_zone = document.cookie
       .split('; ')
       .find((row) => row.startsWith('patient_timeZone='))
+      .split('=')[1];
+    userEmail = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_email='))
       .split('=')[1];
     // document.cookie = 'patient_timeZone=test'
   } else {
@@ -84,9 +89,10 @@ export default function Home(props) {
     //userTime_zone = loginContext.loginState.curUserTimeZone;
     console.log('curUser', userID);
     console.log('curUser', userTime_zone);
+    
     // document.cookie = 'patient_name=test'
   }
-
+  console.log('curUser', document.cookie);
   const history = useHistory();
   //console.log('curUser timezone', userTime_zone);
   /* useEffect() is used to render API calls as minimumly 
@@ -133,12 +139,14 @@ export default function Home(props) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;
+          const curUserEI = usersOfTA[0].user_email_id;
           console.log('timezone', curUserTZ);
           loginContext.setLoginState({
             ...loginContext.loginState,
             usersOfTA: response.data.result,
             curUser: curUserID,
             curUserTimeZone: curUserTZ,
+            curUserEmail: curUserEI,
           });
           console.log(curUserID);
           console.log('timezone', curUserTZ);
@@ -157,7 +165,7 @@ export default function Home(props) {
       });
   }, [loginContext.loginState.reload]);
   // }
-  console.log(loginContext.loginState.curUserTimeZone);
+  
   /*----------------------------Use states to define variables----------------------------*/
   const [routineID, setRoutineID] = useState('');
   const [actionID, setActionID] = useState('');
@@ -167,6 +175,7 @@ export default function Home(props) {
   const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
   const [events, setEvents] = useState({})
   const [hightlight, setHightlight] = useState('');
+  console.log(loginContext.loginState.curUserEmail);
   const [stateValue, setStateValue] = useState({
     itemToEdit: {
       title: '',
@@ -356,7 +365,7 @@ export default function Home(props) {
 
     ta_people_id: '',
     emailIdObject: {},
-    theCurrentUserEmail: {},
+    theCurrentUserEmail: userEmail,
     newAccountID: '',
 
     // versionNumber: this.getVersionNumber(),
