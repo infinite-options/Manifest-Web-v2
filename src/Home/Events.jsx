@@ -2052,7 +2052,8 @@ function GoogleEvents() {
                       }}
                       id="one"
                       onClick={() => {
-                      setEditingEvent(newEditingEventState);                      }}
+                      setEditingEvent(newEditingEventState);                      
+                    }}
                     >
                       Add Event +
                     </Button>
@@ -2080,7 +2081,7 @@ function GoogleEvents() {
                         // setIS={setEditingIS}
                         // aID={actionID}
                         // setaID={setActionID}
-                        // editRTS={editingRTS.editing}
+                        editEvent={editingEvent.editing}
                         // editATS={editingATS.editing}
                         // editIS={editingIS.editing}
                         // getGoalsEndPoint={events}
