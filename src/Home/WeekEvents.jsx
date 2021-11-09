@@ -191,7 +191,7 @@ export default class WeekEvents extends Component {
         }
       }
     }
-    console.log(arr);
+    //console.log(arr);
     if (arr == null) {
       return;
     }

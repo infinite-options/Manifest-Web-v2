@@ -97,6 +97,7 @@ export default function MainPage(props) {
   } else {
     userID = loginContext.loginState.curUser;
     userTime_zone = loginContext.loginState.curUserTimeZone;
+    userEmail = loginContext.loginState.curUserEmail;
   }
   if (userID != currentUser) {
     setHG([]);

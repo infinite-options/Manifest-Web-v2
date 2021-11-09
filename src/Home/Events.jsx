@@ -80,6 +80,7 @@ export default function Events(props) {
     console.log('in here', console.log(loginContext.loginState));
     console.log('document cookie', document.cookie);
     userID = loginContext.loginState.curUser;
+    userEmail = loginContext.loginState.curUserEmail;
     //userTime_zone = 'America/Tijuana';
     if (loginContext.loginState.usersOfTA.length === 0) {
       userTime_zone = 'America/Tijuana';
@@ -93,6 +94,7 @@ export default function Events(props) {
     //userTime_zone = loginContext.loginState.curUserTimeZone;
     console.log('curUser', userID);
     console.log('curUser', userTime_zone);
+    console.log('curUser', userEmail);
     // document.cookie = 'patient_name=test'
   }
   console.log('curUser', loginContext.loginState);
@@ -1252,7 +1254,13 @@ export default function Events(props) {
       if (userID == '') return;
       console.log(
         'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-        [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
+        [
+          userID,
+          editingRTS.editing,
+          editingATS.editing,
+          editingIS.editing,
+          editingEvent.editing,
+        ]
       );
 
       axios
@@ -1694,7 +1702,13 @@ export default function Events(props) {
         .catch((error) => {
           console.log('Error in getting goals and routines ' + error);
         });
-    }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
+    }, [
+      userID,
+      editingRTS.editing,
+      editingATS.editing,
+      editingIS.editing,
+      editingEvent.editing,
+    ]);
   }
 function GoogleEvents() {
   let url = BASE_URL + 'calenderEvents/';
@@ -1749,7 +1763,13 @@ function GoogleEvents() {
     if (userID == '') return;
     console.log(
       'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-      [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
+      [
+        userID,
+        editingRTS.editing,
+        editingATS.editing,
+        editingIS.editing,
+        editingEvent.editing,
+      ]
     );
 
     axios
@@ -1859,7 +1879,13 @@ function GoogleEvents() {
       if (userID == '') return;
       console.log(
         'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-        [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
+        [
+          userID,
+          editingRTS.editing,
+          editingATS.editing,
+          editingIS.editing,
+          editingEvent.editing,
+        ]
       );
 
       axios
@@ -1916,9 +1942,15 @@ function GoogleEvents() {
         .catch((error) => {
           console.log('here: Error in getting goals and routines ' + error);
         });
-    }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
+    }, [
+      userID,
+      editingRTS.editing,
+      editingATS.editing,
+      editingIS.editing,
+      editingEvent.editing,
+    ]);
   }
-  useEffect(() => console.log('here: 4'), [editingRTS.editing.item]);
+  useEffect(() => console.log('here: 4'), [editingRTS.editing.item, editingEvent.editing.item]);
 
   const updateFBGR = () => {
     GrabFireBaseRoutinesGoalsData();
@@ -1987,6 +2019,14 @@ function GoogleEvents() {
               setEditingIS: setEditingIS,
             }}
           >
+            <EditEventContext.Provider
+            value={{
+              editingEvent : editingEvent,
+              setEditingEvent : setEditingEvent,
+            }}
+            stateValue={stateValue}
+            setStateValue={setStateValue}
+            >
             <userContext.Provider
               value={
                 (stateValue.itemToEdit,
@@ -2102,7 +2142,7 @@ function GoogleEvents() {
               </div> */}
                 </div>
                 <div style={{ width: '70%', float: 'left' }}>
-                  {editingRTS.editing ? null : (
+                  {editingEvent.editing ? null : (
                     <Box
                       bgcolor="#889AB5"
                       className={classes.dateContainer}
@@ -2454,6 +2494,7 @@ function GoogleEvents() {
 
               {/* ---------------------------- Navigation--------------------------- */}
             </userContext.Provider>
+            </EditEventContext.Provider>
           </EditISContext.Provider>
         </EditATSContext.Provider>
       </EditRTSContext.Provider>

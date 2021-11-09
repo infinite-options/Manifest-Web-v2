@@ -76,6 +76,7 @@ export default function Home(props) {
     console.log('in here', console.log(loginContext.loginState));
     console.log('document cookie', document.cookie);
     userID = loginContext.loginState.curUser;
+    userEmail = loginContext.loginState.curUserEmail;
     //userTime_zone = 'America/Tijuana';
     if (loginContext.loginState.usersOfTA.length === 0) {
       userTime_zone = 'America/Tijuana';

@@ -125,21 +125,12 @@ export default function GoogleEventComponent(props) {
   }, []);
 
   const startTimePicker = () => {
-    // const [startDate, setStartDate] = useState(new Date());
     return (
       <DatePicker
         className="form-control"
         type="text"
         selected={startTime}
         onChange={(date) => {
-          // this.setState(
-          //   {
-          //     newEventStart0: date,
-          //   },
-          //   () => {
-          //     console.log('starttimepicker', newEventStart0);
-          //   }
-          // );
           setStartTime(date);
         }}
         showTimeSelect
@@ -151,7 +142,6 @@ export default function GoogleEventComponent(props) {
   };
 
   const endTimePicker = () => {
-    // const [startDate, setStartDate] = useState(new Date());
     return (
       <DatePicker
         className="form-control"
@@ -159,14 +149,6 @@ export default function GoogleEventComponent(props) {
         style={{ width: '100%' }}
         selected={endTime}
         onChange={(date) => {
-          // this.setState(
-          //   {
-          //     newEventEnd0: date,
-          //   },
-          //   () => {
-          //     console.log(newEventEnd0);
-          //   }
-          // );
           setEndTime(date);
         }}
         showTimeSelect
@@ -189,37 +171,37 @@ export default function GoogleEventComponent(props) {
      setRepeatInputValue_temp((prevState) => {
        return {
          ...prevState,
-         repeatInputValue_temp: prevState.repeatInputValue, // or you could directly change it..
+         repeatInputValue_temp: prevState.repeatInputValue, 
        };
      });
      setRepeatOccurrence_temp((prevState) => {
        return {
          ...prevState,
-         repeatOccurrence_temp: prevState.repeatOccurrence, // or you could directly change it..
+         repeatOccurrence_temp: prevState.repeatOccurrence, 
        };
      });
      setRepeatDropDown_temp((prevState) => {
        return {
          ...prevState,
-         repeatDropDown_temp: prevState.repeatDropDown, // or you could directly change it..
+         repeatDropDown_temp: prevState.repeatDropDown, 
        };
      });
      setRepeatRadio_temp((prevState) => {
        return {
          ...prevState,
-         repeatRadio_temp: prevState.repeatRadio, // or you could directly change it..
+         repeatRadio_temp: prevState.repeatRadio, 
        };
      });
      setRepeatEndDate_temp((prevState) => {
        return {
          ...prevState,
-         repeatEndDate_temp: prevState.repeatEndDate, // or you could directly change it..
+         repeatEndDate_temp: prevState.repeatEndDate, 
        };
      });
      setByDay_temp((prevState) => {
        return {
          ...prevState,
-         byDay_temp: prevState.byDay, // or you could directly change it..
+         byDay_temp: prevState.byDay, 
        };
      });
     
@@ -275,37 +257,37 @@ export default function GoogleEventComponent(props) {
     setRepeatInputValue((prevState) => {
       return {
         ...prevState,
-        repeatInputValue: prevState.repeatInputValue_temp, // or you could directly change it..
+        repeatInputValue: prevState.repeatInputValue_temp, 
       };
     });
     setRepeatOccurrence((prevState) => {
       return {
         ...prevState,
-        repeatOccurrence: prevState.repeatOccurrence_temp, // or you could directly change it..
+        repeatOccurrence: prevState.repeatOccurrence_temp, 
       };
     });
     setRepeatDropDown((prevState) => {
       return {
         ...prevState,
-        repeatDropDown: prevState.repeatDropDown_temp, // or you could directly change it..
+        repeatDropDown: prevState.repeatDropDown_temp, 
       };
     });
     setRepeatRadio((prevState) => {
       return {
         ...prevState,
-        repeatRadio: prevState.repeatRadio_temp, // or you could directly change it..
+        repeatRadio: prevState.repeatRadio_temp, 
       };
     });
     setRepeatEndDate((prevState) => {
       return {
         ...prevState,
-        repeatEndDate: prevState.repeatEndDate_temp, // or you could directly change it..
+        repeatEndDate: prevState.repeatEndDate_temp, 
       };
     });
     setByDay((prevState) => {
       return {
         ...prevState,
-        byDay: prevState.byDay_temp, // or you could directly change it..
+        byDay: prevState.byDay_temp, 
       };
     });
     // ((prevState) => ({
