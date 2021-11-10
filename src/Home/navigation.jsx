@@ -540,7 +540,8 @@ export function Navigation() {
       code: auth_code,
       client_id: client_id,
       client_secret: client_secret,
-      redirect_uri: 'http://localhost:3000',
+      redirect_uri:'https://manifestmy.space/home',
+      //redirect_uri: 'http://localhost:3000',
       grant_type: 'authorization_code',
     };
 
@@ -860,7 +861,7 @@ export function Navigation() {
                         usersOfTA: [],
                         curUser: '',
                         curUserTimeZone: '',
-                        curUserEmail:'',
+                        curUserEmail: '',
                       });
                       history.push('/');
                     }}
@@ -934,7 +935,8 @@ export function Navigation() {
                     prompt="consent"
                     responseType="code"
                     buttonText="Log In"
-                    redirectUri="http://localhost:3000"
+                    redirectUri="https://manifestmy.space/home"
+                    //redirectUri="http://localhost:3000"
                     scope="https://www.googleapis.com/auth/calendar"
                     onSuccess={responseGoogle}
                     onFailure={responseGoogle}
