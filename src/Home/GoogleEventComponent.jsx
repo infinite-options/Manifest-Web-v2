@@ -23,6 +23,7 @@ import LoginContext from '../LoginContext';
 import EditEventContext from './EditEventContext';
 import { makeStyles } from '@material-ui/core/styles';
 import moment from 'moment';
+import createBreakpoints from '@material-ui/core/styles/createBreakpoints';
 
 export default function GoogleEventComponent(props) {
   //const classes = useStyles();
@@ -802,7 +803,6 @@ export default function GoogleEventComponent(props) {
       </Modal.Dialog>
     );
   };
-
   const getGoogleAuthorizedEmail = async () => {
     let email = await getSignedInUserEmail();
     if (email) {
@@ -832,7 +832,7 @@ export default function GoogleEventComponent(props) {
       summary,
       description,
       location,
-      recurrence: repeatOption ? [recurrenceRule] : false,
+
       start: {
         dateTime: moment(startTime),
         timeZone: userTime_zone,
@@ -841,7 +841,7 @@ export default function GoogleEventComponent(props) {
         dateTime: moment(endTime),
         timeZone: userTime_zone,
       },
-
+      recurrence: repeatOption ? [recurrenceRule] : false,
       attendees: [{ email: attendees }],
     };
     publishTheCalenderEvent(event);
