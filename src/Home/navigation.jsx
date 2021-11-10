@@ -540,7 +540,7 @@ export function Navigation() {
       code: auth_code,
       client_id: client_id,
       client_secret: client_secret,
-      redirect_uri:'https://manifestmy.space/home',
+      redirect_uri:'https://manifestmy.space',
       //redirect_uri: 'http://localhost:3000',
       grant_type: 'authorization_code',
     };
@@ -935,7 +935,7 @@ export function Navigation() {
                     prompt="consent"
                     responseType="code"
                     buttonText="Log In"
-                    redirectUri="https://manifestmy.space/home"
+                    redirectUri="https://manifestmy.space"
                     //redirectUri="http://localhost:3000"
                     scope="https://www.googleapis.com/auth/calendar"
                     onSuccess={responseGoogle}
