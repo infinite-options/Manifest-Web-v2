@@ -454,7 +454,7 @@ export default function Firebasev2(props) {
                       .then((response) => {
                         toggleCopyModalConfirm(false);
                         axios
-                          .get(BASE_URL + 'getroutines/' + currentUser)
+                          .get(BASE_URL + 'getgoals/' + currentUser)
                           .then((response) => {
                             const temp = [];
                             for (
@@ -554,7 +554,7 @@ export default function Firebasev2(props) {
                               gr.is_in_progress =
                                 x[i].is_in_progress.toLowerCase() === 'true';
                               gr.is_persistent =
-                                x[i].is_persistent.toLowerCase() === 'true';
+                                x[i].is_persistent.toLowerCase() === 'false';
                               gr.is_sublist_available =
                                 x[i].is_sublist_available.toLowerCase() ===
                                 'true';
@@ -790,7 +790,7 @@ export default function Firebasev2(props) {
                                 gr_array.push(gr);
                               }
                               if (
-                                x[i]['is_persistent'].toLowerCase() === 'true'
+                                x[i]['is_persistent'].toLowerCase() === 'false'
                               ) {
                                 if (
                                   props.stateValue.calendarView === 'Day' &&
@@ -1662,7 +1662,7 @@ export default function Firebasev2(props) {
       return 'E';
     }
 
-    if (r.is_available == 'True' ) {
+    if (r.is_available == 'True') {
       // console.log('match true',GR[i].is_available)
       return (
         <div>
@@ -1744,17 +1744,15 @@ export default function Firebasev2(props) {
                   r.is_persistent == 'True' &&
                   JSON.stringify(start_time) !== JSON.stringify(end_time)
                 ) {
+                  console.log('this has to be block');
                   return '#FF6B4A';
                 } else if (r.is_persistent == 'False') {
+                  console.log('this has to be none');
                   return '#376DAC';
-                } else{
+                } else {
                   return '#9b4aff';
                 }
               })(),
-              // backgroundColor:
-              //       JSON.stringify(start_time) !== JSON.stringify(end_time)
-              //     ? '#FF6B4A'
-              //     : '#9b4aff',
               boxShadow:
                 '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.09)',
               zIndex: '50%',
@@ -1970,7 +1968,7 @@ export default function Firebasev2(props) {
                       await axios.post(BASE_URL + 'deleteGR', body);
 
                       await axios
-                        .get(BASE_URL + 'getroutines/' + currentUser)
+                        .get(BASE_URL + 'getgoals/' + currentUser)
                         .then((response) => {
                           const temp = [];
                           for (
@@ -2068,7 +2066,7 @@ export default function Firebasev2(props) {
                             gr.is_in_progress =
                               x[i].is_in_progress.toLowerCase() === 'true';
                             gr.is_persistent =
-                              x[i].is_persistent.toLowerCase() === 'true';
+                              x[i].is_persistent.toLowerCase() === 'false';
                             gr.is_sublist_available =
                               x[i].is_sublist_available.toLowerCase() ===
                               'true';
@@ -2300,7 +2298,7 @@ export default function Firebasev2(props) {
                               gr_array.push(gr);
                             }
                             if (
-                              x[i]['is_persistent'].toLowerCase() === 'true'
+                              x[i]['is_persistent'].toLowerCase() === 'false'
                             ) {
                               if (
                                 props.stateValue.calendarView === 'Day' &&
@@ -2462,8 +2460,8 @@ export default function Firebasev2(props) {
     //    }
   }
 
-  function displayActions(a,r) {
-    console.log('displayActions', a,r);
+  function displayActions(a, r) {
+    console.log('displayActions', a, r);
     /* const start_time = a.at_datetime_started.substring(11, 16).split(/[:\s+]/);
     // Need to strip trailing zeros because the data in the database
     // is inconsistent about this
@@ -2529,7 +2527,6 @@ export default function Firebasev2(props) {
                 }}
               >
                 {a['at_title']}
-                
               </div>
 
               {/* ({date}) */}
@@ -2598,7 +2595,8 @@ export default function Firebasev2(props) {
             >
               <div>
                 <div>
-                  {(a.is_available == 'True') && (r.is_displayed_today == 'True') ? (
+                  {a.is_available == 'True' &&
+                  r.is_displayed_today == 'True' ? (
                     <div>
                       <FontAwesomeIcon
                         title="Available to the user"
@@ -2845,8 +2843,8 @@ export default function Firebasev2(props) {
     );
   }
 
-  function displayInstructions(i,a,r) {
-    console.log('displaySteps', i, a,r);
+  function displayInstructions(i, a, r) {
+    console.log('displaySteps', i, a, r);
     return (
       <div
         key={i.is_unique_id}

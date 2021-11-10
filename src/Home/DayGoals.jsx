@@ -1,17 +1,18 @@
-import React, { Component } from "react";
-//import firebase from "./firebase";
-import moment from "moment";
-import { Container, Row, Col } from "react-bootstrap";
+import React, { Component } from 'react';
 
-export default class DayRoutines extends Component {
+// import axios from 'axios';
+import moment from 'moment';
+import { Container, Row, Col } from 'react-bootstrap';
+
+export default class DayGoals extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      routines: [], // array to hold all routines
-      pxPerHour: "30px", //preset size for all columns
+      goals:[],
+      pxPerHour: '30px', //preset size for all columns
       pxPerHourForConversion: 55, // if pxPerHour is change, this should change to reflect it
       zIndex: 1, //thought i needed to increment zIndex for div overlaps but seems to be fine being at 1 for all divs
-      eventBoxSize: "200", //width size for event box
+      eventBoxSize: '200', //width size for event box
     };
   }
 
@@ -20,10 +21,11 @@ export default class DayRoutines extends Component {
     let arr = [];
     for (let i = 0; i < 24; ++i) {
       arr.push(
-        <Row key={'dayDayViewRoutines' + i}>
+        <Row key={'dayDayViewGoals' + i}>
           <Col
             style={{
-              borderTop: '1px solid  mistyrose',
+              borderTop: '1px solid mistyrose',
+              //borderTop: '2px solid #b1b3b6',
               textAlign: 'right',
               //height: this.state.pxPerHour,
               textAlign: 'center',
@@ -44,49 +46,52 @@ export default class DayRoutines extends Component {
     return arr;
   };
 
-  RoutineClicked = () => {
-    console.log(this.props.dayRoutineClick());
+  GoalClicked = () => {
+    this.props.dayGoalClick();
   };
-
   /**
    * getEventItem: given an hour, this will return all events that was started during that hour
    *
    */
-
   getEventItem = (hour) => {
+    //console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
+    //updateGRIsDisplayed();
+    //console.log("TimeZone", this.props.TimeZone);
     var res = [];
     var tempStart = null;
     var tempEnd = null;
-    var arr = this.props.routines;
+    var arr = this.props.goals;
     var sameTimeEventCount = 0;
     let itemWidth = this.state.eventBoxSize;
     var addmarginLeft = 0;
     var fontSize = 10;
-    console.log(this.props.dateContext.toString())
+    //console.log("this.props.dateContext", this.props.dateContext);
+    //this.updateGRIsDisplayed()
+    // console.log("For pragya", arr)
     for (let i = 0; i < arr.length; i++) {
       tempStart = arr[i].start_day_and_time;
       tempEnd = arr[i].end_day_and_time;
 
       let tempStartTime = new Date(tempStart);
       let tempEndTime = new Date(tempEnd);
-
-      let curDate = this.props.dateContext.get("date");
-      let curMonth = this.props.dateContext.get("month");
-      let curYear = this.props.dateContext.get("year");
+      let curDate = this.props.dateContext.get('date');
+      let curMonth = this.props.dateContext.get('month');
+      let curYear = this.props.dateContext.get('year');
 
       let CurrentDate = new Date(
-        new Date(curYear, curMonth, curDate).toLocaleString("en-US", {
+        new Date(curYear, curMonth, curDate).toLocaleString('en-US', {
           timeZone: this.props.TimeZone,
         })
       );
       CurrentDate.setHours(0, 0, 0, 0);
 
       let startDate = new Date(
-        new Date(arr[i].start_day_and_time).toLocaleString("en-US", {
+        new Date(arr[i].start_day_and_time).toLocaleString('en-US', {
           timeZone: this.props.TimeZone,
         })
       );
       startDate.setHours(0, 0, 0, 0);
+
       let isDisplayedTodayCalculated = false;
 
       let repeatOccurences = parseInt(arr[i].repeat_occurences);
@@ -96,7 +101,7 @@ export default class DayRoutines extends Component {
       let repeatEnds = arr[i].repeat_type;
 
       let repeatEndsOn = new Date(
-        new Date(arr[i].repeat_ends_on).toLocaleString("en-US", {
+        new Date(arr[i].repeat_ends_on).toLocaleString('en-US', {
           timeZone: this.props.TimeZone,
         })
       );
@@ -107,7 +112,7 @@ export default class DayRoutines extends Component {
       let repeatWeekDays = [];
       if (arr[i].repeat_week_days != null) {
         Object.keys(arr[i].repeat_week_days).forEach((k) => {
-          if (arr[i].repeat_week_days[k] != "") {
+          if (arr[i].repeat_week_days[k] != '') {
             repeatWeekDays.push(parseInt(k));
           }
         });
@@ -118,22 +123,18 @@ export default class DayRoutines extends Component {
           CurrentDate.getTime() - startDate.getTime() == 0;
       } else {
         if (CurrentDate >= startDate) {
-          if (repeatEnds == "On") {
-          } else if (repeatEnds == "After") {
-            if (repeatFrequency == "Day") {
+          if (repeatEnds == 'On') {
+          } else if (repeatEnds == 'After') {
+            if (repeatFrequency == 'Day') {
               repeatEndsOn = new Date(startDate);
               repeatEndsOn.setDate(
                 startDate.getDate() + (repeatOccurences - 1) * repeatEvery
               );
-            } else if (repeatFrequency == "Week") {
+            } else if (repeatFrequency == 'Week') {
               let occurence_dates = [];
 
-              const start_day_and_time = arr[i].start_day_and_time.split(
-                " "
-              )[0];
-              // const initDate = start_day_and_time[1];
-              //const initMonth = getMonthNumber(start_day_and_time[2]);
-              //const initYear = start_day_and_time[3];
+              const start_day_and_time =
+                arr[i].start_day_and_time.split(' ')[0];
 
               let initFullDate = start_day_and_time;
 
@@ -146,7 +147,7 @@ export default class DayRoutines extends Component {
                 repeatWeekDays.push(7);
               }
 
-              const d = moment(initFullDate, "MM/DD/YYYY");
+              const d = moment(initFullDate, 'MM/DD/YYYY');
               const today_day = d.isoWeekday();
               const result = repeatWeekDays.filter((day) => day < today_day);
               if (result.length > 0) {
@@ -165,14 +166,14 @@ export default class DayRoutines extends Component {
                   numberOfWeek = Math.floor(i / repeatWeekDays.length);
                   dow = repeatWeekDays[i % repeatWeekDays.length];
                 }
-                const new_date = moment(initFullDate, "MM/DD/YYYY");
+                const new_date = moment(initFullDate, 'MM/DD/YYYY');
                 const nextDayOfTheWeek = getNextDayOfTheWeek(dow, new_date);
                 //console.log("NextDayOfWeek: ", nextDayOfTheWeek.format("L"));
                 //console.log("numberOfWeeks: ", numberOfWeek);
                 const date = nextDayOfTheWeek
                   .clone()
-                  .add(numberOfWeek * repeatEvery, "weeks")
-                  .format("L");
+                  .add(numberOfWeek * repeatEvery, 'weeks')
+                  .format('L');
                 occurence_dates.push(date);
               }
 
@@ -184,23 +185,23 @@ export default class DayRoutines extends Component {
               if (occurence_dates.includes(today)) {
                 isDisplayedTodayCalculated = true;
               }
-            } else if (repeatFrequency == "Month") {
+            } else if (repeatFrequency == 'Month') {
               repeatEndsOn = new Date(startDate);
               repeatEndsOn.setMonth(
                 startDate.getMonth() + (repeatOccurences - 1) * repeatEvery
               );
-            } else if (repeatFrequency == "YEAR") {
+            } else if (repeatFrequency == 'YEAR') {
               repeatEndsOn = new Date(startDate);
               repeatEndsOn.setFullYear(
                 startDate.getFullYear() + (repeatOccurences - 1) * repeatEvery
               );
             }
-          } else if (repeatEnds == "Never") {
+          } else if (repeatEnds == 'Never') {
             repeatEndsOn = CurrentDate;
           }
 
           if (CurrentDate <= repeatEndsOn) {
-            if (repeatFrequency == "Day") {
+            if (repeatFrequency == 'Day') {
               isDisplayedTodayCalculated =
                 Math.floor(
                   (CurrentDate.getTime() - startDate.getTime()) /
@@ -208,7 +209,7 @@ export default class DayRoutines extends Component {
                 ) %
                   repeatEvery ==
                 0;
-            } else if (repeatFrequency == "Week") {
+            } else if (repeatFrequency == 'Week') {
               isDisplayedTodayCalculated =
                 repeatWeekDays.includes(CurrentDate.getDay()) &&
                 Math.floor(
@@ -217,7 +218,7 @@ export default class DayRoutines extends Component {
                 ) %
                   repeatEvery ==
                   0;
-            } else if (repeatFrequency == "Month") {
+            } else if (repeatFrequency == 'Month') {
               isDisplayedTodayCalculated =
                 CurrentDate.getDate() == startDate.getDate() &&
                 ((CurrentDate.getFullYear() - startDate.getFullYear()) * 12 +
@@ -225,7 +226,7 @@ export default class DayRoutines extends Component {
                   startDate.getMonth()) %
                   repeatEvery ==
                   0;
-            } else if (repeatFrequency == "YEAR") {
+            } else if (repeatFrequency == 'YEAR') {
               isDisplayedTodayCalculated =
                 startDate.getDate() == CurrentDate.getDate() &&
                 CurrentDate.getMonth() == startDate.getMonth() &&
@@ -248,9 +249,13 @@ export default class DayRoutines extends Component {
         tempEndTime.setFullYear(curYear);
       }
 
+      //***   Firbase boolean varibale to help mobile side know if to display goal */
       let checkCurDate = moment();
       arr[i].is_displayed_today = isDisplayedTodayCalculated;
 
+      /**
+       * TODO: add the case where arr[i].start.dateTime doesn't exists
+       */
       if (
         tempStartTime.getDate() === curDate &&
         curMonth <= tempEndTime.getMonth() &&
@@ -265,7 +270,7 @@ export default class DayRoutines extends Component {
               this.state.pxPerHourForConversion;
             let hourDiff = 24 - tempStartTime.getHours();
             let minDiff = 0;
-            let color = "lavender";
+            let color = 'lavender';
             let height =
               (hourDiff + minDiff) * this.state.pxPerHourForConversion;
             sameTimeEventCount++;
@@ -293,7 +298,7 @@ export default class DayRoutines extends Component {
                       e.target.style.background = color;
                     }}
                     key={i}
-                    onClick={this.RoutineClicked}
+                    onClick={this.GoalClicked}
                     style={{
                       zIndex: this.state.zIndex,
                       marginTop: minsToMarginTop + 'px',
@@ -321,10 +326,12 @@ export default class DayRoutines extends Component {
               (tempStartTime.getMinutes() / 60) *
               this.state.pxPerHourForConversion;
             let hourDiff = tempEndTime.getHours() - tempStartTime.getHours();
-            let minDiff = (tempEndTime.getMinutes()-tempStartTime.getMinutes()) / 60;
+            let minDiff =
+              (tempEndTime.getMinutes() - tempStartTime.getMinutes()) / 60;
             let height =
               (hourDiff + minDiff) * this.state.pxPerHourForConversion;
-            let color = "lightslategray";
+            let color = 'lightslategray';
+
             sameTimeEventCount++;
             for (let i = 0; i < arr.length; i++) {
               tempStart = arr[i].start_day_and_time;
@@ -332,7 +339,6 @@ export default class DayRoutines extends Component {
 
               let tempStartTime = new Date(tempStart);
               let tempEndTime = new Date(tempEnd);
-
               if (
                 tempStartTime.getHours() < hour &&
                 tempEndTime.getHours() > hour
@@ -347,16 +353,17 @@ export default class DayRoutines extends Component {
               itemWidth = itemWidth - 20;
             }
 
+            //change font size if not enough space
             if (tempEndTime.getHours() - tempStartTime.getHours() < 2) {
               fontSize = 8;
             }
             // change color if more than one event in same time.
             if (sameTimeEventCount <= 1) {
-              color = hour % 2 === 0 ? "lightslategray" : "#BBC7D7";
+              color = hour % 2 === 0 ? 'lightslategray' : '#BBC7D7';
             } else if (sameTimeEventCount === 2) {
-              color = "#BBC7D7";
+              color = '#BBC7D7';
             } else {
-              color = "blue";
+              color = 'blue';
             }
             if (isDisplayedTodayCalculated) {
               let newElement = (
@@ -382,7 +389,7 @@ export default class DayRoutines extends Component {
                     e.target.style.border = '1px lightgray solid';
                     e.target.style.background = color;
                   }}
-                  onClick={this.RoutineClicked}
+                  onClick={this.GoalClicked}
                   style={{
                     zIndex: this.state.zIndex,
                     marginTop: minsToMarginTop + 'px',
@@ -417,7 +424,7 @@ export default class DayRoutines extends Component {
         let hourDiff = tempEndTime.getHours();
         let minDiff = tempEndTime.getMinutes() / 60;
         let height = (hourDiff + minDiff) * this.state.pxPerHourForConversion;
-        let color = "lavender";
+        let color = 'lavender';
         sameTimeEventCount++;
         if (isDisplayedTodayCalculated) {
           let newElement = (
@@ -443,7 +450,7 @@ export default class DayRoutines extends Component {
                   e.target.style.background = color;
                 }}
                 key={i}
-                onClick={this.RoutineClicked}
+                onClick={this.GoalClicked}
                 style={{
                   zIndex: this.state.zIndex,
                   marginTop: minsToMarginTop + 'px',
@@ -478,7 +485,7 @@ export default class DayRoutines extends Component {
         let minsToMarginTop = 0;
         //let hourDiff = 24;
         let height = 24 * this.state.pxPerHourForConversion;
-        let color = "lavender";
+        let color = 'lavender';
         sameTimeEventCount++;
         if (isDisplayedTodayCalculated) {
           let newElement = (
@@ -504,7 +511,7 @@ export default class DayRoutines extends Component {
                   e.target.style.background = color;
                 }}
                 key={i}
-                onClick={this.RoutineClicked}
+                onClick={this.GoalClicked}
                 style={{
                   zIndex: this.state.zIndex,
                   marginTop: minsToMarginTop + 'px',
@@ -539,7 +546,7 @@ export default class DayRoutines extends Component {
     var arr = [];
     for (let i = 0; i < 24; ++i) {
       arr.push(
-        <Row key={'dayRoutine' + i} style={{ position: 'relative' }}>
+        <Row key={'dayGoal' + i} style={{ position: 'relative' }}>
           <Col
             style={{
               position: 'relative',
@@ -567,13 +574,12 @@ export default class DayRoutines extends Component {
           width: '300px',
         }}
       >
-        Today's Routines:
-        <Container >
+        Today's Goals:
+        <Container>
           <Row
             ref={this.hourDisplay}
             noGutters={true}
             className="d-flex justify-content-end"
-            
           >
             <Col>
               <Container style={{ margin: '0', padding: '0' }}>
@@ -589,16 +595,16 @@ export default class DayRoutines extends Component {
 
 function getFormattedDate(date) {
   let year = date.getFullYear();
-  let month = (1 + date.getMonth()).toString().padStart(2, "0");
-  let day = date.getDate().toString().padStart(2, "0");
+  let month = (1 + date.getMonth()).toString().padStart(2, '0');
+  let day = date.getDate().toString().padStart(2, '0');
 
-  return month + "/" + day + "/" + year;
+  return month + '/' + day + '/' + year;
 }
 
 function getNextDayOfTheWeek(day, date) {
   const dayINeed = day; // for Thursday
   const today = date.isoWeekday();
-  //console.log("DayINeed, today", dayINeed, today);
+  // console.log("DayINeed, today", dayINeed, today);
 
   // if we haven't yet passed the day of the week that I need:
   if (today <= dayINeed) {
@@ -607,39 +613,8 @@ function getNextDayOfTheWeek(day, date) {
     return nextDayOfTheWeek;
   } else {
     // otherwise, give me *next week's* instance of that same day
-    var nextDayOfTheWeek = date.add(1, "weeks").day(dayINeed);
+    var nextDayOfTheWeek = date.add(1, 'weeks').day(dayINeed);
     // console.log("from getNextday", nextDayOfTheWeek.format("L"));
     return nextDayOfTheWeek;
-  }
-}
-function getMonthNumber(str) {
-  switch (str) {
-    case "Jan":
-      return "01";
-    case "Feb":
-      return "02";
-    case "Mar":
-      return "03";
-    case "April":
-      return "04";
-    case "May":
-      return "05";
-    case "Jun":
-      return "06";
-    case "Jul":
-      return "07";
-    case "Aug":
-      return "08";
-    case "Sep":
-      return "09";
-    case "Oct":
-      return "10";
-    case "Nov":
-      return "11";
-    case "Dec":
-      return "12";
-    default:
-      console.log("can't change the month");
-      return "";
   }
 }

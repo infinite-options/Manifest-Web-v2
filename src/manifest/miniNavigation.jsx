@@ -47,6 +47,9 @@ export default function MiniNavigation() {
   function homeNavigation() {
     history.push('/home');
   }
+  function goalHomeNavigation() {
+    history.push('/goalhome');
+  }
 
   function aboutNavigation() {
     history.push('/about');
@@ -84,7 +87,11 @@ export default function MiniNavigation() {
       <Button className={classes.buttonSelection} id="one">
         Events
       </Button>
-      <Button className={classes.buttonSelection} id="one">
+      <Button
+        className={classes.buttonSelection}
+        onClick={goalHomeNavigation}
+        id="one"
+      >
         Goals
       </Button>
       <Button

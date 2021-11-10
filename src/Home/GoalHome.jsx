@@ -2,14 +2,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import Button from '@material-ui/core/Button';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { useHistory,} from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import './Home.css';
-import {
-  Container,
-  Row,
-  Col,
-} from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -19,10 +15,9 @@ import {
   faCalendar,
 } from '@fortawesome/free-solid-svg-icons';
 import 'react-datepicker/dist/react-datepicker.css';
-import FirebaseV2 from './Firebasev2';
+import GoalFirebaseV2 from './GoalFirebasev2';
 import DayEvents from './DayEvents';
 import DayRoutines from './DayRoutines.jsx';
-import DayGoals from './DayGoals.jsx';
 import WeekRoutines from './WeekRoutines.jsx';
 import userContext from './userContext';
 
@@ -162,7 +157,6 @@ export default function Home(props) {
   const [routineID, setRoutineID] = useState('');
   const [actionID, setActionID] = useState('');
   const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
-  const [getRoutinesEndPoint, setGetRoutinesEndPoint] = useState([]);
   const [getActionsEndPoint, setGetActionsEndPoint] = useState({});
   const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
 
@@ -363,7 +357,7 @@ export default function Home(props) {
     // BASE_URL: getBaseUrl(),
     BASE_URL: BASE_URL,
   });
-  //console.log('startObject = ', stateValue.currentUserTimeZone);
+  console.log('startObject = ', stateValue.currentUserTimeZone);
   const initialEditingRTSState = {
     editing: false,
     type: '',
@@ -400,7 +394,7 @@ export default function Home(props) {
       },
       location: '',
       is_available: true,
-      is_persistent: true,
+      is_persistent: false,
       is_complete: false,
       is_displayed_today: true,
       is_timed: false,
@@ -486,7 +480,7 @@ export default function Home(props) {
       },
       location: '',
       is_available: true,
-      is_persistent: true,
+      is_persistent: false,
       is_complete: false,
       is_in_progress: false,
       is_displayed_today: true,
@@ -558,7 +552,7 @@ export default function Home(props) {
       numMins: '',
       location: '',
       is_available: true,
-      is_persistent: true,
+      is_persistent: false,
       is_complete: false,
       is_displayed_today: true,
       is_timed: false,
@@ -589,7 +583,7 @@ export default function Home(props) {
       numMins: '',
       location: '',
       is_available: true,
-      is_persistent: true,
+      is_persistent: false,
       is_complete: false,
       is_displayed_today: true,
       is_timed: false,
@@ -676,62 +670,101 @@ export default function Home(props) {
   //     history.push("/routine");
   //   }
 
-  // var onlyCal =
-  //   !stateValue.showRoutineGoalModal &&
-  //   // !this.state.showGoalModal &&
-  //   !stateValue.showRoutineModal;
-  /*----------------------------toggleShowRoutine----------------------------*/
-  function toggleShowRoutine(props) {
+  var onlyCal =
+    !stateValue.showRoutineGoalModal &&
+   
+    !stateValue.showGoalModal;
+  /*----------------------------toggleShowGoal----------------------------*/
+  function toggleShowGoal(props) {
     setStateValue((prevState) => {
       return {
         ...prevState,
-        showRoutineModal: !stateValue.showRoutineModal,
-        showGoalModal: false,
+        showRoutineModal: false,
+        showGoalModal: !stateValue.showGoalModal,
         showRoutineGoalModal: false,
       };
     });
-
-    return stateValue.showRoutineModal;
+    // console.log('Home: Routine Modal', stateValue.showRoutineModal);
+    return stateValue.showGoalModal;
+  }
+  /*----------------------------toggleShowRoutine----------------------------*/
+  function toggleShowRoutine(props) {
+    history.push('/home')
   }
 
-  function toggleShowGoal() {
-    history.push('/goalhome');
-  }
+  /*-----------------------------updateEventsArray:-----------------------------*/
+  /*updates the array if the month view changes to a different month.*/
+
+  const updateEventsArray = () => {
+    if (stateValue.calendarView === 'Month') {
+      //The month view has transferred to a different month
+      let startObject = stateValue.dateContext.clone();
+      let endObject = stateValue.dateContext.clone();
+      let startDay = startObject.startOf('month');
+      let endDay = endObject.endOf('month');
+
+      let startDate = new Date(startDay.format('MM/DD/YYYY'));
+      console.log('startObject', startDate);
+      let endDate = new Date(endDay.format('MM/DD/YYYY'));
+      startDate.setHours(0, 0, 0);
+      endDate.setHours(23, 59, 59);
+      // getEventsByInterval(
+      //   LocalDateToISOString(startDate, stateValue.currentUserTimeZone),
+      //   LocalDateToISOString(endDate, stateValue.currentUserTimeZone)
+      // );
+    } else if (stateValue.calendarView === 'Day') {
+      let startObject = stateValue.dateContext.clone();
+      let endObject = stateValue.dateContext.clone();
+      // console.log(startObject, endObject);
+      let startDay = startObject.startOf('day');
+      let endDay = endObject.endOf('day');
+      // console.log(startDay, endDay);
+      let startDate = new Date(startDay.format('MM/DD/YYYY'));
+      let endDate = new Date(endDay.format('MM/DD/YYYY'));
+      startDate.setHours(0, 0, 0);
+      endDate.setHours(23, 59, 59);
+    } else if (this.state.calendarView === 'Week') {
+      let startObject = this.state.dateContext.clone();
+      let endObject = this.state.dateContext.clone();
+      let startDay = startObject.startOf('week');
+      let endDay = endObject.endOf('week');
+      let startDate = new Date(startDay.format('MM/DD/YYYY'));
+      let endDate = new Date(endDay.format('MM/DD/YYYY'));
+      startDate.setHours(0, 0, 0);
+      endDate.setHours(23, 59, 59);
+    }
+  };
 
   const nextDay = () => {
-    
-    let dateContext = Object.assign({}, stateValue.todayDateObject);
-    console.log(dateContext);
-    dateContext = moment(dateContext).add(1, 'days');
-    console.log('todayDateObject', dateContext);
-    console.log('todayDateObject', dateContext.toString());
-    //console.log(end.toString());
+    let newdateContext = Object.assign({}, stateValue.dateContext);
+    // console.log(newdateContext);
+    newdateContext = moment(newdateContext).add(1, 'day');
+    // console.log(newdateContext);
+
     setStateValue((prevState) => {
       return {
         ...prevState,
-        todayDateObject: dateContext,
+        dateContext: newdateContext,
         dayEvents: [],
       };
-      //updateEventsArray;
     });
-    console.log(stateValue.dateContext, stateValue.dayEvents);
   };
 
   const prevDay = () => {
-    let dateContext = Object.assign({}, stateValue.todayDateObject);
-    
-    dateContext = moment(dateContext).subtract(1, 'days');
-    console.log('todayDateObject', dateContext);
-    console.log('todayDateObject', dateContext.toString());
+    let dateContext = Object.assign({}, stateValue.dateContext);
+    // console.log(dateContext);
+    dateContext = moment(dateContext).subtract(1, 'day');
+    // console.log(dateContext);
+
     setStateValue((prevState) => {
       return {
         ...prevState,
-        todayDateObject: dateContext,
+        dateContext: dateContext,
         dayEvents: [],
       };
-      //updateEventsArray;
+      // updateEventsArray;
     });
-    console.log(stateValue.dateContext, stateValue.dayEvents);
+    // console.log(stateValuedateContext, stateValue.dayEvents);
   };
 
   const nextWeek = () => {
@@ -794,48 +827,7 @@ export default function Home(props) {
 
     console.log('today timezone curWeek');
   };
-  /*-----------------------------updateEventsArray:-----------------------------*/
-  /*updates the array if the month view changes to a different month.*/
 
-  const updateEventsArray = () => {
-    if (stateValue.calendarView === 'Month') {
-      //The month view has transferred to a different month
-      let startObject = stateValue.dateContext.clone();
-      let endObject = stateValue.dateContext.clone();
-      let startDay = startObject.startOf('month');
-      let endDay = endObject.endOf('month');
-
-      let startDate = new Date(startDay.format('MM/DD/YYYY'));
-      console.log('startObject', startDate);
-      let endDate = new Date(endDay.format('MM/DD/YYYY'));
-      startDate.setHours(0, 0, 0);
-      endDate.setHours(23, 59, 59);
-      // getEventsByInterval(
-      //   LocalDateToISOString(startDate, stateValue.currentUserTimeZone),
-      //   LocalDateToISOString(endDate, stateValue.currentUserTimeZone)
-      // );
-    } else if (stateValue.calendarView === 'Day') {
-      let startObject = stateValue.dateContext.clone();
-      let endObject = stateValue.dateContext.clone();
-      // console.log(startObject, endObject);
-      let startDay = startObject.startOf('day');
-      let endDay = endObject.endOf('day');
-      // console.log(startDay, endDay);
-      let startDate = new Date(startDay.format('MM/DD/YYYY'));
-      let endDate = new Date(endDay.format('MM/DD/YYYY'));
-      startDate.setHours(0, 0, 0);
-      endDate.setHours(23, 59, 59);
-    } else if (this.state.calendarView === 'Week') {
-      let startObject = stateValue.dateContext.clone();
-      let endObject = stateValue.dateContext.clone();
-      let startDay = startObject.startOf('week');
-      let endDay = endObject.endOf('week');
-      let startDate = new Date(startDay.format('MM/DD/YYYY'));
-      let endDate = new Date(endDay.format('MM/DD/YYYY'));
-      startDate.setHours(0, 0, 0);
-      endDate.setHours(23, 59, 59);
-    }
-  };
   const getDate = () => {
     stateValue.dateContext.format('dddd');
 
@@ -860,71 +852,25 @@ export default function Home(props) {
   };
 
   function dayViewAbstracted() {
-    //stateValue.dateContext = today;
-    console.log('Day view', stateValue.dateContext);
     return (
       <div
         style={{
+          borderRadius: '20px',
           background: 'white',
           width: '100%',
+          marginLeft: '10px',
           padding: '20px',
+          border: '1px black solid',
+          boxShadow:
+            '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)',
         }}
       >
-        <Container>
-          <Row style={{ marginTop: '0px' }}>
-            <Col>
-              <div>
-                <FontAwesomeIcon
-                  style={{ marginLeft: '100px', cursor: 'pointer' }}
-                  icon={faChevronLeft}
-                  size="2x"
-                  className="X"
-                  onClick={(e) => {
-                    prevDay();
-                  }}
-                />
-              </div>
-            </Col>
-            <Col
-              md="auto"
-              style={{ textAlign: 'center' }}
-              className="bigfancytext"
-            >
-              <p>
-                {stateValue.todayDateObject.format('dddd')} {stateValue.todayDateObject.get('date')} {getMonth()} {getYear()}{' '}
-              </p>
-              <p
-                style={{ marginBottom: '0', height: '19.5px' }}
-                className="normalfancytext"
-              >
-                {userTime_zone}
-              </p>
-            </Col>
-            <Col>
-              <FontAwesomeIcon
-                // style={{ marginLeft: "50%" }}
-                style={{
-                  float: 'right',
-                  marginRight: '100px',
-                  cursor: 'pointer',
-                }}
-                icon={faChevronRight}
-                size="2x"
-                className="X"
-                onClick={(e) => {
-                  nextDay();
-                }}
-              />
-            </Col>
-          </Row>
-        </Container>
         <Row>
           {/* {console.log("these are the events that are going to be passed in", this.state.dayEvents)} */}
-          {console.log('stateValue.todayDateObject',stateValue.todayDateObject)}
-          {console.log(stateValue.dayEvents)}
-
+          {/* {console.log(this.state.dateContext)}
+          {console.log(this.state.dayEvents)} */}
           <DayEvents
-            dateContext={stateValue.todayDateObject}
+            dateContext={stateValue.dateContext}
             // eventClickDayView={handleDayEventClick}
             // handleDateClick={handleDateClickOnDayView}
             dayEvents={stateValue.dayEvents}
@@ -935,21 +881,11 @@ export default function Home(props) {
           <DayRoutines
             // handleDateClick={this.handleDateClickOnDayView}
             timeZone={userTime_zone}
-            dateContext={stateValue.todayDateObject}
+            dateContext={stateValue.dateContext}
             routine_ids={stateValue.routine_ids}
             routines={stateValue.routines}
-            dayRoutineClick={toggleShowRoutine}
+            dayRoutineClick={toggleShowGoal}
             theCurrentUserId={userID}
-            originalGoalsAndRoutineArr={stateValue.originalGoalsAndRoutineArr}
-            BASE_URL={stateValue.BASE_URL}
-          />
-          <DayGoals
-            TimeZone={userTime_zone}
-            dateContext={stateValue.todayDateObject}
-            goal_ids={stateValue.goal_ids}
-            goals={stateValue.goals}
-            dayGoalClick={toggleShowGoal}
-            theCurrentUserId={stateValue.currentUserId}
             originalGoalsAndRoutineArr={stateValue.originalGoalsAndRoutineArr}
             BASE_URL={stateValue.BASE_URL}
           />
@@ -971,7 +907,7 @@ export default function Home(props) {
         <Row style={{ float: 'right', width: '100%' }}>
           <WeekRoutines
             timeZone={userTime_zone}
-            routines={stateValue.routines}
+            routines={stateValue.goals}
             dateContext={stateValue.dateContext}
             BASE_URL={stateValue.BASE_URL}
             highLight={hightlight}
@@ -1008,7 +944,8 @@ export default function Home(props) {
   causes alarms and excessive rendering */
 
   function GrabFireBaseRoutinesGoalsData() {
-    let url = BASE_URL + 'getgoalsandroutines/';
+    let url = BASE_URL + 'getgoals/';
+
     let routine = [];
     let routine_ids = [];
     let goal = [];
@@ -1508,520 +1445,16 @@ export default function Home(props) {
         });
     }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
-function GrabFireBaseRoutinesData() {
-  let url = BASE_URL + 'getroutines/';
-  let routine = [];
-  let routine_ids = [];
-  let goal = [];
-  let goal_ids = [];
 
-  // console.log('base url ', url);
-  // console.log('base url id ', userID);
-
-  const getTimes = (a_day_time, b_day_time) => {
-    const [a_start_time, b_start_time] = [
-      a_day_time.substring(10, a_day_time.length),
-      b_day_time.substring(10, b_day_time.length),
-    ];
-    const [a_HMS, b_HMS] = [
-      a_start_time
-        .substring(0, a_start_time.length - 3)
-        .replace(/\s{1,}/, '')
-        .split(':'),
-      b_start_time
-        .substring(0, b_start_time.length - 3)
-        .replace(/\s{1,}/, '')
-        .split(':'),
-    ];
-    const [a_parity, b_parity] = [
-      a_start_time
-        .substring(a_start_time.length - 3, a_start_time.length)
-        .replace(/\s{1,}/, ''),
-      b_start_time
-        .substring(b_start_time.length - 3, b_start_time.length)
-        .replace(/\s{1,}/, ''),
-    ];
-
-    let [a_time, b_time] = [0, 0];
-    if (a_parity === 'PM' && a_HMS[0] !== '12') {
-      const hoursInt = parseInt(a_HMS[0]) + 12;
-      a_HMS[0] = `${hoursInt}`;
-    } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
-
-    if (b_parity === 'PM' && b_HMS[0] !== '12') {
-      const hoursInt = parseInt(b_HMS[0]) + 12;
-      b_HMS[0] = `${hoursInt}`;
-    } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
-
-    for (let i = 0; i < a_HMS.length; i++) {
-      a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
-      b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
-    }
-
-    return [a_time, b_time];
-  };
-
-  useEffect(() => {
-    if (userID == '') return;
-    console.log(
-      'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-      [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
-    );
-
-    axios
-      .get(url + userID)
-      .then((response) => {
-        console.log(
-          'here: Obtained user information with res = ',
-          response.data.result
-        );
-        const temp = [];
-
-        for (let i = 0; i < response.data.result.length; i++) {
-          temp.push(response.data.result[i]);
-        }
-        temp.sort((a, b) => {
-          console.log('a = ', a, '\nb = ', b);
-          const [a_start, b_start] = [
-            a.gr_start_day_and_time,
-            b.gr_start_day_and_time,
-          ];
-          console.log('a_start = ', a_start, '\nb_start = ', b_start);
-          const [a_end, b_end] = [a.gr_end_day_and_time, b.gr_end_day_and_time];
-
-          const [a_start_time, b_start_time] = getTimes(
-            a.gr_start_day_and_time,
-            b.gr_start_day_and_time
-          );
-          const [a_end_time, b_end_time] = getTimes(
-            a.gr_end_day_and_time,
-            b.gr_end_day_and_time
-          );
-
-          if (a_start_time < b_start_time) return -1;
-          else if (a_start_time > b_start_time) return 1;
-          else {
-            if (a_end_time < b_end_time) return -1;
-            else if (a_end_time > b_end_time) return 1;
-            else {
-              if (a_start < b_start) return -1;
-              else if (a_start > b_start) return 1;
-              else {
-                if (a_end < b_end) return -1;
-                else if (a_end > b_end) return 1;
-              }
-            }
-          }
-
-          return 0;
-        });
-
-        console.log('homeTemp = ', temp);
-
-        setGetRoutinesEndPoint(temp);
-        if (response.data.result && response.data.result.length !== 0) {
-          let x = response.data.result;
-          console.log('response', x);
-          x.sort((a, b) => {
-            // console.log(a);
-            // console.log(b);
-            let datetimeA = new Date(
-              a['gr_start_day_and_time'].replace(/-/g, '/')
-            );
-
-            let datetimeB = new Date(
-              b['gr_start_day_and_time'].replace(/-/g, '/')
-            );
-
-            let timeA =
-              new Date(datetimeA).getHours() * 60 +
-              new Date(datetimeA).getMinutes();
-
-            let timeB =
-              new Date(datetimeB).getHours() * 60 +
-              new Date(datetimeB).getMinutes();
-
-            return timeA - timeB;
-          });
-
-          let gr_array = [];
-
-          for (let i = 0; i < x.length; ++i) {
-            let gr = {};
-            gr.audio = '';
-            // gr.available_end_time = "23:59:59";
-            // gr.available_start_time = "00:00:00";
-            gr.datetime_completed = x[i].gr_datetime_completed;
-            gr.datetime_started = x[i].gr_datetime_started;
-            gr.end_day_and_time = x[i].gr_end_day_and_time;
-            gr.expected_completion_time = x[i].expected_completion_time;
-            gr.id = x[i].gr_unique_id;
-
-            gr.is_available = x[i].is_available.toLowerCase() === 'true';
-
-            gr.is_complete = x[i].is_complete.toLowerCase() === 'true';
-            gr.is_displayed_today =
-              x[i].is_displayed_today.toLowerCase() === 'true';
-            gr.is_in_progress = x[i].is_in_progress.toLowerCase() === 'true';
-            gr.is_persistent = x[i].is_persistent.toLowerCase() === 'true';
-            gr.is_sublist_available =
-              x[i].is_sublist_available.toLowerCase() === 'true';
-            gr.is_timed = x[i].is_timed.toLowerCase() === 'true';
-
-            gr.photo = x[i].photo;
-            gr.repeat = x[i].repeat.toLowerCase() === 'true';
-            gr.repeat_type = x[i].repeat_type || 'Never';
-            gr.repeat_ends_on = x[i].repeat_ends_on;
-            gr.repeat_every = x[i].repeat_every;
-            gr.repeat_frequency = x[i].repeat_frequency;
-            gr.repeat_occurences = x[i].repeat_occurences;
-
-            const repeat_week_days_json = JSON.parse(x[i].repeat_week_days);
-
-            if (repeat_week_days_json) {
-              gr.repeat_week_days = {
-                0:
-                  repeat_week_days_json.Sunday &&
-                  repeat_week_days_json.Sunday.toLowerCase() === 'true'
-                    ? 'Sunday'
-                    : '',
-                1:
-                  repeat_week_days_json.Monday &&
-                  repeat_week_days_json.Monday.toLowerCase() === 'true'
-                    ? 'Monday'
-                    : '',
-                2:
-                  repeat_week_days_json.Tuesday &&
-                  repeat_week_days_json.Tuesday.toLowerCase() === 'true'
-                    ? 'Tuesday'
-                    : '',
-                3:
-                  repeat_week_days_json.Wednesday &&
-                  repeat_week_days_json.Wednesday.toLowerCase() === 'true'
-                    ? 'Wednesday'
-                    : '',
-                4:
-                  repeat_week_days_json.Thursday &&
-                  repeat_week_days_json.Thursday.toLowerCase() === 'true'
-                    ? 'Thursday'
-                    : '',
-                5:
-                  repeat_week_days_json.Friday &&
-                  repeat_week_days_json.Friday.toLowerCase() === 'true'
-                    ? 'Friday'
-                    : '',
-                6:
-                  repeat_week_days_json.Saturday &&
-                  repeat_week_days_json.Saturday.toLowerCase() === 'true'
-                    ? 'Saturday'
-                    : '',
-              };
-            } else {
-              gr.repeat_week_days = {
-                0: '',
-                1: '',
-                2: '',
-                3: '',
-                4: '',
-                5: '',
-                6: '',
-              };
-            }
-
-            gr.start_day_and_time = x[i].gr_start_day_and_time;
-
-            // const first_notifications = x[i].notifications[0];
-            // const second_notifications = x[i].notifications[1];
-            // console.log(first_notifications);
-            // console.log(second_notifications);
-
-            for (let k = 0; k < x[i].notifications.length; ++k) {
-              const first_notifications = x[i].notifications[k];
-              if (first_notifications) {
-                if (first_notifications.user_ta_id.charAt(0) === '1') {
-                  gr.user_notifications = {
-                    before: {
-                      is_enabled:
-                        first_notifications.before_is_enable.toLowerCase() ===
-                        'true',
-                      is_set:
-                        first_notifications.before_is_set.toLowerCase() ===
-                        'true',
-                      message: first_notifications.before_message,
-                      time: first_notifications.before_time,
-                    },
-                    during: {
-                      is_enabled:
-                        first_notifications.during_is_enable.toLowerCase() ===
-                        'true',
-                      is_set:
-                        first_notifications.during_is_set.toLowerCase() ===
-                        'true',
-                      message: first_notifications.during_message,
-                      time: first_notifications.during_time,
-                    },
-                    after: {
-                      is_enabled:
-                        first_notifications.after_is_enable.toLowerCase() ===
-                        'true',
-                      is_set: first_notifications.after_is_set.toLowerCase(),
-                      message: first_notifications.after_message,
-                      time: first_notifications.after_time,
-                    },
-                  };
-                } else if (
-                  first_notifications.user_ta_id.charAt(0) === '2' &&
-                  first_notifications.user_ta_id === stateValue.ta_people_id
-                ) {
-                  gr.ta_notifications = {
-                    before: {
-                      is_enabled:
-                        first_notifications.before_is_enable.toLowerCase() ===
-                        'true',
-                      is_set:
-                        first_notifications.before_is_set.toLowerCase() ===
-                        'true',
-                      message: first_notifications.before_message,
-                      time: first_notifications.before_time,
-                    },
-                    during: {
-                      is_enabled:
-                        first_notifications.during_is_enable.toLowerCase() ===
-                        'true',
-                      is_set: first_notifications.during_is_set.toLowerCase(),
-                      message: first_notifications.during_message,
-                      time: first_notifications.during_time,
-                    },
-                    after: {
-                      is_enabled:
-                        first_notifications.after_is_enable.toLowerCase() ===
-                        'true',
-                      is_set:
-                        first_notifications.after_is_set.toLowerCase() ===
-                        'true',
-                      message: first_notifications.after_message,
-                      time: first_notifications.after_time,
-                    },
-                  };
-                }
-              }
-            }
-
-            // if (!gr.ta_notifications) {
-            //   gr.ta_notifications = {
-            //     before: {
-            //       is_enabled: false,
-            //       is_set: false,
-            //       message: "",
-            //       time: gr.user_notifications.before.time,
-            //     },
-            //     during: {
-            //       is_enabled: false,
-            //       is_set: false,
-            //       message: "",
-            //       time: gr.user_notifications.during.time,
-            //     },
-            //     after: {
-            //       is_enabled: false,
-            //       is_set: false,
-            //       message: "",
-            //       time: gr.user_notifications.after.time,
-            //     },
-            //   };
-            // }
-
-            // console.log(gr);
-            gr.title = x[i].gr_title;
-            // console.log('X', x);
-            // console.log(gr.title, gr.is_sublist_available);
-            var goalDate = new Date(gr.end_day_and_time.replace(/-/g, '/'));
-            console.log(goalDate);
-            //For Today Goals and Routines
-            let startOfDay = moment(goalDate);
-            let endOfDay = moment(goalDate);
-            let begOfTheDay = startOfDay.startOf('day');
-            let endOfTheDay = endOfDay.endOf('day');
-            // console.log(begOfTheDay);
-            // console.log(endOfTheDay);
-            let todayStartDate = new Date(begOfTheDay.format('MM/DD/YYYY'));
-            let todayEndDate = new Date(endOfTheDay.format('MM/DD/YYYY'));
-            todayStartDate.setHours(0, 0, 0);
-            todayEndDate.setHours(23, 59, 59);
-            // console.log(todayStartDate);
-            // console.log(todayEndDate);
-            // console.log(goalDate);
-
-            //For Week Goals and Routines
-            let startWeek = moment(goalDate);
-            let endWeek = moment(goalDate);
-            let startDay = startWeek.startOf('week');
-            let endDay = endWeek.endOf('week');
-            // console.log(startDay);
-            // console.log(endDay);
-            let startDate = new Date(startDay.format('MM/DD/YYYY'));
-            let endDate = new Date(endDay.format('MM/DD/YYYY'));
-            startDate.setHours(0, 0, 0);
-            endDate.setHours(23, 59, 59);
-            //console.log(startDate);
-            //console.log(endDate);
-
-            //For Months Goals and Routines
-            let startMonth = moment(goalDate);
-            let endMonth = moment(goalDate);
-            let startDayMonth = startMonth.startOf('month');
-            let endDayMonth = endMonth.endOf('month');
-            // console.log(startDayMonth);
-            // console.log(endDayMonth);
-            let monthStartDate = new Date(startDayMonth.format('MM/DD/YYYY'));
-            let monthEndDate = new Date(endDayMonth.format('MM/DD/YYYY'));
-            monthStartDate.setHours(0, 0, 0);
-            monthEndDate.setHours(23, 59, 59);
-            // console.log(monthStartDate);
-            // console.log(monthEndDate);
-
-            if (
-              stateValue.calendarView === 'Day' &&
-              goalDate.getTime() > todayStartDate.getTime() &&
-              goalDate.getTime() < todayEndDate.getTime()
-            ) {
-              gr_array.push(gr);
-            }
-            if (
-              stateValue.calendarView === 'Week' &&
-              goalDate.getTime() > startDate.getTime() &&
-              goalDate.getTime() < endDate.getTime()
-            ) {
-              gr_array.push(gr);
-            }
-            // if (
-            //   this.state.calendarView === "Month" &&
-            //   goalDate.getTime() > monthStartDate.getTime() &&
-            //   goalDate.getTime() < monthEndDate.getTime()
-            // ) {
-            //   gr_array.push(gr);
-            // }
-            // console.log(gr_array);
-            if (x[i]['is_persistent'].toLowerCase() === 'true') {
-              // routine_ids.push(i);
-
-              // routine_ids.push(x[i]["gr_unique_id"]);
-              // routine.push(x[i]);
-
-              if (
-                stateValue.calendarView === 'Day' &&
-                goalDate.getTime() > todayStartDate.getTime() &&
-                goalDate.getTime() < todayEndDate.getTime()
-              ) {
-                routine_ids.push(gr['id']);
-                routine.push(gr);
-              }
-              if (
-                stateValue.calendarView === 'Week' &&
-                goalDate.getTime() > todayStartDate.getTime() &&
-                goalDate.getTime() < todayEndDate.getTime()
-              ) {
-                routine_ids.push(gr['id']);
-                routine.push(gr);
-              }
-              // if (
-              //   this.state.calendarView === "Month" &&
-              //   goalDate.getTime() > monthStartDate.getTime() &&
-              //   goalDate.getTime() < monthEndDate.getTime()
-              // ) {
-              //   routine_ids.push(gr["id"]);
-              //   routine.push(gr);
-              // }
-            }
-            if (x[i]['is_persistent'].toLowerCase() === 'false') {
-              // goal_ids.push(i);
-
-              // goal_ids.push(x[i]["gr_unique_id"]);
-              // goal.push(x[i]);
-
-              if (
-                stateValue.calendarView === 'Day' &&
-                goalDate.getTime() > todayStartDate.getTime() &&
-                goalDate.getTime() < todayEndDate.getTime()
-              ) {
-                goal_ids.push(gr['id']);
-                goal.push(gr);
-              }
-              if (
-                stateValue.calendarView === 'Week' &&
-                goalDate.getTime() > startDate.getTime() &&
-                goalDate.getTime() < endDate.getTime()
-              ) {
-                goal_ids.push(gr['id']);
-                goal.push(gr);
-              }
-              // if (
-              //   this.state.calendarView === "Month" &&
-              //   goalDate.getTime() > monthStartDate.getTime() &&
-              //   goalDate.getTime() < monthEndDate.getTime()
-              // ) {
-              //   goal_ids.push(gr["id"]);
-              //   goal.push(gr);
-              // }
-            }
-          }
-
-          setStateValue((prevState) => {
-            return {
-              ...prevState,
-              originalGoalsAndRoutineArr: gr_array,
-              goals: goal,
-              addNewGRModalShow: false,
-              routine_ids: routine_ids,
-              goal_ids: goal_ids,
-              routines: routine,
-            };
-          });
-          setEditingRTS({
-            ...editingRTS,
-            gr_array: gr_array,
-          });
-          setEditingATS({
-            ...editingATS,
-            gr_array: gr_array,
-          });
-        } else {
-          setStateValue((prevState) => {
-            return {
-              ...prevState,
-              originalGoalsAndRoutineArr: [],
-              goals: goal,
-              addNewGRModalShow: false,
-              routine_ids: routine_ids,
-              goal_ids: goal_ids,
-              routines: routine,
-            };
-          });
-        }
-
-        // console.log(this.state.goals);
-        // console.log(stateValue);
-      })
-      .catch((error) => {
-        console.log('Error in getting goals and routines ' + error);
-      });
-  }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
-}
   useEffect(() => console.log('here: 4'), [editingRTS.editing.item]);
 
   const updateFBGR = () => {
     GrabFireBaseRoutinesGoalsData();
-    // props.refresh();
-    // useEffect(() => {
-    // window.location.reload();
-    // }, []);
   };
 
   function ToggleShowAbout() {
     history.push('/about');
   }
-  // if (loginContext.loginState.loggedIn == false) {
-  //   history.push('/')
-  // }
 
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
@@ -2051,7 +1484,7 @@ function GrabFireBaseRoutinesData() {
     /*----------------------------button
         selection----------------------------*/
     <div>
-      {/* <Navigation userID= {stateValue.currentUserId}/> */}
+     
       <div style={{ height: '3px' }}></div>
       <EditRTSContext.Provider
         value={{
@@ -2078,9 +1511,9 @@ function GrabFireBaseRoutinesData() {
             <userContext.Provider
               value={
                 (stateValue.itemToEdit,
-                stateValue.routines,
+                stateValue.goals,
                 stateValue.originalGoalsAndRoutineArr,
-                stateValue.showRoutineModal,
+                stateValue.showGoalModal,
                 stateValue.itemToEdit.is_available,
                 stateValue.itemToEdit.is_displayed_today,
                 stateValue.itemToEdit.is_complete,
@@ -2088,7 +1521,6 @@ function GrabFireBaseRoutinesData() {
                 stateValue.dateContext,
                 stateValue.closeRoutine,
                 GrabFireBaseRoutinesGoalsData(),
-                GrabFireBaseRoutinesData(),
                 stateValue.BASE_URL)
               }
             >
@@ -2126,7 +1558,7 @@ function GrabFireBaseRoutinesData() {
                     Routines
                   </Button>
 
-                  {stateValue.showRoutineModal ? (
+                  {stateValue.showGoalModal ? (
                     <Button
                       className={classes.buttonSelection}
                       style={{
@@ -2141,7 +1573,7 @@ function GrabFireBaseRoutinesData() {
                         //console.log(editingRTS)
                       }}
                     >
-                      Add Routine +
+                      Add Goal +
                     </Button>
                   ) : (
                     <div
@@ -2153,7 +1585,7 @@ function GrabFireBaseRoutinesData() {
 
                   <div style={{ flex: '1' }}>
                     {userID != '' && (
-                      <FirebaseV2
+                      <GoalFirebaseV2
                         theCurrentUserID={userID}
                         sethighLight={setHightlight}
                         highLight={hightlight}
@@ -2168,8 +1600,8 @@ function GrabFireBaseRoutinesData() {
                         editRTS={editingRTS.editing}
                         editATS={editingATS.editing}
                         editIS={editingIS.editing}
-                        getGoalsEndPoint={getRoutinesEndPoint}
-                        setGetGoalsEndPoint={setGetRoutinesEndPoint}
+                        getGoalsEndPoint={getGoalsEndPoint}
+                        setGetGoalsEndPoint={setGetGoalsEndPoint}
                         getActionsEndPoint={getActionsEndPoint}
                         setGetActionsEndPoint={setGetActionsEndPoint}
                         getStepsEndPoint={getStepsEndPoint}
@@ -2179,11 +1611,6 @@ function GrabFireBaseRoutinesData() {
                       />
                     )}
                   </div>
-                  {/* <div style={{flex:'2'}}
-              >
-               {editingIS.editing ? <EditIS/> : editingATS.editing ? <EditATS/> : editingRTS.editing ? <EditRTS /> : showCalendarView()}
-           
-              </div> */}
                 </div>
                 <div style={{ width: '70%', float: 'left' }}>
                   {editingRTS.editing ? null : (
@@ -2196,279 +1623,111 @@ function GrabFireBaseRoutinesData() {
                       <Container
                         style={{ marginRight: '-10rem', width: '100%' }}
                       >
-                        {stateValue.calendarView === 'Week' ? (
-                          <Row style={{ margin: '0px', width: '100%' }}>
-                            <Col
-                              style={{
-                                width: '10%',
-                                paddingTop: '1rem',
-                              }}
-                            >
-                              <Button
-                                style={{
-                                  font: 'normal normal bold 20px SF Pro',
-                                  color: 'white',
-                                }}
+                        <Row style={{ margin: '0px', width: '100%' }}>
+                          <Col
+                            style={{
+                              width: '10%',
+                              paddingTop: '1rem',
+                              marginLeft: '7rem',
+                            }}
+                          >
+                            <div>
+                              <FontAwesomeIcon
+                                style={{ cursor: 'pointer' }}
+                                icon={faChevronLeft}
+                                size="2x"
                                 onClick={(e) => {
-                                  stateValue.calendarView === 'Week'
-                                    ? setStateValue((prevState) => {
-                                        return {
-                                          ...prevState,
-                                          calendarView: 'Day',
-                                        };
-                                      })
-                                    : setStateValue((prevState) => {
-                                        return {
-                                          ...prevState,
-                                          calendarView: 'Week',
-                                        };
-                                      });
+                                  prevWeek();
                                 }}
-                              >
-                                Week
-                              </Button>
-                            </Col>
-                            <Col
-                              style={{
-                                width: '10%',
-                                paddingTop: '1rem',
-                                marginLeft: '0rem',
-                              }}
-                            >
-                              <div>
-                                <FontAwesomeIcon
-                                  style={{ cursor: 'pointer' }}
-                                  icon={faChevronLeft}
-                                  size="2x"
-                                  onClick={(e) => {
-                                    prevWeek();
-                                  }}
-                                />
-                              </div>
-                            </Col>
-                            <Col
-                              md="auto"
-                              style={{ textAlign: 'center', width: '70%' }}
-                              className="bigfancytext"
-                            >
-                              {0 <= today.format('D') - curDate.format('D') &&
-                              today.format('D') - curDate.format('D') <= 6 &&
-                              today.format('M') - curDate.format('M') === 0 ? (
-                                <p
-                                  style={{
-                                    font: 'normal normal bold 28px SF Pro',
-                                    paddingBottom: '0px',
-                                  }}
-                                >
-                                  {console.log(
-                                    'today timezone',
-                                    today.format('D') - curDate.format('D')
-                                  )}
-                                  {console.log(
-                                    'today timezone',
-                                    today.format('D')
-                                  )}
-                                  {console.log(
-                                    'today timezone',
-                                    curDate.format('D')
-                                  )}
-                                  This week
-                                </p>
-                              ) : (
-                                <p
-                                  style={{
-                                    font: 'normal normal bold 28px SF Pro',
-                                    paddingBottom: '0px',
-                                  }}
-                                >
-                                  Week of {startWeek.format('D MMMM YYYY')}{' '}
-                                </p>
-                              )}
+                              />
+                            </div>
+                          </Col>
+                          <Col
+                            md="auto"
+                            style={{ textAlign: 'center', width: '70%' }}
+                            className="bigfancytext"
+                          >
+                            {0 <= today.format('D') - curDate.format('D') &&
+                            today.format('D') - curDate.format('D') <= 6 &&
+                            today.format('M') - curDate.format('M') === 0 ? (
                               <p
                                 style={{
-                                  font: 'normal normal bold 20px SF Pro',
+                                  font: 'normal normal bold 28px SF Pro',
                                   paddingBottom: '0px',
                                 }}
-                                className="normalfancytext"
                               >
-                                {userTime_zone}
+                                {console.log(
+                                  'today timezone',
+                                  today.format('D') - curDate.format('D')
+                                )}
+                                {console.log(
+                                  'today timezone',
+                                  today.format('D')
+                                )}
+                                {console.log(
+                                  'today timezone',
+                                  curDate.format('D')
+                                )}
+                                This week
                               </p>
-                            </Col>
-                            <Col
-                              style={{
-                                width: '10%',
-                                textAlign: 'right',
-                                paddingTop: '1rem',
-                              }}
-                            >
-                              <FontAwesomeIcon
-                                // style={{ marginLeft: "50%" }}
-                                style={{ float: 'right', cursor: 'pointer' }}
-                                icon={faChevronRight}
-                                size="2x"
-                                className="X"
-                                onClick={(e) => {
-                                  nextWeek();
-                                }}
-                              />
-                            </Col>
-                            <Col
-                              style={{
-                                width: '10%',
-                                textAlign: 'right',
-                                paddingTop: '1rem',
-                                marginRight: '1rem',
-                              }}
-                            >
-                              <FontAwesomeIcon
-                                // style={{ marginLeft: "50%" }}
-                                style={{ float: 'right', cursor: 'pointer' }}
-                                icon={faCalendar}
-                                size="2x"
-                                className="X"
-                                onClick={(e) => {
-                                  curWeek();
-                                }}
-                              />
-                            </Col>
-                          </Row>
-                        ) : (
-                          <Row style={{ margin: '0px', width: '100%' }}>
-                            <Col
-                              style={{
-                                width: '10%',
-                                paddingTop: '1rem',
-                              }}
-                            >
-                              <Button
-                                style={{
-                                  font: 'normal normal bold 20px SF Pro',
-                                  color: 'white',
-                                }}
-                                onClick={(e) => {
-                                  stateValue.calendarView === 'Week'
-                                    ? setStateValue((prevState) => {
-                                        return {
-                                          ...prevState,
-                                          calendarView: 'Day',
-                                        };
-                                      })
-                                    : setStateValue((prevState) => {
-                                        return {
-                                          ...prevState,
-                                          calendarView: 'Week',
-                                        };
-                                      });
-                                }}
-                              >
-                                Day
-                              </Button>
-                            </Col>
-                            <Col
-                              style={{
-                                width: '10%',
-                                paddingTop: '1rem',
-                                marginLeft: '0rem',
-                              }}
-                            >
-                              <div>
-                                {/* <FontAwesomeIcon
-                                  style={{ cursor: 'pointer' }}
-                                  icon={faChevronLeft}
-                                  size="2x"
-                                  onClick={(e) => {
-                                    prevWeek();
-                                  }}
-                                /> */}
-                              </div>
-                            </Col>
-                            <Col
-                              md="auto"
-                              style={{ textAlign: 'center', width: '70%' }}
-                              className="bigfancytext"
-                            >
-                              {/* {0 <= today.format('D') - curDate.format('D') &&
-                              today.format('D') - curDate.format('D') <= 6 &&
-                              today.format('M') - curDate.format('M') === 0 ? (
-                                <p
-                                  style={{
-                                    font: 'normal normal bold 28px SF Pro',
-                                    paddingBottom: '0px',
-                                  }}
-                                >
-                                  {console.log(
-                                    'today timezone',
-                                    today.format('D') - curDate.format('D')
-                                  )}
-                                  {console.log(
-                                    'today timezone',
-                                    today.format('D')
-                                  )}
-                                  {console.log(
-                                    'today timezone',
-                                    curDate.format('D')
-                                  )}
-                                  This week
-                                </p>
-                              ) : (
-                                <p
-                                  style={{
-                                    font: 'normal normal bold 28px SF Pro',
-                                    paddingBottom: '0px',
-                                  }}
-                                >
-                                  Week of {startWeek.format('D MMMM YYYY')}{' '}
-                                </p>
-                              )}
+                            ) : (
                               <p
                                 style={{
-                                  font: 'normal normal bold 20px SF Pro',
+                                  font: 'normal normal bold 28px SF Pro',
                                   paddingBottom: '0px',
                                 }}
-                                className="normalfancytext"
                               >
-                                {userTime_zone}
-                              </p> */}
-                            </Col>
-                            <Col
+                                Week of {startWeek.format('D MMMM YYYY')}{' '}
+                              </p>
+                            )}
+                            <p
                               style={{
-                                width: '10%',
-                                textAlign: 'right',
-                                paddingTop: '1rem',
+                                font: 'normal normal bold 20px SF Pro',
+                                paddingBottom: '0px',
                               }}
+                              className="normalfancytext"
                             >
-                              {/* <FontAwesomeIcon
-                                // style={{ marginLeft: "50%" }}
-                                style={{ float: 'right', cursor: 'pointer' }}
-                                icon={faChevronRight}
-                                size="2x"
-                                className="X"
-                                onClick={(e) => {
-                                  nextWeek();
-                                }}
-                              /> */}
-                            </Col>
-                            <Col
-                              style={{
-                                width: '10%',
-                                textAlign: 'right',
-                                paddingTop: '1rem',
-                                marginRight: '1rem',
+                              {userTime_zone}
+                            </p>
+                          </Col>
+                          <Col
+                            style={{
+                              width: '10%',
+                              textAlign: 'right',
+                              paddingTop: '1rem',
+                            }}
+                          >
+                            <FontAwesomeIcon
+                              // style={{ marginLeft: "50%" }}
+                              style={{ float: 'right', cursor: 'pointer' }}
+                              icon={faChevronRight}
+                              size="2x"
+                              className="X"
+                              onClick={(e) => {
+                                nextWeek();
                               }}
-                            >
-                              {/* <FontAwesomeIcon
-                                // style={{ marginLeft: "50%" }}
-                                style={{ float: 'right', cursor: 'pointer' }}
-                                icon={faCalendar}
-                                size="2x"
-                                className="X"
-                                onClick={(e) => {
-                                  curWeek();
-                                }}
-                              /> */}
-                            </Col>
-                          </Row>
-                        )}
+                            />
+                          </Col>
+                          <Col
+                            style={{
+                              width: '10%',
+                              textAlign: 'right',
+                              paddingTop: '1rem',
+                              marginRight: '1rem',
+                            }}
+                          >
+                            <FontAwesomeIcon
+                              // style={{ marginLeft: "50%" }}
+                              style={{ float: 'right', cursor: 'pointer' }}
+                              icon={faCalendar}
+                              size="2x"
+                              className="X"
+                              onClick={(e) => {
+                                curWeek();
+                              }}
+                            />
+                          </Col>
+                        </Row>
                       </Container>
                     </Box>
                   )}
@@ -2511,7 +1770,7 @@ function GrabFireBaseRoutinesData() {
                 </div>
               </Box>
               {/* ----------------------------... Navigation--------------------------- */}
-
+              
               {/* ---------------------------- Navigation--------------------------- */}
             </userContext.Provider>
           </EditISContext.Provider>

@@ -93,7 +93,7 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
 
           axios
             .get(
-              BASE_URL + 'getgoalsandroutines/' +
+              BASE_URL + 'getroutines/' +
                 step
             )
             .then((response) => {
