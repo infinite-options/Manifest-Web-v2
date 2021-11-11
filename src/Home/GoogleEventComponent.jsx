@@ -61,8 +61,7 @@ export default function GoogleEventComponent(props) {
   console.log('in add events', userEmail);
   console.log('in add events', document.cookie);
   console.log('in add events', userID);
-  const [signedin, setSignedIn] = useState(false);
-  const [googleAuthedEmail, setgoogleAuthedEmail] = useState(null);
+  const [addPerson, setAddPerson] = useState(false);
   const [summary, setSummary] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
@@ -824,12 +823,33 @@ export default function GoogleEventComponent(props) {
   //     setSignedIn(false);
   //     setgoogleAuthedEmail(null);
   //   }
-  // };
+  // };c
+
+  const [fields, setFields] = useState([{ email: null }]);
+  function handleChange(i, event) {
+    const emails = [...fields];
+    emails[i].email = event.target.value;
+    setFields(emails);
+  }
+
+  function handleAdd() {
+    const emails = [...fields];
+    emails.push({ email: null });
+    setFields(emails);
+  }
+
+  function handleRemove(i) {
+    const emails = [...fields];
+    emails.splice(i, 1);
+    setFields(emails);
+  }
   const submit = (e) => {
     
     e.preventDefault();
     console.log(repeatOptionDropDown)
     console.log(recurrenceRule);
+    var guestList;
+
     var event = {
       summary,
       description,
@@ -851,13 +871,14 @@ export default function GoogleEventComponent(props) {
         timeZone: userTime_zone,
       },
       recurrence: repeatOption ? [recurrenceRule] : false,
-      attendees: [{ email: attendees }],
+      attendees: fields,
     };
     publishTheCalenderEvent(event);
     editingEventContext.setEditingEvent({
       ...editingEventContext.editingEvent,
       editing: false,
     });
+    console.log(event)
   };
 
   return (
@@ -866,9 +887,7 @@ export default function GoogleEventComponent(props) {
         <h1>Add an event to google Calender</h1>
       </div>
       {!props.signedin ? (
-        <div className="google-login">
-          
-        </div>
+        <div className="google-login"></div>
       ) : (
         <div className="body">
           <form>
@@ -953,7 +972,7 @@ export default function GoogleEventComponent(props) {
                 // />
               }
             </div>
-            <div className="eventItem">
+            {/* <div className="eventItem">
               <label>Attendees</label>
               <input
                 type="text"
@@ -962,6 +981,37 @@ export default function GoogleEventComponent(props) {
                 onChange={(e) => setAttendees(e.target.value)}
               ></input>
             </div>
+            {!addPerson ? (
+              <div className="eventItem">
+                <label>Attendees</label>
+                <input
+                  type="text"
+                  placeholder="attendees..."
+                  value={attendees}
+                  onChange={(e) => setAttendees(e.target.value)}
+                ></input>
+              </div>
+            ) : (
+              <div></div>
+            )} */}
+            <div className="eventItem">
+              <div onClick={() => handleAdd()}>+ Add Person</div>
+            </div>
+            {fields.map((field, idx) => {
+              return (
+                <div key={`${field}-${idx}`}>
+                  <label>Attendees</label>
+                  <input
+                    type="text"
+                    placeholder="Enter text"
+                    onChange={(e) => handleChange(idx, e)}
+                  />
+                  <button type="button" onClick={() => handleRemove(idx)}>
+                    X
+                  </button>
+                </div>
+              );
+            })}
             <div className="eventItem">
               <label>Location</label>
               <input
@@ -970,6 +1020,9 @@ export default function GoogleEventComponent(props) {
                 onChange={(e) => setLocation(e.target.value)}
               ></input>
             </div>
+            <button type='submit'>
+              Cancel
+              </button>
             <button type="submit" onClick={(e) => submit(e)}>
               Submit
             </button>

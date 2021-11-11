@@ -381,7 +381,7 @@ export default function Firebasev2(props) {
                 } else if (r.is_persistent == 'False') {
                   return '#376DAC';
                 } else {
-                  return '#9b4aff';
+                  return '#67ABFC';
                 }
               })(),
               // backgroundColor:

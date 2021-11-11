@@ -1907,9 +1907,6 @@ function GoogleEvents() {
       'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
       [
         userID,
-        editingRTS.editing,
-        editingATS.editing,
-        editingIS.editing,
         editingEvent.editing,
       ]
     );
@@ -1966,7 +1963,7 @@ function GoogleEvents() {
       .catch((error) => {
         console.log('here: Error in getting goals and routines ' + error);
       });
-  }, [userID, stateValue.dateContext]);
+  }, [userID, stateValue.dateContext, editingEvent.editing]);
 }
     function GrabFireBaseRoutinesData() {
     let url = BASE_URL + 'calenderEvents/';
@@ -2022,10 +2019,7 @@ function GoogleEvents() {
       console.log(
         'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
         [
-          userID,
-          editingRTS.editing,
-          editingATS.editing,
-          editingIS.editing,
+          userID,          
           editingEvent.editing,
         ]
       );

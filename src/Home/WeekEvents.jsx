@@ -83,7 +83,7 @@ export default class WeekEvents extends Component {
               color:
                 (curDate.format('D') === dateNew.format('D')) &
                 (curDate.format('M') === dateNew.format('M'))
-                  ? 'RebeccaPurple'
+                  ? '#67ABFC'
                   : '',
             }}
           >
@@ -225,7 +225,7 @@ export default class WeekEvents extends Component {
                 this.state.pxPerHourForConversion;
               let hourDiff = tempEndTime.getHours() - tempStartTime.getHours();
               let minDiff = tempEndTime.getMinutes() / 60;
-              let color = 'PaleTurquoise';
+              let color = '#67ABFC';
               let height =
                 (hourDiff + minDiff) * this.state.pxPerHourForConversion;
               sameTimeEventCount++;
@@ -267,11 +267,11 @@ export default class WeekEvents extends Component {
 
               // change color if more than one event in same time.
               if (sameTimeEventCount <= 1) {
-                color = hour % 2 === 0 ? 'PaleTurquoise' : 'skyblue';
+                color = hour % 2 === 0 ? '#67ABFC' : '#3a92fb';
               } else if (sameTimeEventCount === 2) {
-                color = 'skyblue';
+                color = '#3a92fb';
               } else {
-                color = 'blue';
+                color = '#3a92fb';
               }
 
               let newElement = (
@@ -288,7 +288,7 @@ export default class WeekEvents extends Component {
                     }
                     onMouseOver={(e) => {
                       e.target.style.color = '#FFFFFF';
-                      e.target.style.background = 'RebeccaPurple';
+                      e.target.style.background = '#b1d4fd';
                       e.target.style.zIndex = '2';
                     }}
                     onMouseOut={(e) => {
@@ -348,7 +348,7 @@ export default class WeekEvents extends Component {
                     }
                     onMouseOver={(e) => {
                       e.target.style.color = '#FFFFFF';
-                      e.target.style.background = 'RebeccaPurple';
+                      e.target.style.background = '#b1d4fd';
                       e.target.style.zIndex = '2';
                     }}
                     onMouseOut={(e) => {
@@ -409,7 +409,7 @@ export default class WeekEvents extends Component {
                   }
                   onMouseOver={(e) => {
                     e.target.style.color = '#FFFFFF';
-                    e.target.style.background = 'RebeccaPurple';
+                    e.target.style.background = '#b1d4fd';
                     e.target.style.zIndex = '2';
                   }}
                   onMouseOut={(e) => {
@@ -464,7 +464,7 @@ export default class WeekEvents extends Component {
                   }
                   onMouseOver={(e) => {
                     e.target.style.color = '#FFFFFF';
-                    e.target.style.background = 'RebeccaPurple';
+                    e.target.style.background = '#b1d4fd';
                     e.target.style.zIndex = '2';
                   }}
                   onMouseOut={(e) => {
@@ -530,7 +530,7 @@ export default class WeekEvents extends Component {
                 (curDate.format('D') === dateNew.format('D')) &
                 (curDate.format('dddd') === dateNew.format('dddd')) &
                 (curDate.format('M') === dateNew.format('M'))
-                  ? 'RebeccaPurple'
+                  ? '#67ABFC'
                   : '',
               padding: '0',
             }}

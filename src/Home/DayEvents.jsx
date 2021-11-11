@@ -196,7 +196,7 @@ export default class DayEvents extends Component {
                     }
                     onMouseOver={(e) => {
                       e.target.style.color = '#FFFFFF';
-                      e.target.style.background = 'RebeccaPurple';
+                      e.target.style.background = '#67ABFC';
                       e.target.style.zIndex = '2';
                     }}
                     onMouseOut={(e) => {
@@ -300,7 +300,7 @@ export default class DayEvents extends Component {
                     }
                     onMouseOver={(e) => {
                       e.target.style.color = '#FFFFFF';
-                      e.target.style.background = 'RebeccaPurple';
+                      e.target.style.background = '#67ABFC';
                       e.target.style.zIndex = '2';
                     }}
                     onMouseOut={(e) => {
@@ -360,7 +360,7 @@ export default class DayEvents extends Component {
                 }
                 onMouseOver={(e) => {
                   e.target.style.color = '#FFFFFF';
-                  e.target.style.background = 'RebeccaPurple';
+                  e.target.style.background = '#67ABFC';
                   e.target.style.zIndex = '2';
                 }}
                 onMouseOut={(e) => {
@@ -421,7 +421,7 @@ export default class DayEvents extends Component {
                 }
                 onMouseOver={(e) => {
                   e.target.style.color = '#FFFFFF';
-                  e.target.style.background = 'RebeccaPurple';
+                  e.target.style.background = '#67ABFC';
                   e.target.style.zIndex = '2';
                 }}
                 onMouseOut={(e) => {
