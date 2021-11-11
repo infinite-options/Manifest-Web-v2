@@ -1,4 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
+import {
+  signInToGoogle,
+  initClient,
+  getSignedInUserEmail,
+  signOutFromGoogle,
+} from './GoogleApiService';
 import axios from 'axios';
 import Button from '@material-ui/core/Button';
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -160,6 +166,12 @@ export default function Events(props) {
   console.log(loginContext.loginState.curUserEmail);
   console.log(document.cookie);
   /*----------------------------Use states to define variables----------------------------*/
+  const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+  const CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
+  const [accessToken, setAccessToken] = useState('');
+  const [signedin, setSignedIn] = useState(false);
+  const [googleAuthedEmail, setgoogleAuthedEmail] = useState(null);
+  const [idToken, setIdToken] = useState('');
   const [routineID, setRoutineID] = useState('');
   const [actionID, setActionID] = useState('');
   const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
@@ -799,6 +811,136 @@ export default function Events(props) {
   //   // !this.state.showGoalModal &&
   //   !stateValue.showRoutineModal;
   /*----------------------------toggleShowRoutine----------------------------*/
+  useEffect(() => {
+    initClient((success) => {
+      if (success) {
+        getGoogleAuthorizedEmail();
+      }
+    });
+  }, []);
+
+  const getGoogleAuthorizedEmail = async () => {
+    let email = await getSignedInUserEmail();
+    if (email) {
+      setSignedIn(true);
+      setgoogleAuthedEmail(email);
+    }
+  };
+  const getAuthToGoogle = async () => {
+    let successfull = await signInToGoogle();
+    if (successfull) {
+      getGoogleAuthorizedEmail();
+    }
+  };
+  const _signOutFromGoogle = () => {
+    let status = signOutFromGoogle();
+    if (status) {
+      setSignedIn(false);
+      setgoogleAuthedEmail(null);
+    }
+  };
+    
+  const getAcessToken = () => {
+    let url = BASE_URL + 'taToken/';
+    let ta_id = '200-000002'
+    axios
+      .get(url + ta_id)
+      .then((response) => {
+        console.log('in events', response);
+        let url = 'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
+        loginContext.setLoginState({
+          ...loginContext.loginState,
+          ta:{
+            id:'200-000002',
+            email: response['data']['ta_email_id']
+          }
+        });
+        var old_at = response['data']['ta_google_auth_token']
+        console.log('in events', old_at)
+        var refreshToken = response['data']['ta_google_refresh_token'];
+        
+        let checkExp_url =
+          url + old_at
+        console.log('in events', checkExp_url)
+        fetch(`https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`, {
+          method: 'GET',
+        })
+          .then((response) => {
+            console.log('in events', response);
+            if (response['status'] === 400) {
+              console.log('in events if')
+              let authorization_url =
+                'https://accounts.google.com/o/oauth2/token';
+
+              var details = {
+                refresh_token: refreshToken,
+                client_id: CLIENT_ID,
+                client_secret: CLIENT_SECRET,
+                grant_type: 'refresh_token',
+              };
+
+              var formBody = [];
+              for (var property in details) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + '=' + encodedValue);
+              }
+              formBody = formBody.join('&');
+
+              fetch(authorization_url, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                },
+                body: formBody,
+              })
+                .then((response) => {
+                  return response.json();
+                })
+                .then((responseData) => {
+                  console.log(responseData);
+                  return responseData;
+                })
+                .then((data) => {
+                  console.log(data);
+                  let at = data['access_token'];
+                  var id_token = data['id_token'];
+                  setAccessToken(at);
+                  setIdToken(id_token)
+                  console.log('in events', at);
+                  let url = BASE_URL + 'UpdateAccessToken/';
+                  axios
+                    .post(url + ta_id, {
+                      ta_google_auth_token: at,
+                    })
+                    .then((response) => {})
+                    .catch((err) => {
+                      console.log(err);
+                    });
+                  return accessToken
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+                
+              }
+              else{
+                setAccessToken(old_at);
+              }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        console.log('in events', refreshToken)
+        
+      })
+      .catch((error) => {
+        console.log('Error in events' + error);
+      });
+}; 
+ 
+console.log('in events setaccess', accessToken)
+  
   function toggleShowEvents(props) {
     setStateValue((prevState) => {
       return {
@@ -2092,7 +2234,11 @@ function GoogleEvents() {
                       }}
                       id="one"
                       onClick={() => {
-                      setEditingEvent(newEditingEventState);                      
+                        getAcessToken(); 
+
+                        setEditingEvent(newEditingEventState); 
+                        getAuthToGoogle();
+                                          
                     }}
                     >
                       Add Event +
@@ -2481,6 +2627,8 @@ function GoogleEvents() {
                       />
                     ) : editingEvent.editing ? (
                         <GoogleEventComponent
+                        signedin={signedin}
+                        setSignedIn={setSignedIn}
                         currentEmail={userEmail}
                         stateValue={stateValue}
                         setStateValue={setStateValue} />

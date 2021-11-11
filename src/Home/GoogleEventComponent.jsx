@@ -29,6 +29,8 @@ export default function GoogleEventComponent(props) {
   //const classes = useStyles();
   console.log('in add events', props);
   const loginContext = useContext(LoginContext);
+
+  console.log('in events', loginContext)
   const editingEventContext = useContext(EditEventContext);
   const user = props.CurrentId;
   var userID = '';
@@ -117,13 +119,13 @@ export default function GoogleEventComponent(props) {
 
 
 
-  useEffect(() => {
-    initClient((success) => {
-      if (success) {
-        getGoogleAuthorizedEmail();
-      }
-    });
-  }, []);
+  // useEffect(() => {
+  //   initClient((success) => {
+  //     if (success) {
+  //       getGoogleAuthorizedEmail();
+  //     }
+  //   });
+  // }, []);
 
   const startTimePicker = () => {
     return (
@@ -803,26 +805,26 @@ export default function GoogleEventComponent(props) {
       </Modal.Dialog>
     );
   };
-  const getGoogleAuthorizedEmail = async () => {
-    let email = await getSignedInUserEmail();
-    if (email) {
-      setSignedIn(true);
-      setgoogleAuthedEmail(email);
-    }
-  };
-  const getAuthToGoogle = async () => {
-    let successfull = await signInToGoogle();
-    if (successfull) {
-      getGoogleAuthorizedEmail();
-    }
-  };
-  const _signOutFromGoogle = () => {
-    let status = signOutFromGoogle();
-    if (status) {
-      setSignedIn(false);
-      setgoogleAuthedEmail(null);
-    }
-  };
+  // const getGoogleAuthorizedEmail = async () => {
+  //   let email = await getSignedInUserEmail();
+  //   if (email) {
+  //     setSignedIn(true);
+  //     setgoogleAuthedEmail(email);
+  //   }
+  // };
+  // const getAuthToGoogle = async () => {
+  //   let successfull = await signInToGoogle();
+  //   if (successfull) {
+  //     getGoogleAuthorizedEmail();
+  //   }
+  // };
+  // const _signOutFromGoogle = () => {
+  //   let status = signOutFromGoogle();
+  //   if (status) {
+  //     setSignedIn(false);
+  //     setgoogleAuthedEmail(null);
+  //   }
+  // };
   const submit = (e) => {
     
     e.preventDefault();
@@ -832,7 +834,14 @@ export default function GoogleEventComponent(props) {
       summary,
       description,
       location,
-
+      creator: {
+        email: 'calendar@manifestmy.space',
+        self: true,
+      },
+      organizer: {
+        email: 'calendar@manifestmy.space',
+        self: true,
+      },
       start: {
         dateTime: moment(startTime),
         timeZone: userTime_zone,
@@ -856,10 +865,9 @@ export default function GoogleEventComponent(props) {
       <div className="header">
         <h1>Add an event to google Calender</h1>
       </div>
-      {!signedin ? (
+      {!props.signedin ? (
         <div className="google-login">
-          <p>Login in to Google</p>
-          <button onClick={() => getAuthToGoogle()}>Sign In</button>
+          
         </div>
       ) : (
         <div className="body">
@@ -917,7 +925,7 @@ export default function GoogleEventComponent(props) {
                     // })
                     {
                       setRepeatOptionDropDown(eventKey);
-                      setRecurrenceRule()
+                      setRecurrenceRule();
                       setRepeatOption(false);
                     }
                   }

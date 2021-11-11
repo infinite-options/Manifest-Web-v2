@@ -6,7 +6,7 @@ import React from 'react';
     'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
   ];
   const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-  const SCOPES = 'https://www.googleapis.com/auth/calendar.events';
+  const SCOPES = 'https://www.googleapis.com/auth/calendar.events email';
   
    var userID = '';
    var userTime_zone = '';
@@ -79,7 +79,7 @@ import React from 'react';
     try {
       let googleuser = await gapi.auth2
         .getAuthInstance()
-        .signIn({ prompt: 'consent' });
+        .signIn({ prompt: 'none', login_hint: 'calendar@manifestmy.space' });
       if (googleuser) {
         return true;
       }
