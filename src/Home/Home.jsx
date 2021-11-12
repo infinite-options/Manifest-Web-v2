@@ -93,10 +93,12 @@ export default function Home(props) {
     //userTime_zone = loginContext.loginState.curUserTimeZone;
     console.log('curUser', userID);
     console.log('curUser', userTime_zone);
+    console.log('curUser', userEmail);
     
     // document.cookie = 'patient_name=test'
   }
   console.log('curUser', document.cookie);
+  console.log('curUser', userEmail);
   const history = useHistory();
   //console.log('curUser timezone', userTime_zone);
   /* useEffect() is used to render API calls as minimumly 
@@ -2396,8 +2398,23 @@ function GrabFireBaseRoutinesData() {
                     >
                       Routines
                     </Button>
-
-                    {stateValue.showRoutineModal ? (
+                    <Button
+                      className={classes.buttonSelection}
+                      style={{
+                        width: '19%',
+                      }}
+                      id="one"
+                      onClick={() => {
+                        // e.stopPropagation()
+                        console.log('Clicked add RTS');
+                        //console.log(editingRTS)
+                        setEditingRTS(newRTSState);
+                        //console.log(editingRTS)
+                      }}
+                    >
+                      Add Routine +
+                    </Button>
+                    {/* {stateValue.showRoutineModal ? (
                       <Button
                         className={classes.buttonSelection}
                         style={{
@@ -2420,7 +2437,7 @@ function GrabFireBaseRoutinesData() {
                           width: '20%',
                         }}
                       ></div>
-                    )}
+                    )} */}
 
                     <div style={{ flex: '1' }}>
                       {userID != '' && (

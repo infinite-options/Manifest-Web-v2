@@ -2235,8 +2235,23 @@ export default function GoalHome(props) {
                   >
                     Routines
                   </Button>
-
-                  {stateValue.showGoalModal ? (
+                  <Button
+                    className={classes.buttonSelection}
+                    style={{
+                      width: '19%',
+                    }}
+                    id="one"
+                    onClick={() => {
+                      // e.stopPropagation()
+                      console.log('Clicked add RTS');
+                      //console.log(editingRTS)
+                      setEditingRTS(newRTSState);
+                      //console.log(editingRTS)
+                    }}
+                  >
+                    Add Goal +
+                  </Button>
+                  {/* {stateValue.showGoalModal ? (
                     <Button
                       className={classes.buttonSelection}
                       style={{
@@ -2259,7 +2274,7 @@ export default function GoalHome(props) {
                         width: '20%',
                       }}
                     ></div>
-                  )}
+                  )} */}
 
                   <div style={{ flex: '1' }}>
                     {userID != '' && (

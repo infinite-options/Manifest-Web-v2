@@ -495,23 +495,7 @@ export default function Firebasev2(props) {
               </div>
               {/* working on this thing */}
 
-              <div>
-                <PlaylistAddIcon
-                  onMouseOver={(event) => {
-                    event.target.style.color = '#48D6D2';
-                  }}
-                  onMouseOut={(event) => {
-                    event.target.style.color = '#FFFFFF';
-                  }}
-                  style={{ color: '#ffffff', cursor: 'pointer' }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.target.style.color = '#000000';
-                    props.setATS(props.newATS);
-                    props.setrID(r);
-                  }}
-                />
-              </div>
+            
               <div style={{ flex: '1' }}>
                 <FontAwesomeIcon
                   title="Delete Item 1"
