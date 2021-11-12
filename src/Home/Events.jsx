@@ -116,11 +116,9 @@ export default function Events(props) {
   // function GetUserID(e){
   useEffect(() => {
     console.log('home line 94');
-    console.log(
+    console.log('document.cookie',
       document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('ta_email='))
-        .split('=')[1]
+        
     );
     axios
       .get(

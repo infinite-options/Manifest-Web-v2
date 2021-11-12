@@ -168,6 +168,7 @@ export function Navigation() {
             user_unique_id: user.user_unique_id,
             user_name: user.user_name,
             time_zone: user.time_zone,
+            user_email_id: user.user_email_id
           })}
         >
           {user.user_name}
@@ -247,6 +248,7 @@ export function Navigation() {
                   .split('=')[1]
               }
             </option>
+            
             {elements}
           </select>
         </div>

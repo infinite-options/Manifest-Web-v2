@@ -851,7 +851,7 @@ export default function GoogleEventComponent(props) {
   };
   
 
-  const [fields, setFields] = useState([{ email: null }]);
+  const [fields, setFields] = useState([{ email: userEmail }]);
   function handleChange(i, event) {
     const emails = [...fields];
     emails[i].email = event.target.value;
@@ -860,7 +860,7 @@ export default function GoogleEventComponent(props) {
 
   function handleAdd() {
     const emails = [...fields];
-    emails.push({ email: null });
+    emails.push({ email: userEmail });
     setFields(emails);
   }
 
@@ -878,7 +878,6 @@ export default function GoogleEventComponent(props) {
       ...editingEventContext.editingEvent,
       editing: true,
     });
-    var guestList;
 
     var event = {
       summary,
@@ -1230,7 +1229,7 @@ export default function GoogleEventComponent(props) {
                                 fontWeight: 'bold',
                               }}
                               type="text"
-                              placeholder="Enter email address"
+                              placeholder={userEmail}
                               onChange={(e) => handleChange(idx, e)}
                             />
                           </Col>
