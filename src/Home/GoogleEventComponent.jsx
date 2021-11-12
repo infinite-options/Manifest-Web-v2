@@ -874,6 +874,10 @@ export default function GoogleEventComponent(props) {
     e.preventDefault();
     console.log(repeatOptionDropDown)
     console.log(recurrenceRule);
+    editingEventContext.setEditingEvent({
+      ...editingEventContext.editingEvent,
+      editing: true,
+    });
     var guestList;
 
     var event = {
@@ -911,7 +915,6 @@ export default function GoogleEventComponent(props) {
       ...editingEventContext.editingEvent,
       editing: false,
     });
-    console.log(event)
   };
 
   return (
@@ -1048,7 +1051,7 @@ export default function GoogleEventComponent(props) {
                       className="repeatOptionDropDown"
                       // onClick={this.openRepeatModal}
                       title={
-                        repeatOptionDropDown === 'Does not Repeat'
+                        repeatOptionDropDown === 'Does not repeat'
                           ? 'Does not repeat'
                           : 'Custom...'
                       }
