@@ -1,11 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import {
-  signInToGoogle,
-  initClient,
-  getSignedInUserEmail,
-  signOutFromGoogle,
-  publishTheCalenderEvent,
-} from './GoogleApiService';
+import {publishTheCalenderEvent} from './GoogleApiService';
 import {
   Form,
   Button,
@@ -15,16 +9,14 @@ import {
   Modal,
   Dropdown,
   DropdownButton,
-  Spinner,
 } from 'react-bootstrap';
+import trash from '../manifest/LoginAssets/Trash.png';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import './DatePicker.css';
 import LoginContext from '../LoginContext';
 import EditEventContext from './EditEventContext';
-import { makeStyles } from '@material-ui/core/styles';
 import moment from 'moment';
-import createBreakpoints from '@material-ui/core/styles/createBreakpoints';
-
 export default function GoogleEventComponent(props) {
   //const classes = useStyles();
   console.log('in add events', props);
@@ -61,11 +53,11 @@ export default function GoogleEventComponent(props) {
   console.log('in add events', userEmail);
   console.log('in add events', document.cookie);
   console.log('in add events', userID);
-  const [addPerson, setAddPerson] = useState(false);
+  
   const [summary, setSummary] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
-  const [attendees, setAttendees] = useState([]);
+  
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
   const [repeatOptionDropDown, setRepeatOptionDropDown] =useState('Does not repeat');
@@ -83,8 +75,7 @@ export default function GoogleEventComponent(props) {
   const [repeatRadio_temp , setRepeatRadio_temp]= useState('Never');
   const [repeatEndDate , setRepeatEndDate]= useState('');
   const [repeatEndDate_temp , setRepeatEndDate_temp]= useState('');
-  const [showNoTitleError , setShowNoTitleError]= useState('');
-  const [showDateError , setShowDateError]= useState('');
+  
   const [byDay , setByDay]= useState({
         0: '',
         1: '',
@@ -103,14 +94,9 @@ export default function GoogleEventComponent(props) {
         5: '',
         6: '',
       });
-  const [repeatSummary, setRepeatSummary]= useState('');
   const [recurrenceRule, setRecurrenceRule]= useState('');
-  const [eventNotifications, setEventNotifications]= useState({});
-  const [showDeleteRecurringModal, setShowDeleteRecurringModal]= useState(false);
-  const [deleteRecurringOption, setDeleteRecurringOption]= useState('This event');
-  const [showEditRecurringModal, setShowEditRecurringModal]= useState(false);
-  const [editRecurringOption, setEditRecurringOption]= useState('');
-
+  const [reminderMethod, setReminderMethod] = useState('');
+  const [reminderMinutes, setReminderMinutes] = useState('');
 
 
 
@@ -129,6 +115,7 @@ export default function GoogleEventComponent(props) {
   const startTimePicker = () => {
     return (
       <DatePicker
+        wrapperClassName="datePicker"
         className="form-control"
         type="text"
         selected={startTime}
@@ -146,9 +133,9 @@ export default function GoogleEventComponent(props) {
   const endTimePicker = () => {
     return (
       <DatePicker
+        wrapperClassName="datePicker"
         className="form-control"
         type="text"
-        style={{ width: '100%' }}
         selected={endTime}
         onChange={(date) => {
           setEndTime(date);
@@ -243,6 +230,9 @@ export default function GoogleEventComponent(props) {
   const handleRepeatOccurrence = (eventKey) => {
     setRepeatOccurrence_temp(eventKey);
   };
+  const handleReminderMinutes = (eventKey) => {
+    setReminderMinutes(eventKey);
+  };
 
   const saveRepeatChanges = () => {
     // const {
@@ -301,7 +291,7 @@ export default function GoogleEventComponent(props) {
     //   repeatRadio: prevState.repeatRadio_temp,
     //   repeatEndDate: prevState.repeatEndDate_temp,
     //   byDay: prevState.byDay_temp,
-    // }));
+    // }))
 
     // If repeatDropDown_temp is DAY
     console.log(repeatDropDown_temp);
@@ -312,7 +302,9 @@ export default function GoogleEventComponent(props) {
           setRepeatOptionDropDown('Daily');
           setRecurrenceRule('RRULE:FREQ=DAILY;INTERVAL=1');
         } else if (repeatRadio_temp === 'On') {
-          setRepeatOptionDropDown(`Daily, until ${moment(repeatEndDate_temp).format('YYYYMMDD')}`);
+          setRepeatOptionDropDown(
+            `Daily, until ${moment(repeatEndDate_temp).format('LL')}`
+          );
           setRecurrenceRule(
             `RRULE:FREQ=DAILY;INTERVAL=1;UNTIL=${moment(
               repeatEndDate_temp
@@ -336,7 +328,11 @@ export default function GoogleEventComponent(props) {
             `RRULE:FREQ=DAILY;INTERVAL=${repeatInputValue_temp}`
           );
         } else if (repeatRadio_temp === 'On') {
-          setRepeatOptionDropDown(`Every ${repeatInputValue_temp} days, until ${moment(repeatEndDate_temp).format('YYYYMMDD')}`);
+          setRepeatOptionDropDown(
+            `Every ${repeatInputValue_temp} days, until ${moment(
+              repeatEndDate_temp
+            ).format('LL')}`
+          );
           setRecurrenceRule(
             `RRULE:FREQ=DAILY;INTERVAL=${repeatInputValue_temp};UNTIL=${moment(repeatEndDate_temp).format('YYYYMMDD')}`);
         } else {
@@ -545,8 +541,9 @@ export default function GoogleEventComponent(props) {
       zIndex: '5',
       left: '50%',
       top: '50%',
-      transform: 'translate(-50%, -50%)',
+      transform: 'translate(-50%, 0%)',
       width: '400px',
+      color: '#67ABFC',
     };
 
     const inputStyle = {
@@ -557,10 +554,12 @@ export default function GoogleEventComponent(props) {
       width: '70px',
       borderRadius: '4px',
       marginRight: '8px',
+      color: '#67ABFC',
     };
 
     const selectStyle = {
       display: 'inline-block',
+      color: '#67ABFC',
     };
 
     const weekStyle = {
@@ -568,6 +567,11 @@ export default function GoogleEventComponent(props) {
       alignItems: 'center',
       textAlign: 'center',
       marginTop: '10px',
+      color: '#67ABFC',
+    };
+    const dotSelected = {
+      backgroundColor: '#67ABFC',
+      color:'#ffffff'
     };
 
     // const radioInputStyle = { display: "flex", alignItems: "center" };
@@ -604,7 +608,12 @@ export default function GoogleEventComponent(props) {
                 <span
                   key={i}
                   className="dot selected"
-                  style={{cursor:'pointer', padding:'1rem'}}
+                  style={{
+                    cursor: 'pointer',
+                    padding: '1rem',
+                    backgroundColor: '#67ABFC',
+                    color: '#ffffff',
+                  }}
                   onClick={(e) => selectedDot(e, i)}
                 >
                   {day.charAt(0)}
@@ -615,7 +624,12 @@ export default function GoogleEventComponent(props) {
                 <span
                   key={i}
                   className="dot"
-                  style={{ cursor: 'pointer', padding: '1rem' }}
+                  style={{
+                    cursor: 'pointer',
+                    padding: '1rem',
+                    backgroundColor: '#ffffff',
+                    color: '#67ABFC',
+                  }}
                   onClick={(e) => selectedDot(e, i)}
                 >
                   {day.charAt(0)}
@@ -653,7 +667,7 @@ export default function GoogleEventComponent(props) {
       <Modal.Dialog style={modalStyle}>
         <Modal.Header closeButton onHide={closeRepeatModal}>
           <Modal.Title>
-            <h5 className="normalfancytext">Repeating Options test</h5>
+            <h5 className="normalfancytext">Repeating Options</h5>
           </Modal.Title>
         </Modal.Header>
 
@@ -664,6 +678,7 @@ export default function GoogleEventComponent(props) {
                 display: 'flex',
                 alignItems: 'center',
                 marginLeft: '5px',
+                color: '#67ABFC',
               }}
             >
               Repeat every
@@ -682,12 +697,14 @@ export default function GoogleEventComponent(props) {
               >
                 <Dropdown.Item
                   eventKey="Day"
+                  style={{ color: '#67ABFC' }}
                   onSelect={(eventKey) => handleRepeatDropDown(eventKey)}
                 >
                   day
                 </Dropdown.Item>
                 <Dropdown.Item
                   eventKey="WEEK"
+                  style={{ color: '#67ABFC' }}
                   onSelect={(eventKey) =>
                     handleRepeatDropDown(eventKey, week_days)
                   }
@@ -696,12 +713,14 @@ export default function GoogleEventComponent(props) {
                 </Dropdown.Item>
                 <Dropdown.Item
                   eventKey="MONTH"
+                  style={{ color: '#67ABFC' }}
                   onSelect={(eventKey) => handleRepeatDropDown(eventKey)}
                 >
                   month
                 </Dropdown.Item>
                 <Dropdown.Item
                   eventKey="YEAR"
+                  style={{ color: '#67ABFC' }}
                   onSelect={(eventKey) => handleRepeatDropDown(eventKey)}
                 >
                   year
@@ -724,7 +743,7 @@ export default function GoogleEventComponent(props) {
               className="repeat-form"
               onChange={(e) => {
                 if (e.target.type === 'radio') {
-                  setRepeatRadio_temp(e.target.value)
+                  setRepeatRadio_temp(e.target.value);
                 }
               }}
             >
@@ -735,9 +754,7 @@ export default function GoogleEventComponent(props) {
                     type="radio"
                     value="Never"
                     name="radios"
-                    defaultChecked={
-                      repeatRadio_temp === 'Never' && true
-                    }
+                    defaultChecked={repeatRadio_temp === 'Never' && true}
                   />
                   Never
                 </Form.Check.Label>
@@ -749,15 +766,13 @@ export default function GoogleEventComponent(props) {
                     name="radios"
                     value="On"
                     style={{ marginTop: '10px' }}
-                    defaultChecked={
-                      repeatRadio_temp === 'On' && true
-                    }
+                    defaultChecked={repeatRadio_temp === 'On' && true}
                   />
                   Until
                   <DatePicker
                     className="date-picker-btn btn btn-light"
                     selected={repeatEndDate_temp}
-                    onChange={(date) =>handleRepeatEndDate(date)}
+                    onChange={(date) => handleRepeatEndDate(date)}
                   ></DatePicker>
                 </Form.Check.Label>
               </Form.Check>
@@ -768,9 +783,7 @@ export default function GoogleEventComponent(props) {
                     name="radios"
                     value="After"
                     style={{ marginTop: '12px' }}
-                    defaultChecked={
-                      repeatRadio_temp === 'After' && true
-                    }
+                    defaultChecked={repeatRadio_temp === 'After' && true}
                   />
                   After
                   <span style={{ marginLeft: '60px' }}>
@@ -779,9 +792,7 @@ export default function GoogleEventComponent(props) {
                       min="1"
                       max="10000"
                       value={repeatOccurrence_temp}
-                      onChange={(e) =>
-                        handleRepeatOccurrence(e.target.value)
-                      }
+                      onChange={(e) => handleRepeatOccurrence(e.target.value)}
                       style={inputStyle}
                       className="input-exception"
                     />
@@ -794,36 +805,51 @@ export default function GoogleEventComponent(props) {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="secondary" onClick={closeRepeatModal}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={saveRepeatChanges}>
-            Save changes
-          </Button>
+          <Container>
+          <Row>
+            
+              <Col>
+                <button
+                  style={{
+                    width: '110px',
+                    padding: '0',
+                    margin: '0 20px',
+                    backgroundColor: 'inherit',
+                    border: '1px #67ABFC solid',
+                    borderRadius: '30px',
+                    color: '#67ABFC',
+                    textAlign: 'center',
+                  }}
+                  onClick={closeRepeatModal}
+                >
+                  Cancel
+                </button>
+              </Col>
+              <Col>
+                <button
+                  style={{
+                    width: '110px',
+                    padding: '0',
+                    margin: '0 20px',
+                    backgroundColor: 'inherit',
+                    border: '1px #67ABFC solid',
+                    borderRadius: '30px',
+                    color: '#67ABFC',
+                    textAlign: 'center',
+                  }}
+                  onClick={saveRepeatChanges}
+                >
+                  Save changes
+                </button>
+              </Col>
+          
+          </Row>
+          </Container>
         </Modal.Footer>
       </Modal.Dialog>
     );
   };
-  // const getGoogleAuthorizedEmail = async () => {
-  //   let email = await getSignedInUserEmail();
-  //   if (email) {
-  //     setSignedIn(true);
-  //     setgoogleAuthedEmail(email);
-  //   }
-  // };
-  // const getAuthToGoogle = async () => {
-  //   let successfull = await signInToGoogle();
-  //   if (successfull) {
-  //     getGoogleAuthorizedEmail();
-  //   }
-  // };
-  // const _signOutFromGoogle = () => {
-  //   let status = signOutFromGoogle();
-  //   if (status) {
-  //     setSignedIn(false);
-  //     setgoogleAuthedEmail(null);
-  //   }
-  // };c
+  
 
   const [fields, setFields] = useState([{ email: null }]);
   function handleChange(i, event) {
@@ -872,6 +898,13 @@ export default function GoogleEventComponent(props) {
       },
       recurrence: repeatOption ? [recurrenceRule] : false,
       attendees: fields,
+      reminders: {
+        useDefault: false,
+        overrides: [
+          { method: reminderMethod, 
+            minutes: reminderMinutes }
+        ],
+      },
     };
     publishTheCalenderEvent(event);
     editingEventContext.setEditingEvent({
@@ -882,151 +915,405 @@ export default function GoogleEventComponent(props) {
   };
 
   return (
-    <div className="calenderEvent-wrapper">
-      <div className="header">
-        <h1>Add an event to google Calender</h1>
-      </div>
+    <div>
       {!props.signedin ? (
         <div className="google-login"></div>
       ) : (
-        <div className="body">
-          <form>
-            <div className="eventItem">
-              <label>summary</label>
-              <input
-                placeholder="summary..."
-                value={summary}
-                onChange={(e) => setSummary(e.target.value)}
-              >
-                {console.log('in add events', userEmail)}
-              </input>
-            </div>
-            <div className="eventItem">
-              <label>Description</label>
-              <input
-                placeholder="description..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              ></input>
-            </div>
-            <div className="eventItem">
-              <label>Start Time</label>
-              {/* <input
-                type="datetime-local"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-              ></input> */}
-              {startTimePicker()}
-            </div>
-            <div className="eventItem">
-              <label>End Time</label>
-              {/* <input
-                type="datetime-local"
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-              ></input> */}
-              {endTimePicker()}
-            </div>
-            <Form.Group style={{ display: 'flex', flexDirection: 'column' }}>
-              <Form.Label>Repeating Options</Form.Label>
-              <DropdownButton
-                className="repeatOptionDropDown"
-                // onClick={this.openRepeatModal}
-                title={repeatOptionDropDown}
-                variant="light"
-              >
-                <Dropdown.Item
-                  eventKey="Does not repeat"
-                  onSelect={(eventKey) =>
-                    // this.setState({
-                    //   repeatOptionDropDown: eventKey,
-                    //   repeatOption: false,
-                    // })
-                    {
-                      setRepeatOptionDropDown(eventKey);
-                      setRecurrenceRule();
-                      setRepeatOption(false);
-                    }
-                  }
-                >
-                  Does not repeat
-                </Dropdown.Item>
-                <Dropdown.Item
-                  eventKey="Custom..."
-                  onSelect={(eventKey) => {
-                    openRepeatModal();
-                    // this.setState({ repeatOptionDropDown: eventKey });
-                  }}
-                >
-                  Custom...
-                </Dropdown.Item>
-              </DropdownButton>
-            </Form.Group>
-            <div>
-              {
-                showRepeatModal && repeatModal()
-                // <RepeatModal
-                //   closeRepeatModal={this.closeRepeatModal}
-                //   todayObject={todayDateObject}
-                //   newEventStart0={newEventStart0}
-                // />
-              }
-            </div>
-            {/* <div className="eventItem">
-              <label>Attendees</label>
-              <input
-                type="text"
-                placeholder="attendees..."
-                value={attendees}
-                onChange={(e) => setAttendees(e.target.value)}
-              ></input>
-            </div>
-            {!addPerson ? (
-              <div className="eventItem">
-                <label>Attendees</label>
-                <input
-                  type="text"
-                  placeholder="attendees..."
-                  value={attendees}
-                  onChange={(e) => setAttendees(e.target.value)}
-                ></input>
+        <div
+          style={{
+            marginTop: '1rem',
+            marginLeft: '2rem',
+            //marginRight: '3rem',
+            width: '90%',
+            backgroundColor: '#67ABFC',
+            color: '#ffffff',
+          }}
+        >
+          <Container
+            style={{
+              paddingLeft: '1rem',
+              paddingTop: '1rem',
+
+              width: '100%',
+            }}
+          >
+            <Col style={{ float: 'left', width: '30%' }}>
+              <div style={{ fontWeight: 'bold', fontSize: '20px' }}>
+                Event Name
               </div>
-            ) : (
-              <div></div>
-            )} */}
-            <div className="eventItem">
-              <div onClick={() => handleAdd()}>+ Add Person</div>
-            </div>
-            {fields.map((field, idx) => {
-              return (
-                <div key={`${field}-${idx}`}>
-                  <label>Attendees</label>
-                  <input
-                    type="text"
-                    placeholder="Enter text"
-                    onChange={(e) => handleChange(idx, e)}
-                  />
-                  <button type="button" onClick={() => handleRemove(idx)}>
-                    X
-                  </button>
-                </div>
-              );
-            })}
-            <div className="eventItem">
-              <label>Location</label>
               <input
-                placeholder="location..."
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-              ></input>
-            </div>
-            <button type='submit'>
+                style={{
+                  borderRadius: '10px',
+                  border: 'none',
+                  width: '80%',
+                  height: '2rem',
+                  marginTop: '20px',
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                }}
+                value={summary}
+                placeholder="Summary"
+                onChange={(e) => setSummary(e.target.value)}
+              />
+
+              <div style={{ marginTop: '40px' }}>
+                <div style={{ fontWeight: 'bold', fontSize: '20px' }}>
+                  Description
+                </div>
+                <input
+                  style={{
+                    margin: '5px 0',
+                    borderRadius: '10px',
+                    border: 'none',
+                    width: '80%',
+                    height: '4rem',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                  }}
+                  value={description}
+                  placeholder="Description"
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
+
+              <div style={{ fontWeight: 'bold', fontSize: '20px' }}>
+                Start Time
+              </div>
+              <Container>
+                <Row>
+                  <Col
+                    //sm={6}
+                    style={{
+                      margin: '0',
+                      padding: '0',
+                      // width: '30%',
+                    }}
+                  >
+                    {startTimePicker()}
+                  </Col>
+                </Row>
+              </Container>
+
+              <div
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: '20px',
+                  marginTop: '10px',
+                }}
+              >
+                End Time
+              </div>
+              <Container>
+                <Row>
+                  <Col
+                    //sm={7}
+                    style={{
+                      margin: '0',
+                      padding: '0',
+                      // width: '30%',
+                    }}
+                  >
+                    {endTimePicker()}
+                  </Col>
+                </Row>
+              </Container>
+            </Col>
+
+            <div
+              style={{
+                float: 'left',
+                backgroundColor: 'white',
+                width: '2px',
+                height: '500px',
+                marginLeft: '1%',
+                marginRight: '1%',
+              }}
+            />
+
+            <Col style={{ float: 'left', width: '30%' }}>
+              <Row style={{ fontWeight: 'bold', fontSize: '20px' }}>
+                Repeating Options
+              </Row>
+
+              <Row
+                style={{
+                  padding: '10px 0 0 0',
+                }}
+              >
+                <Col style={{ margin: '10px 0' }}>
+                  <Row
+                    style={{ marginBottom: '20px', verticalAlign: 'middle' }}
+                  >
+                    <DropdownButton
+                      className="repeatOptionDropDown"
+                      // onClick={this.openRepeatModal}
+                      title={
+                        repeatOptionDropDown === 'Does not Repeat'
+                          ? 'Does not repeat'
+                          : 'Custom...'
+                      }
+                      variant="light"
+                    >
+                      <Dropdown.Item
+                        eventKey="Does not repeat"
+                        onSelect={(eventKey) =>
+                          // this.setState({
+                          //   repeatOptionDropDown: eventKey,
+                          //   repeatOption: false,
+                          // })
+                          {
+                            setRepeatOptionDropDown(eventKey);
+                            setRecurrenceRule();
+                            setRepeatOption(false);
+                          }
+                        }
+                      >
+                        Does not repeat
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        eventKey="Custom..."
+                        onSelect={(eventKey) => {
+                          openRepeatModal();
+                          // this.setState({ repeatOptionDropDown: eventKey });
+                        }}
+                      >
+                        Custom...
+                      </Dropdown.Item>
+                    </DropdownButton>
+                    <div>{showRepeatModal && repeatModal()}</div>
+                  </Row>
+                  <Row>{repeatOptionDropDown}</Row>
+                </Col>
+              </Row>
+              <Row style={{ fontWeight: 'bold', fontSize: '20px' }}>
+                Notifications
+              </Row>
+              <Row>
+                <Col>
+                  <Form.Group
+                    style={{
+                      height: '140px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      marginTop: '20px',
+                      marginLeft: '5px',
+                    }}
+                    className="repeat-form"
+                    onChange={(e) => {
+                      if (e.target.type === 'radio') {
+                        setReminderMethod(e.target.value);
+                      }
+                    }}
+                  >
+                    Ends
+                    <Form.Check type="radio">
+                      <Form.Check.Label style={{ marginLeft: '5px' }}>
+                        <Form.Check.Input
+                          type="radio"
+                          name="radios"
+                          value="email"
+                          style={{ marginTop: '10px' }}
+                          defaultChecked={reminderMethod === 'email' && true}
+                        />
+                        Email
+                        <span style={{ marginLeft: '60px' }}>
+                          <input
+                            type="number"
+                            min="1"
+                            max="10000"
+                            value={reminderMinutes}
+                            onChange={(e) =>
+                              handleReminderMinutes(e.target.value)
+                            }
+                            className="input-exception"
+                          />
+                        </span>
+                      </Form.Check.Label>
+                    </Form.Check>
+                    <Form.Check type="radio">
+                      <Form.Check.Label style={{ marginLeft: '5px' }}>
+                        <Form.Check.Input
+                          type="radio"
+                          name="radios"
+                          value="popup"
+                          style={{ marginTop: '12px' }}
+                          defaultChecked={reminderMethod === 'popup' && true}
+                        />
+                        PopUp
+                        <span style={{ marginLeft: '50px' }}>
+                          <input
+                            type="number"
+                            min="1"
+                            max="10000"
+                            value={reminderMinutes}
+                            onChange={(e) =>
+                              handleReminderMinutes(e.target.value)
+                            }
+                            className="input-exception"
+                          />
+                        </span>
+                      </Form.Check.Label>
+                    </Form.Check>
+                  </Form.Group>
+                </Col>
+              </Row>
+            </Col>
+            <div
+              style={{
+                float: 'left',
+                backgroundColor: 'white',
+                width: '2px',
+                height: '500px',
+                marginLeft: '1%',
+                marginRight: '1%',
+              }}
+            />
+
+            <Col style={{ float: 'left', width: '30%' }}>
+              <Row style={{ fontWeight: 'bold', fontSize: '20px' }}>
+                Location
+              </Row>
+
+              <Row
+                style={{
+                  padding: '10px 0 0 0',
+                }}
+              >
+                <Col style={{ margin: '10px 0' }}>
+                  <Row
+                    style={{ marginBottom: '20px', verticalAlign: 'middle' }}
+                  >
+                    <input
+                      style={{
+                        margin: '5px 0',
+                        borderRadius: '10px',
+                        border: 'none',
+                        width: '100%',
+                        height: '2rem',
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                      }}
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                    />
+                  </Row>
+                </Col>
+              </Row>
+              <Row style={{ fontWeight: 'bold', fontSize: '20px' }}>
+                Attendees
+              </Row>
+              <Row
+                style={{
+                  padding: '10px 0 0 0',
+                }}
+              >
+                <Col style={{ margin: '10px 0' }}>
+                  <Row
+                    style={{ marginBottom: '20px', verticalAlign: 'middle' }}
+                  >
+                    {fields.map((field, idx) => {
+                      return (
+                        <Row>
+                          <Col>
+                            <input
+                              style={{
+                                margin: '5px 0',
+                                borderRadius: '10px',
+                                border: 'none',
+                                width: '100%',
+                                height: '2rem',
+                                fontSize: '12px',
+                                fontWeight: 'bold',
+                              }}
+                              type="text"
+                              placeholder="Enter email address"
+                              onChange={(e) => handleChange(idx, e)}
+                            />
+                          </Col>
+                          <Col xs={1}>
+                            <div
+                              style={{
+                                width: '21px',
+                                height: '21px',
+                                margin: '5px 0',
+                                backgroundImage: `url(${trash})`,
+                                backgroundSize: 'contain',
+                                backgroundRepeat: 'no-repeat',
+                                cursor: 'pointer',
+                              }}
+                              onClick={() => handleRemove(idx)}
+                            ></div>
+                          </Col>
+                        </Row>
+                      );
+                    })}
+                    <div className="eventItem">
+                      <div
+                        style={{
+                          width: '100%',
+                          padding: '0',
+                          margin: '20px 40px',
+                          backgroundColor: 'inherit',
+                          border: '2px white solid',
+                          borderRadius: '30px',
+                          color: '#ffffff',
+                          textAlign: 'center',
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => handleAdd()}
+                      >
+                        + Add Person
+                      </div>
+                    </div>
+                  </Row>
+                </Col>
+              </Row>
+            </Col>
+          </Container>
+          <div
+            style={{
+              textAlign: 'center',
+              marginTop: '20px',
+              paddingBottom: '20px',
+            }}
+          >
+            <button
+              style={{
+                width: '150px',
+                padding: '0',
+                margin: '0 20px',
+                backgroundColor: 'inherit',
+                border: '3px white solid',
+                borderRadius: '30px',
+                color: '#ffffff',
+                textAlign: 'center',
+              }}
+              onClick={() => {
+                editingEventContext.setEditingEvent({
+                  ...editingEventContext.editingEvent,
+                  editing: false,
+                });
+              }}
+            >
               Cancel
-              </button>
-            <button type="submit" onClick={(e) => submit(e)}>
-              Submit
             </button>
-          </form>
+            <button
+              style={{
+                width: '150px',
+                padding: '0',
+                margin: '0 20px',
+                backgroundColor: 'inherit',
+                border: '3px white solid',
+                borderRadius: '30px',
+                color: '#ffffff',
+                textAlign: 'center',
+              }}
+              onClick={(e) => submit(e)}
+            >
+              Save Changes
+            </button>
+          </div>
         </div>
       )}
     </div>

@@ -87,7 +87,7 @@ export default function Firebasev2(props) {
     // props.setGetActionsEndPoint({});
     // props.setGetStepsEndPoint({});
     props.setEvents({});
-  }, [props.theCurrentUserID, props.stateValue.dateContext]);
+  }, [props.theCurrentUserID, props.stateValue.dateContext, props.editEvent]);
 
   useEffect(() => {
     makeActionDisplays();

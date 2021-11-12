@@ -163,8 +163,6 @@ export default function Events(props) {
       });
   }, [loginContext.loginState.reload]);
   // }
-  console.log(loginContext.loginState.curUserEmail);
-  console.log(document.cookie);
   /*----------------------------Use states to define variables----------------------------*/
   const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
   const CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
@@ -1395,7 +1393,7 @@ console.log('in events setaccess', accessToken)
     useEffect(() => {
       if (userID == '') return;
       console.log(
-        'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
+        'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing, editingEvent.editing] = ',
         [
           userID,
           editingRTS.editing,
