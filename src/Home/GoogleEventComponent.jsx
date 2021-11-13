@@ -954,7 +954,6 @@ export default function GoogleEventComponent(props) {
                   fontWeight: 'bold',
                 }}
                 value={summary}
-                placeholder="Summary"
                 onChange={(e) => setSummary(e.target.value)}
               />
 
@@ -973,7 +972,6 @@ export default function GoogleEventComponent(props) {
                     fontWeight: 'bold',
                   }}
                   value={description}
-                  placeholder="Description"
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
