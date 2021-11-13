@@ -376,7 +376,7 @@ export default function GoalHome(props) {
   const initialEditingRTSState = {
     editing: false,
     type: '',
-    id: '',
+    gr_unique_id: '',
     user_id: userID,
     gr_array: [],
     newItem: {
@@ -462,7 +462,7 @@ export default function GoalHome(props) {
   const newRTSState = {
     editing: true,
     type: '',
-    id: '',
+    gr_unique_id: '',
     user_id: userID,
     gr_array: [],
     newItem: {
@@ -965,8 +965,18 @@ export default function GoalHome(props) {
         }}
       >
         <Row style={{ float: 'right', width: '100%' }}>
-          <WeekRoutines
+          {/* <WeekRoutines
             timeZone={userTime_zone}
+            routines={stateValue.goals}
+            dateContext={stateValue.dateContext}
+            BASE_URL={stateValue.BASE_URL}
+            highLight={hightlight}
+          /> */}
+          <WeekRoutines
+            theCurrentUserID={userID}
+            timeZone={userTime_zone}
+            getGoalsEndPoint={getRoutinesEndPoint}
+            setGetGoalsEndPoint={setGetRoutinesEndPoint}
             routines={stateValue.goals}
             dateContext={stateValue.dateContext}
             BASE_URL={stateValue.BASE_URL}
@@ -1154,7 +1164,7 @@ export default function GoalHome(props) {
               gr.datetime_started = x[i].gr_datetime_started;
               gr.end_day_and_time = x[i].gr_end_day_and_time;
               gr.expected_completion_time = x[i].expected_completion_time;
-              gr.id = x[i].gr_unique_id;
+              gr.gr_unique_id = x[i].gr_unique_id;
 
               gr.is_available = x[i].is_available.toLowerCase() === 'true';
 
@@ -1411,7 +1421,7 @@ export default function GoalHome(props) {
                   goalDate.getTime() > todayStartDate.getTime() &&
                   goalDate.getTime() < todayEndDate.getTime()
                 ) {
-                  routine_ids.push(gr['id']);
+                  routine_ids.push(gr['gr_unique_id']);
                   routine.push(gr);
                 }
                 if (
@@ -1419,7 +1429,7 @@ export default function GoalHome(props) {
                   goalDate.getTime() > todayStartDate.getTime() &&
                   goalDate.getTime() < todayEndDate.getTime()
                 ) {
-                  routine_ids.push(gr['id']);
+                  routine_ids.push(gr['gr_unique_id']);
                   routine.push(gr);
                 }
                 // if (
@@ -1427,7 +1437,7 @@ export default function GoalHome(props) {
                 //   goalDate.getTime() > monthStartDate.getTime() &&
                 //   goalDate.getTime() < monthEndDate.getTime()
                 // ) {
-                //   routine_ids.push(gr["id"]);
+                //   routine_ids.push(gr["gr_unique_id"]);
                 //   routine.push(gr);
                 // }
               }
@@ -1442,7 +1452,7 @@ export default function GoalHome(props) {
                   goalDate.getTime() > todayStartDate.getTime() &&
                   goalDate.getTime() < todayEndDate.getTime()
                 ) {
-                  goal_ids.push(gr['id']);
+                  goal_ids.push(gr['gr_unique_id']);
                   goal.push(gr);
                 }
                 if (
@@ -1450,7 +1460,7 @@ export default function GoalHome(props) {
                   goalDate.getTime() > startDate.getTime() &&
                   goalDate.getTime() < endDate.getTime()
                 ) {
-                  goal_ids.push(gr['id']);
+                  goal_ids.push(gr['gr_unique_id']);
                   goal.push(gr);
                 }
                 // if (
@@ -1458,7 +1468,7 @@ export default function GoalHome(props) {
                 //   goalDate.getTime() > monthStartDate.getTime() &&
                 //   goalDate.getTime() < monthEndDate.getTime()
                 // ) {
-                //   goal_ids.push(gr["id"]);
+                //   goal_ids.push(gr["gr_unique_id"]);
                 //   goal.push(gr);
                 // }
               }
@@ -1767,7 +1777,7 @@ export default function GoalHome(props) {
               gr.datetime_started = x[i].gr_datetime_started;
               gr.end_day_and_time = x[i].gr_end_day_and_time;
               gr.expected_completion_time = x[i].expected_completion_time;
-              gr.id = x[i].gr_unique_id;
+              gr.gr_unique_id = x[i].gr_unique_id;
 
               gr.is_available = x[i].is_available.toLowerCase() === 'true';
 
@@ -2024,7 +2034,7 @@ export default function GoalHome(props) {
                   goalDate.getTime() > todayStartDate.getTime() &&
                   goalDate.getTime() < todayEndDate.getTime()
                 ) {
-                  routine_ids.push(gr['id']);
+                  routine_ids.push(gr['gr_unique_id']);
                   routine.push(gr);
                 }
                 if (
@@ -2032,7 +2042,7 @@ export default function GoalHome(props) {
                   goalDate.getTime() > todayStartDate.getTime() &&
                   goalDate.getTime() < todayEndDate.getTime()
                 ) {
-                  routine_ids.push(gr['id']);
+                  routine_ids.push(gr['gr_unique_id']);
                   routine.push(gr);
                 }
                 // if (
@@ -2040,7 +2050,7 @@ export default function GoalHome(props) {
                 //   goalDate.getTime() > monthStartDate.getTime() &&
                 //   goalDate.getTime() < monthEndDate.getTime()
                 // ) {
-                //   routine_ids.push(gr["id"]);
+                //   routine_ids.push(gr["gr_unique_id"]);
                 //   routine.push(gr);
                 // }
               }
@@ -2055,7 +2065,7 @@ export default function GoalHome(props) {
                   goalDate.getTime() > todayStartDate.getTime() &&
                   goalDate.getTime() < todayEndDate.getTime()
                 ) {
-                  goal_ids.push(gr['id']);
+                  goal_ids.push(gr['gr_unique_id']);
                   goal.push(gr);
                 }
                 if (
@@ -2063,7 +2073,7 @@ export default function GoalHome(props) {
                   goalDate.getTime() > startDate.getTime() &&
                   goalDate.getTime() < endDate.getTime()
                 ) {
-                  goal_ids.push(gr['id']);
+                  goal_ids.push(gr['gr_unique_id']);
                   goal.push(gr);
                 }
                 // if (
@@ -2071,7 +2081,7 @@ export default function GoalHome(props) {
                 //   goalDate.getTime() > monthStartDate.getTime() &&
                 //   goalDate.getTime() < monthEndDate.getTime()
                 // ) {
-                //   goal_ids.push(gr["id"]);
+                //   goal_ids.push(gr["gr_unique_id"]);
                 //   goal.push(gr);
                 // }
               }

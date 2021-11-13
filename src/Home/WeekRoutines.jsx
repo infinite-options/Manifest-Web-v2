@@ -4,7 +4,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import './Home.css';
 import greenTick from '../manifest/LoginAssets/GreenTick.svg';
 import yelloTick from '../manifest/LoginAssets/YellowTick.svg';
-
+import EditIcon from './EditRTS/EditIcon'
 export default class WeekRoutines extends Component {
   constructor(props) {
     super(props);
@@ -244,7 +244,7 @@ export default class WeekRoutines extends Component {
   };
   getRoutineItemFromDic = (day, hour, dic) => {
     let startObject = this.props.dateContext.clone();
-
+    let currentUser = this.props.theCurrentUserID;
     let startDay = startObject.startOf('week');
     let curDate2 = startDay.clone();
     curDate2.add(day, 'days');
@@ -664,7 +664,7 @@ export default class WeekRoutines extends Component {
                       {/* insert border change here: */}
                       <div>
                         {arr[i].title}
-                        {console.log('is_persistent', arr[i].title)}
+                        {console.log('arr[i]', arr[i])}
                         {console.log('is_persistent', arr[i].is_persistent)}
                       </div>
                       <div
@@ -684,10 +684,24 @@ export default class WeekRoutines extends Component {
                           backgroundRepeat: 'no-repeat',
                         }}
                       ></div>
+                      <div>
+                        <EditIcon
+                          routine={arr[i]}
+                          task={null}
+                          step={currentUser}
+                          getGoalsEndPoint={this.props.getGoalsEndPoint}
+                          //  id={currentUser}
+                        />
+                      </div>
                     </div>
                   </div>
                 );
-                // console.log(newElement);
+                console.log(
+                  'newElement',
+                  newElement,
+                  this.props.getGoalsEndPoint,
+                  arr[i]
+                );
                 res.push(newElement);
               }
             } else if (startDate.date() !== endDate.date()) {
@@ -740,6 +754,15 @@ export default class WeekRoutines extends Component {
                       }}
                     >
                       {arr[i].title}
+                    </div>
+                    <div>
+                      <EditIcon
+                        routine={arr[i]}
+                        task={null}
+                        step={currentUser}
+                        getGoalsEndPoint={this.props.getGoalsEndPoint}
+                        //  id={currentUser}
+                      />
                     </div>
                   </div>
                 );
@@ -803,6 +826,15 @@ export default class WeekRoutines extends Component {
                   >
                     {arr[i].title}
                   </div>
+                  <div>
+                    <EditIcon
+                      routine={arr[i]}
+                      task={null}
+                      step={currentUser}
+                      getGoalsEndPoint={this.props.getGoalsEndPoint}
+                      //  id={currentUser}
+                    />
+                  </div>
                 </div>
               );
               res.push(newElement);
@@ -859,6 +891,16 @@ export default class WeekRoutines extends Component {
                     }}
                   >
                     {arr[i].title}
+                  </div>
+                  <div>
+                    {console.log('arr[i]',arr[i])}
+                    <EditIcon
+                      routine={arr[i]}
+                      task={null}
+                      step={currentUser}
+                      getGoalsEndPoint={this.props.getGoalsEndPoint}
+                      //  id={currentUser}
+                    />
                   </div>
                 </div>
               );

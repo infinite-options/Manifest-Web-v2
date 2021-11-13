@@ -179,7 +179,7 @@ const EditRTS = (props) => {
     if (numMins < 10) numMins = '0' + numMins;
     object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
-    object.id = editingRTSContext.editingRTS.id;
+    object.gr_unique_id = editingRTSContext.editingRTS.id;
     object.user_id = props.CurrentId; // editingRTSContext.editingRTS.currentUserId;
     object.ta_people_id = props.ta_ID;
     object.photo = image;
@@ -212,7 +212,7 @@ const EditRTS = (props) => {
       console.log('formData: ', pair);
     }
     console.log('object.id');
-    console.log(object.id);
+    console.log(object.gr_unique_id);
     let url=''
     if(object.is_persistent == 'True'){
       url= 'getroutines/'
@@ -221,7 +221,7 @@ const EditRTS = (props) => {
       url='getgoals/'
     }
     console.log('url', url, object.is_persistent);
-    if (object.id != '') {
+    if (object.gr_unique_id != '') {
       console.log('updateGR');
       console.log('here: About to post changes to db');
       async function updateDB() {
@@ -308,7 +308,7 @@ const EditRTS = (props) => {
       } else {
         url = 'getgoals/';
       }
-      console.log('url', url, typeof(object.is_persistent));
+      console.log('url', url, typeof object.is_persistent);
       const addToDB = async () => {
         await axios
           .post(BASE_URL + 'addGR', formData)

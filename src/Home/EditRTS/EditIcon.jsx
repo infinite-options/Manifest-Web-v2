@@ -116,9 +116,9 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
               console.log(
                 'item',
                 getGoalsEndPoint[0].gr_start_day_and_time,
-                routine.id
+                routine.gr_unique_id
               );
-              console.log(getGoalsEndPoint[0].repeat);
+              console.log(routine);
               let itemToChange;
               for (var k = 0; k < getGoalsEndPoint.length; k++) {
                 if (routine.gr_unique_id === getGoalsEndPoint[k].gr_unique_id) {

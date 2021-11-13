@@ -541,7 +541,7 @@ export default function Firebasev2(props) {
                               gr.end_day_and_time = x[i].gr_end_day_and_time;
                               gr.expected_completion_time =
                                 x[i].expected_completion_time;
-                              gr.id = x[i].gr_unique_id;
+                              gr.gr_unique_id = x[i].gr_unique_id;
 
                               gr.is_available =
                                 x[i].is_available.toLowerCase() === 'true';
@@ -798,7 +798,7 @@ export default function Firebasev2(props) {
                                     todayStartDate.getTime() &&
                                   goalDate.getTime() < todayEndDate.getTime()
                                 ) {
-                                  routine_ids.push(gr['id']);
+                                  routine_ids.push(gr['gr_unique_id']);
                                   routine.push(gr);
                                 }
                                 if (
@@ -807,7 +807,7 @@ export default function Firebasev2(props) {
                                     todayStartDate.getTime() &&
                                   goalDate.getTime() < todayEndDate.getTime()
                                 ) {
-                                  routine_ids.push(gr['id']);
+                                  routine_ids.push(gr['gr_unique_id']);
                                   routine.push(gr);
                                 }
                               }
@@ -1656,9 +1656,9 @@ export default function Firebasev2(props) {
     console.log('titles2', temp2);
 
     console.log('current name', r.name, temp.indexOf(r.name));
-    console.log('current id', r.id, temp2.indexOf(r.id));
+    console.log('current gr_unique_id', r.gr_unique_id, temp2.indexOf(r.gr_unique_id));
 
-    if (temp2.indexOf(r.id) == -1) {
+    if (temp2.indexOf(r.gr_unique_id) == -1) {
       return 'E';
     }
 
@@ -1881,7 +1881,7 @@ export default function Firebasev2(props) {
                     // console.log("On click");
                     e.stopPropagation();
                     // console.log("On click1");
-                    console.log(r.id, r.name);
+                    console.log(r.gr_unique_id, r.name);
                     setCRN(r.gr_title);
                     setCRID(r.gr_unique_id);
                     setTAToCopyTo({});
@@ -2054,7 +2054,7 @@ export default function Firebasev2(props) {
                             gr.end_day_and_time = x[i].gr_end_day_and_time;
                             gr.expected_completion_time =
                               x[i].expected_completion_time;
-                            gr.id = x[i].gr_unique_id;
+                            gr.gr_unique_id = x[i].gr_unique_id;
 
                             gr.is_available =
                               x[i].is_available.toLowerCase() === 'true';
@@ -2305,7 +2305,7 @@ export default function Firebasev2(props) {
                                 goalDate.getTime() > todayStartDate.getTime() &&
                                 goalDate.getTime() < todayEndDate.getTime()
                               ) {
-                                routine_ids.push(gr['id']);
+                                routine_ids.push(gr['gr_unique_id']);
                                 routine.push(gr);
                               }
                               if (
@@ -2313,7 +2313,7 @@ export default function Firebasev2(props) {
                                 goalDate.getTime() > todayStartDate.getTime() &&
                                 goalDate.getTime() < todayEndDate.getTime()
                               ) {
-                                routine_ids.push(gr['id']);
+                                routine_ids.push(gr['gr_unique_id']);
                                 routine.push(gr);
                               }
                             }

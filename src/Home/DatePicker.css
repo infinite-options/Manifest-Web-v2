@@ -35,3 +35,8 @@
   width:100% !important
 }
 .react-datepicker__time-list { padding: 0 !important; }
+
+::-webkit-input-placeholder { /* WebKit browsers */
+    color:    Black;
+     opacity: 1 !important;
+}
