@@ -23,7 +23,7 @@ import {
   faCalendarWeek,
 } from '@fortawesome/free-solid-svg-icons';
 import 'react-datepicker/dist/react-datepicker.css';
-import WeekFirebaseV2 from './WeekFirebasev2';
+import EventFirebaseV2 from './EventFirebasev2';
 import DayEvents from './DayEvents';
 import DayRoutines from './DayRoutines.jsx';
 import DayGoals from './DayGoals.jsx';
@@ -2196,7 +2196,13 @@ function GoogleEvents() {
                     </Button>
                     <Button
                       className={classes.buttonSelection}
-                      onClick={toggleShowEvents}
+                      //onClick={toggleShowEvents}
+                      onClick={() => {
+                        //getAcessToken();
+                        toggleShowEvents();
+                        //setEditingEvent(newEditingEventState);
+                        getAuthToGoogle();
+                      }}
                       id="one"
                     >
                       Events
@@ -2225,7 +2231,7 @@ function GoogleEvents() {
                         getAcessToken();
 
                         setEditingEvent(newEditingEventState);
-                        getAuthToGoogle();
+                        //getAuthToGoogle();
                       }}
                     >
                       Add Event +
@@ -2257,12 +2263,13 @@ function GoogleEvents() {
 
                     <div style={{ flex: '1' }}>
                       {userID != '' && (
-                        <WeekFirebaseV2
+                        <EventFirebaseV2
                           theCurrentUserID={userID}
                           sethighLight={setHightlight}
                           highLight={hightlight}
                           events={events}
                           setEvents={setEvents}
+                          timeZone={userTime_zone}
                           //setEvent={setEditingEvent}
                           //newEvent={newEditingEventState}
                           // rID={routineID}

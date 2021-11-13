@@ -1,5 +1,4 @@
 import React, {  useEffect, useState } from 'react';
-import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
 import axios from 'axios';
 import moment from 'moment';
 import {
@@ -13,11 +12,12 @@ import {
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import EditIcon from './EditRTS/EditIcon.jsx';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import {
   faCalendarDay,
 } from '@fortawesome/free-solid-svg-icons';
 import { makeStyles } from '@material-ui/core/styles';
+import { updateTheCalenderEvent, deleteTheCalenderEvent } from './GoogleApiService';
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const useStyles = makeStyles({
@@ -257,6 +257,55 @@ export default function Firebasev2(props) {
     console.log('tempRows', tempRows, tempID);
     setlistOfBlocks(tempRows);
   }
+  const callEdit = (id) =>{
+    //e.preventDefault();
+    console.log('edit', id)
+    var event = {
+      id: id,
+      
+      start: {
+        dateTime: '2021-11-15T01:00:00-08:00',
+        timeZone: props.timeZone,
+      },
+      end: {
+        dateTime: '2021-11-15T02:00:00-08:00',
+        timeZone: props.timeZone,
+      },
+      // recurrence: repeatOption ? [recurrenceRule] : false,
+      // attendees: fields,
+      // reminders: {
+      //   useDefault: false,
+      //   overrides: [{ method: reminderMethod, minutes: reminderMinutes }],
+      // },
+    };
+
+    updateTheCalenderEvent(event)
+
+  }
+  const callDelete = (id) => {
+    //e.preventDefault();
+    console.log('delete', id);
+    // var event = {
+    //   id: id,
+
+    //   start: {
+    //     dateTime: '2021-11-15T01:00:00-08:00',
+    //     timeZone: props.timeZone,
+    //   },
+    //   end: {
+    //     dateTime: '2021-11-15T02:00:00-08:00',
+    //     timeZone: props.timeZone,
+    //   },
+    //   // recurrence: repeatOption ? [recurrenceRule] : false,
+    //   // attendees: fields,
+    //   // reminders: {
+    //   //   useDefault: false,
+    //   //   overrides: [{ method: reminderMethod, minutes: reminderMinutes }],
+    //   // },
+    // };
+
+    deleteTheCalenderEvent(id);
+  };
   function formatDateTime(str) {
     let newTime = new Date(str).toLocaleTimeString();
     return newTime.replace(/:\d+ /, ' ');
@@ -453,7 +502,7 @@ export default function Firebasev2(props) {
                     width="28px"
                   /> */}
                   <FontAwesomeIcon
-                    style={{ cursor: 'pointer', color:'white' }}
+                    style={{ cursor: 'pointer', color: 'white' }}
                     icon={faCalendarDay}
                     size="2x"
                   />
@@ -485,17 +534,23 @@ export default function Firebasev2(props) {
               }}
             >
               <div>
-                <EditIcon
-                  routine={r}
-                  task={null}
-                  step={currentUser}
-                  events={props.events}
-                  //  id={currentUser}
+                <FontAwesomeIcon
+                  title="Edit Item"
+                  onMouseOver={(event) => {
+                    event.target.style.color = '#48D6D2';
+                  }}
+                  onMouseOut={(event) => {
+                    event.target.style.color = '#FFFFFF';
+                  }}
+                  style={{ color: '#ffffff', cursor: 'pointer' }}
+                  icon={faEdit}
+                  onClick={(e) => {
+                    callEdit(r['id']);
+                  }}
                 />
               </div>
               {/* working on this thing */}
 
-            
               <div style={{ flex: '1' }}>
                 <FontAwesomeIcon
                   title="Delete Item 1"
@@ -509,8 +564,10 @@ export default function Firebasev2(props) {
                   // style ={{ color:  "#000000" }}
                   // onClick={(e) => {                }}
                   icon={faTrashAlt}
-                  size="sm"
-                />
+                  onClick={(e) => {
+                    callDelete(r['id']);
+                  }}
+                size="sm" />
               </div>
             </div>
           </div>

@@ -128,3 +128,42 @@ export const publishTheCalenderEvent = (event) => {
     console.log(error);
   }
 };
+
+export const updateTheCalenderEvent = (event) => {
+  try {
+    console.log('updatedTheCalenderEvent', event)
+    gapi.client.load('calendar', 'v3', () => {
+      console.log('updatedTheCalenderEvent in');
+      var request = gapi.client.calendar.events.patch({
+        calendarId: 'primary',
+        eventId: event['id'], 
+        resource: event,
+      });
+      console.log('updatedTheCalenderEvent', request);
+      request.execute(function (event) {
+        console.log('Event updated: ' + event.htmlLink);
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteTheCalenderEvent = (id) => {
+  try {
+    console.log('updatedTheCalenderid', id);
+    gapi.client.load('calendar', 'v3', () => {
+      console.log('updatedTheCalenderEvent in');
+      var request = gapi.client.calendar.events.delete({
+        calendarId: 'primary',
+        eventId: id
+      });
+      console.log('updatedTheCalenderEvent', request);
+      request.execute(function (id) {
+        console.log('Event deleted ');
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};

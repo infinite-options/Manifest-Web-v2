@@ -870,7 +870,7 @@ export default function GoogleEventComponent(props) {
     setFields(emails);
   }
   const submit = (e) => {
-    
+  
     e.preventDefault();
     console.log(repeatOptionDropDown)
     console.log(recurrenceRule);
@@ -878,7 +878,6 @@ export default function GoogleEventComponent(props) {
       ...editingEventContext.editingEvent,
       editing: true,
     });
-
     var event = {
       summary,
       description,
