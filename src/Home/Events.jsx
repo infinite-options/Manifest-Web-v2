@@ -2201,7 +2201,7 @@ function GoogleEvents() {
                         //getAcessToken();
                         toggleShowEvents();
                         //setEditingEvent(newEditingEventState);
-                        getAuthToGoogle();
+                        //getAuthToGoogle();
                       }}
                       id="one"
                     >
