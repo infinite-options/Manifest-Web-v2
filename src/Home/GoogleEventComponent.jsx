@@ -98,20 +98,6 @@ export default function GoogleEventComponent(props) {
   const [reminderMethod, setReminderMethod] = useState('');
   const [reminderMinutes, setReminderMinutes] = useState('');
 
-
-
-
-
-
-
-  // useEffect(() => {
-  //   initClient((success) => {
-  //     if (success) {
-  //       getGoogleAuthorizedEmail();
-  //     }
-  //   });
-  // }, []);
-
   const startTimePicker = () => {
     return (
       <DatePicker
@@ -235,15 +221,7 @@ export default function GoogleEventComponent(props) {
   };
 
   const saveRepeatChanges = () => {
-    // const {
-    //   // repeatOptionDropDown,
-    //   repeatDropDown_temp,
-    //   repeatInputValue_temp,
-    //   repeatOccurrence_temp,
-    //   repeatRadio_temp,
-    //   repeatEndDate_temp,
-    //   byDay_temp,
-    // } = '';
+   
     setShowRepeatModal(false);
     setRepeatOption(true);
     setRepeatInputValue((prevState) => {

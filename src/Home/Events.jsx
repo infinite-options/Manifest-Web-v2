@@ -2231,7 +2231,7 @@ function GoogleEvents() {
                         getAcessToken();
 
                         setEditingEvent(newEditingEventState);
-                        //getAuthToGoogle();
+                        getAuthToGoogle();
                       }}
                     >
                       Add Event +

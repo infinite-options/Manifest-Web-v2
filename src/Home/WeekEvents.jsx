@@ -96,19 +96,19 @@ export default class WeekEvents extends Component {
     return arr;
   };
 
-  onEventClick = (e, i) => {
-    var arr = this.props.weekEvents;
-    e.stopPropagation();
-    this.props.eventClick(arr[i]);
-  };
+  // onEventClick = (e, i) => {
+  //   var arr = this.props.weekEvents;
+  //   e.stopPropagation();
+  //   this.props.eventClick(arr[i]);
+  // };
 
-  onWeekClick = (event, day, hour) => {
-    let startObject = this.props.dateContext.clone();
-    let startDay = startObject.startOf('week');
-    let curDate = startDay.clone();
-    curDate.add(24 * day + hour, 'hour');
-    this.props.onDayClick(curDate);
-  };
+  // onWeekClick = (event, day, hour) => {
+  //   let startObject = this.props.dateContext.clone();
+  //   let startDay = startObject.startOf('week');
+  //   let curDate = startDay.clone();
+  //   curDate.add(24 * day + hour, 'hour');
+  //   this.props.onDayClick(curDate);
+  // };
 
   weekViewItems = () => {
     // this creates the events adjusting their div size to reflecting the time it's slotted for
@@ -131,7 +131,7 @@ export default class WeekEvents extends Component {
                   margin: '0px',
                   width: '100%',
                 }}
-                onClick={(e) => this.onWeekClick(e, i, j)}
+                //onClick={(e) => this.onWeekClick(e, i, j)}
               >
                 {this.getEventItemFromDic(i, j, dic)}
               </Col>
@@ -298,7 +298,7 @@ export default class WeekEvents extends Component {
                     }}
                     key={i}
                     // value = {i}
-                    onClick={(e) => this.onEventClick(e, i)}
+                    //onClick={(e) => this.onEventClick(e, i)}
                     style={{
                       zIndex: this.state.zIndex,
                       marginTop: minsToMarginTop + 'px',
@@ -358,7 +358,7 @@ export default class WeekEvents extends Component {
                     }}
                     key={i}
                     // value = {i}
-                    onClick={(e) => this.onEventClick(e, i)}
+                    //onClick={(e) => this.onEventClick(e, i)}
                     style={{
                       zIndex: this.state.zIndex,
                       marginTop: minsToMarginTop + 'px',
@@ -419,7 +419,7 @@ export default class WeekEvents extends Component {
                   }}
                   key={i}
                   // value = {i}
-                  onClick={(e) => this.onEventClick(e, i)}
+                  //onClick={(e) => this.onEventClick(e, i)}
                   style={{
                     zIndex: this.state.zIndex,
                     marginTop: minsToMarginTop + 'px',
@@ -474,7 +474,7 @@ export default class WeekEvents extends Component {
                   }}
                   key={i}
                   // value = {i}
-                  onClick={(e) => this.onEventClick(e, i)}
+                  //onClick={(e) => this.onEventClick(e, i)}
                   style={{
                     zIndex: this.state.zIndex,
                     marginTop: minsToMarginTop + 'px',

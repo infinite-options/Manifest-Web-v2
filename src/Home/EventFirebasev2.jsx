@@ -2,6 +2,7 @@ import React, {  useEffect, useState } from 'react';
 import axios from 'axios';
 import moment from 'moment';
 import {
+  faPeopleArrows,
   faUser,
   faUserAltSlash,
 } from '@fortawesome/free-solid-svg-icons';
@@ -68,15 +69,7 @@ export default function Firebasev2(props) {
 
   const [listOfBlocks, setlistOfBlocks] = useState([]);
   const [historyGot, setHG] = useState([]);
-  const [toggleActions, setToggleActions] = useState(false);
   const [getActions, setActions] = useState([]);
-  const [getSteps, setSteps] = useState('');
-
-  const [iconColor, setIconColor] = useState();
-  //NOTE This gives you routines within 7 days of current date. Change currentDate to change that
-  const [currentDate, setCurDate] = useState(new Date(Date.now()));
-  const classes = useStyles();
-  const [rows, setRows] = useState([]);
   const [allTAData, setTAData] = useState([]);
   const [allPatientData, setPatientData] = useState([]);
 
@@ -389,7 +382,6 @@ export default function Firebasev2(props) {
     return 'E';
   }
 
-  //Creates actual boxes to display
 
   function displayRoutines(r) {
     const ret = getIsAvailableFromGR(r);
