@@ -96,11 +96,12 @@ export default function DeleteEventModal(props) {
          .post(url + id.toString() + ',' + eventId.toString())
          .then((res) => {
            console.log('/googleRecurringInstances: ', res.data);
+           console.log('before delete submit', res.data[0]);
            if (res.data[0].id === event.id) {
+             console.log('before delete submit',event)
              deleteSubmit(eventId);
            } else {
              let newEvent = {
-               
                reminders: event.reminders,
                creator: event.creator,
                created: event.created,
@@ -108,15 +109,16 @@ export default function DeleteEventModal(props) {
                sequence: event.sequence,
                status: event.status,
              };
-             let newRecurrenceRule = recEvent.recurrence;
+             console.log(event, recEvent)
+             let newRecurrenceRule = recurrenceRule;
              let newUntilSubString = `${moment(
-               recEvent.start.dateTime
+               event.start.dateTime
              ).format('YYYYMMDD')}`;
 
              let countSubString = '';
-             let countIndex = recEvent.recurrence.indexOf('COUNT');
+             let countIndex = recurrenceRule.indexOf('COUNT');
              if (countIndex !== -1) {
-               countSubString = recEvent.recurrence.substring(countIndex);
+               countSubString = recurrenceRule.substring(countIndex);
              }
              if (countSubString.includes(';')) {
                let endCountIndex = countSubString.indexOf(';');
@@ -142,10 +144,10 @@ export default function DeleteEventModal(props) {
 
              if (newRecurrenceRule.includes('UNTIL')) {
                let untilSubString = '';
-               let untilIndex = recEvent.recurrence.indexOf('UNTIL');
+               let untilIndex = recurrenceRule.indexOf('UNTIL');
                if (untilIndex !== -1) {
                  untilSubString =
-                   recEvent.recurrence.substring(untilIndex);
+                   recurrenceRule.substring(untilIndex);
                }
                if (untilSubString.includes(';')) {
                  let endUntilIndex = untilSubString.indexOf(';');
@@ -162,12 +164,12 @@ export default function DeleteEventModal(props) {
                );
              } else if (newRecurrenceRule.includes('COUNT')) {
                let start = moment(res.data[0].start.dateTime);
-               let end = moment(recEvent.end.dateTime);
+               let end = moment(event.end.dateTime);
 
                let arr = res.data.filter((e, i) => {
                  return moment(e.start.dateTime).isBefore(end);
                });
-
+               console.log(start,end)
                // let diff =
                //   moment.duration(end.diff(start)).asDays() /
                //   parseInt(intervalSubString);
@@ -181,11 +183,27 @@ export default function DeleteEventModal(props) {
                  `;UNTIL=${newUntilSubString}`
                );
              }
-             newEvent.start = res.data[0].start;
-             newEvent.end = res.data[0].end;
-             newEvent.recurrence = [newRecurrenceRule];
-             newEvent.summary = res.data[0].summary;
-
+            //  newEvent.start = res.data[0].start;
+            //  newEvent.end = res.data[0].end;
+            //  newEvent.recurrence = [
+            //    'RRULE:FREQ=DAILY;UNTIL=20211117T065959Z;INTERVAL=1',
+            //  ];
+            //  newEvent.summary = res.data[0].summary;
+            //  newEvent.id = res.data[0].recurringEventId;
+            newEvent.start = {
+                        "dateTime": "2011-11-15T09:00:00.000-07:00",
+                        "timeZone": "America/Los_Angeles"
+                                };
+            newEvent.end = {
+                      "dateTime": "2011-11-15T09:30:00.000-07:00",
+                      "timeZone": "America/Los_Angeles"
+                    };
+            newEvent.recurrence = [
+              'RRULE:FREQ=DAILY;UNTIL=20211117T092959Z;INTERVAL=1',
+            ];
+            newEvent.summary = 'Test Event';
+            newEvent.id = res.data[0].recurringEventId;
+             console.log(newEvent)
              updateTheCalenderEvent(newEvent)
              
            }

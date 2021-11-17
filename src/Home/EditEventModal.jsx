@@ -1246,7 +1246,7 @@ export default function EditEventModal(props) {
                     overrides: [
                       { method: reminderMethod, minutes: reminderMinutes },
                     ],
-                  },
+                  }
                 };
                 let firstEventCount = clickedEventIndex;
                 let secondEventCount = res.data.length - clickedEventIndex;
@@ -1257,7 +1257,6 @@ export default function EditEventModal(props) {
             })
         let newEvent = {
           
-          reminders: props.event.reminders,
           creator: props.event.creator,
           created: props.event.created,
           organizer: props.event.organizer,

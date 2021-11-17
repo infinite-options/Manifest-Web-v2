@@ -134,7 +134,7 @@ export const updateTheCalenderEvent = (event) => {
     console.log('updatedTheCalenderEvent', event)
     gapi.client.load('calendar', 'v3', () => {
       console.log('updatedTheCalenderEvent in');
-      var request = gapi.client.calendar.events.patch({
+      var request = gapi.client.calendar.events.update({
         calendarId: 'primary',
         eventId: event['id'], 
         resource: event,
