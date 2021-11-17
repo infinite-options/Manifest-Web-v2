@@ -42,6 +42,8 @@ import EditATS from './EditATS/EditATS';
 import EditISContext from './EditIS/EditISContext';
 import EditIS from './EditIS/EditIS';
 import LoginContext from '../LoginContext';
+import DeleteEventModal from './DeleteEventModal';
+import EditEventModal from './EditEventModal';
 //import ApiCalendar from 'react-google-calendar-api';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
@@ -262,7 +264,7 @@ export default function Events(props) {
     createUserParam: false,
     loaded: false,
     loggedIn: false,
-    originalEvents: [], //holds the google events data in it's original JSON form
+    originalEvents: '', //holds the google events data in it's original JSON form
     dayEvents: [], //holds google events data for a single day
     weekEvents: [], //holds google events data for a week
     originalGoalsAndRoutineArr: [], //Hold goals and routines so day and week view can access it
@@ -345,6 +347,7 @@ export default function Events(props) {
     eventNotifications: {},
     showDeleteRecurringModal: false,
     deleteRecurringOption: 'This event',
+    showEditModal: false,
     showEditRecurringModal: false,
     editRecurringOption: '',
 
@@ -427,6 +430,7 @@ export default function Events(props) {
       eventNotifications: {},
       showDeleteRecurringModal: false,
       deleteRecurringOption: 'This event',
+      showEditModal: false,
       showEditRecurringModal: false,
       editRecurringOption: '',
     },
@@ -484,6 +488,7 @@ export default function Events(props) {
       eventNotifications: {},
       showDeleteRecurringModal: false,
       deleteRecurringOption: 'This event',
+      showEditModal: false,
       showEditRecurringModal: false,
       editRecurringOption: '',
     },
@@ -1157,6 +1162,7 @@ console.log('in events setaccess', accessToken)
       recurrenceRule: '',
       showDeleteRecurringModal: false,
       deleteRecurringOption: 'This event',
+      showEditModal: false,
       showEditRecurringModal: false,
       editRecurringOption: '',
     });
@@ -2083,7 +2089,23 @@ function GoogleEvents() {
   //   ]);
   // }
   useEffect(() => console.log('here: 4'), [editingRTS.editing.item, editingEvent.editing.item]);
+  // const openDeleteRecurringModal = () => {
+  //   console.log("opendeleterecurringmodal called");
+  //  setStateValue({
+  //    showDeleteRecurringModal: true,
+  //  });
+  // };
 
+  // const closeDeleteRecurringModal = () => {
+  //   setStateValue({
+  //     showDeleteRecurringModal: false,
+  //   });
+  //   // if (!this.state.repeatOption) {
+  //   //   this.setState({
+  //   //     repeatOptionDropDown: "Does not repeat",
+  //   //   });
+  //   // }
+  // };
   const updateFBGR = () => {
     GrabFireBaseRoutinesGoalsData();
     // props.refresh();
@@ -2201,7 +2223,7 @@ function GoogleEvents() {
                         //getAcessToken();
                         toggleShowEvents();
                         //setEditingEvent(newEditingEventState);
-                        //getAuthToGoogle();
+                        getAuthToGoogle();
                       }}
                       id="one"
                     >
@@ -2287,6 +2309,15 @@ function GoogleEvents() {
                           // setGetActionsEndPoint={setGetActionsEndPoint}
                           // getStepsEndPoint={getStepsEndPoint}
                           // setGetStepsEndPoint={setGetStepsEndPoint}
+                          showDeleteRecurringModal={
+                            stateValue.showDeleteRecurringModal
+                          }
+                          showEditModal={
+                            stateValue.showEditModal
+                          }
+                          showEditRecurringModal={
+                            stateValue.showEditRecurringModal
+                          }
                           stateValue={stateValue}
                           setStateValue={setStateValue}
                         />
@@ -2645,12 +2676,37 @@ function GoogleEvents() {
                           stateValue={stateValue}
                           setStateValue={setStateValue}
                         />
+                      ) : stateValue.showDeleteRecurringModal ? (
+                        <DeleteEventModal
+                          event={stateValue.originalEvents}
+                          stateValue={stateValue}
+                          setStateValue={setStateValue}
+                        />
+                      ) : stateValue.showEditModal ? (
+                        <EditEventModal
+                          signedin={signedin}
+                          setSignedIn={setSignedIn}
+                          showEditRecurringModal={stateValue.showEditRecurringModal}
+                          event={stateValue.originalEvents}
+                          stateValue={stateValue}
+                          setStateValue={setStateValue}
+                        />
                       ) : (
                         showCalendarView()
+                      )}
+                      {console.log(
+                        stateValue.showDeleteRecurringModal,
+                        stateValue.originalEvents
                       )}
                     </div>
                   </div>
                 </Box>
+
+                {/* {stateValue.showDeleteRecurringModal ? (
+                  <DeleteEventModal />
+                ) : (
+                  ''
+                )} */}
                 {/* ----------------------------... Navigation--------------------------- */}
 
                 {/* ---------------------------- Navigation--------------------------- */}

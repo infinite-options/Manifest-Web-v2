@@ -1,4 +1,4 @@
-import React, {  useEffect, useState } from 'react';
+import React, {  useEffect, useState, useModal } from 'react';
 import axios from 'axios';
 import moment from 'moment';
 import {
@@ -19,6 +19,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { makeStyles } from '@material-ui/core/styles';
 import { updateTheCalenderEvent, deleteTheCalenderEvent } from './GoogleApiService';
+import DeleteEventModal from './DeleteEventModal';
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const useStyles = makeStyles({
@@ -50,7 +51,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Firebasev2(props) {
+export default function EventFirebasev2(props) {
   console.log('curdate today firebase props ', props);
   const history = useHistory();
   const inRange = [];
@@ -72,7 +73,9 @@ export default function Firebasev2(props) {
   const [getActions, setActions] = useState([]);
   const [allTAData, setTAData] = useState([]);
   const [allPatientData, setPatientData] = useState([]);
-
+  const [showDeleteRecurringModal, setShowDeleteRecurringModal] = useState(false)
+  const [showEditModal, setShowEditModal] =
+    useState(false);
   // var copiedRoutineName = ''
   
   useEffect(() => {
@@ -250,55 +253,7 @@ export default function Firebasev2(props) {
     console.log('tempRows', tempRows, tempID);
     setlistOfBlocks(tempRows);
   }
-  const callEdit = (id) =>{
-    //e.preventDefault();
-    console.log('edit', id)
-    var event = {
-      id: id,
-      
-      start: {
-        dateTime: '2021-11-15T01:00:00-08:00',
-        timeZone: props.timeZone,
-      },
-      end: {
-        dateTime: '2021-11-15T02:00:00-08:00',
-        timeZone: props.timeZone,
-      },
-      // recurrence: repeatOption ? [recurrenceRule] : false,
-      // attendees: fields,
-      // reminders: {
-      //   useDefault: false,
-      //   overrides: [{ method: reminderMethod, minutes: reminderMinutes }],
-      // },
-    };
-
-    updateTheCalenderEvent(event)
-
-  }
-  const callDelete = (id) => {
-    //e.preventDefault();
-    console.log('delete', id);
-    // var event = {
-    //   id: id,
-
-    //   start: {
-    //     dateTime: '2021-11-15T01:00:00-08:00',
-    //     timeZone: props.timeZone,
-    //   },
-    //   end: {
-    //     dateTime: '2021-11-15T02:00:00-08:00',
-    //     timeZone: props.timeZone,
-    //   },
-    //   // recurrence: repeatOption ? [recurrenceRule] : false,
-    //   // attendees: fields,
-    //   // reminders: {
-    //   //   useDefault: false,
-    //   //   overrides: [{ method: reminderMethod, minutes: reminderMinutes }],
-    //   // },
-    // };
-
-    deleteTheCalenderEvent(id);
-  };
+  
   function formatDateTime(str) {
     let newTime = new Date(str).toLocaleTimeString();
     return newTime.replace(/:\d+ /, ' ');
@@ -382,6 +337,45 @@ export default function Firebasev2(props) {
     return 'E';
   }
 
+  const openDeleteRecurringModal = (r) => {
+    console.log('opendeleterecurringmodal called',r);
+    if (r.recurringEventId === undefined) {
+      console.log('opendeleterecurringmodal nonre', r);
+      deleteTheCalenderEvent(r.id);
+      alert('Deleted');
+    }
+    else{
+    console.log('opendeleterecurringmodal rec', r);
+    props.setStateValue((prevState) => {
+      return {
+        ...prevState,
+        showDeleteRecurringModal: !showDeleteRecurringModal,
+      };
+    });
+     props.setStateValue((prevState) => {
+       return {
+         ...prevState,
+         originalEvents: r,
+       };
+     });}
+  };
+  const openEditModal = (r) => {
+    console.log('openeditmodal called', r);
+    
+      console.log('opendeletemodal rec', r);
+      props.setStateValue((prevState) => {
+        return {
+          ...prevState,
+          showEditModal: !showEditModal,
+        };
+      });
+      props.setStateValue((prevState) => {
+        return {
+          ...prevState,
+          originalEvents: r,
+        };
+      });
+  };
 
   function displayRoutines(r) {
     const ret = getIsAvailableFromGR(r);
@@ -537,7 +531,8 @@ export default function Firebasev2(props) {
                   style={{ color: '#ffffff', cursor: 'pointer' }}
                   icon={faEdit}
                   onClick={(e) => {
-                    callEdit(r['id']);
+                    //callEdit(r['id']);
+                    openEditModal(r);
                   }}
                 />
               </div>
@@ -556,8 +551,9 @@ export default function Firebasev2(props) {
                   // style ={{ color:  "#000000" }}
                   // onClick={(e) => {                }}
                   icon={faTrashAlt}
-                  onClick={(e) => {
-                    callDelete(r['id']);
+                  onClick={ (e) => {
+                    //callDelete(r['id']);
+                    openDeleteRecurringModal(r);
                   }}
                 size="sm" />
               </div>
@@ -574,6 +570,7 @@ export default function Firebasev2(props) {
       {/* {makeDisplays()} */}
       {/* {getCurrentUser()} */}
       {listOfBlocks}
+      
     </row>
   );
 }
