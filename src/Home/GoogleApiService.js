@@ -1,4 +1,4 @@
-import React from 'react';
+
 
   let gapi = window.gapi;
   const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
@@ -151,14 +151,14 @@ export const updateTheCalenderEvent = (event) => {
 
 export const deleteTheCalenderEvent = (id) => {
   try {
-    console.log('updatedTheCalenderid', id);
+    console.log('deletedTheCalenderid', id);
     gapi.client.load('calendar', 'v3', () => {
-      console.log('updatedTheCalenderEvent in');
+      console.log('deletedTheCalenderEvent in');
       var request = gapi.client.calendar.events.delete({
         calendarId: 'primary',
         eventId: id
       });
-      console.log('updatedTheCalenderEvent', request);
+      console.log('deletedTheCalenderEvent', request);
       request.execute(function (id) {
         console.log('Event deleted ');
       });
@@ -167,3 +167,5 @@ export const deleteTheCalenderEvent = (id) => {
     console.log(error);
   }
 };
+
+

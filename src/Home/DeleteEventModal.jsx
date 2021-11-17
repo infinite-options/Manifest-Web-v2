@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useContext } from 'react';
 import {
   Form,
   Button,
@@ -9,11 +9,62 @@ import {
   Dropdown,
   DropdownButton,
 } from 'react-bootstrap';
+import axios from 'axios';
+import LoginContext from '../LoginContext';
 import {
-  deleteTheCalenderEvent,
+  deleteTheCalenderEvent, publishTheCalenderEvent, updateTheCalenderEvent
 } from './GoogleApiService';
+import moment from 'moment';
+
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 export default function DeleteEventModal(props) {
+  const loginContext = useContext(LoginContext);
+  var userID = '';
+  var userTime_zone = '';
+  var userEmail = '';
+  if (
+    document.cookie
+      .split(';')
+      .some((item) => item.trim().startsWith('patient_uid='))
+  ) {
+    userID = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_uid='))
+      .split('=')[1];
+    userTime_zone = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_timeZone='))
+      .split('=')[1];
+    userEmail = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_email='))
+      .split('=')[1];
+  } else {
+    userID = loginContext.loginState.curUser;
+    userTime_zone = loginContext.loginState.curUserTimeZone;
+    userEmail = loginContext.loginState.curUserEmail;
+  }
+    const [recurrence, setRecurrence] = useState('');
+    const [recurrenceRule, setRecurrenceRule] = useState('');
+    const [recEvent, setRecEvent] = useState({});
+    useEffect(() => {
+      if (props.event.recurringEventId !== undefined) {
+        var requestRecurringEvent = window.gapi.client.calendar.events.get({
+          calendarId: 'primary',
+          eventId: props.event.recurringEventId,
+        });
+        requestRecurringEvent.execute(function (resp) {
+          console.log(resp);
+          setRecEvent(resp);
+          let recurrence = resp.recurrence;
+          setRecurrence(recurrence);
+          setRecurrenceRule(recurrence);
+          return recurrence;
+        });
+      }
+    }, [props.event]);
+
     const [showDeleteRecurringModal, setShowDeleteRecurringModal] =
       useState(props.stateValue.showDeleteRecurringModal);
     const [deleteRecurringOption, setDeleteRecurringOption] = useState(
@@ -37,151 +88,111 @@ export default function DeleteEventModal(props) {
           deleteSubmit(event.id)
         
       } else if (deleteRecurringOption === 'This and following events') {
-       // await axios
-        //   .get('/getRecurringEventInstances', {
-        //     params: {
-        //       recurringEventId: newEventRecurringID,
-        //     },
-        //   })
-        //   .then((res) => {
-            
-        //     if (res.data[0].id === this.state.newEvent.id) {
-        //       axios
-        //         .post('/deleteEvent', {
-        //           userId: this.state.currentUserId,
-        //           eventId: newEventRecurringID,
-        //         })
-        //         .then((response) => {
-        //           console.log('response: ', response);
-        //           this.setState({
-        //             dayEventSelected: false,
-        //             showDeleteRecurringModal: false,
-        //           });
-        //           this.updateEventsArray();
-        //         })
-        //         .catch(function (error) {
-        //           console.log(error);
-        //         });
-        //     } else {
-        //       let newEvent = {
-        //         reminders: this.state.newEvent.reminders,
-        //         creator: this.state.newEvent.creator,
-        //         created: this.state.newEvent.created,
-        //         organizer: this.state.newEvent.organizer,
-        //         sequence: this.state.newEvent.sequence,
-        //         status: this.state.newEvent.status,
-        //       };
-        //       let newRecurrenceRule = this.state.recurrenceRule;
-        //       let newUntilSubString = `${moment(
-        //         this.state.newEventStart0
-        //       ).format('YYYYMMDD')}`;
+       let url = BASE_URL + 'googleRecurringInstances/';
+       let id = userID;
+       let eventId = props.event.recurringEventId;
+       
+       axios
+         .post(url + id.toString() + ',' + eventId.toString())
+         .then((res) => {
+           console.log('/googleRecurringInstances: ', res.data);
+           if (res.data[0].id === event.id) {
+             deleteSubmit(eventId);
+           } else {
+             let newEvent = {
+               
+               reminders: event.reminders,
+               creator: event.creator,
+               created: event.created,
+               organizer: event.organizer,
+               sequence: event.sequence,
+               status: event.status,
+             };
+             let newRecurrenceRule = recEvent.recurrence;
+             let newUntilSubString = `${moment(
+               recEvent.start.dateTime
+             ).format('YYYYMMDD')}`;
 
-        //       let countSubString = '';
-        //       let countIndex = this.state.recurrenceRule.indexOf('COUNT');
-        //       if (countIndex !== -1) {
-        //         countSubString =
-        //           this.state.recurrenceRule.substring(countIndex);
-        //       }
-        //       if (countSubString.includes(';')) {
-        //         let endCountIndex = countSubString.indexOf(';');
-        //         countSubString = countSubString.substring(6, endCountIndex);
-        //       } else if (countSubString) {
-        //         countSubString = countSubString.substring(6);
-        //       }
+             let countSubString = '';
+             let countIndex = recEvent.recurrence.indexOf('COUNT');
+             if (countIndex !== -1) {
+               countSubString = recEvent.recurrence.substring(countIndex);
+             }
+             if (countSubString.includes(';')) {
+               let endCountIndex = countSubString.indexOf(';');
+               countSubString = countSubString.substring(6, endCountIndex);
+             } else if (countSubString) {
+               countSubString = countSubString.substring(6);
+             }
 
-        //       let intervalSubString = '';
-        //       let intervalIndex = recurrenceRule.indexOf('INTERVAL');
-        //       if (intervalIndex !== -1) {
-        //         intervalSubString = recurrenceRule.substring(intervalIndex);
-        //       }
-        //       if (intervalSubString.includes(';')) {
-        //         let endIntervalIndex = intervalSubString.indexOf(';');
-        //         intervalSubString = intervalSubString.substring(
-        //           9,
-        //           endIntervalIndex
-        //         );
-        //       } else if (intervalSubString) {
-        //         intervalSubString = intervalSubString.substring(9);
-        //       }
+             let intervalSubString = '';
+             let intervalIndex = recurrence.indexOf('INTERVAL');
+             if (intervalIndex !== -1) {
+               intervalSubString = recurrence.substring(intervalIndex);
+             }
+             if (intervalSubString.includes(';')) {
+               let endIntervalIndex = intervalSubString.indexOf(';');
+               intervalSubString = intervalSubString.substring(
+                 9,
+                 endIntervalIndex
+               );
+             } else if (intervalSubString) {
+               intervalSubString = intervalSubString.substring(9);
+             }
 
-        //       if (newRecurrenceRule.includes('UNTIL')) {
-        //         let untilSubString = '';
-        //         let untilIndex = this.state.recurrenceRule.indexOf('UNTIL');
-        //         if (untilIndex !== -1) {
-        //           untilSubString =
-        //             this.state.recurrenceRule.substring(untilIndex);
-        //         }
-        //         if (untilSubString.includes(';')) {
-        //           let endUntilIndex = untilSubString.indexOf(';');
-        //           untilSubString = untilSubString.substring(6, endUntilIndex);
-        //         } else if (untilSubString) {
-        //           untilSubString = untilSubString = untilSubString.substring(6);
-        //         }
+             if (newRecurrenceRule.includes('UNTIL')) {
+               let untilSubString = '';
+               let untilIndex = recEvent.recurrence.indexOf('UNTIL');
+               if (untilIndex !== -1) {
+                 untilSubString =
+                   recEvent.recurrence.substring(untilIndex);
+               }
+               if (untilSubString.includes(';')) {
+                 let endUntilIndex = untilSubString.indexOf(';');
+                 untilSubString = untilSubString.substring(6, endUntilIndex);
+               } else if (untilSubString) {
+                 untilSubString = untilSubString = untilSubString.substring(6);
+               }
 
-        //         console.log(
-        //           untilSubString,
-        //           newUntilSubString,
-        //           'untilSubString'
-        //         );
+               console.log(untilSubString, newUntilSubString, 'untilSubString');
 
-        //         newRecurrenceRule = newRecurrenceRule.replace(
-        //           untilSubString,
-        //           newUntilSubString
-        //         );
-        //       } else if (newRecurrenceRule.includes('COUNT')) {
-        //         let start = moment(res.data[0].start.dateTime);
-        //         let end = moment(this.state.newEventStart0);
+               newRecurrenceRule = newRecurrenceRule.replace(
+                 untilSubString,
+                 newUntilSubString
+               );
+             } else if (newRecurrenceRule.includes('COUNT')) {
+               let start = moment(res.data[0].start.dateTime);
+               let end = moment(recEvent.end.dateTime);
 
-        //         let arr = res.data.filter((e, i) => {
-        //           return moment(e.start.dateTime).isBefore(end);
-        //         });
+               let arr = res.data.filter((e, i) => {
+                 return moment(e.start.dateTime).isBefore(end);
+               });
 
-        //         // let diff =
-        //         //   moment.duration(end.diff(start)).asDays() /
-        //         //   parseInt(intervalSubString);
-        //         // console.log(diff, intervalSubString, "diff");
-        //         newRecurrenceRule = newRecurrenceRule.replace(
-        //           countSubString,
-        //           arr.length
-        //         );
-        //       } else {
-        //         newRecurrenceRule = newRecurrenceRule.concat(
-        //           `;UNTIL=${newUntilSubString}`
-        //         );
-        //       }
-        //       newEvent.start = res.data[0].start;
-        //       newEvent.end = res.data[0].end;
-        //       newEvent.recurrence = [newRecurrenceRule];
-        //       newEvent.summary = res.data[0].summary;
+               // let diff =
+               //   moment.duration(end.diff(start)).asDays() /
+               //   parseInt(intervalSubString);
+               // console.log(diff, intervalSubString, "diff");
+               newRecurrenceRule = newRecurrenceRule.replace(
+                 countSubString,
+                 arr.length
+               );
+             } else {
+               newRecurrenceRule = newRecurrenceRule.concat(
+                 `;UNTIL=${newUntilSubString}`
+               );
+             }
+             newEvent.start = res.data[0].start;
+             newEvent.end = res.data[0].end;
+             newEvent.recurrence = [newRecurrenceRule];
+             newEvent.summary = res.data[0].summary;
 
-        //       axios
-        //         .put('/updateEvent', {
-        //           extra: newEvent,
-        //           eventId: newEventRecurringID,
-        //           username: this.state.currentUserName,
-        //           id: this.state.currentUserId,
-        //           // start: updatedEvent.start,
-        //           // end: updatedEvent.end,
-        //         })
-        //         .then((response) => {
-        //           this.setState({
-        //             dayEventSelected: false,
-        //             newEventName: '',
-        //             newEventStart0: new Date(),
-        //             newEventEnd0: new Date(),
-        //           });
-
-        //           this.updateEventsArray();
-        //         })
-
-        //         .catch(function (error) {
-        //           console.log(error);
-        //         });
-        //     }
-        //   })
-        //   .catch((error) => {
-        //     console.log(error);
-        //   });
+             updateTheCalenderEvent(newEvent)
+             
+           }
+         })
+         .catch((error) => {
+           console.log(error);
+         });
       } else if (deleteRecurringOption === 'All events') {
        // deleteTheCalenderEvent(event.recurringEventId);
         deleteSubmit(event.recurringEventId);

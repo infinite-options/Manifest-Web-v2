@@ -2686,7 +2686,6 @@ function GoogleEvents() {
                         <EditEventModal
                           signedin={signedin}
                           setSignedIn={setSignedIn}
-                          showEditRecurringModal={stateValue.showEditRecurringModal}
                           event={stateValue.originalEvents}
                           stateValue={stateValue}
                           setStateValue={setStateValue}

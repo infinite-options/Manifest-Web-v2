@@ -10,18 +10,18 @@ import {
   DropdownButton,
 } from 'react-bootstrap';
 import trash from '../manifest/LoginAssets/Trash.png';
-
+import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './DatePicker.css';
-import {updateTheCalenderEvent} from './GoogleApiService';
+import {deleteTheCalenderEvent, instancesTheCalenderEvent, publishTheCalenderEvent, updateTheCalenderEvent} from './GoogleApiService';
 import LoginContext from '../LoginContext';
-import EditEventContext from './EditEventContext';
 import moment from 'moment';
+
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 export default function EditEventModal(props) {
     const loginContext = useContext(LoginContext);
-    const editingEventContext = useContext(EditEventContext);
     var userID = '';
     var userTime_zone = '';
     var userEmail = '';
@@ -58,17 +58,22 @@ export default function EditEventModal(props) {
       props.stateValue.editRecurringOption
     );
     const [summary, setSummary] = useState(props.event.summary);
-    const [startTime, setStartTime] = useState('');
-    const [endTime, setEndTime] = useState('');
-
+    const [startTime, setStartTime] = useState(
+      moment(props.event.start.dateTime).toDate()
+    );
+    const [endTime, setEndTime] = useState(moment(props.event.end.dateTime).toDate());
+    console.log(startTime);
+    console.log(endTime);
     const [location, setLocation] = useState(
       props.event.location === undefined ? '' : props.event.location
     );
     const [description, setDescription] = useState(props.event.description === undefined ? '' : props.event.description);
     const [repeatOptionDropDown, setRepeatOptionDropDown] = useState(
-      props.event.RRULE === undefined ? '' : props.event.RRULE
+      props.event.recurringEventId === undefined ? 'Does not repeat' : 'Custom'
     );
-    const [repeatOption, setRepeatOption] = useState(false);
+    const [repeatOption, setRepeatOption] = useState(
+      props.event.recurringEventId === undefined ? false : true
+    );
     const [showRepeatModal, setShowRepeatModal] = useState(false);
     const [repeatDropDown, setRepeatDropDown] = useState('DAY');
     const [repeatDropDown_temp, setRepeatDropDown_temp] = useState('DAY');
@@ -101,7 +106,31 @@ export default function EditEventModal(props) {
       5: '',
       6: '',
     });
+    const [recurrence, setRecurrence] = useState('');
     const [recurrenceRule, setRecurrenceRule] = useState('');
+    const [recEvent, setRecEvent] =useState({})
+    useEffect(() => {
+    if(props.event.recurringEventId !== undefined){
+        var requestRecurringEvent = window.gapi.client.calendar.events.get({
+          calendarId: 'primary',
+          eventId: props.event.recurringEventId,
+        });
+        requestRecurringEvent.execute(function (resp) {
+          console.log(resp)
+          setRecEvent(resp)
+          let recurrence = resp.recurrence;
+          setRecurrence(recurrence);
+          setRecurrenceRule(recurrence)
+          return recurrence;
+        });
+        
+    }
+  },[props.event])
+    
+    
+   
+    
+    console.log('recurrence', recurrence, recurrenceRule,repeatOption,repeatOptionDropDown,recEvent);
     const [reminderMethod, setReminderMethod] = useState('');
     const [reminderMinutes, setReminderMinutes] = useState('');
       const openEditRecurringModal = (r) => {
@@ -109,12 +138,8 @@ export default function EditEventModal(props) {
 
         console.log('opendeletemodal rec', r, showEditRecurringModal);
         setShowEditRecurringModal(!showEditRecurringModal)
-        props.setStateValue((prevState) => {
-          return {
-            ...prevState,
-            originalEvents: r,
-          };
-        });
+        //console.log(instancesTheCalenderEvent(r.recurringEventId))
+        
       };
 
     const closeEditModal = () => {
@@ -126,12 +151,7 @@ export default function EditEventModal(props) {
       });
     };
     const closeEditRecurringModal = () => {
-      props.setStateValue((prevState) => {
-        return {
-          ...prevState,
-          showEditRecurringModal: !showEditRecurringModal,
-        };
-      });
+      setShowEditRecurringModal(!showEditRecurringModal)
     };
     function handleChange(i, event) {
         const emails = [...fields];
@@ -968,24 +988,26 @@ export default function EditEventModal(props) {
                 onChange={(e) => {
                   if (e.target.type === 'radio') {
                     setEditRecurringOption(e.target.value);
+                    // props.setStateValue({
+                    //   editRecurringOption: e.target.value,
+                    // });
                   }
                 }}
               >
-                {
-                  <Form.Check type="radio">
-                    <Form.Check.Label style={{ marginLeft: '5px' }}>
-                      <Form.Check.Input
-                        type="radio"
-                        value="This event"
-                        name="radios"
-                        defaultChecked={
-                          editRecurringOption === 'This event' && true
-                        }
-                      />
-                      This event
-                    </Form.Check.Label>
-                  </Form.Check>
-                }
+                <Form.Check type="radio">
+                  <Form.Check.Label style={{ marginLeft: '5px' }}>
+                    <Form.Check.Input
+                      type="radio"
+                      value="This event"
+                      name="radios"
+                      defaultChecked={
+                        editRecurringOption === 'This event' && true
+                      }
+                    />
+                    This event
+                    {console.log(editRecurringOption)}
+                  </Form.Check.Label>
+                </Form.Check>
                 <Form.Check type="radio">
                   <Form.Check.Label style={{ marginLeft: '5px' }}>
                     <Form.Check.Input
@@ -998,6 +1020,7 @@ export default function EditEventModal(props) {
                       }
                     />
                     This and following events
+                    {console.log(editRecurringOption)}
                   </Form.Check.Label>
                 </Form.Check>
                 <Form.Check type="radio">
@@ -1011,6 +1034,7 @@ export default function EditEventModal(props) {
                       }
                     />
                     All events
+                    {console.log(editRecurringOption)}
                   </Form.Check.Label>
                 </Form.Check>
               </Form.Group>
@@ -1018,12 +1042,46 @@ export default function EditEventModal(props) {
           </Modal.Body>
 
           <Modal.Footer>
-            <Button variant="secondary" onClick={closeEditRecurringModal}>
-              Cancel
-            </Button>
-            <Button variant="primary" onClick={updateRecurring(props.event)}>
-              OK
-            </Button>
+            <Container>
+              <Row>
+                <Col>
+                  <button
+                    style={{
+                      width: '110px',
+                      padding: '0',
+                      margin: '0 20px',
+                      backgroundColor: 'inherit',
+                      border: '1px #67ABFC solid',
+                      borderRadius: '30px',
+                      color: '#67ABFC',
+                      textAlign: 'center',
+                    }}
+                    onClick={closeEditRecurringModal}
+                  >
+                    Cancel
+                  </button>
+                </Col>
+                <Col>
+                  <button
+                    style={{
+                      width: '110px',
+                      padding: '0',
+                      margin: '0 20px',
+                      backgroundColor: 'inherit',
+                      border: '1px #67ABFC solid',
+                      borderRadius: '30px',
+                      color: '#67ABFC',
+                      textAlign: 'center',
+                    }}
+                    onClick={(e) => {
+                      UpdateRecurring(props.event);
+                    }}
+                  >
+                    Save changes
+                  </button>
+                </Col>
+              </Row>
+            </Container>
           </Modal.Footer>
         </Modal.Dialog>
       );
@@ -1084,7 +1142,7 @@ export default function EditEventModal(props) {
       }
     };
    
-    const updateRecurring =(event) =>{
+    function UpdateRecurring(event) {
       //e.preventDefault();
       //console.log('editrecuuring', event);
       if (editRecurringOption === 'This event') {
@@ -1118,56 +1176,250 @@ export default function EditEventModal(props) {
             overrides: [{ method: reminderMethod, minutes: reminderMinutes }],
           },
         };
+        
+        updateSubmit(event);
+        // updateTheCalenderEvent(event);
+        // setShowEditRecurringModal(!showEditRecurringModal);
+        // props.setStateValue((prevState) => {
+        //   return {
+        //     ...prevState,
+        //     showEditModal: !showEditModal,
+        //   };
+        // });
+      } else if (editRecurringOption === 'This and following events') {
+        let url = BASE_URL + 'googleRecurringInstances/';
+        let id = userID;
+        let eventId = props.event.recurringEventId;
+        //let eventId = '';
+        var firstEventCount = -1;
+        var secondEventCount = -1;
+        var clickedEventIndex = 0;
+        var parentEvent = {};
+        var isNeverEnds = false;
+         axios
+            .post(url + id.toString() + ',' + eventId.toString())
+            .then((res) => {
+                console.log('/googleRecurringInstances: ', res.data);
+                parentEvent = res.data[0];
+                console.log(parentEvent)
+                clickedEventIndex= ';'
+                for (let i = 0; i < res.data.length; i++) {
+                    if (res.data[i].id === props.event.id) {
+                    clickedEventIndex = i;
+                    break;
+                    }
+                }
+
+                let newISOStartTime = new Date(
+                    parentEvent.start['dateTime']
+                ).toISOString();
+
+                let newISOEndTime = new Date(
+                    parentEvent.end['dateTime']
+                ).toISOString();
+
+                var event = {
+                  id: eventId,
+                  summary: parentEvent.summary,
+                  description,
+                  location,
+                  creator: {
+                    email: 'calendar@manifestmy.space',
+                    self: true,
+                  },
+                  organizer: {
+                    email: 'calendar@manifestmy.space',
+                    self: true,
+                  },
+                  start: {
+                    dateTime: newISOStartTime,
+                    timeZone: userTime_zone,
+                  },
+                  end: {
+                    dateTime: newISOEndTime,
+                    timeZone: userTime_zone,
+                  },
+                  recurrence: repeatOption ? [recurrenceRule] : false,
+                  attendees: fields,
+                  reminders: {
+                    useDefault: false,
+                    overrides: [
+                      { method: reminderMethod, minutes: reminderMinutes },
+                    ],
+                  },
+                };
+                let firstEventCount = clickedEventIndex;
+                let secondEventCount = res.data.length - clickedEventIndex;
+                console.log('firstEventCount: ', firstEventCount);
+                console.log('secondEventCount: ', secondEventCount);
+
+                console.log(event)
+            })
+        let newEvent = {
+          
+          reminders: props.event.reminders,
+          creator: props.event.creator,
+          created: props.event.created,
+          organizer: props.event.organizer,
+          sequence: props.event.sequence,
+          status: props.event.status,
+        };
+
+        //generate new recurrence rule
+      let newRecurrenceRule = recEvent.recurrence;
+      // console.log("newRecurrenceRule", newRecurrenceRule);
+
+      let currentDateString = `${moment(recEvent.start.dateTime).format(
+        "YYYYMMDD"
+      )}`;
+      console.log("currentDateString", currentDateString);
+
+      //find countSubString if the recurrece rule is COUNT
+      let countSubString = "";
+      let countIndex = recEvent.recurrence.indexOf("COUNT");
+      if (countIndex !== -1) {
+        countSubString = recEvent.recurrence.substring(countIndex);
+        // console.log("countSubString 1:", countSubString);
+      }
+      if (countSubString.includes(";")) {
+        let endCountIndex = countSubString.indexOf(";");
+        countSubString = countSubString.substring(6, endCountIndex);
+        // console.log("countSubString 2:", countSubString);
+      } else if (countSubString) {
+        countSubString = countSubString.substring(6);
+        // console.log("countSubString 3", countSubString);
+      }
+
+      // //find untilSubString if the recurrece rule is UNTIL
+      if (newRecurrenceRule.includes("UNTIL")) {
+        let untilSubString = "";
+        let untilIndex = props.event.recurrence.indexOf("UNTIL");
+        if (untilIndex !== -1) {
+          untilSubString = props.event.recurrence.substring(untilIndex);
+        }
+        if (untilSubString.includes(";")) {
+          let endUntilIndex = untilSubString.indexOf(";");
+          untilSubString = untilSubString.substring(6, endUntilIndex);
+        } else if (untilSubString) {
+          untilSubString = untilSubString = untilSubString.substring(6);
+        }
+        console.log("UNTIL, newRecyrrenceRule: ", newRecurrenceRule);
+        // replace by the new calculated currentDateString
+        event.recurrence = newRecurrenceRule.replace(
+          untilSubString,
+          currentDateString
+        );
+        console.log("currentDateString: ", currentDateString);
+        console.log("newRecurrenceRule: ", newRecurrenceRule);
+      } else if (newRecurrenceRule.includes("COUNT")) {
+        event.recurrence = newRecurrenceRule.replace(
+          `COUNT=${countSubString}`,
+          `COUNT=${firstEventCount}`
+        );
+        newRecurrenceRule = newRecurrenceRule.replace(
+          `COUNT=${countSubString}`,
+          `COUNT=${secondEventCount}`
+        );
+
+        console.log("event.recurrence changed", event.recurrence);
+      } else {
+        // recurrence rule === never ends
+        newRecurrenceRule = newRecurrenceRule.concat(
+          `;UNTIL=${currentDateString}`
+        );
+        console.log("entered the useless else statement");
+        console.log("newRecurrenceRule: ", newRecurrenceRule);
+        isNeverEnds = true;
+      }
+
+      newEvent.summary = props.event.summary;
+      newEvent.start = props.event.start;
+      newEvent.end = props.event.end;
+
+      console.log("Before isNeverEnds calls: event:  ", event);
+      console.log("Before isNeverEnds calls: newEvent:  ", newEvent);
+      if (isNeverEnds) {
+        newEvent.recurrence = [event.recurrence];
+        event.recurrence = [newRecurrenceRule];
+      } else {
+        event.recurrence = [event.recurrence];
+        newEvent.recurrence = [newRecurrenceRule];
+      }
+
+      console.log("Before axios calls: event:  ", event);
+      console.log("Before axios calls: newEvent:  ", newEvent);
+
+      if (secondEventCount !== 0) {
+        console.log("Before createEvent/newEvent: ", newEvent);
+        publishTheCalenderEvent(newEvent)
+        //this.axiosCreateEvent(newEvent, this.state.currentUserId);
+      }
+    
+
+    if (firstEventCount === 0) {
+      console.log("Before deleteEvent/eventId: ", eventId);
+      this.axiosDeleteEvent(eventId, this.state.currentUserId);
+      deleteTheCalenderEvent(eventId)
+    } else {
+      console.log("Before updateEvent: ");
+      console.log("event: ", event);
+      console.log("eventId: ", eventId);
+      updateTheCalenderEvent(event)
+      //this.axiosUpdateEvent(event, eventId, this.state.currentUserId);
+    }
+        //instancesTheCalenderEvent(eventId);
         //updateSubmit(event);
-        updateTheCalenderEvent(event);
+        // updateTheCalenderEvent(event);
         setShowEditRecurringModal(!showEditRecurringModal);
         props.setStateValue((prevState) => {
           return {
             ...prevState,
-            showEditRecurringModal: !showEditRecurringModal,
+            showEditModal: !showEditModal,
           };
         });
-      } else if (editRecurringOption === 'This and following events') {
         
       } else if (editRecurringOption === 'All events') {
-        // deleteTheCalenderEvent(event.recurringEventId);
-        var event = {
-          id: props.event.recurringEventId,
-          summary,
-          description,
-          location,
-          creator: {
-            email: 'calendar@manifestmy.space',
-            self: true,
-          },
-          organizer: {
-            email: 'calendar@manifestmy.space',
-            self: true,
-          },
-          start: {
-            dateTime: moment(startTime),
-            timeZone: userTime_zone,
-          },
-          end: {
-            dateTime: moment(endTime),
-            timeZone: userTime_zone,
-          },
-          recurrence: repeatOption ? [recurrenceRule] : false,
-          attendees: fields,
-          reminders: {
-            useDefault: false,
-            overrides: [{ method: reminderMethod, minutes: reminderMinutes }],
-          },
-        };
-        //updateSubmit(event);
-        updateTheCalenderEvent(event);
-        setShowEditRecurringModal(!showEditRecurringModal);
-        props.setStateValue((prevState) => {
-          return {
-            ...prevState,
-            showEditRecurringModal: !showEditRecurringModal,
-          };
-        });
+
+        let eventId= props.event.recurringEventId
+
+         var event = {
+           id: eventId,
+           summary,
+           description,
+           location,
+           creator: {
+             email: 'calendar@manifestmy.space',
+             self: true,
+           },
+           organizer: {
+             email: 'calendar@manifestmy.space',
+             self: true,
+           },
+           start: {
+             dateTime: moment(startTime),
+             timeZone: userTime_zone,
+           },
+           end: {
+             dateTime: moment(endTime),
+             timeZone: userTime_zone,
+           },
+           recurrence: repeatOption ? [recurrenceRule] : false,
+           attendees: fields,
+           reminders: {
+             useDefault: false,
+             overrides: [{ method: reminderMethod, minutes: reminderMinutes }],
+           },
+         };
+
+         updateSubmit(event)
+        //  updateTheCalenderEvent(event);
+        //  setShowEditRecurringModal(!showEditRecurringModal);
+        //  props.setStateValue((prevState) => {
+        //    return {
+        //      ...prevState,
+        //      showEditModal: !showEditModal,
+        //    };
+        //  });
         
       }
     }
@@ -1177,7 +1429,7 @@ export default function EditEventModal(props) {
        props.setStateValue((prevState) => {
          return {
            ...prevState,
-           showEditRecurringModal: !showEditRecurringModal,
+           showEditModal: !showEditModal,
          };
        });
      };
@@ -1348,6 +1600,7 @@ export default function EditEventModal(props) {
                     <div>{showRepeatModal && repeatModal()}</div>
                   </Row>
                   <Row>{repeatOptionDropDown}</Row>
+                  <Row>{recurrenceRule}</Row>
                 </Col>
               </Row>
               <Row style={{ fontWeight: 'bold', fontSize: '20px' }}>

@@ -851,7 +851,8 @@ export default function GoogleEventComponent(props) {
   
     e.preventDefault();
     console.log(repeatOptionDropDown)
-    console.log(recurrenceRule);
+    let x = '2021-11-17T01:30:00-08:00';
+    console.log(moment(x).format('ddd MMM DD YYYY hh:mm:ss [GMT]ZZ(PST)'));
     editingEventContext.setEditingEvent({
       ...editingEventContext.editingEvent,
       editing: true,
