@@ -1402,14 +1402,14 @@ export default function EditEventModal(props) {
              dateTime: moment(endTime),
              timeZone: userTime_zone,
            },
-           recurrence: repeatOption ? [recurrenceRule] : false,
+           recurrence: repeatOption ? recurrenceRule : false,
            attendees: fields,
            reminders: {
              useDefault: false,
              overrides: [{ method: reminderMethod, minutes: reminderMinutes }],
            },
          };
-
+         console.log(event)
          updateSubmit(event)
         //  updateTheCalenderEvent(event);
         //  setShowEditRecurringModal(!showEditRecurringModal);
