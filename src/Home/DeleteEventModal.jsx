@@ -101,111 +101,123 @@ export default function DeleteEventModal(props) {
              console.log('before delete submit',event)
              deleteSubmit(eventId);
            } else {
-             let newEvent = {
-               reminders: event.reminders,
-               creator: event.creator,
-               created: event.created,
-               organizer: event.organizer,
-               sequence: event.sequence,
-               status: event.status,
-             };
-             console.log(event, recEvent)
-             let newRecurrenceRule = recurrenceRule;
-             let newUntilSubString = `${moment(
-               event.start.dateTime
-             ).format('YYYYMMDD')}`;
+                let newEvent = {
+                  reminders: event.reminders,
+                  creator: event.creator,
+                  created: event.created,
+                  organizer: event.organizer,
+                  sequence: event.sequence,
+                  status: event.status,                };
+                console.log(event, recEvent)
+                let newRecurrenceRule = recurrenceRule[0];
+                let newUntilSubString = `${moment( event.start.dateTime ).format('YYYYMMDD')}`;
+                console.log(newRecurrenceRule,newUntilSubString)
+                let countSubString = '';
+                let countIndex = recurrenceRule.indexOf('COUNT');
+                if (countIndex !== -1) {
+                  countSubString = recurrenceRule.substring(countIndex);
+                }
+                if (countSubString.includes(';')) {
+                  let endCountIndex = countSubString.indexOf(';');
+                  countSubString = countSubString.substring(6, endCountIndex);
+                  console.log(countSubString);
+                } else if (countSubString) {
+                  countSubString = countSubString.substring(6);
+                  console.log(countSubString);
+                }
 
-             let countSubString = '';
-             let countIndex = recurrenceRule.indexOf('COUNT');
-             if (countIndex !== -1) {
-               countSubString = recurrenceRule.substring(countIndex);
-             }
-             if (countSubString.includes(';')) {
-               let endCountIndex = countSubString.indexOf(';');
-               countSubString = countSubString.substring(6, endCountIndex);
-             } else if (countSubString) {
-               countSubString = countSubString.substring(6);
-             }
+                let intervalSubString = '';
+                let intervalIndex = recurrence.indexOf('INTERVAL');
+                console.log(intervalIndex);
+                if (intervalIndex !== -1) {
+                  intervalSubString = recurrence.substring(intervalIndex);
+                  console.log(intervalIndex);
+                }
+                if (intervalSubString.includes(';')) {
+                  let endIntervalIndex = intervalSubString.indexOf(';');
+                  intervalSubString = intervalSubString.substring(
+                    9,
+                    endIntervalIndex
+                  );
+                } else if (intervalSubString) {
+                  intervalSubString = intervalSubString.substring(9);
+                }
+                console.log(newRecurrenceRule[0].includes(';UNTIL') ? true : false)
+                if (newRecurrenceRule.includes('UNTIL')) {
+                  console.log('Includes UNTIL');
+                  let untilSubString = '';
+                  let untilIndex = recurrenceRule[0].indexOf('UNTIL');
+                  console.log('Includes UNTIL', untilIndex);
+                  if (untilIndex !== -1) {
+                    untilSubString =
+                      recurrenceRule[0].substring(untilIndex);
+                      console.log('Includes UNTIL', untilSubString);
+                  }
+                  if (untilSubString.includes(';')) {
+                    let endUntilIndex = untilSubString.indexOf(';');
+                    console.log('Includes UNTIL', endUntilIndex);
+                    untilSubString = untilSubString.substring(6, endUntilIndex);
+                    console.log('Includes UNTIL', untilSubString);
+                  } else if (untilSubString) {
+                    untilSubString = untilSubString = untilSubString.substring(6);
+                    console.log('Includes UNTIL', untilSubString);
+                  }
 
-             let intervalSubString = '';
-             let intervalIndex = recurrence.indexOf('INTERVAL');
-             if (intervalIndex !== -1) {
-               intervalSubString = recurrence.substring(intervalIndex);
-             }
-             if (intervalSubString.includes(';')) {
-               let endIntervalIndex = intervalSubString.indexOf(';');
-               intervalSubString = intervalSubString.substring(
-                 9,
-                 endIntervalIndex
-               );
-             } else if (intervalSubString) {
-               intervalSubString = intervalSubString.substring(9);
-             }
+                  console.log('substring',untilSubString, newUntilSubString);
 
-             if (newRecurrenceRule.includes('UNTIL')) {
-               let untilSubString = '';
-               let untilIndex = recurrenceRule.indexOf('UNTIL');
-               if (untilIndex !== -1) {
-                 untilSubString =
-                   recurrenceRule.substring(untilIndex);
-               }
-               if (untilSubString.includes(';')) {
-                 let endUntilIndex = untilSubString.indexOf(';');
-                 untilSubString = untilSubString.substring(6, endUntilIndex);
-               } else if (untilSubString) {
-                 untilSubString = untilSubString = untilSubString.substring(6);
-               }
+                  newRecurrenceRule = newRecurrenceRule.replace(
+                    untilSubString,
+                    newUntilSubString
+                  );
+                  console.log(newRecurrenceRule)
+                } else if (newRecurrenceRule.includes('COUNT')) {
+                  let start = moment(res.data[0].start.dateTime);
+                  let end = moment(event.end.dateTime);
 
-               console.log(untilSubString, newUntilSubString, 'untilSubString');
+                  let arr = res.data.filter((e, i) => {
+                    return moment(e.start.dateTime).isBefore(end);
+                  });
+                  console.log(start,end)
+                  // let diff =
+                  //   moment.duration(end.diff(start)).asDays() /
+                  //   parseInt(intervalSubString);
+                  // console.log(diff, intervalSubString, "diff");
+                  newRecurrenceRule = newRecurrenceRule.replace(
+                    countSubString,
+                    arr.length
+                  );
+                } else {
+                  newRecurrenceRule = newRecurrenceRule.concat(
+                    `;UNTIL=${newUntilSubString}`
+                  );
+                }
+                newEvent.start = res.data[0].start;
+                newEvent.end = res.data[0].end;
+                newEvent.recurrence = [newRecurrenceRule];
+                newEvent.summary = res.data[0].summary;
+                newEvent.id = res.data[0].recurringEventId;
+                newEvent.attendees = res.data[0].attendees;
+                  // newEvent.start = {
+                  //             "dateTime": "2011-11-15T09:00:00.000-07:00",
+                  //             "timeZone": "America/Los_Angeles"
+                  //                     };
+                  // newEvent.end = {
+                  //           "dateTime": "2011-11-15T09:30:00.000-07:00",
+                  //           "timeZone": "America/Los_Angeles"
+                  //         };
+                  // newEvent.recurrence = [
+                  //   'RRULE:FREQ=DAILY;UNTIL=20211117T092959Z;INTERVAL=1',
+                  // ];
+                  // newEvent.summary = 'Test Event';
 
-               newRecurrenceRule = newRecurrenceRule.replace(
-                 untilSubString,
-                 newUntilSubString
-               );
-             } else if (newRecurrenceRule.includes('COUNT')) {
-               let start = moment(res.data[0].start.dateTime);
-               let end = moment(event.end.dateTime);
-
-               let arr = res.data.filter((e, i) => {
-                 return moment(e.start.dateTime).isBefore(end);
-               });
-               console.log(start,end)
-               // let diff =
-               //   moment.duration(end.diff(start)).asDays() /
-               //   parseInt(intervalSubString);
-               // console.log(diff, intervalSubString, "diff");
-               newRecurrenceRule = newRecurrenceRule.replace(
-                 countSubString,
-                 arr.length
-               );
-             } else {
-               newRecurrenceRule = newRecurrenceRule.concat(
-                 `;UNTIL=${newUntilSubString}`
-               );
-             }
-            //  newEvent.start = res.data[0].start;
-            //  newEvent.end = res.data[0].end;
-            //  newEvent.recurrence = [
-            //    'RRULE:FREQ=DAILY;UNTIL=20211117T065959Z;INTERVAL=1',
-            //  ];
-            //  newEvent.summary = res.data[0].summary;
-            //  newEvent.id = res.data[0].recurringEventId;
-            newEvent.start = {
-                        "dateTime": "2011-11-15T09:00:00.000-07:00",
-                        "timeZone": "America/Los_Angeles"
-                                };
-            newEvent.end = {
-                      "dateTime": "2011-11-15T09:30:00.000-07:00",
-                      "timeZone": "America/Los_Angeles"
-                    };
-            newEvent.recurrence = [
-              'RRULE:FREQ=DAILY;UNTIL=20211117T092959Z;INTERVAL=1',
-            ];
-            newEvent.summary = 'Test Event';
-            newEvent.id = res.data[0].recurringEventId;
-             console.log(newEvent)
-             updateTheCalenderEvent(newEvent)
-             
+                console.log(newEvent);
+                updateTheCalenderEvent(newEvent)
+                props.setStateValue((prevState) => {
+                  return {
+                    ...prevState,
+                    showDeleteRecurringModal: !showDeleteRecurringModal,
+                  };
+                });
            }
          })
          .catch((error) => {
