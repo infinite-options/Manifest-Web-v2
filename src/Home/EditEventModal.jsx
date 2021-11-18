@@ -1211,228 +1211,442 @@ export default function EditEventModal(props) {
         //   };
         // });
       } else if (editRecurringOption === 'This and following events') {
-        let url = BASE_URL + 'googleRecurringInstances/';
-        let id = userID;
-        let eventId = props.event.recurringEventId;
-        //let eventId = '';
-        var firstEventCount = -1;
-        var secondEventCount = -1;
-        var clickedEventIndex = 0;
-        var parentEvent = {};
-        var isNeverEnds = false;
-        console.log(event)
-         axios
+        var date1 = new Date(startTime).toISOString();
+        var date2 = new Date().toISOString;
+        if (moment(startTime).format('LT') < moment().format('LT')) {
+          let url = BASE_URL + 'googleRecurringInstances/';
+          let id = userID;
+          let eventId = props.event.recurringEventId;
+          //let eventId = '';
+          var firstEventCount = -1;
+          var secondEventCount = -1;
+          var clickedEventIndex = 0;
+          var parentEvent = {};
+          var isNeverEnds = false;
+          console.log(event);
+          axios
             .post(url + id.toString() + ',' + eventId.toString())
             .then((res) => {
-                console.log('/googleRecurringInstances: ', res.data);
-                parentEvent = res.data[0];
+              console.log('/googleRecurringInstances: ', res.data);
+              parentEvent = res.data[0];
 
-                //event.summary = parentEvent.summary;
-                //event.id = parentEvent.recurringEventId;
-                console.log(parentEvent)
-                console.log(parentEvent.start.dateTime, parentEvent.end.dateTime);
-                clickedEventIndex= '';
-                for (let i = 0; i < res.data.length; i++) {
-                    if (res.data[i].id === props.event.id) {
-                    clickedEventIndex = i;
-                    break;
-                    }
+              //event.summary = parentEvent.summary;
+              //event.id = parentEvent.recurringEventId;
+              console.log(parentEvent);
+              console.log(parentEvent.start.dateTime, parentEvent.end.dateTime);
+              clickedEventIndex = '';
+              for (let i = 0; i < res.data.length; i++) {
+                if (res.data[i].id === props.event.id) {
+                  clickedEventIndex = i;
+                  break;
                 }
-                let newISOStartTime = new Date(
-                  parentEvent.start.dateTime
-                ).toISOString();
+              }
+              let newISOStartTime = new Date(
+                parentEvent.start.dateTime
+              ).toISOString();
 
-                console.log(newISOStartTime);
+              console.log(newISOStartTime);
 
-                let newISOEndTime = new Date(
-                  parentEvent.end.dateTime
-                ).toISOString();
-                console.log(newISOEndTime);
-                var event = {
-                  id: eventId,
-                  summary: parentEvent.summary,
-                  description,
-                  location,
-                  creator: {
-                    email: 'calendar@manifestmy.space',
-                    self: true,
-                  },
-                  organizer: {
-                    email: 'calendar@manifestmy.space',
-                    self: true,
-                  },
-                  start: {
-                    dateTime: newISOStartTime,
-                    timeZone: userTime_zone,
-                  },
-                  end: {
-                    dateTime: newISOEndTime,
-                    timeZone: userTime_zone,
-                  },
-                  recurrence: repeatOption ? recurrenceRule : false,
-                  attendees: fields,
-                  reminders: {
-                    useDefault: false,
-                    overrides: [
-                      { method: reminderMethod, minutes: reminderMinutes },
-                    ],
-                  },
-                };
-                console.log(event, parentEvent);
-                let firstEventCount = clickedEventIndex;
-                let secondEventCount = res.data.length - clickedEventIndex;
-                console.log('firstEventCount: ', firstEventCount);
-                console.log('secondEventCount: ', secondEventCount);
+              let newISOEndTime = new Date(
+                parentEvent.end.dateTime
+              ).toISOString();
+              console.log(newISOEndTime);
+              var event = {
+                id: eventId,
+                summary: parentEvent.summary,
+                description,
+                location,
+                creator: {
+                  email: 'calendar@manifestmy.space',
+                  self: true,
+                },
+                organizer: {
+                  email: 'calendar@manifestmy.space',
+                  self: true,
+                },
+                start: {
+                  dateTime: newISOStartTime,
+                  timeZone: userTime_zone,
+                },
+                end: {
+                  dateTime: newISOEndTime,
+                  timeZone: userTime_zone,
+                },
+                recurrence: repeatOption ? recurrenceRule : false,
+                attendees: fields,
+                reminders: {
+                  useDefault: false,
+                  overrides: [
+                    { method: reminderMethod, minutes: reminderMinutes },
+                  ],
+                },
+              };
+              console.log(event, parentEvent);
+              let firstEventCount = clickedEventIndex;
+              let secondEventCount = res.data.length - clickedEventIndex;
+              console.log('firstEventCount: ', firstEventCount);
+              console.log('secondEventCount: ', secondEventCount);
 
-                console.log(event, parentEvent);
-                setRecEvent(event)
-            })
-            console.log(recEvent,event)
-            let newEvent = {
-              attendees: event.attendees,
-              reminders: event.reminders,
-              creator: event.creator,
-              created: event.created,
-              organizer: event.organizer,
-              sequence: event.sequence,
-              status: event.status,
-            };
+              console.log(event, parentEvent);
+              setRecEvent(event);
+            });
+          console.log(recEvent, event);
+          let newEvent = {
+            attendees: event.attendees,
+            reminders: event.reminders,
+            creator: event.creator,
+            created: event.created,
+            organizer: event.organizer,
+            sequence: event.sequence,
+            status: event.status,
+          };
 
-            //generate new recurrence rule
-            let newRecurrenceRule = recurrenceRule;
-            console.log("newRecurrenceRule", newRecurrenceRule);
+          //generate new recurrence rule
+          let newRecurrenceRule = recurrenceRule;
+          console.log('newRecurrenceRule', newRecurrenceRule);
 
-            let currentDateString = `${moment(event.start.dateTime).format(
-              "YYYYMMDD"
-            )}`;
-            console.log("currentDateString", currentDateString);
+          let currentDateString = `${moment(event.start.dateTime).format(
+            'YYYYMMDD'
+          )}`;
+          console.log('currentDateString', currentDateString);
 
-            //find countSubString if the recurrece rule is COUNT
-            let countSubString = "";
-            let countIndex = recurrenceRule[0].indexOf("COUNT");
-            if (countIndex !== -1) {
-              countSubString = recurrenceRule[0].substring(countIndex);
-              // console.log("countSubString 1:", countSubString);
+          //find countSubString if the recurrece rule is COUNT
+          let countSubString = '';
+          let countIndex = recurrenceRule[0].indexOf('COUNT');
+          if (countIndex !== -1) {
+            countSubString = recurrenceRule[0].substring(countIndex);
+            // console.log("countSubString 1:", countSubString);
+          }
+          if (countSubString.includes(';')) {
+            let endCountIndex = countSubString.indexOf(';');
+            countSubString = countSubString.substring(6, endCountIndex);
+            // console.log("countSubString 2:", countSubString);
+          } else if (countSubString) {
+            countSubString = countSubString.substring(6);
+            // console.log("countSubString 3", countSubString);
+          }
+
+          // //find untilSubString if the recurrece rule is UNTIL
+          if (newRecurrenceRule.includes('UNTIL')) {
+            let untilSubString = '';
+            let untilIndex = newRecurrenceRule.indexOf('UNTIL');
+            console.log('untilIndex 3', untilIndex);
+            if (untilIndex !== -1) {
+              untilSubString = newRecurrenceRule.substring(untilIndex);
+              console.log('untilSubString if -1', untilSubString);
             }
-            if (countSubString.includes(";")) {
-              let endCountIndex = countSubString.indexOf(";");
-              countSubString = countSubString.substring(6, endCountIndex);
-              // console.log("countSubString 2:", countSubString);
-            } else if (countSubString) {
-              countSubString = countSubString.substring(6);
-              // console.log("countSubString 3", countSubString);
+            if (untilSubString.includes(';')) {
+              let endUntilIndex = untilSubString.indexOf(';');
+              console.log('endUntilIndex if;', endUntilIndex);
+              untilSubString = untilSubString.substring(6, endUntilIndex);
+              console.log('untilSubString if;', untilSubString);
+            } else if (untilSubString) {
+              untilSubString = untilSubString.substring(6);
+              console.log('untilSubString else if', untilSubString);
             }
+            console.log(
+              'UNTIL, newRecyrrenceRule: ',
+              newRecurrenceRule,
+              untilSubString,
+              recEvent.recurrence
+            );
+            // replace by the new calculated currentDateString
+            recEvent.recurrence = newRecurrenceRule.replace(
+              untilSubString,
+              currentDateString
+            );
+            console.log('recEvent.recurrence: ', recEvent.recurrence);
+            console.log('currentDateString: ', currentDateString);
+            console.log('newRecurrenceRule: ', newRecurrenceRule);
+          } else if (newRecurrenceRule.includes('COUNT')) {
+            recEvent.recurrence = newRecurrenceRule.replace(
+              `COUNT=${countSubString}`,
+              `COUNT=${firstEventCount}`
+            );
+            newRecurrenceRule = newRecurrenceRule.replace(
+              `COUNT=${countSubString}`,
+              `COUNT=${secondEventCount}`
+            );
 
-            // //find untilSubString if the recurrece rule is UNTIL
-            if (newRecurrenceRule.includes("UNTIL")) {
-                let untilSubString = "";
-                let untilIndex = newRecurrenceRule.indexOf("UNTIL");
-                console.log('untilIndex 3', untilIndex);
-                if (untilIndex !== -1) {
-                  untilSubString = newRecurrenceRule.substring(untilIndex);
-                  console.log('untilSubString if -1', untilSubString);
-                }
-                if (untilSubString.includes(";")) {
-                  let endUntilIndex = untilSubString.indexOf(";");
-                  console.log('endUntilIndex if;', endUntilIndex);
-                  untilSubString = untilSubString.substring(6, endUntilIndex);
-                  console.log('untilSubString if;', untilSubString);
-                } else if (untilSubString) {
-                  untilSubString = untilSubString.substring(6);
-                  console.log('untilSubString else if', untilSubString);
-                }
-                console.log(
-                  'UNTIL, newRecyrrenceRule: ',
-                  newRecurrenceRule,
-                  untilSubString,
-                  recEvent.recurrence
-                );
-                // replace by the new calculated currentDateString
-                recEvent.recurrence = newRecurrenceRule.replace(
-                  untilSubString,
-                  currentDateString
-                );
-                console.log('recEvent.recurrence: ', recEvent.recurrence);
-                console.log("currentDateString: ", currentDateString);
-                console.log("newRecurrenceRule: ", newRecurrenceRule);
-            } else if (newRecurrenceRule.includes("COUNT")) {
-              recEvent.recurrence = newRecurrenceRule.replace(
-                `COUNT=${countSubString}`,
-                `COUNT=${firstEventCount}`
-              );
-              newRecurrenceRule = newRecurrenceRule.replace(
-                `COUNT=${countSubString}`,
-                `COUNT=${secondEventCount}`
-              );
+            console.log('event.recurrence changed', recEvent.recurrence);
+          } else {
+            
+            newRecurrenceRule = newRecurrenceRule.concat(
+              `;UNTIL=${currentDateString}`
+            );
 
-              console.log("event.recurrence changed", recEvent.recurrence);
-            } else {
-              // recurrence rule === never ends
-               newRecurrenceRule = newRecurrenceRule.concat(
-                 `;UNTIL=${currentDateString}`
-               );
-              
-                console.log("entered the useless else statement");
-                console.log("newRecurrenceRule: ", newRecurrenceRule);
-                isNeverEnds = true;
-            }
+            console.log('entered the useless else statement');
+            console.log('newRecurrenceRule: ', newRecurrenceRule);
+            isNeverEnds = true;
+          }
 
-            newEvent.summary = event.summary;
-            newEvent.start= {
-                    dateTime: moment(startTime).format(),
-                    timeZone: userTime_zone,
-                  };
-            newEvent.end={
-              dateTime: moment(endTime).format(),
-              timeZone: userTime_zone,
-            };
-            //newEvent.id = event.recurringEventId
-            newEvent.description = event.description;
-            console.log("Before isNeverEnds calls: event:  ", recEvent);
-            console.log("Before isNeverEnds calls: newEvent:  ", newEvent);
-            if (isNeverEnds) {
-              console.log('in never ends')
-              newEvent.recurrence = recurrence[0];
-              recEvent.recurrence = newRecurrenceRule;
-            } else {
-              console.log('in never ends else');
-              recEvent.recurrence = [
-                'RRULE:FREQ=DAILY;INTERVAL=1;UNTIL=20211117T065959Z',
-              ];
-              newEvent.recurrence = [newRecurrenceRule];
-            }
-            //event.start = 
-            console.log('Before axios calls: event:  ', recEvent);
-            console.log("Before axios calls: newEvent:  ", newEvent);
-
-            if (secondEventCount !== 0) {
-              console.log("Before createEvent/newEvent: ", newEvent);
-              publishTheCalenderEvent(newEvent)
-              //this.axiosCreateEvent(newEvent, this.state.currentUserId);
-            }
+          newEvent.summary = event.summary;
+          newEvent.start = {
+            dateTime: moment(startTime).format(),
+            timeZone: userTime_zone,
+          };
+          newEvent.end = {
+            dateTime: moment(endTime).format(),
+            timeZone: userTime_zone,
+          };
+          console.log(moment(startTime).format('LT'), moment().format('LT'));
           
+          newEvent.description = event.description;
+          console.log('Before isNeverEnds calls: event:  ', recEvent);
+          console.log('Before isNeverEnds calls: newEvent:  ', newEvent);
+          if (isNeverEnds) {
+            console.log('in never ends');
+            newEvent.recurrence = recurrence[0];
+            recEvent.recurrence = newRecurrenceRule;
+          } else {
+            console.log('in never ends else');
+            recEvent.recurrence = [
+              'RRULE:FREQ=DAILY;INTERVAL=1;UNTIL=20211117T065959Z',
+            ];
+            newEvent.recurrence = [newRecurrenceRule];
+          }
+          console.log('Before axios calls: event:  ', recEvent);
+          console.log('Before axios calls: newEvent:  ', newEvent);
+
+          if (secondEventCount !== 0) {
+            console.log('Before createEvent/newEvent: ', newEvent);
+            publishTheCalenderEvent(newEvent)
+          }
 
           if (firstEventCount === 0) {
-            console.log("Before deleteEvent/eventId: ", eventId);
-            //this.axiosDeleteEvent(eventId, this.state.currentUserId);
+            console.log('Before deleteEvent/eventId: ', eventId);
             deleteTheCalenderEvent(eventId)
           } else {
-            console.log("Before updateEvent: ");
+            console.log('Before updateEvent: ');
             console.log('event: ', recEvent);
-            console.log("eventId: ", eventId);
+            console.log('eventId: ', eventId);
             updateTheCalenderEvent(recEvent);
-            //this.axiosUpdateEvent(event, eventId, this.state.currentUserId);
           }
-              //instancesTheCalenderEvent(eventId);
-              //updateSubmit(event);
-              // updateTheCalenderEvent(event);
-            setShowEditRecurringModal(!showEditRecurringModal);
-            props.setStateValue((prevState) => {
-              return {
-                ...prevState,
-                showEditModal: !showEditModal,
+          setShowEditRecurringModal(!showEditRecurringModal);
+          props.setStateValue((prevState) => {
+            return {
+              ...prevState,
+              showEditModal: !showEditModal,
+            };
+          });
+        } else {
+          let url = BASE_URL + 'googleRecurringInstances/';
+          let id = userID;
+          let eventId = props.event.recurringEventId;
+          //let eventId = '';
+          var firstEventCount = -1;
+          var secondEventCount = -1;
+          var clickedEventIndex = 0;
+          var parentEvent = {};
+          var isNeverEnds = false;
+          console.log(event);
+          axios
+            .post(url + id.toString() + ',' + eventId.toString())
+            .then((res) => {
+              console.log('/googleRecurringInstances: ', res.data);
+              parentEvent = res.data[0];
+
+              
+              console.log(parentEvent);
+              console.log(parentEvent.start.dateTime, parentEvent.end.dateTime);
+              clickedEventIndex = '';
+              for (let i = 0; i < res.data.length; i++) {
+                if (res.data[i].id === props.event.id) {
+                  clickedEventIndex = i;
+                  break;
+                }
+              }
+              let newISOStartTime = new Date(
+                parentEvent.start.dateTime
+              ).toISOString();
+
+              console.log(newISOStartTime);
+
+              let newISOEndTime = new Date(
+                parentEvent.end.dateTime
+              ).toISOString();
+              console.log(newISOEndTime);
+              var event = {
+                id: eventId,
+                summary: parentEvent.summary,
+                description,
+                location,
+                creator: {
+                  email: 'calendar@manifestmy.space',
+                  self: true,
+                },
+                organizer: {
+                  email: 'calendar@manifestmy.space',
+                  self: true,
+                },
+                start: {
+                  dateTime: newISOStartTime,
+                  timeZone: userTime_zone,
+                },
+                end: {
+                  dateTime: newISOEndTime,
+                  timeZone: userTime_zone,
+                },
+                recurrence: repeatOption ? recurrenceRule : false,
+                attendees: fields,
+                reminders: {
+                  useDefault: false,
+                  overrides: [
+                    { method: reminderMethod, minutes: reminderMinutes },
+                  ],
+                },
               };
+              console.log(event, parentEvent);
+              let firstEventCount = clickedEventIndex;
+              let secondEventCount = res.data.length - clickedEventIndex;
+              console.log('firstEventCount: ', firstEventCount);
+              console.log('secondEventCount: ', secondEventCount);
+
+              console.log(event, parentEvent);
+              setRecEvent(event);
             });
+          console.log(recEvent, event);
+          let newEvent = {
+            attendees: event.attendees,
+            reminders: event.reminders,
+            creator: event.creator,
+            created: event.created,
+            organizer: event.organizer,
+            sequence: event.sequence,
+            status: event.status,
+          };
+
+          //generate new recurrence rule
+          let newRecurrenceRule = recurrenceRule;
+          console.log('newRecurrenceRule', newRecurrenceRule);
+
+          let currentDateString = `${moment(event.start.dateTime).format(
+            'YYYYMMDD'
+          )}`;
+          console.log('currentDateString', currentDateString);
+
+          //find countSubString if the recurrece rule is COUNT
+          let countSubString = '';
+          let countIndex = recurrenceRule[0].indexOf('COUNT');
+          if (countIndex !== -1) {
+            countSubString = recurrenceRule[0].substring(countIndex);
+            // console.log("countSubString 1:", countSubString);
+          }
+          if (countSubString.includes(';')) {
+            let endCountIndex = countSubString.indexOf(';');
+            countSubString = countSubString.substring(6, endCountIndex);
+            // console.log("countSubString 2:", countSubString);
+          } else if (countSubString) {
+            countSubString = countSubString.substring(6);
+            // console.log("countSubString 3", countSubString);
+          }
+
+          // //find untilSubString if the recurrece rule is UNTIL
+          if (newRecurrenceRule.includes('UNTIL')) {
+            let untilSubString = '';
+            let untilIndex = newRecurrenceRule.indexOf('UNTIL');
+            console.log('untilIndex 3', untilIndex);
+            if (untilIndex !== -1) {
+              untilSubString = newRecurrenceRule.substring(untilIndex);
+              console.log('untilSubString if -1', untilSubString);
+            }
+            if (untilSubString.includes(';')) {
+              let endUntilIndex = untilSubString.indexOf(';');
+              console.log('endUntilIndex if;', endUntilIndex);
+              untilSubString = untilSubString.substring(6, endUntilIndex);
+              console.log('untilSubString if;', untilSubString);
+            } else if (untilSubString) {
+              untilSubString = untilSubString.substring(6);
+              console.log('untilSubString else if', untilSubString);
+            }
+            console.log(
+              'UNTIL, newRecyrrenceRule: ',
+              newRecurrenceRule,
+              untilSubString,
+              recEvent.recurrence
+            );
+            // replace by the new calculated currentDateString
+            recEvent.recurrence = newRecurrenceRule.replace(
+              untilSubString,
+              currentDateString
+            );
+            console.log('recEvent.recurrence: ', recEvent.recurrence);
+            console.log('currentDateString: ', currentDateString);
+            console.log('newRecurrenceRule: ', newRecurrenceRule);
+          } else if (newRecurrenceRule.includes('COUNT')) {
+            recEvent.recurrence = newRecurrenceRule.replace(
+              `COUNT=${countSubString}`,
+              `COUNT=${firstEventCount}`
+            );
+            newRecurrenceRule = newRecurrenceRule.replace(
+              `COUNT=${countSubString}`,
+              `COUNT=${secondEventCount}`
+            );
+
+            console.log('event.recurrence changed', recEvent.recurrence);
+          } else {
+            
+            newRecurrenceRule = newRecurrenceRule.concat(
+              `;UNTIL=${currentDateString}`
+            );
+
+            console.log('entered the useless else statement');
+            console.log('newRecurrenceRule: ', newRecurrenceRule);
+            isNeverEnds = true;
+          }
+
+          newEvent.summary = event.summary;
+          newEvent.start = {
+            dateTime: moment(startTime).add(1, 'days').format(),
+            timeZone: userTime_zone,
+          };
+          newEvent.end = {
+            dateTime: moment(endTime).add(1, 'days').format(),
+            timeZone: userTime_zone,
+          };
+          console.log(moment(startTime).format('LT'), moment().format('LT'));
+          
+          newEvent.description = event.description;
+          console.log('Before isNeverEnds calls: event:  ', recEvent);
+          console.log('Before isNeverEnds calls: newEvent:  ', newEvent);
+          if (isNeverEnds) {
+            console.log('in never ends');
+            newEvent.recurrence = recurrence[0];
+            recEvent.recurrence = newRecurrenceRule;
+          } else {
+            console.log('in never ends else');
+            recEvent.recurrence = [
+              'RRULE:FREQ=DAILY;INTERVAL=1;UNTIL=20211117T065959Z',
+            ];
+            newEvent.recurrence = [newRecurrenceRule];
+          }
+          console.log('Before axios calls: event:  ', recEvent);
+          console.log('Before axios calls: newEvent:  ', newEvent);
+
+          if (secondEventCount !== 0) {
+            console.log('Before createEvent/newEvent: ', newEvent);
+            publishTheCalenderEvent(newEvent)
+          }
+
+          if (firstEventCount === 0) {
+            console.log('Before deleteEvent/eventId: ', eventId);
+            deleteTheCalenderEvent(eventId)
+          } else {
+            console.log('Before updateEvent: ');
+            console.log('event: ', recEvent);
+            console.log('eventId: ', eventId);
+            updateTheCalenderEvent(recEvent);
+          }
+          
+          setShowEditRecurringModal(!showEditRecurringModal);
+          props.setStateValue((prevState) => {
+            return {
+              ...prevState,
+              showEditModal: !showEditModal,
+            };
+          });
+        }
+        
         
       } else if (editRecurringOption === 'All events') {
 
