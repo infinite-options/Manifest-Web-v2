@@ -113,9 +113,9 @@ export default function DeleteEventModal(props) {
                 let newUntilSubString = `${moment( event.start.dateTime ).format('YYYYMMDD')}`;
                 console.log(newRecurrenceRule,newUntilSubString)
                 let countSubString = '';
-                let countIndex = recurrenceRule.indexOf('COUNT');
+                let countIndex = recurrenceRule[0].indexOf('COUNT');
                 if (countIndex !== -1) {
-                  countSubString = recurrenceRule.substring(countIndex);
+                  countSubString = recurrenceRule[0].substring(countIndex);
                 }
                 if (countSubString.includes(';')) {
                   let endCountIndex = countSubString.indexOf(';');
@@ -127,10 +127,10 @@ export default function DeleteEventModal(props) {
                 }
 
                 let intervalSubString = '';
-                let intervalIndex = recurrence.indexOf('INTERVAL');
+                let intervalIndex = recurrenceRule[0].indexOf('INTERVAL');
                 console.log(intervalIndex);
                 if (intervalIndex !== -1) {
-                  intervalSubString = recurrence.substring(intervalIndex);
+                  intervalSubString = recurrenceRule[0].substring(intervalIndex);
                   console.log(intervalIndex);
                 }
                 if (intervalSubString.includes(';')) {
@@ -159,7 +159,7 @@ export default function DeleteEventModal(props) {
                     untilSubString = untilSubString.substring(6, endUntilIndex);
                     console.log('Includes UNTIL', untilSubString);
                   } else if (untilSubString) {
-                    untilSubString = untilSubString = untilSubString.substring(6);
+                    untilSubString = untilSubString.substring(6);
                     console.log('Includes UNTIL', untilSubString);
                   }
 
