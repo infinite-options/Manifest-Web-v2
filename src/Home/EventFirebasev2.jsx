@@ -196,41 +196,42 @@ export default function EventFirebasev2(props) {
         console.log('recurring', filteredRecEvents);
         console.log('recurring', filteredNonRecEvents);
         console.log('recurring', filteredEvents);
-        // filteredEvents.sort((a, b) => {
-        //   // console.log('a = ', a, '\nb = ', b);
-        //   const [a_start, b_start] = [
-        //     a['start']['dateTime'],
-        //     b['start']['dateTime'],
-        //   ];
-        //   console.log('a_start = ', a_start, '\nb_start = ', b_start);
-        //   const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
+        filteredEvents.sort((a, b) => {
+          // console.log('a = ', a, '\nb = ', b);
+          const [a_start, b_start] = [
+            a['start']['dateTime'],
+            b['start']['dateTime'],
+          ];
+          console.log('a_start = ', a_start, '\nb_start = ', b_start);
+          const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
+          console.log('a_end = ', a_end, '\nb_end = ', b_end);
+          const [a_start_time, b_start_time] = getTimes(
+            a['start']['dateTime'],
+            b['start']['dateTime']
+          );
+          const [a_end_time, b_end_time] = getTimes(
+            a['end']['dateTime'],
+            b['end']['dateTime']
+          );
+          console.log('a_start_time = ', a_start_time, '\nb_start_time = ', b_start_time); 
+          console.log('a_end_time = ', a_end_time, '\nb_end_time = ', b_end_time); 
+          if (a_start_time < b_start_time) return -1;
+          else if (a_start_time > b_start_time) return 1;
+          else {
+            if (a_end_time < b_end_time) return -1;
+            else if (a_end_time > b_end_time) return 1;
+            else {
+              if (a_start < b_start) return -1;
+              else if (a_start > b_start) return 1;
+              else {
+                if (a_end < b_end) return -1;
+                else if (a_end > b_end) return 1;
+              }
+            }
+          }
 
-        //   const [a_start_time, b_start_time] = getTimes(
-        //     a['start']['dateTime'],
-        //     b['start']['dateTime']
-        //   );
-        //   const [a_end_time, b_end_time] = getTimes(
-        //     a['end']['dateTime'],
-        //     b['end']['dateTime']
-        //   );
-
-        //   if (a_start_time < b_start_time) return -1;
-        //   else if (a_start_time > b_start_time) return 1;
-        //   else {
-        //     if (a_end_time < b_end_time) return -1;
-        //     else if (a_end_time > b_end_time) return 1;
-        //     else {
-        //       if (a_start < b_start) return -1;
-        //       else if (a_start > b_start) return 1;
-        //       else {
-        //         if (a_end < b_end) return -1;
-        //         else if (a_end > b_end) return 1;
-        //       }
-        //     }
-        //   }
-
-        //   return 0;
-        // });
+          return 0;
+        });
       console.log('recurring', filteredEvents);
       //setActions(temp);
       setActions(filteredEvents);
@@ -267,27 +268,30 @@ export default function EventFirebasev2(props) {
             return (
               <ListGroup.Item
                 key={r.id}
-                style={{ backgroundColor: '#BBC7D7', marginTop: '1px' }}
+                style={{ backgroundColor: '#d1dceb', marginTop: '1px' }}
                 onClick={() => {
                   //  props.sethighLight(r["summary"])
                   console.log('ListGroup', r['summary']);
                 }}
               >
                 <div
-                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                  style={{ display: 'flex', justifyContent: 'space-evenly' }}
                 >
                   <div
                     flex="1"
                     style={{
                       marginLeft: '1rem',
+                      marginTop: '0.5rem',
                       height: '4.5rem',
                       borderRadius: '10px',
-                      width: '65%',
+                      width: '60%',
                       display: 'flex',
                       justifyContent: 'space-between',
-                      backgroundColor: '#67ABFC',
+
                       boxShadow:
-                        '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.09)',
+                        '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)',
+
+                      backgroundColor: '#67ABFC',
                       zIndex: '50%',
                     }}
                   >
@@ -308,7 +312,6 @@ export default function EventFirebasev2(props) {
                               color: '#ffffff',
                             }}
                           >
-                            
                             {moment(r.start.dateTime).format('MMM DD, hh:mm')}-
                             {moment(r.end.dateTime).format('MMM DD, hh:mm')}
                           </div>
@@ -386,7 +389,9 @@ export default function EventFirebasev2(props) {
                           icon={faEdit}
                           onClick={(e) => {
                             openEditModal(r);
-                            {console.log(r)}
+                            {
+                              console.log(r);
+                            }
                           }}
                         />
                       </div>
@@ -599,7 +604,7 @@ export default function EventFirebasev2(props) {
                   } else if (r.is_persistent == 'False') {
                     return '#376DAC';
                   } else {
-                    return '#67ABFC';
+                    return '#3a92fb';
                   }
                 })(),
                 // backgroundColor:
