@@ -69,8 +69,7 @@ export default function EventFirebasev2(props) {
   //   }
 
   const [listOfBlocks, setlistOfBlocks] = useState([]);
-  const [rec,setRec] = useState(false);
-  const [recList, setRecList] = useState([])
+  const [recList, setRecList] = useState({})
   const [historyGot, setHG] = useState([]);
   const [getActions, setActions] = useState([]);
   const [getRecEvents, setRecEvents] = useState([])
@@ -86,7 +85,9 @@ export default function EventFirebasev2(props) {
     // props.setGetActionsEndPoint({});
     // props.setGetStepsEndPoint({});
     props.setEvents({});
-  }, [props.theCurrentUserID, props.stateValue.dateContext, props.editEvent]);
+    setActions([])
+    setRecList({});
+  }, [props.theCurrentUserID, props.stateValue.dateContext, props.editEvent, ]);
 
   useEffect(() => {
     makeActionDisplays();
@@ -94,6 +95,8 @@ export default function EventFirebasev2(props) {
   }, [
     props.events,
     props.theCurrentUserID,
+    getActions,
+    recList
   ]);
 
   const getTimes = (a_day_time, b_day_time) => {
@@ -252,23 +255,67 @@ export default function EventFirebasev2(props) {
         getActions.map((item) => [item.id, item])
       ).values(),
     ];
+    
     console.log('unique obj', uniqueObjects, getActions);
     for (var i = 0; i < uniqueObjects.length; i++) {
       tempRows.push(displayRoutines(getActions[i]));
       console.log('p.ggep[i] = ', getActions[i].id);
-      
+      console.log('p.ggep[i] = ', recList[getActions[i].recurringEventId]);
+      console.log('p.ggep[i] = ', recList);
+      if (recList[getActions[i].recurringEventId]) {
+        
+        for ( var j = 0;
+          j < recList[getActions[i].recurringEventId].length;
+          j++
+        ) {
+          console.log('in if1 ggep', recList[getActions[i].recurringEventId].length);
+          if (
+            getActions[i].recurringEventId ===
+            recList[getActions[i].recurringEventId][j].recurringEventId
+          ) {
+             console.log(
+               'in if2 ggep',
+               recList[getActions[i].recurringEventId][j].recurringEventId
+             );
+            if (
+              tempID.includes(
+                recList[
+                  getActions[i].recurringEventId
+                ][j].id
+              ) === false
+            ) {
+              
+               console.log(
+                 'in if3 ggep', tempID,
+                 recList[getActions[i].recurringEventId][j].id
+               );
+              tempRows.push(
+                displayActions(
+                  recList[
+                    getActions[i].recurringEventId
+                  ][j],
+                  getActions[i]
+                )
+              );
+              tempID.push(
+                recList[
+                  getActions[i].recurringEventId
+                ][j].id
+              );
+              console.log('only ggep', tempID);
+            }
+          }
+        }
+      }
     }
     console.log('tempRows', tempRows, tempID);
     setlistOfBlocks(tempRows);
   }
-  const displayActions = (instance) => {
-    console.log('displayActions', instance);
+  const displayActions = (r) => {
+    console.log('displayActions ggep', r);
     
       return (
         <div>
-          
-          {instance.map((r) => {
-            return (
               <ListGroup.Item
                 key={r.id}
                 style={{ backgroundColor: '#d1dceb', marginTop: '1px' }}
@@ -419,8 +466,7 @@ export default function EventFirebasev2(props) {
                   </div>
                 </div>
               </ListGroup.Item>
-            );
-            })}
+            
         </div>
       );
   }
@@ -482,51 +528,8 @@ export default function EventFirebasev2(props) {
           />
         </div>
       );
-    }
-    //     } else {
-
-    //         var temp = []
-    //         for (var j = 0; j < GR.length; j++) {
-    //             temp.push(GR[j].summary)
-    //         }
-    //         console.log('no match found', r.name, temp)
-    //     }
-    // }
-    return 'E';
-  }
-  const openInstances = (r) =>{
-    let url = BASE_URL + 'googleRecurringInstances/';
-    let id = currentUser;
-    let eventId = r.recurringEventId;
-    
-    axios
-    .post(url + id.toString() + ',' + eventId.toString())
-    .then((response) => {
-      console.log('/googleRecurringInstances: ', response.data);
-      const temp = [];
-      for (var i = 0; i < response.data.length; i++) {
-        temp.push(response.data[i]);
-      }
-      console.log('/googleRecurringInstances: ', temp);
-      setRecEvents(temp)
-      setRec(true)
-    });
-    var tempRows = [];
-    var tempID = [];
-    var tempIsID = [];
-    console.log('only 0.1.0', getRecEvents);
-    const uniqueObjects = [
-      ...new Map(getRecEvents.map((item) => [item.id, item])).values(),
-    ];
-    console.log('unique obj', uniqueObjects, getRecEvents);
-    for (var i = 0; i < uniqueObjects.length; i++) {
-      tempRows.push(displayActions(getRecEvents[i]));
-      console.log('p.ggep[i] = ', getRecEvents[i].id);
-    }
-    console.log('tempRows', tempRows, tempID);
-    setRecList(tempRows);
-    
-   }
+    }  }
+  
 
   const openDeleteRecurringModal = (r) => {
     console.log('opendeleterecurringmodal called',r);
@@ -724,7 +727,6 @@ export default function EventFirebasev2(props) {
                     style={{ color: '#ffffff', cursor: 'pointer' }}
                     icon={faEdit}
                     onClick={(e) => {
-                      //callEdit(r['id']);
                       openEditModal(r);
                     }}
                   />
@@ -741,11 +743,9 @@ export default function EventFirebasev2(props) {
                       event.target.style.color = '#FFFFFF';
                     }}
                     style={{ color: '#FFFFFF', cursor: 'pointer' }}
-                    // style ={{ color:  "#000000" }}
-                    // onClick={(e) => {                }}
+                   
                     icon={faTrashAlt}
                     onClick={(e) => {
-                      //callDelete(r['id']);
                       openDeleteRecurringModal(r);
                     }}
                     size="sm"
@@ -766,11 +766,73 @@ export default function EventFirebasev2(props) {
                         style={{ color: '#FFFFFF', cursor: 'pointer' }}
                         icon={faList}
                         onClick={(e) => {
-                          openInstances(r);
-                          //setRec(!rec);
+
+                          console.log('log(-2): r.gr_uid = ', r.recurringEventId);
+
+                          if (
+                            recList[r.recurringEventId] !=
+                            undefined
+                          ) {
+                            //do stuff
+                            const tempObj = {};
+                            for (const key in recList) {
+                              tempObj[key] = recList[key];
+                            }
+                            delete tempObj[r.recurringEventId];
+                            setRecList(tempObj);
+                            return;
+                          }
+                          e.preventDefault();
+
+
+                          let url = BASE_URL + 'googleRecurringInstances/';
+                          let id = currentUser;
+                          let eventId = r.recurringEventId;
+                          
+                          axios
+                            .post(
+                              url + id.toString() + ',' + eventId.toString()
+                            )
+                            .then((response) => {
+                              const temp = [];
+                              for (
+                                var i = 0;
+                                i < response.data.length;
+                                i++
+                              ) {
+                                temp.push(response.data[i]);
+                              }
+
+                              const tempObj = {};
+                              for (const key in recList) {
+                                tempObj[key] = recList[key];
+                              }
+                              console.log(
+                                'here-0: temp = ',
+                                temp,
+                                '\ntempObj = ',
+                                tempObj
+                              );
+                              tempObj[r.recurringEventId] = temp;
+                              console.log(
+                                'here-0: temp = ',
+                                temp,
+                                '\ntempObj = ',
+                                tempObj
+                              );
+
+                              setRecList(tempObj);
+                              
+                              
+                            });
+                          console.log('here-1: gaep = ', recList);
+                          
+                         makeActionDisplays();
+                    
                         }}
                         size="sm"
                       />
+                      
                     </div>
                   ) : (
                     <div></div>
@@ -787,12 +849,7 @@ export default function EventFirebasev2(props) {
 
   return (
     <row>
-      {/* {makeDisplays()} */}
-      {/* {getCurrentUser()} */}
       {listOfBlocks}
-      {/* {recList} */}
-      {console.log(rec, recList)}
-      <div>{rec ? <div>{displayActions(getRecEvents)}</div> : <div></div>}</div>
     </row>
   );
 }

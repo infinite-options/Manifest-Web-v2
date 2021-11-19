@@ -1512,6 +1512,14 @@ export default function Firebasev2(props) {
     for (var i = 0; i < uniqueObjects.length; i++) {
       tempRows.push(displayRoutines(props.getGoalsEndPoint[i]));
       console.log('p.ggep[i] = ', props.getGoalsEndPoint[i].gr_unique_id);
+      console.log(
+         'p.ggep[i] = ',
+         props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id]
+       );
+       console.log(
+         'p.ggep[i] = ',
+         props.getActionsEndPoint
+       );
       if (props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id]) {
         for (
           var j = 0;
@@ -1532,6 +1540,13 @@ export default function Firebasev2(props) {
                 ][j].at_unique_id
               ) === false
             ) {
+               console.log(
+                 'in if3 ggep',
+                 j,tempID,
+                 props.getActionsEndPoint[
+                   props.getGoalsEndPoint[i].gr_unique_id
+                 ][j].at_unique_id
+               );
               tempRows.push(
                 displayActions(
                   props.getActionsEndPoint[
@@ -1545,7 +1560,7 @@ export default function Firebasev2(props) {
                   props.getGoalsEndPoint[i].gr_unique_id
                 ][j].at_unique_id
               );
-              console.log('only', tempID);
+              console.log('only ggep', tempID);
 
               const currStepArr =
                 props.getStepsEndPoint[
