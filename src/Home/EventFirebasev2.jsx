@@ -199,19 +199,22 @@ export default function EventFirebasev2(props) {
         filteredEvents.sort((a, b) => {
           // console.log('a = ', a, '\nb = ', b);
           const [a_start, b_start] = [
-            a['start']['dateTime'],
-            b['start']['dateTime'],
+            moment(a['start']['dateTime']).format('YYYY-MM-DD hh:mm:ss a'),
+            moment(b['start']['dateTime']).format('YYYY-MM-DD hh:mm:ss a'),
           ];
           console.log('a_start = ', a_start, '\nb_start = ', b_start);
-          const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
+          const [a_end, b_end] = [
+            moment(a['end']['dateTime']).format('YYYY-MM-DD hh:mm:ss a'),
+            moment(b['end']['dateTime']).format('YYYY-MM-DD hh:mm:ss a'),
+          ];
           console.log('a_end = ', a_end, '\nb_end = ', b_end);
           const [a_start_time, b_start_time] = getTimes(
-            a['start']['dateTime'],
-            b['start']['dateTime']
+            moment(a['start']['dateTime']).format('YYYY-MM-DD hh:mm:ss a'),
+            moment(b['start']['dateTime']).format('YYYY-MM-DD hh:mm:ss a')
           );
           const [a_end_time, b_end_time] = getTimes(
-            a['end']['dateTime'],
-            b['end']['dateTime']
+            moment(a['end']['dateTime']).format('YYYY-MM-DD hh:mm:ss a'),
+            moment(b['end']['dateTime']).format('YYYY-MM-DD hh:mm:ss a')
           );
           console.log('a_start_time = ', a_start_time, '\nb_start_time = ', b_start_time); 
           console.log('a_end_time = ', a_end_time, '\nb_end_time = ', b_end_time); 
