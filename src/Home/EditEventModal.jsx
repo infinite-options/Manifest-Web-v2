@@ -1211,9 +1211,9 @@ export default function EditEventModal(props) {
         //   };
         // });
       } else if (editRecurringOption === 'This and following events') {
-        var date1 = new Date(startTime).toISOString();
-        var date2 = new Date().toISOString;
-        if (moment(startTime).format('LT') < moment().format('LT')) {
+        
+        if (moment(event.start.dateTime) < moment()) {
+          console.log('in if')
           let url = BASE_URL + 'googleRecurringInstances/';
           let id = userID;
           let eventId = props.event.recurringEventId;
@@ -1284,7 +1284,9 @@ export default function EditEventModal(props) {
               console.log(event, parentEvent);
               let firstEventCount = clickedEventIndex;
               let secondEventCount = res.data.length - clickedEventIndex;
+              //the instance clicked on
               console.log('firstEventCount: ', firstEventCount);
+              //the total occurences - instance clicked on
               console.log('secondEventCount: ', secondEventCount);
 
               console.log(event, parentEvent);
@@ -1312,18 +1314,19 @@ export default function EditEventModal(props) {
 
           //find countSubString if the recurrece rule is COUNT
           let countSubString = '';
-          let countIndex = recurrenceRule[0].indexOf('COUNT');
+          let countIndex = recurrenceRule.indexOf('COUNT');
+          console.log('countIndex 1:', countIndex);
           if (countIndex !== -1) {
-            countSubString = recurrenceRule[0].substring(countIndex);
-            // console.log("countSubString 1:", countSubString);
+            countSubString = recurrenceRule.substring(countIndex);
+            console.log("countSubString 1:", countSubString);
           }
           if (countSubString.includes(';')) {
             let endCountIndex = countSubString.indexOf(';');
             countSubString = countSubString.substring(6, endCountIndex);
-            // console.log("countSubString 2:", countSubString);
+            console.log("countSubString 2:", countSubString);
           } else if (countSubString) {
             countSubString = countSubString.substring(6);
-            // console.log("countSubString 3", countSubString);
+            console.log("countSubString 3", countSubString);
           }
 
           // //find untilSubString if the recurrece rule is UNTIL
@@ -1345,30 +1348,47 @@ export default function EditEventModal(props) {
               console.log('untilSubString else if', untilSubString);
             }
             console.log(
-              'UNTIL, newRecyrrenceRule: ',
+              'UNTIL, newRecurrenceRule: ',
               newRecurrenceRule,
               untilSubString,
               recEvent.recurrence
             );
             // replace by the new calculated currentDateString
-            recEvent.recurrence = newRecurrenceRule.replace(
+            if(moment(currentDateString) < moment()){
+              recEvent.recurrence = newRecurrenceRule.replace(
+                untilSubString,
+                `${moment().format('YYYYMMDD')}`
+              );
+            }
+            else{recEvent.recurrence = newRecurrenceRule.replace(
               untilSubString,
               currentDateString
-            );
+            );}
+            
             console.log('recEvent.recurrence: ', recEvent.recurrence);
             console.log('currentDateString: ', currentDateString);
             console.log('newRecurrenceRule: ', newRecurrenceRule);
           } else if (newRecurrenceRule.includes('COUNT')) {
-            recEvent.recurrence = newRecurrenceRule.replace(
-              `COUNT=${countSubString}`,
-              `COUNT=${firstEventCount}`
-            );
-            newRecurrenceRule = newRecurrenceRule.replace(
-              `COUNT=${countSubString}`,
-              `COUNT=${secondEventCount}`
-            );
-
+            if(moment(startTime) < moment()){
+              recEvent.recurrence = newRecurrenceRule.replace(
+                `COUNT=${countSubString}`,
+                `UNTIL=${moment(startTime).format('YYYYMMDD')}`
+              );
+            }
+            else{
+              recEvent.recurrence = newRecurrenceRule.replace(
+                `COUNT=${countSubString}`,
+                `UNTIL=${moment().format('YYYYMMDD')}`
+              );
+            }
+            
+            // newRecurrenceRule = newRecurrenceRule.replace(
+            //   `COUNT=${countSubString}`,
+            //   `COUNT=${secondEventCount}`
+            // );
+            console.log(countSubString, firstEventCount);
             console.log('event.recurrence changed', recEvent.recurrence);
+            console.log('newRecurrenceRule changed', newRecurrenceRule);
           } else {
             
             newRecurrenceRule = newRecurrenceRule.concat(
@@ -1390,7 +1410,7 @@ export default function EditEventModal(props) {
             timeZone: userTime_zone,
           };
           console.log(moment(startTime).format('LT'), moment().format('LT'));
-          
+          console.log(moment(startTime), moment());
           newEvent.description = event.description;
           console.log('Before isNeverEnds calls: event:  ', recEvent);
           console.log('Before isNeverEnds calls: newEvent:  ', newEvent);
@@ -1398,28 +1418,42 @@ export default function EditEventModal(props) {
             console.log('in never ends');
             newEvent.recurrence = recurrence[0];
             recEvent.recurrence = newRecurrenceRule;
+            console.log(
+              'in never ends',
+              newEvent.recurrence,
+              recEvent.recurrence
+            );
           } else {
             console.log('in never ends else');
-            recEvent.recurrence = [
-              'RRULE:FREQ=DAILY;INTERVAL=1;UNTIL=20211117T065959Z',
-            ];
+            recEvent.recurrence = [recEvent.recurrence];
+            // recEvent.recurrence = [
+            //   'RRULE:FREQ=DAILY;INTERVAL=1;UNTIL=20211117T065959Z',
+            // ];
             newEvent.recurrence = [newRecurrenceRule];
+            console.log(
+              'in never ends else',
+              newEvent.recurrence,
+              recEvent.recurrence 
+            );
           }
           console.log('Before axios calls: event:  ', recEvent);
           console.log('Before axios calls: newEvent:  ', newEvent);
 
           if (secondEventCount !== 0) {
             console.log('Before createEvent/newEvent: ', newEvent);
+            //insert
             publishTheCalenderEvent(newEvent)
           }
 
           if (firstEventCount === 0) {
             console.log('Before deleteEvent/eventId: ', eventId);
-            deleteTheCalenderEvent(eventId)
+            //delete
+            //deleteTheCalenderEvent(eventId)
           } else {
             console.log('Before updateEvent: ');
             console.log('event: ', recEvent);
             console.log('eventId: ', eventId);
+            //update
             updateTheCalenderEvent(recEvent);
           }
           setShowEditRecurringModal(!showEditRecurringModal);
@@ -1430,6 +1464,7 @@ export default function EditEventModal(props) {
             };
           });
         } else {
+          console.log('In else')
           let url = BASE_URL + 'googleRecurringInstances/';
           let id = userID;
           let eventId = props.event.recurringEventId;
@@ -1527,18 +1562,19 @@ export default function EditEventModal(props) {
 
           //find countSubString if the recurrece rule is COUNT
           let countSubString = '';
-          let countIndex = recurrenceRule[0].indexOf('COUNT');
+          let countIndex = recurrenceRule.indexOf('COUNT');
+          console.log('countIndex 1:', countIndex);
           if (countIndex !== -1) {
-            countSubString = recurrenceRule[0].substring(countIndex);
-            // console.log("countSubString 1:", countSubString);
+            countSubString = recurrenceRule.substring(countIndex);
+            console.log("countSubString 1:", countSubString);
           }
           if (countSubString.includes(';')) {
             let endCountIndex = countSubString.indexOf(';');
             countSubString = countSubString.substring(6, endCountIndex);
-            // console.log("countSubString 2:", countSubString);
+            console.log("countSubString 2:", countSubString);
           } else if (countSubString) {
             countSubString = countSubString.substring(6);
-            // console.log("countSubString 3", countSubString);
+            console.log("countSubString 3", countSubString);
           }
 
           // //find untilSubString if the recurrece rule is UNTIL
@@ -1560,30 +1596,54 @@ export default function EditEventModal(props) {
               console.log('untilSubString else if', untilSubString);
             }
             console.log(
-              'UNTIL, newRecyrrenceRule: ',
+              'UNTIL, newRecurrenceRule: ',
               newRecurrenceRule,
               untilSubString,
               recEvent.recurrence
             );
             // replace by the new calculated currentDateString
-            recEvent.recurrence = newRecurrenceRule.replace(
-              untilSubString,
-              currentDateString
-            );
+            if (moment(currentDateString) < moment()) {
+              recEvent.recurrence = newRecurrenceRule.replace(
+                untilSubString,
+                `${moment().format('YYYYMMDD')}`
+              );
+            } else {
+              recEvent.recurrence = newRecurrenceRule.replace(
+                untilSubString,
+                currentDateString
+              );
+            }
+            // recEvent.recurrence = newRecurrenceRule.replace(
+            //   untilSubString,
+            //   currentDateString
+            // );
             console.log('recEvent.recurrence: ', recEvent.recurrence);
             console.log('currentDateString: ', currentDateString);
             console.log('newRecurrenceRule: ', newRecurrenceRule);
           } else if (newRecurrenceRule.includes('COUNT')) {
-            recEvent.recurrence = newRecurrenceRule.replace(
-              `COUNT=${countSubString}`,
-              `COUNT=${firstEventCount}`
-            );
-            newRecurrenceRule = newRecurrenceRule.replace(
-              `COUNT=${countSubString}`,
-              `COUNT=${secondEventCount}`
-            );
-
-            console.log('event.recurrence changed', recEvent.recurrence);
+            // recEvent.recurrence = newRecurrenceRule.replace(
+            //   `COUNT=${countSubString}`,
+            //   `COUNT=${firstEventCount}`
+            // );
+            if (moment(startTime) < moment()) {
+              recEvent.recurrence = newRecurrenceRule.replace(
+                `COUNT=${countSubString}`,
+                `UNTIL=${moment().format('YYYYMMDD')}`
+              );
+            } else {
+              recEvent.recurrence = newRecurrenceRule.replace(
+                `COUNT=${countSubString}`,
+                `UNTIL=${moment(startTime).format('YYYYMMDD')}`
+              );
+            }
+            
+            // newRecurrenceRule = newRecurrenceRule.replace(
+            //   `COUNT=${countSubString}`,
+            //   `COUNT=${secondEventCount}`
+            // );
+           console.log(countSubString, firstEventCount);
+           console.log('event.recurrence changed', recEvent.recurrence);
+           console.log('newRecurrenceRule changed', newRecurrenceRule);
           } else {
             
             newRecurrenceRule = newRecurrenceRule.concat(
@@ -1605,7 +1665,7 @@ export default function EditEventModal(props) {
             timeZone: userTime_zone,
           };
           console.log(moment(startTime).format('LT'), moment().format('LT'));
-          
+          console.log(moment(startTime), moment());
           newEvent.description = event.description;
           console.log('Before isNeverEnds calls: event:  ', recEvent);
           console.log('Before isNeverEnds calls: newEvent:  ', newEvent);
@@ -1613,12 +1673,22 @@ export default function EditEventModal(props) {
             console.log('in never ends');
             newEvent.recurrence = recurrence[0];
             recEvent.recurrence = newRecurrenceRule;
+            console.log(
+              'in never ends',
+              newEvent.recurrence,
+              recEvent.recurrence
+            );
           } else {
             console.log('in never ends else');
-            recEvent.recurrence = [
-              'RRULE:FREQ=DAILY;INTERVAL=1;UNTIL=20211117T065959Z',
-            ];
+            //recEvent.recurrence = event.recurrence;
+            recEvent.recurrence = [recEvent.recurrence];
             newEvent.recurrence = [newRecurrenceRule];
+            //newEvent.recurrence = ["RRULE:FREQ=DAILY;COUNT=4;INTERVAL=1"]
+            console.log(
+              'in never ends else',
+              newEvent.recurrence,
+              recEvent.recurrence
+            );
           }
           console.log('Before axios calls: event:  ', recEvent);
           console.log('Before axios calls: newEvent:  ', newEvent);

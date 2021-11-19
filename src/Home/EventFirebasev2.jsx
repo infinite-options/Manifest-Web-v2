@@ -13,7 +13,7 @@ import {
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faList } from '@fortawesome/free-solid-svg-icons';
 import {
   faCalendarDay,
 } from '@fortawesome/free-solid-svg-icons';
@@ -69,8 +69,11 @@ export default function EventFirebasev2(props) {
   //   }
 
   const [listOfBlocks, setlistOfBlocks] = useState([]);
+  const [rec,setRec] = useState(false);
+  const [recList, setRecList] = useState([])
   const [historyGot, setHG] = useState([]);
   const [getActions, setActions] = useState([]);
+  const [getRecEvents, setRecEvents] = useState([])
   const [allTAData, setTAData] = useState([]);
   const [allPatientData, setPatientData] = useState([]);
   const [showDeleteRecurringModal, setShowDeleteRecurringModal] = useState(false)
@@ -254,25 +257,171 @@ export default function EventFirebasev2(props) {
     console.log('tempRows', tempRows, tempID);
     setlistOfBlocks(tempRows);
   }
-  
+  const displayActions = (instance) => {
+    console.log('displayActions', instance);
+    
+      return (
+        <div>
+          
+          {instance.map((r) => {
+            return (
+              <ListGroup.Item
+                key={r.id}
+                style={{ backgroundColor: '#BBC7D7', marginTop: '1px' }}
+                onClick={() => {
+                  //  props.sethighLight(r["summary"])
+                  console.log('ListGroup', r['summary']);
+                }}
+              >
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <div
+                    flex="1"
+                    style={{
+                      marginLeft: '1rem',
+                      height: '4.5rem',
+                      borderRadius: '10px',
+                      width: '65%',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      backgroundColor: '#67ABFC',
+                      boxShadow:
+                        '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.09)',
+                      zIndex: '50%',
+                    }}
+                  >
+                    <div
+                      flex="1"
+                      style={{
+                        marginTop: '0.5rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'flex-start',
+                      }}
+                    >
+                      <div style={{ marginLeft: '1rem' }}>
+                        {r.start.dateTime && r.end.dateTime ? (
+                          <div
+                            style={{
+                              fontSize: '8px',
+                              color: '#ffffff',
+                            }}
+                          >
+                            
+                            {moment(r.start.dateTime).format('MMM DD, hh:mm')}-
+                            {moment(r.end.dateTime).format('MMM DD, hh:mm')}
+                          </div>
+                        ) : (
+                          <Col> </Col>
+                        )}
+                      </div>
+                      <div
+                        style={{
+                          color: '#ffffff',
+                          size: '24px',
+                          textDecoration: 'underline',
+                          fontWeight: 'bold',
+                          marginLeft: '10px',
+                        }}
+                      >
+                        {r['summary']}
+                        {console.log(r.summary)}
+                      </div>
+
+                      {/* ({date}) */}
+                    </div>
+
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-evenly',
+                      }}
+                    >
+                      <div>
+                        <Col
+                          xs={7}
+                          style={{ paddingRight: '1rem', marginTop: '0.5rem' }}
+                        >
+                          <FontAwesomeIcon
+                            style={{ cursor: 'pointer', color: 'white' }}
+                            icon={faCalendarDay}
+                            size="2x"
+                          />
+                        </Col>
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex' }}>
+                    <div
+                      style={{
+                        marginRight: '1rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <div style={{ flex: '1' }}>
+                        <div></div>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        marginRight: '1rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                      }}
+                    >
+                      <div>
+                        <FontAwesomeIcon
+                          title="Edit Item"
+                          onMouseOver={(event) => {
+                            event.target.style.color = '#48D6D2';
+                          }}
+                          onMouseOut={(event) => {
+                            event.target.style.color = '#FFFFFF';
+                          }}
+                          style={{ color: '#ffffff', cursor: 'pointer' }}
+                          icon={faEdit}
+                          onClick={(e) => {
+                            openEditModal(r);
+                            {console.log(r)}
+                          }}
+                        />
+                      </div>
+                      <div style={{ flex: '1' }}>
+                        <FontAwesomeIcon
+                          title="Delete Item 1"
+                          onMouseOver={(event) => {
+                            event.target.style.color = '#48D6D2';
+                          }}
+                          onMouseOut={(event) => {
+                            event.target.style.color = '#FFFFFF';
+                          }}
+                          style={{ color: '#FFFFFF', cursor: 'pointer' }}
+                          icon={faTrashAlt}
+                          onClick={(e) => {
+                            openDeleteRecurringModal(r);
+                          }}
+                          size="sm"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ListGroup.Item>
+            );
+            })}
+        </div>
+      );
+  }
   function formatDateTime(str) {
     let newTime = new Date(str).toLocaleTimeString();
     return newTime.replace(/:\d+ /, ' ');
   }
 
-  //no need to use GR here - "is_avalible" is part of "r" and comes from getHistory
-  //this was causing an error of not showing routines on the left side of home when
-  //switching pages, because GR was not getting updated before this was. So GR
-  //was empty. now no need for GR and no issue.
   function getIsAvailableFromGR(r) {
-    // console.log('checking availability', r, GR, currentUser)
-    // var NTC1 = r.name
-    // for (var i=0; i < GR.length; i++) {
-    //     var NTC2 = GR[i].summary
-    //     console.log('match ntcs',NTC1, NTC2, i, GR.length)
-    //     if(NTC1 == NTC2) {
-    //         console.log('match', GR[i].summary, r.name)
-    // if (GR[i].is_available == 'True') {
     var temp = [];
     var temp2 = [];
 
@@ -337,6 +486,39 @@ export default function EventFirebasev2(props) {
     // }
     return 'E';
   }
+  const openInstances = (r) =>{
+    let url = BASE_URL + 'googleRecurringInstances/';
+    let id = currentUser;
+    let eventId = r.recurringEventId;
+    
+    axios
+    .post(url + id.toString() + ',' + eventId.toString())
+    .then((response) => {
+      console.log('/googleRecurringInstances: ', response.data);
+      const temp = [];
+      for (var i = 0; i < response.data.length; i++) {
+        temp.push(response.data[i]);
+      }
+      console.log('/googleRecurringInstances: ', temp);
+      setRecEvents(temp)
+      setRec(true)
+    });
+    var tempRows = [];
+    var tempID = [];
+    var tempIsID = [];
+    console.log('only 0.1.0', getRecEvents);
+    const uniqueObjects = [
+      ...new Map(getRecEvents.map((item) => [item.id, item])).values(),
+    ];
+    console.log('unique obj', uniqueObjects, getRecEvents);
+    for (var i = 0; i < uniqueObjects.length; i++) {
+      tempRows.push(displayActions(getRecEvents[i]));
+      console.log('p.ggep[i] = ', getRecEvents[i].id);
+    }
+    console.log('tempRows', tempRows, tempID);
+    setRecList(tempRows);
+    
+   }
 
   const openDeleteRecurringModal = (r) => {
     console.log('opendeleterecurringmodal called',r);
@@ -388,180 +570,209 @@ export default function EventFirebasev2(props) {
     // Need to strip trailing zeros because the data in the database
     // is inconsistent about this
     if (end_time[0][0] == '0') end_time[0] = end_time[0][1];
-    //console.log('displayActions', start_time, end_time);
     return (
-      <ListGroup.Item
-        key={r.id}
-        style={{ backgroundColor: '#BBC7D7', marginTop: '1px' }}
-        onClick={() => {
-          //  props.sethighLight(r["summary"])
-          console.log('ListGroup', r['summary']);
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div
-            flex="1"
-            style={{
-              marginLeft: '1rem',
-              height: '4.5rem',
-              borderRadius: '10px',
-              width: '65%',
-              display: 'flex',
-              justifyContent: 'space-between',
-              backgroundColor: (() => {
-                if (
-                  r.is_persistent == 'True' &&
-                  JSON.stringify(start_time) !== JSON.stringify(end_time)
-                ) {
-                  return '#FF6B4A';
-                } else if (r.is_persistent == 'False') {
-                  return '#376DAC';
-                } else {
-                  return '#67ABFC';
-                }
-              })(),
-              // backgroundColor:
-              //       JSON.stringify(start_time) !== JSON.stringify(end_time)
-              //     ? '#FF6B4A'
-              //     : '#9b4aff',
-              boxShadow:
-                '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.09)',
-              zIndex: '50%',
-            }}
-          >
+      <div>
+        <ListGroup.Item
+          key={r.id}
+          style={{ backgroundColor: '#BBC7D7', marginTop: '1px' }}
+          onClick={() => {
+            //  props.sethighLight(r["summary"])
+            console.log('ListGroup', r['summary']);
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <div
               flex="1"
               style={{
-                marginTop: '0.5rem',
+                marginLeft: '1rem',
+                height: '4.5rem',
+                borderRadius: '10px',
+                width: '65%',
                 display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'flex-start',
+                justifyContent: 'space-between',
+                backgroundColor: (() => {
+                  if (
+                    r.is_persistent == 'True' &&
+                    JSON.stringify(start_time) !== JSON.stringify(end_time)
+                  ) {
+                    return '#FF6B4A';
+                  } else if (r.is_persistent == 'False') {
+                    return '#376DAC';
+                  } else {
+                    return '#67ABFC';
+                  }
+                })(),
+                // backgroundColor:
+                //       JSON.stringify(start_time) !== JSON.stringify(end_time)
+                //     ? '#FF6B4A'
+                //     : '#9b4aff',
+                boxShadow:
+                  '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.09)',
+                zIndex: '50%',
               }}
             >
-              <div style={{ marginLeft: '1rem' }}>
-                {r.start.dateTime && r.end.dateTime ? (
-                  <div
-                    style={{
-                      fontSize: '8px',
-                      color: '#ffffff',
-                    }}
-                  >
-                    {formatDateTime(r.start.dateTime)}-
-                    {formatDateTime(r.end.dateTime)}
-                  </div>
-                ) : (
-                  <Col> </Col>
-                )}
+              <div
+                flex="1"
+                style={{
+                  marginTop: '0.5rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'flex-start',
+                }}
+              >
+                <div style={{ marginLeft: '1rem' }}>
+                  {r.start.dateTime && r.end.dateTime ? (
+                    <div
+                      style={{
+                        fontSize: '8px',
+                        color: '#ffffff',
+                      }}
+                    >
+                      {/* {formatDateTime(r.start.dateTime)}-
+                      {formatDateTime(r.end.dateTime)} */}
+                      {moment(r.start.dateTime).format('MMM DD, hh:mm')}-
+                      {moment(r.end.dateTime).format('MMM DD, hh:mm')}
+                    </div>
+                  ) : (
+                    <Col> </Col>
+                  )}
+                </div>
+
+                <div
+                  style={{
+                    color: '#ffffff',
+                    size: '24px',
+                    textDecoration: 'underline',
+                    fontWeight: 'bold',
+                    marginLeft: '10px',
+                  }}
+                >
+                  {r['summary']}
+                </div>
+
+                {/* ({date}) */}
               </div>
 
               <div
                 style={{
-                  color: '#ffffff',
-                  size: '24px',
-                  textDecoration: 'underline',
-                  fontWeight: 'bold',
-                  marginLeft: '10px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-evenly',
                 }}
               >
-                {r['summary']}
-              </div>
-
-              {/* ({date}) */}
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-evenly',
-              }}
-            >
-              <div>
-                <Col
-                  xs={7}
-                  style={{ paddingRight: '1rem', marginTop: '0.5rem' }}
-                >
-                  {/* <img
+                <div>
+                  <Col
+                    xs={7}
+                    style={{ paddingRight: '1rem', marginTop: '0.5rem' }}
+                  >
+                    {/* <img
                     src={r.gr_photo}
                     alt="Events"
                     className="center"
                     height="28px"
                     width="28px"
                   /> */}
+                    <FontAwesomeIcon
+                      style={{ cursor: 'pointer', color: 'white' }}
+                      icon={faCalendarDay}
+                      size="2x"
+                    />
+                  </Col>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex' }}>
+              <div
+                style={{
+                  marginRight: '1rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ flex: '1' }}>
+                  <div></div>
+                </div>
+
+                {/* </div> */}
+              </div>
+              <div
+                style={{
+                  marginRight: '1rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <div>
                   <FontAwesomeIcon
-                    style={{ cursor: 'pointer', color: 'white' }}
-                    icon={faCalendarDay}
-                    size="2x"
+                    title="Edit Item"
+                    onMouseOver={(event) => {
+                      event.target.style.color = '#48D6D2';
+                    }}
+                    onMouseOut={(event) => {
+                      event.target.style.color = '#FFFFFF';
+                    }}
+                    style={{ color: '#ffffff', cursor: 'pointer' }}
+                    icon={faEdit}
+                    onClick={(e) => {
+                      //callEdit(r['id']);
+                      openEditModal(r);
+                    }}
                   />
-                </Col>
+                </div>
+                {/* working on this thing */}
+
+                <div style={{ flex: '1' }}>
+                  <FontAwesomeIcon
+                    title="Delete Item 1"
+                    onMouseOver={(event) => {
+                      event.target.style.color = '#48D6D2';
+                    }}
+                    onMouseOut={(event) => {
+                      event.target.style.color = '#FFFFFF';
+                    }}
+                    style={{ color: '#FFFFFF', cursor: 'pointer' }}
+                    // style ={{ color:  "#000000" }}
+                    // onClick={(e) => {                }}
+                    icon={faTrashAlt}
+                    onClick={(e) => {
+                      //callDelete(r['id']);
+                      openDeleteRecurringModal(r);
+                    }}
+                    size="sm"
+                  />
+                </div>
+
+                <div style={{ flex: '1' }}>
+                  {r.recurringEventId !== undefined ? (
+                    <div>
+                      <FontAwesomeIcon
+                        title="Delete Item 1"
+                        onMouseOver={(event) => {
+                          event.target.style.color = '#48D6D2';
+                        }}
+                        onMouseOut={(event) => {
+                          event.target.style.color = '#FFFFFF';
+                        }}
+                        style={{ color: '#FFFFFF', cursor: 'pointer' }}
+                        icon={faList}
+                        onClick={(e) => {
+                          openInstances(r);
+                          //setRec(!rec);
+                        }}
+                        size="sm"
+                      />
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-
-          <div style={{ display: 'flex' }}>
-            <div
-              style={{
-                marginRight: '1rem',
-                display: 'flex',
-                flexDirection: 'column',
-                textAlign: 'center',
-              }}
-            >
-              <div style={{ flex: '1' }}>
-                <div></div>
-              </div>
-
-              {/* </div> */}
-            </div>
-            <div
-              style={{
-                marginRight: '1rem',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <div>
-                <FontAwesomeIcon
-                  title="Edit Item"
-                  onMouseOver={(event) => {
-                    event.target.style.color = '#48D6D2';
-                  }}
-                  onMouseOut={(event) => {
-                    event.target.style.color = '#FFFFFF';
-                  }}
-                  style={{ color: '#ffffff', cursor: 'pointer' }}
-                  icon={faEdit}
-                  onClick={(e) => {
-                    //callEdit(r['id']);
-                    openEditModal(r);
-                  }}
-                />
-              </div>
-              {/* working on this thing */}
-
-              <div style={{ flex: '1' }}>
-                <FontAwesomeIcon
-                  title="Delete Item 1"
-                  onMouseOver={(event) => {
-                    event.target.style.color = '#48D6D2';
-                  }}
-                  onMouseOut={(event) => {
-                    event.target.style.color = '#FFFFFF';
-                  }}
-                  style={{ color: '#FFFFFF', cursor: 'pointer' }}
-                  // style ={{ color:  "#000000" }}
-                  // onClick={(e) => {                }}
-                  icon={faTrashAlt}
-                  onClick={ (e) => {
-                    //callDelete(r['id']);
-                    openDeleteRecurringModal(r);
-                  }}
-                size="sm" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </ListGroup.Item>
+        </ListGroup.Item>
+      </div>
     );
     //    }
   }
@@ -571,7 +782,9 @@ export default function EventFirebasev2(props) {
       {/* {makeDisplays()} */}
       {/* {getCurrentUser()} */}
       {listOfBlocks}
-      
+      {/* {recList} */}
+      {console.log(rec, recList)}
+      <div>{rec ? <div>{displayActions(getRecEvents)}</div> : <div></div>}</div>
     </row>
   );
 }
