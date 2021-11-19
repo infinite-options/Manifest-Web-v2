@@ -121,15 +121,15 @@ export default function EventFirebasev2(props) {
     ];
 
     let [a_time, b_time] = [0, 0];
-    if (a_parity === 'PM' && a_HMS[0] !== '12') {
+    if (a_parity === 'pm' && a_HMS[0] !== '12') {
       const hoursInt = parseInt(a_HMS[0]) + 12;
       a_HMS[0] = `${hoursInt}`;
-    } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+    } else if (a_parity === 'am' && a_HMS[0] === '12') a_HMS[0] = '00';
 
-    if (b_parity === 'PM' && b_HMS[0] !== '12') {
+    if (b_parity === 'pm' && b_HMS[0] !== '12') {
       const hoursInt = parseInt(b_HMS[0]) + 12;
       b_HMS[0] = `${hoursInt}`;
-    } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+    } else if (b_parity === 'am' && b_HMS[0] === '12') b_HMS[0] = '00';
 
     for (let i = 0; i < a_HMS.length; i++) {
       a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
