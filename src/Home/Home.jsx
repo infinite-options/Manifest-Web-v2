@@ -185,7 +185,7 @@ export default function Home(props) {
   const [stateValue, setStateValue] = useState({
     itemToEdit: {
       title: '',
-      id: '',
+      gr_unique_id: '',
       // is_persistent: this.props.isRoutine,
       photo: '',
       photo_url: '',
@@ -1224,7 +1224,7 @@ export default function Home(props) {
               a.gr_end_day_and_time,
               b.gr_end_day_and_time,
             ];
-
+           console.log('a_end = ', a_end, '\nb_end = ', b_end);
             const [a_start_time, b_start_time] = getTimes(
               a.gr_start_day_and_time,
               b.gr_start_day_and_time
@@ -1233,7 +1233,18 @@ export default function Home(props) {
               a.gr_end_day_and_time,
               b.gr_end_day_and_time
             );
-
+              console.log(
+                'a_start_time = ',
+                a_start_time,
+                '\nb_start_time = ',
+                b_start_time
+              );
+              console.log(
+                'a_end_time = ',
+                a_end_time,
+                '\nb_end_time = ',
+                b_end_time
+              ); 
             if (a_start_time < b_start_time) return -1;
             else if (a_start_time > b_start_time) return 1;
             else {
@@ -1721,12 +1732,11 @@ function GoogleEvents() {
           temp.push(response.data[i]);
         }
         temp.sort((a, b) => {
-          console.log('a = ', a, '\nb = ', b);
-          const [a_start, b_start] = [
+           const [a_start, b_start] = [
             a['start']['dateTime'],
             b['start']['dateTime'],
           ];
-          console.log('a_start = ', a_start, '\nb_start = ', b_start);
+          
           const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
 
           const [a_start_time, b_start_time] = getTimes(

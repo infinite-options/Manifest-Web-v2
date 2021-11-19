@@ -221,7 +221,8 @@ const EditRTS = (props) => {
       url='getgoals/'
     }
     console.log('url', url, object.is_persistent);
-    if (object.gr_unique_id != '') {
+    console.log(object.gr_unique_id);
+    if (object.gr_unique_id != '' && object.gr_unique_id != undefined) {
       console.log('updateGR');
       console.log('here: About to post changes to db');
       async function updateDB() {
@@ -231,7 +232,7 @@ const EditRTS = (props) => {
             console.log('editrts', _);
             const gr_array_index =
               editingRTSContext.editingRTS.gr_array.findIndex(
-                (elt) => elt.id === editingRTSContext.editingRTS.id
+                (elt) => elt.gr_unique_id === editingRTSContext.editingRTS.gr_unique_id
               );
             const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
             new_gr_array[gr_array_index] = object;
@@ -316,7 +317,7 @@ const EditRTS = (props) => {
             console.log(_);
             const gr_array_index =
               editingRTSContext.editingRTS.gr_array.findIndex(
-                (elt) => elt.id === editingRTSContext.editingRTS.id
+                (elt) => elt.gr_unique_id === editingRTSContext.editingRTS.gr_unique_id
               );
             const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
             new_gr_array[gr_array_index] = object;
