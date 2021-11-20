@@ -174,9 +174,10 @@ const EditRTS = (props) => {
     delete object.end_day;
     delete object.end_time;
     // Get expected_completion_time
-    const numHours = object.numMins >= 60 ? object.numMins / 60 : '00';
+    const numHours = object.numMins >= 60 ? Math.floor(object.numMins / 60 ): '00';
     let numMins = object.numMins % 60;
     if (numMins < 10) numMins = '0' + numMins;
+    console.log(numHours)
     object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
     object.gr_unique_id = editingRTSContext.editingRTS.id;
