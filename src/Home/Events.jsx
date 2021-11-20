@@ -2691,19 +2691,9 @@ function GoogleEvents() {
                       ) : (
                         showCalendarView()
                       )}
-                      {console.log(
-                        stateValue.showDeleteRecurringModal,
-                        stateValue.originalEvents
-                      )}
                     </div>
                   </div>
                 </Box>
-
-                {/* {stateValue.showDeleteRecurringModal ? (
-                  <DeleteEventModal />
-                ) : (
-                  ''
-                )} */}
                 {/* ----------------------------... Navigation--------------------------- */}
 
                 {/* ---------------------------- Navigation--------------------------- */}

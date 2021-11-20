@@ -1201,7 +1201,7 @@ export default function EditEventModal(props) {
           },
         };
         console.log(event)
-        //updateSubmit(event);
+        updateSubmit(event);
         // updateTheCalenderEvent(event);
         // setShowEditRecurringModal(!showEditRecurringModal);
         // props.setStateValue((prevState) => {
@@ -1793,7 +1793,7 @@ export default function EditEventModal(props) {
               //    },
               //  };
               
-              //updateSubmit(event)
+              updateSubmit(event)
               //  updateTheCalenderEvent(event);
               //  setShowEditRecurringModal(!showEditRecurringModal);
               //  props.setStateValue((prevState) => {

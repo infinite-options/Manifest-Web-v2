@@ -74,52 +74,27 @@ export default function Home(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_email='))
       .split('=')[1];
-    // document.cookie = 'patient_timeZone=test'
   } else {
     console.log('in here', console.log(loginContext.loginState));
     console.log('document cookie', document.cookie);
     userID = loginContext.loginState.curUser;
     userEmail = loginContext.loginState.curUserEmail;
-    //userTime_zone = 'America/Tijuana';
+   
     if (loginContext.loginState.usersOfTA.length === 0) {
       userTime_zone = 'America/Tijuana';
     } else {
       userTime_zone = loginContext.loginState.usersOfTA[0].time_zone;
     }
-    /* userTime_zone = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('patient_timeZone='))
-      .split('=')[1]; */
-    //userTime_zone = loginContext.loginState.curUserTimeZone;
     console.log('curUser', userID);
     console.log('curUser', userTime_zone);
     console.log('curUser', userEmail);
-    
-    // document.cookie = 'patient_name=test'
   }
-  console.log('curUser', document.cookie);
-  console.log('curUser', userEmail);
+
   const history = useHistory();
   //console.log('curUser timezone', userTime_zone);
   /* useEffect() is used to render API calls as minimumly 
   as possible based on past experience, if not included 
   causes alarms and excessive rendering */
-  function GetBaseUrl() {
-    useEffect(() => {
-      axios.get('/base_url', {}).then((response) => {
-        console.log('getBaseUrl', response);
-
-        setStateValue((prevState) => {
-          return {
-            ...prevState,
-            BASE_URL: response['data'],
-          };
-        });
-      });
-    }, []);
-  }
-
-  // const [userID, setUserID] = useState(" ");
 
   // function GetUserID(e){
   useEffect(() => {
@@ -156,8 +131,6 @@ export default function Home(props) {
           });
           console.log(curUserID);
           console.log('timezone', curUserTZ);
-          // setUserID(curUserID);
-          // console.log(userID);
           GrabFireBaseRoutinesGoalsData();
           GrabFireBaseRoutinesData();
           GoogleEvents()
@@ -173,6 +146,7 @@ export default function Home(props) {
   // }
   
   /*----------------------------Use states to define variables----------------------------*/
+  const [signedin, setSignedIn] = useState(false);
   const [routineID, setRoutineID] = useState('');
   const [actionID, setActionID] = useState('');
   const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
@@ -181,11 +155,10 @@ export default function Home(props) {
   const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
   const [events, setEvents] = useState({})
   const [hightlight, setHightlight] = useState('');
-  console.log(loginContext.loginState.curUserEmail);
   const [stateValue, setStateValue] = useState({
     itemToEdit: {
       title: '',
-      gr_unique_id: '',
+      id:'',
       // is_persistent: this.props.isRoutine,
       photo: '',
       photo_url: '',
@@ -379,7 +352,6 @@ export default function Home(props) {
     // BASE_URL: getBaseUrl(),
     BASE_URL: BASE_URL,
   });
-  //console.log('startObject = ', stateValue.currentUserTimeZone);
   const initialEditingRTSState = {
     editing: false,
     type: '',
@@ -772,8 +744,6 @@ export default function Home(props) {
     buttonSelection: {
       width: '14%',
       height: '70px',
-      // borderBottomLeftRadius: '25%',
-      // borderBottomRightRadius: '25%',
       borderRadius: '0%',
       textTransform: 'capitalize',
       color: '#FFFFFF',
@@ -790,25 +760,12 @@ export default function Home(props) {
 
     dateContainer: {
       height: '70px',
-      //width: 'relative',
       color: '#FFFFFF',
-      // flex: 1,
-      // display: 'flex',
     },
   });
 
-  //   const [calendarView] = useState();
-  //   const history = useHistory();
   const classes = useStyles();
 
-  //   function routineNavigation() {
-  //     history.push("/routine");
-  //   }
-
-  // var onlyCal =
-  //   !stateValue.showRoutineGoalModal &&
-  //   // !this.state.showGoalModal &&
-  //   !stateValue.showRoutineModal;
   /*----------------------------toggleShowRoutine----------------------------*/
   function toggleShowRoutine(props) {
     setStateValue((prevState) => {
@@ -827,138 +784,11 @@ export default function Home(props) {
   function toggleShowGoal() {
     history.push('/goalhome');
   }
-
   function toggleShowEvents() {
     history.push('/events');
   }
 
-  const nextDay = () => {
-    
-    let dateContext = Object.assign({}, stateValue.todayDateObject);
-    console.log(dateContext);
-    dateContext = moment(dateContext).add(1, 'days');
-    console.log('todayDateObject', dateContext);
-    console.log('todayDateObject', dateContext.toString());
-    //console.log(end.toString());
-    setStateValue((prevState) => {
-      return {
-        ...prevState,
-        todayDateObject: dateContext,
-        dayEvents: [],
-      };
-      //updateEventsArray();
-    });
-    console.log(stateValue.dateContext, stateValue.dayEvents);
-  };
 
-  const prevDay = () => {
-    let dateContext = Object.assign({}, stateValue.todayDateObject);
-    
-    dateContext = moment(dateContext).subtract(1, 'days');
-    console.log('todayDateObject', dateContext);
-    console.log('todayDateObject', dateContext.toString());
-    setStateValue((prevState) => {
-      return {
-        ...prevState,
-        todayDateObject: dateContext,
-        dayEvents: [],
-      };
-      //updateEventsArray();
-    });
-    console.log(stateValue.dateContext, stateValue.dayEvents);
-  };
-
-  const curDay = () => {
-    let dateContext = Object.assign({}, stateValue.todayDateObject);
-    let today = new Date();
-    dateContext = moment(dateContext);
-    console.log('today timezone curDay', dateContext);
-
-    {
-      0 <= today.getDate().toString() - dateContext.format('D') &&
-      today.getDate().toString() - dateContext.format('D') <= 6 &&
-      (today.getMonth() + 1).toString() - dateContext.format('M') === 0
-        ? setStateValue((prevState) => {
-            return {
-              ...prevState,
-              todayDateObject: moment(today),
-              dayEvents: [],
-            };
-            //updateEventsArray();
-          })
-        : setStateValue((prevState) => {
-            return {
-              ...prevState,
-              todayDateObject: moment(today),
-              dayEvents: [],
-            };
-            //updateEventsArray();
-          });
-    }
-
-    console.log('today timezone curDay');
-  };
-
-  const nextWeek = () => {
-    let dateContext = Object.assign({}, stateValue.dateContext);
-    console.log('today timezone nextWeek', dateContext);
-    dateContext = moment(dateContext).add(1, 'week');
-    console.log('today timezone nextWeek', dateContext);
-    setStateValue((prevState) => {
-      return {
-        ...prevState,
-        dateContext: dateContext,
-        dayEvents: [],
-      };
-      // updateEventsArray();
-    });
-    console.log('today timezone nextWeek');
-  };
-
-  const prevWeek = () => {
-    let dateContext = Object.assign({}, stateValue.dateContext);
-    dateContext = moment(dateContext).subtract(1, 'week');
-    console.log('today timezone prevWeek', dateContext);
-    setStateValue((prevState) => {
-      return {
-        ...prevState,
-        dateContext: dateContext,
-        dayEvents: [],
-      };
-      // updateEventsArray();
-    });
-    console.log('today timezone prevWeek');
-  };
-  const curWeek = () => {
-    let dateContext = Object.assign({}, stateValue.dateContext);
-    let today = new Date();
-    dateContext = moment(dateContext);
-    console.log('today timezone curWeek', dateContext);
-
-    {
-      0 <= today.getDate().toString() - dateContext.format('D') &&
-      today.getDate().toString() - dateContext.format('D') <= 6 &&
-      (today.getMonth() + 1).toString() - dateContext.format('M') === 0
-        ? setStateValue((prevState) => {
-            return {
-              ...prevState,
-              dateContext: dateContext,
-              dayEvents: [],
-            };
-            // updateEventsArray();
-          })
-        : setStateValue((prevState) => {
-            return {
-              ...prevState,
-              dateContext: moment(today),
-              dayEvents: [],
-            };
-            // updateEventsArray();
-          });
-    }
-
-    console.log('today timezone curWeek');
-  };
   /*-----------------------------updateEventsArray:-----------------------------*/
   /*updates the array if the month view changes to a different month.*/
 
@@ -991,8 +821,8 @@ export default function Home(props) {
       startDate.setHours(0, 0, 0);
       endDate.setHours(23, 59, 59);
     } else if (this.state.calendarView === 'Week') {
-      let startObject = stateValue.dateContext.clone();
-      let endObject = stateValue.dateContext.clone();
+      let startObject = this.state.dateContext.clone();
+      let endObject = this.state.dateContext.clone();
       let startDay = startObject.startOf('week');
       let endDay = endObject.endOf('week');
       let startDate = new Date(startDay.format('MM/DD/YYYY'));
@@ -1001,15 +831,134 @@ export default function Home(props) {
       endDate.setHours(23, 59, 59);
     }
   };
-  const getDate = () => {
-    stateValue.dateContext.format('dddd');
 
-    getDay();
+    const nextDay = () => {
+      let dateContext = Object.assign({}, stateValue.todayDateObject);
+      console.log(dateContext);
+      dateContext = moment(dateContext).add(1, 'days');
+      console.log('todayDateObject', dateContext);
+      console.log('todayDateObject', dateContext.toString());
+      //console.log(end.toString());
+      setStateValue((prevState) => {
+        return {
+          ...prevState,
+          todayDateObject: dateContext,
+          dayEvents: [],
+        };
+        //updateEventsArray();
+      });
+      console.log(stateValue.dateContext, stateValue.dayEvents);
+    };
 
-    getMonth();
+    const prevDay = () => {
+      let dateContext = Object.assign({}, stateValue.todayDateObject);
 
-    getYear();
-  };
+      dateContext = moment(dateContext).subtract(1, 'days');
+      console.log('todayDateObject', dateContext);
+      console.log('todayDateObject', dateContext.toString());
+      setStateValue((prevState) => {
+        return {
+          ...prevState,
+          todayDateObject: dateContext,
+          dayEvents: [],
+        };
+        //updateEventsArray();
+      });
+      console.log(stateValue.dateContext, stateValue.dayEvents);
+    };
+
+    const curDay = () => {
+      let dateContext = Object.assign({}, stateValue.todayDateObject);
+      let today = new Date();
+      dateContext = moment(dateContext);
+      console.log('today timezone curDay', dateContext);
+
+      {
+        0 <= today.getDate().toString() - dateContext.format('D') &&
+        today.getDate().toString() - dateContext.format('D') <= 6 &&
+        (today.getMonth() + 1).toString() - dateContext.format('M') === 0
+          ? setStateValue((prevState) => {
+              return {
+                ...prevState,
+                todayDateObject: moment(today),
+                dayEvents: [],
+              };
+              //updateEventsArray();
+            })
+          : setStateValue((prevState) => {
+              return {
+                ...prevState,
+                todayDateObject: moment(today),
+                dayEvents: [],
+              };
+              //updateEventsArray();
+            });
+      }
+
+      console.log('today timezone curDay');
+    };
+
+    const nextWeek = () => {
+      let dateContext = Object.assign({}, stateValue.dateContext);
+      console.log('today timezone nextWeek', dateContext);
+      dateContext = moment(dateContext).add(1, 'week');
+      console.log('today timezone nextWeek', dateContext);
+      setStateValue((prevState) => {
+        return {
+          ...prevState,
+          dateContext: dateContext,
+          dayEvents: [],
+        };
+        // updateEventsArray();
+      });
+      console.log('today timezone nextWeek');
+    };
+
+    const prevWeek = () => {
+      let dateContext = Object.assign({}, stateValue.dateContext);
+      dateContext = moment(dateContext).subtract(1, 'week');
+      console.log('today timezone prevWeek', dateContext);
+      setStateValue((prevState) => {
+        return {
+          ...prevState,
+          dateContext: dateContext,
+          dayEvents: [],
+        };
+        // updateEventsArray();
+      });
+      console.log('today timezone prevWeek');
+    };
+    const curWeek = () => {
+      let dateContext = Object.assign({}, stateValue.dateContext);
+      let today = new Date();
+      dateContext = moment(dateContext);
+      console.log('today timezone curWeek', dateContext);
+
+      {
+        0 <= today.getDate().toString() - dateContext.format('D') &&
+        today.getDate().toString() - dateContext.format('D') <= 6 &&
+        (today.getMonth() + 1).toString() - dateContext.format('M') === 0
+          ? setStateValue((prevState) => {
+              return {
+                ...prevState,
+                dateContext: dateContext,
+                dayEvents: [],
+              };
+              // updateEventsArray();
+            })
+          : setStateValue((prevState) => {
+              return {
+                ...prevState,
+                dateContext: moment(today),
+                dayEvents: [],
+              };
+              // updateEventsArray();
+            });
+      }
+
+      console.log('today timezone curWeek');
+    };
+  
   // getYear:
   // returns the year based on year format
   const getYear = () => {
@@ -1025,27 +974,17 @@ export default function Home(props) {
   };
 
   function dayViewAbstracted() {
-    //stateValue.dateContext = today;
-    console.log('Day view', stateValue.dateContext);
     return (
       <div style={{ width: '100%' }}>
         <Row
           style={{ float: 'right', width: '100%', padding: '0', margin: '0' }}
         >
-          {/* {console.log("these are the events that are going to be passed in", this.state.dayEvents)} */}
-          {console.log(
-            'stateValue.todayDateObject',
-            stateValue.todayDateObject
-          )}
-          {console.log('day events goals ', events)}
-          {console.log('day events goals', stateValue.goals)}
-
           <DayEvents
             dateContext={stateValue.todayDateObject}
             // eventClickDayView={handleDayEventClick}
             // handleDateClick={handleDateClickOnDayView}
             dayEvents={events}
-            //theCurrentUserId={userID}
+            theCurrentUserId={userID}
             // getEventsByInterval={getEventsByIntervalDayVersion}
             timeZone={userTime_zone}
           />
@@ -1077,9 +1016,6 @@ export default function Home(props) {
   }
 
   const weekViewAbstracted = () => {
-    // let startObject = stateValue.dateContext.clone();
-    // let startWeek = startObject.startOf('week');
-    console.log('is_persistent', stateValue.routines);
     return (
       <div
         style={{
@@ -1105,7 +1041,6 @@ export default function Home(props) {
             highLight={hightlight}
           />
         </Row>
-        {/* </Container> */}
       </div>
     );
   };
@@ -1115,20 +1050,6 @@ export default function Home(props) {
     if (stateValue.calendarView === 'Day') return dayViewAbstracted();
     else if (stateValue.calendarView === 'Week') return weekViewAbstracted();
   }
-
-  //   props.hidden = props.hidden !== null ? props.hidden : false;
-
-  /*----------------------------getUrlParam----------------------------*/
-
-  const getUrlParam = (name, url) => {
-    if (!url) url = window.location.href;
-    name = name.replace(/[\[\]]/g, '\\$&');
-    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-      results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, ' '));
-  };
 
   /*----------------------------grabFireBaseRoutinesGoalData----------------------------*/
   /* useEffect() is used to render API calls as minimumly 
@@ -1141,9 +1062,6 @@ export default function Home(props) {
     let routine_ids = [];
     let goal = [];
     let goal_ids = [];
-
-    // console.log('base url ', url);
-    // console.log('base url id ', userID);
 
     const getTimes = (a_day_time, b_day_time) => {
       const [a_start_time, b_start_time] = [
@@ -1214,17 +1132,14 @@ export default function Home(props) {
             temp.push(response.data.result[i]);
           }
           temp.sort((a, b) => {
-            console.log('a = ', a, '\nb = ', b);
             const [a_start, b_start] = [
               a.gr_start_day_and_time,
               b.gr_start_day_and_time,
             ];
-            console.log('a_start = ', a_start, '\nb_start = ', b_start);
             const [a_end, b_end] = [
               a.gr_end_day_and_time,
               b.gr_end_day_and_time,
             ];
-           console.log('a_end = ', a_end, '\nb_end = ', b_end);
             const [a_start_time, b_start_time] = getTimes(
               a.gr_start_day_and_time,
               b.gr_start_day_and_time
@@ -1233,19 +1148,8 @@ export default function Home(props) {
               a.gr_end_day_and_time,
               b.gr_end_day_and_time
             );
-              console.log(
-                'a_start_time = ',
-                a_start_time,
-                '\nb_start_time = ',
-                b_start_time
-              );
-              console.log(
-                'a_end_time = ',
-                a_end_time,
-                '\nb_end_time = ',
-                b_end_time
-              ); 
-            if (a_start_time < b_start_time) return -1;
+            
+         if (a_start_time < b_start_time) return -1;
             else if (a_start_time > b_start_time) return 1;
             else {
               if (a_end_time < b_end_time) return -1;
@@ -1270,8 +1174,6 @@ export default function Home(props) {
             let x = response.data.result;
             console.log('response', x);
             x.sort((a, b) => {
-              // console.log(a);
-              // console.log(b);
               let datetimeA = new Date(
                 a['gr_start_day_and_time'].replace(/-/g, '/')
               );
@@ -1296,8 +1198,6 @@ export default function Home(props) {
             for (let i = 0; i < x.length; ++i) {
               let gr = {};
               gr.audio = '';
-              // gr.available_end_time = "23:59:59";
-              // gr.available_start_time = "00:00:00";
               gr.datetime_completed = x[i].gr_datetime_completed;
               gr.datetime_started = x[i].gr_datetime_started;
               gr.end_day_and_time = x[i].gr_end_day_and_time;
@@ -1376,11 +1276,6 @@ export default function Home(props) {
               }
 
               gr.start_day_and_time = x[i].gr_start_day_and_time;
-
-              // const first_notifications = x[i].notifications[0];
-              // const second_notifications = x[i].notifications[1];
-              // console.log(first_notifications);
-              // console.log(second_notifications);
 
               for (let k = 0; k < x[i].notifications.length; ++k) {
                 const first_notifications = x[i].notifications[k];
@@ -1732,11 +1627,11 @@ function GoogleEvents() {
           temp.push(response.data[i]);
         }
         temp.sort((a, b) => {
-           const [a_start, b_start] = [
+          const [a_start, b_start] = [
             a['start']['dateTime'],
             b['start']['dateTime'],
           ];
-          
+
           const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
 
           const [a_start_time, b_start_time] = getTimes(
@@ -1773,7 +1668,7 @@ function GoogleEvents() {
       .catch((error) => {
         console.log('here: Error in getting goals and routines ' + error);
       });
-  }, [userID, stateValue.dateContext]);
+  }, [userID, stateValue.dateContext, stateValue.todayDateObject]);
 }
 function GrabFireBaseRoutinesData() {
   let url = BASE_URL + 'getroutines/';
@@ -1781,10 +1676,6 @@ function GrabFireBaseRoutinesData() {
   let routine_ids = [];
   let goal = [];
   let goal_ids = [];
-
-  // console.log('base url ', url);
-  // console.log('base url id ', userID);
-
   const getTimes = (a_day_time, b_day_time) => {
     const [a_start_time, b_start_time] = [
       a_day_time.substring(10, a_day_time.length),
@@ -1854,13 +1745,14 @@ function GrabFireBaseRoutinesData() {
           temp.push(response.data.result[i]);
         }
         temp.sort((a, b) => {
-          console.log('a = ', a, '\nb = ', b);
           const [a_start, b_start] = [
             a.gr_start_day_and_time,
             b.gr_start_day_and_time,
           ];
-          console.log('a_start = ', a_start, '\nb_start = ', b_start);
-          const [a_end, b_end] = [a.gr_end_day_and_time, b.gr_end_day_and_time];
+          const [a_end, b_end] = [
+            a.gr_end_day_and_time,
+             b.gr_end_day_and_time
+            ];
 
           const [a_start_time, b_start_time] = getTimes(
             a.gr_start_day_and_time,
@@ -1896,8 +1788,6 @@ function GrabFireBaseRoutinesData() {
           let x = response.data.result;
           console.log('response', x);
           x.sort((a, b) => {
-            // console.log(a);
-            // console.log(b);
             let datetimeA = new Date(
               a['gr_start_day_and_time'].replace(/-/g, '/')
             );
@@ -1921,10 +1811,7 @@ function GrabFireBaseRoutinesData() {
 
           for (let i = 0; i < x.length; ++i) {
             let gr = {};
-            //console.log('day events', x[i]);
             gr.audio = '';
-            // gr.available_end_time = "23:59:59";
-            // gr.available_start_time = "00:00:00";
             gr.datetime_completed = x[i].gr_datetime_completed;
             gr.datetime_started = x[i].gr_datetime_started;
             gr.end_day_and_time = x[i].gr_end_day_and_time;
@@ -2271,9 +2158,6 @@ function GrabFireBaseRoutinesData() {
             };
           });
         }
-
-        // console.log(this.state.goals);
-        // console.log(stateValue);
       })
       .catch((error) => {
         console.log('Error in getting goals and routines ' + error);
@@ -2288,21 +2172,10 @@ function GrabFireBaseRoutinesData() {
 }
   useEffect(() => console.log('here: 4'), [editingRTS.editing.item]);
 
-  const updateFBGR = () => {
-    GrabFireBaseRoutinesGoalsData();
-    // props.refresh();
-    // useEffect(() => {
-    // window.location.reload();
-    // }, []);
-  };
-
   function ToggleShowAbout() {
     history.push('/about');
   }
-  // if (loginContext.loginState.loggedIn == false) {
-  //   history.push('/')
-  // }
-
+  
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
   ) {
@@ -2331,7 +2204,6 @@ function GrabFireBaseRoutinesData() {
     /*----------------------------button
         selection----------------------------*/
     <div>
-      {/* <Navigation userID= {stateValue.currentUserId}/> */}
       <div style={{ height: '3px' }}></div>
       <EditRTSContext.Provider
         value={{
@@ -2434,30 +2306,6 @@ function GrabFireBaseRoutinesData() {
                     >
                       Add Routine +
                     </Button>
-                    {/* {stateValue.showRoutineModal ? (
-                      <Button
-                        className={classes.buttonSelection}
-                        style={{
-                          width: '19%',
-                        }}
-                        id="one"
-                        onClick={() => {
-                          // e.stopPropagation()
-                          console.log('Clicked add RTS');
-                          //console.log(editingRTS)
-                          setEditingRTS(newRTSState);
-                          //console.log(editingRTS)
-                        }}
-                      >
-                        Add Routine +
-                      </Button>
-                    ) : (
-                      <div
-                        style={{
-                          width: '20%',
-                        }}
-                      ></div>
-                    )} */}
 
                     <div style={{ flex: '1' }}>
                       {userID != '' && (
@@ -2487,11 +2335,6 @@ function GrabFireBaseRoutinesData() {
                         />
                       )}
                     </div>
-                    {/* <div style={{flex:'2'}}
-              >
-               {editingIS.editing ? <EditIS/> : editingATS.editing ? <EditATS/> : editingRTS.editing ? <EditRTS /> : showCalendarView()}
-           
-              </div> */}
                   </div>
                   <div style={{ width: '70%', float: 'left' }}>
                     {editingRTS.editing ? null : (
@@ -2512,29 +2355,6 @@ function GrabFireBaseRoutinesData() {
                                   paddingTop: '1rem',
                                 }}
                               >
-                                {/* <Button
-                                style={{
-                                  font: 'normal normal bold 20px SF Pro',
-                                  color: 'white',
-                                }}
-                                onClick={(e) => {
-                                  stateValue.calendarView === 'Week'
-                                    ? setStateValue((prevState) => {
-                                        return {
-                                          ...prevState,
-                                          calendarView: 'Day',
-                                        };
-                                      })
-                                    : setStateValue((prevState) => {
-                                        return {
-                                          ...prevState,
-                                          calendarView: 'Week',
-                                        };
-                                      });
-                                }}
-                              >
-                                Week
-                              </Button> */}
                                 <FontAwesomeIcon
                                   style={{ cursor: 'pointer' }}
                                   icon={faCalendarDay}
@@ -2581,26 +2401,13 @@ function GrabFireBaseRoutinesData() {
                               >
                                 {0 <= today.format('D') - curDate.format('D') &&
                                 today.format('D') - curDate.format('D') <= 6 &&
-                                today.format('M') - curDate.format('M') ===
-                                  0 ? (
+                                today.format('M') - curDate.format('M') === 0 ? (
                                   <p
                                     style={{
                                       font: 'normal normal bold 28px SF Pro',
                                       paddingBottom: '0px',
                                     }}
                                   >
-                                    {console.log(
-                                      'today timezone',
-                                      today.format('D') - curDate.format('D')
-                                    )}
-                                    {console.log(
-                                      'today timezone',
-                                      today.format('D')
-                                    )}
-                                    {console.log(
-                                      'today timezone',
-                                      curDate.format('D')
-                                    )}
                                     This week
                                   </p>
                                 ) : (
@@ -2669,29 +2476,6 @@ function GrabFireBaseRoutinesData() {
                                   paddingTop: '1rem',
                                 }}
                               >
-                                {/* <Button
-                                style={{
-                                  font: 'normal normal bold 20px SF Pro',
-                                  color: 'white',
-                                }}
-                                onClick={(e) => {
-                                  stateValue.calendarView === 'Week'
-                                    ? setStateValue((prevState) => {
-                                        return {
-                                          ...prevState,
-                                          calendarView: 'Day',
-                                        };
-                                      })
-                                    : setStateValue((prevState) => {
-                                        return {
-                                          ...prevState,
-                                          calendarView: 'Week',
-                                        };
-                                      });
-                                }}
-                              >
-                                Day
-                              </Button> */}
                                 <FontAwesomeIcon
                                   style={{ cursor: 'pointer' }}
                                   icon={faCalendarWeek}
@@ -2829,6 +2613,14 @@ function GrabFireBaseRoutinesData() {
                           CurrentId={userID}
                           ta_ID={selectedUser}
                           setGetGoalsEndPoint={setGetGoalsEndPoint}
+                          stateValue={stateValue}
+                          setStateValue={setStateValue}
+                        />
+                      ) : editingEvent.editing ? (
+                        <GoogleEventComponent
+                          signedin={signedin}
+                          setSignedIn={setSignedIn}
+                          currentEmail={userEmail}
                           stateValue={stateValue}
                           setStateValue={setStateValue}
                         />
