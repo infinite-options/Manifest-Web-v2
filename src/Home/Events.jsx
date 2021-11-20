@@ -2218,11 +2218,9 @@ function GoogleEvents() {
                     </Button>
                     <Button
                       className={classes.buttonSelection}
-                      //onClick={toggleShowEvents}
                       onClick={() => {
-                        //getAcessToken();
                         toggleShowEvents();
-                        //setEditingEvent(newEditingEventState);
+                        
                         getAuthToGoogle();
                       }}
                       id="one"

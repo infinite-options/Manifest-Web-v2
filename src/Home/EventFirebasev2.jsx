@@ -92,10 +92,7 @@ export default function EventFirebasev2(props) {
   useEffect(() => {
     makeActionDisplays();
     // console.log('here-2: gsep on useEffect = ', props.getStepsEndPoint);
-  }, [
-    props.events,
-    props.theCurrentUserID,    recList
-  ]);
+  }, [props.events, props.theCurrentUserID, recList, props.editEvent]);
 
   const getTimes = (a_day_time, b_day_time) => {
     const [a_start_time, b_start_time] = [
