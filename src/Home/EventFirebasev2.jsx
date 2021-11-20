@@ -94,9 +94,7 @@ export default function EventFirebasev2(props) {
     // console.log('here-2: gsep on useEffect = ', props.getStepsEndPoint);
   }, [
     props.events,
-    props.theCurrentUserID,
-    getActions,
-    recList
+    props.theCurrentUserID,    recList
   ]);
 
   const getTimes = (a_day_time, b_day_time) => {
