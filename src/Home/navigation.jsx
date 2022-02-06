@@ -121,7 +121,7 @@ export function Navigation() {
   const [taName, setTAName] = useState('');
   const [taID, setTAID] = useState('');
   const [taList, setTAList] = useState([]);
-  const redirect_uri = 'https://manifestmy.space';
+  let redirect_uri = 'https://manifestmy.space';
   //var taList = []
   useEffect(() => {
     //const redirect_uri = 'https://manifestmy.space';
