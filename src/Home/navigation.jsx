@@ -121,21 +121,10 @@ export function Navigation() {
   const [taName, setTAName] = useState('');
   const [taID, setTAID] = useState('');
   const [taList, setTAList] = useState([]);
-  let redirect_uri = 'https://manifestmy.space';
-  //var taList = []
-  useEffect(() => {
-    //const redirect_uri = 'https://manifestmy.space';
-    console.log('base_url', redirect_uri);
-    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      redirect_uri = 'https://manifestmy.space';
-      console.log('base_url', redirect_uri);
-    } else {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      redirect_uri = 'https://manifestmy.life';
-      console.log('base_url', redirect_uri);
-    }
-  }, []);
+  let redirecturi = 'https://manifestmy.space';
+  console.log(redirecturi);
+
+  console.log(redirecturi);
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
   ) {
@@ -537,11 +526,23 @@ export function Navigation() {
     let authorization_url = 'https://accounts.google.com/o/oauth2/token';
 
     console.log('auth_code', auth_code);
+
+    //const redirecturi = 'https://manifestmy.space';
+    console.log('base_url', redirecturi);
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      redirecturi = 'https://manifestmy.space';
+      console.log('base_url', redirecturi);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      redirecturi = 'https://manifestmy.life';
+      console.log('base_url', redirecturi);
+    }
     var details = {
       code: auth_code,
       client_id: client_id,
       client_secret: client_secret,
-      redirect_uri: redirect_uri,
+      redirect_uri: redirecturi,
       //redirect_uri: 'https://manifestmy.space',
       //redirect_uri: 'http://localhost:3000',
       grant_type: 'authorization_code',
@@ -944,7 +945,11 @@ export function Navigation() {
                     prompt="consent"
                     responseType="code"
                     buttonText="Log In"
-                    redirectUri={redirect_uri}
+                    redirectUri={
+                      BASE_URL.substring(8, 18) == '3s3sftsr90'
+                        ? 'https://manifestmy.space'
+                        : 'https://manifestmy.life'
+                    }
                     //redirectUri="https://manifestmy.space"
                     //redirectUri="http://localhost:3000"
                     scope="https://www.googleapis.com/auth/calendar"
