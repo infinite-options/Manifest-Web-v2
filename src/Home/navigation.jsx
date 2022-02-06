@@ -96,16 +96,6 @@ export function Navigation() {
 
   const client_id = CLIENT_ID;
   const client_secret = CLIENT_SECRET;
-  const redirect_uris = [
-    'https://manifestmy.space/adduser',
-    'https://www.manifestmy.space/',
-    'https://manifestmy.space',
-    'https://manifestmy.life/adduser',
-    'https://www.manifestmy.life/',
-    'https://manifestmy.life',
-    'http://localhost:3000',
-    'http://localhost'
-  ];
 
   // const selectedUser = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
   // const [selectedUser, setSelectedUser] = useState('')
@@ -117,7 +107,7 @@ export function Navigation() {
   const [timezone, setTimezone] = useState(
     Intl.DateTimeFormat().resolvedOptions().timeZone
   );
-  const [tokenInfo, setTokenInfo]=useState({});
+  const [tokenInfo, setTokenInfo] = useState({});
   const [userInfo, setUserInfo] = useState({});
   const [patientName, setPatiantName] = useState('');
   const [emailUser, setEmailUser] = useState('');
@@ -131,9 +121,21 @@ export function Navigation() {
   const [taName, setTAName] = useState('');
   const [taID, setTAID] = useState('');
   const [taList, setTAList] = useState([]);
-
+  const redirect_uri = 'https://manifestmy.space';
   //var taList = []
-
+  useEffect(() => {
+    //const redirect_uri = 'https://manifestmy.space';
+    console.log('base_url', redirect_uri);
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      redirect_uri = 'https://manifestmy.space';
+      console.log('base_url', redirect_uri);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      redirect_uri = 'https://manifestmy.life';
+      console.log('base_url', redirect_uri);
+    }
+  }, []);
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
   ) {
@@ -168,7 +170,7 @@ export function Navigation() {
             user_unique_id: user.user_unique_id,
             user_name: user.user_name,
             time_zone: user.time_zone,
-            user_email_id: user.user_email_id
+            user_email_id: user.user_email_id,
           })}
         >
           {user.user_name}
@@ -227,7 +229,7 @@ export function Navigation() {
               document.cookie =
                 'patient_timeZone=' + JSON.parse(e.target.value).time_zone;
               document.cookie =
-                  'patient_email=' + JSON.parse(e.target.value).user_email_id;
+                'patient_email=' + JSON.parse(e.target.value).user_email_id;
               console.log(document.cookie);
               loginContext.setLoginState({
                 ...loginContext.loginState,
@@ -248,7 +250,7 @@ export function Navigation() {
                   .split('=')[1]
               }
             </option>
-            
+
             {elements}
           </select>
         </div>
@@ -517,7 +519,6 @@ export function Navigation() {
   //   let fn = userInfo['given_name'];
   //   let ln = userInfo['family_name'];
   //   let si = userInfo['id'];
-   
 
   //   setEmailUser(e);
   //   setFirstName(fn);
@@ -529,20 +530,19 @@ export function Navigation() {
   //   //document.cookie = 'patient_name=Loading';
   // }
 
-  
   const responseGoogle = (response) => {
-    
     console.log('response', response);
-    
+
     let auth_code = response.code;
     let authorization_url = 'https://accounts.google.com/o/oauth2/token';
-    
+
     console.log('auth_code', auth_code);
     var details = {
       code: auth_code,
       client_id: client_id,
       client_secret: client_secret,
-      redirect_uri:'https://manifestmy.space',
+      redirect_uri: redirect_uri,
+      //redirect_uri: 'https://manifestmy.space',
       //redirect_uri: 'http://localhost:3000',
       grant_type: 'authorization_code',
     };
@@ -554,7 +554,7 @@ export function Navigation() {
       formBody.push(encodedKey + '=' + encodedValue);
     }
     formBody = formBody.join('&');
-    
+
     fetch(authorization_url, {
       method: 'POST',
       headers: {
@@ -579,32 +579,32 @@ export function Navigation() {
         setaccessExpiresIn(ax);
         console.log('res', at, rt);
 
-         axios
-           .get(
-             'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' +
-               at
-           )
-           .then((response) => {
-             console.log(response.data);
+        axios
+          .get(
+            'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' +
+              at
+          )
+          .then((response) => {
+            console.log(response.data);
 
-             let data = response.data;
-             //setUserInfo(data);
-             let e = data['email'];
-             let fn = data['given_name'];
-             let ln = data['family_name'];
-             let si = data['id'];
+            let data = response.data;
+            //setUserInfo(data);
+            let e = data['email'];
+            let fn = data['given_name'];
+            let ln = data['family_name'];
+            let si = data['id'];
 
-             setEmailUser(e);
-             setFirstName(fn);
-             setLastName(ln);
-             setSocialId(si);
-           })
-           .catch((error) => {
-             console.log('its in landing page');
-             console.log(error);
-           });
+            setEmailUser(e);
+            setFirstName(fn);
+            setLastName(ln);
+            setSocialId(si);
+          })
+          .catch((error) => {
+            console.log('its in landing page');
+            console.log(error);
+          });
 
-         //console.log('res', userInfo);
+        //console.log('res', userInfo);
         //  let e = userInfo['email'];
         //  let fn = userInfo['given_name'];
         //  let ln = userInfo['family_name'];
@@ -614,15 +614,22 @@ export function Navigation() {
         //  setFirstName(fn);
         //  setLastName(ln);
         //  setSocialId(si);
-         toggleNewUser(!showNewUser);
+        toggleNewUser(!showNewUser);
 
-        return accessToken,refreshToken,accessExpiresIn,emailUser,firstName,lastName,socialId
+        return (
+          accessToken,
+          refreshToken,
+          accessExpiresIn,
+          emailUser,
+          firstName,
+          lastName,
+          socialId
+        );
       })
       .catch((err) => {
         console.log(err);
       });
   };
-   
 
   function onSubmitUser() {
     let body = {
@@ -937,7 +944,8 @@ export function Navigation() {
                     prompt="consent"
                     responseType="code"
                     buttonText="Log In"
-                    redirectUri="https://manifestmy.space"
+                    redirectUri={redirect_uri}
+                    //redirectUri="https://manifestmy.space"
                     //redirectUri="http://localhost:3000"
                     scope="https://www.googleapis.com/auth/calendar"
                     onSuccess={responseGoogle}
