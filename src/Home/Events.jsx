@@ -47,8 +47,11 @@ import EditEventModal from './EditEventModal';
 //import ApiCalendar from 'react-google-calendar-api';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
+const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
 export default function Events(props) {
+  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
   console.log('In events');
   const loginContext = useContext(LoginContext);
   var selectedUser = loginContext.loginState.curUser;
@@ -111,17 +114,13 @@ export default function Events(props) {
   /* useEffect() is used to render API calls as minimumly 
   as possible based on past experience, if not included 
   causes alarms and excessive rendering */
-  
 
   // const [userID, setUserID] = useState(" ");
 
   // function GetUserID(e){
   useEffect(() => {
     console.log('home line 94');
-    console.log('document.cookie',
-      document.cookie
-        
-    );
+    console.log('document.cookie', document.cookie);
     axios
       .get(
         BASE_URL +
@@ -144,15 +143,16 @@ export default function Events(props) {
             usersOfTA: response.data.result,
             curUser: curUserID,
             curUserTimeZone: curUserTZ,
-            curUserEmail:curUserEI,
+            curUserEmail: curUserEI,
           });
           console.log(curUserID);
           console.log('timezone', curUserTZ);
           // setUserID(curUserID);
           // console.log(userID);
-           GrabFireBaseRoutinesGoalsData();
-           //GrabFireBaseRoutinesData();
-           GoogleEvents();
+          GrabFireBaseRoutinesGoalsData();
+          //GrabFireBaseRoutinesData();
+          //GoogleEvents();
+          GetUserAcessToken();
           // return userID;
         } else {
           console.log('No User Found');
@@ -162,10 +162,23 @@ export default function Events(props) {
         console.log(error);
       });
   }, [loginContext.loginState.reload]);
+
+  useEffect(() => {
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    }
+  }, [loginContext.loginState.reload]);
   // }
   /*----------------------------Use states to define variables----------------------------*/
-  const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-  const CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
+
   const [accessToken, setAccessToken] = useState('');
   const [signedin, setSignedIn] = useState(false);
   const [googleAuthedEmail, setgoogleAuthedEmail] = useState(null);
@@ -840,36 +853,39 @@ export default function Events(props) {
       setgoogleAuthedEmail(null);
     }
   };
-    
+
   const getAcessToken = () => {
     let url = BASE_URL + 'taToken/';
-    let ta_id = '200-000002'
+    let ta_id = '200-000002';
     axios
       .get(url + ta_id)
       .then((response) => {
         console.log('in events', response);
-        let url = 'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
+        let url =
+          'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
         loginContext.setLoginState({
           ...loginContext.loginState,
-          ta:{
-            id:'200-000002',
-            email: response['data']['ta_email_id']
-          }
+          ta: {
+            id: '200-000002',
+            email: response['data']['ta_email_id'],
+          },
         });
-        var old_at = response['data']['ta_google_auth_token']
-        console.log('in events', old_at)
+        var old_at = response['data']['ta_google_auth_token'];
+        console.log('in events', old_at);
         var refreshToken = response['data']['ta_google_refresh_token'];
-        
-        let checkExp_url =
-          url + old_at
-        console.log('in events', checkExp_url)
-        fetch(`https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`, {
-          method: 'GET',
-        })
+
+        let checkExp_url = url + old_at;
+        console.log('in events', checkExp_url);
+        fetch(
+          `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`,
+          {
+            method: 'GET',
+          }
+        )
           .then((response) => {
             console.log('in events', response);
             if (response['status'] === 400) {
-              console.log('in events if')
+              console.log('in events if');
               let authorization_url =
                 'https://accounts.google.com/o/oauth2/token';
 
@@ -891,7 +907,8 @@ export default function Events(props) {
               fetch(authorization_url, {
                 method: 'POST',
                 headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                  'Content-Type':
+                    'application/x-www-form-urlencoded;charset=UTF-8',
                 },
                 body: formBody,
               })
@@ -907,7 +924,7 @@ export default function Events(props) {
                   let at = data['access_token'];
                   var id_token = data['id_token'];
                   setAccessToken(at);
-                  setIdToken(id_token)
+                  setIdToken(id_token);
                   console.log('in events', at);
                   let url = BASE_URL + 'UpdateAccessToken/';
                   axios
@@ -918,30 +935,27 @@ export default function Events(props) {
                     .catch((err) => {
                       console.log(err);
                     });
-                  return accessToken
+                  return accessToken;
                 })
                 .catch((err) => {
                   console.log(err);
                 });
-                
-              }
-              else{
-                setAccessToken(old_at);
-              }
+            } else {
+              setAccessToken(old_at);
+            }
           })
           .catch((err) => {
             console.log(err);
           });
-        console.log('in events', refreshToken)
-        
+        console.log('in events', refreshToken);
       })
       .catch((error) => {
         console.log('Error in events' + error);
       });
-}; 
- 
-console.log('in events setaccess', accessToken)
-  
+  };
+
+  console.log('in events setaccess', accessToken);
+
   function toggleShowEvents(props) {
     setStateValue((prevState) => {
       return {
@@ -1016,7 +1030,7 @@ console.log('in events setaccess', accessToken)
               ...prevState,
               todayDateObject: moment(today),
               dayEvents: [],
-              events:[]
+              events: [],
             };
             // updateEventsArray();
           })
@@ -1095,7 +1109,6 @@ console.log('in events setaccess', accessToken)
     console.log('today timezone curWeek');
   };
 
-  
   const handleWeekEventClick = (A) => {
     var guestList = '';
     if (A.attendees) {
@@ -1167,6 +1180,17 @@ console.log('in events setaccess', accessToken)
       editRecurringOption: '',
     });
   };
+
+  // useEffect(() => {
+  //   GetUserAcessToken();
+  //   // console.log('here-2: gsep on useEffect = ', props.getStepsEndPoint);
+  // }, [
+  //   userID,
+  //   editingRTS.editing,
+  //   editingATS.editing,
+  //   editingIS.editing,
+  //   editingEvent.editing,
+  // ]);
   /*-----------------------------updateEventsArray:-----------------------------*/
   /*updates the array if the month view changes to a different month.*/
 
@@ -1244,7 +1268,6 @@ console.log('in events setaccess', accessToken)
         }}
       >
         <Row
-          
           noGutters={true}
           // style={{ overflowY: 'scroll', maxHeight: '1350px' }}
           className="d-flex justify-content-end"
@@ -1854,272 +1877,393 @@ console.log('in events setaccess', accessToken)
       editingEvent.editing,
     ]);
   }
-function GoogleEvents() {
-  let url = BASE_URL + 'calenderEvents/';
-  let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
-  let endofWeek = moment(stateValue.dateContext).add(6, 'days');
-  let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
-  let id = userID;
 
-  const getTimes = (a_day_time, b_day_time) => {
-    const [a_start_time, b_start_time] = [
-      a_day_time.substring(10, a_day_time.length),
-      b_day_time.substring(10, b_day_time.length),
-    ];
-    const [a_HMS, b_HMS] = [
-      a_start_time
-        .substring(0, a_start_time.length - 3)
-        .replace(/\s{1,}/, '')
-        .split(':'),
-      b_start_time
-        .substring(0, b_start_time.length - 3)
-        .replace(/\s{1,}/, '')
-        .split(':'),
-    ];
-    const [a_parity, b_parity] = [
-      a_start_time
-        .substring(a_start_time.length - 3, a_start_time.length)
-        .replace(/\s{1,}/, ''),
-      b_start_time
-        .substring(b_start_time.length - 3, b_start_time.length)
-        .replace(/\s{1,}/, ''),
-    ];
+  function GetUserAcessToken() {
+    let url = BASE_URL + 'usersToken/';
+    let user_id = userID;
+    let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+    let endofWeek = moment(stateValue.dateContext).add(6, 'days');
+    let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
 
-    let [a_time, b_time] = [0, 0];
-    if (a_parity === 'PM' && a_HMS[0] !== '12') {
-      const hoursInt = parseInt(a_HMS[0]) + 12;
-      a_HMS[0] = `${hoursInt}`;
-    } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+    const getTimes = (a_day_time, b_day_time) => {
+      const [a_start_time, b_start_time] = [
+        a_day_time.substring(10, a_day_time.length),
+        b_day_time.substring(10, b_day_time.length),
+      ];
+      const [a_HMS, b_HMS] = [
+        a_start_time
+          .substring(0, a_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+        b_start_time
+          .substring(0, b_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+      ];
+      const [a_parity, b_parity] = [
+        a_start_time
+          .substring(a_start_time.length - 3, a_start_time.length)
+          .replace(/\s{1,}/, ''),
+        b_start_time
+          .substring(b_start_time.length - 3, b_start_time.length)
+          .replace(/\s{1,}/, ''),
+      ];
 
-    if (b_parity === 'PM' && b_HMS[0] !== '12') {
-      const hoursInt = parseInt(b_HMS[0]) + 12;
-      b_HMS[0] = `${hoursInt}`;
-    } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+      let [a_time, b_time] = [0, 0];
+      if (a_parity === 'PM' && a_HMS[0] !== '12') {
+        const hoursInt = parseInt(a_HMS[0]) + 12;
+        a_HMS[0] = `${hoursInt}`;
+      } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
 
-    for (let i = 0; i < a_HMS.length; i++) {
-      a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
-      b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
-    }
+      if (b_parity === 'PM' && b_HMS[0] !== '12') {
+        const hoursInt = parseInt(b_HMS[0]) + 12;
+        b_HMS[0] = `${hoursInt}`;
+      } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
 
-    return [a_time, b_time];
-  };
-  useEffect(() => {
-    if (userID == '') return;
-    console.log(
-      'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-      [
-        userID,
-        editingEvent.editing,
-      ]
-    );
+      for (let i = 0; i < a_HMS.length; i++) {
+        a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+        b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+      }
 
-    axios
-      .post(url + id.toString() + ',' + start.toString() + ',' + end.toString())
-      .then((response) => {
-        console.log('day events ', response.data);
-        const temp = [];
+      return [a_time, b_time];
+    };
+    useEffect(() => {
+      if (userID == '') return;
+      console.log(
+        'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
+        [userID, editingEvent.editing]
+      );
 
-        for (let i = 0; i < response.data.length; i++) {
-          temp.push(response.data[i]);
-        }
-        temp.sort((a, b) => {
-          // console.log('a = ', a, '\nb = ', b);
-          const [a_start, b_start] = [
-            a['start']['dateTime'],
-            b['start']['dateTime'],
-          ];
-          console.log('a_start = ', a_start, '\nb_start = ', b_start);
-          const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
+      axios
+        .get(url + user_id)
+        .then((response) => {
+          console.log('in events', response);
 
-          const [a_start_time, b_start_time] = getTimes(
-            a['start']['dateTime'],
-            b['start']['dateTime']
-          );
-          const [a_end_time, b_end_time] = getTimes(
-            a['end']['dateTime'],
-            b['end']['dateTime']
-          );
+          var old_at = response['data']['google_auth_token'];
+          var refreshToken = response['data']['google_refresh_token'];
+          console.log('in events', old_at);
+          const headers = {
+            Accept: 'application/json',
+            Authorization: 'Bearer ' + old_at,
+          };
+          const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?orderBy=startTime&singleEvents=true&timeMax=${end}&timeMin=${start}&key=${API_KEY}`;
+          axios
+            .get(url, {
+              headers: headers,
+            })
+            .then((response) => {
+              console.log('day events ', response.data.items);
+              const temp = [];
 
-          if (a_start_time < b_start_time) return -1;
-          else if (a_start_time > b_start_time) return 1;
-          else {
-            if (a_end_time < b_end_time) return -1;
-            else if (a_end_time > b_end_time) return 1;
+              for (let i = 0; i < response.data.items.length; i++) {
+                temp.push(response.data.items[i]);
+              }
+              temp.sort((a, b) => {
+                // console.log('a = ', a, '\nb = ', b);
+                const [a_start, b_start] = [
+                  a['start']['dateTime'],
+                  b['start']['dateTime'],
+                ];
+                console.log('a_start = ', a_start, '\nb_start = ', b_start);
+                const [a_end, b_end] = [
+                  a['end']['dateTime'],
+                  b['end']['dateTime'],
+                ];
+
+                const [a_start_time, b_start_time] = getTimes(
+                  a['start']['dateTime'],
+                  b['start']['dateTime']
+                );
+                const [a_end_time, b_end_time] = getTimes(
+                  a['end']['dateTime'],
+                  b['end']['dateTime']
+                );
+
+                if (a_start_time < b_start_time) return -1;
+                else if (a_start_time > b_start_time) return 1;
+                else {
+                  if (a_end_time < b_end_time) return -1;
+                  else if (a_end_time > b_end_time) return 1;
+                  else {
+                    if (a_start < b_start) return -1;
+                    else if (a_start > b_start) return 1;
+                    else {
+                      if (a_end < b_end) return -1;
+                      else if (a_end > b_end) return 1;
+                    }
+                  }
+                }
+
+                return 0;
+              });
+
+              console.log('homeTemp = ', temp);
+
+              setEvents(temp);
+            })
+            .catch((error) => console.log(error));
+          fetch(
+            `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`,
+            {
+              method: 'GET',
+            }
+          )
+            .then((response) => {
+              console.log('in events', response);
+              if (response['status'] === 400) {
+                console.log('in events if');
+                let authorization_url =
+                  'https://accounts.google.com/o/oauth2/token';
+
+                var details = {
+                  refresh_token: refreshToken,
+                  client_id: CLIENT_ID,
+                  client_secret: CLIENT_SECRET,
+                  grant_type: 'refresh_token',
+                };
+
+                var formBody = [];
+                for (var property in details) {
+                  var encodedKey = encodeURIComponent(property);
+                  var encodedValue = encodeURIComponent(details[property]);
+                  formBody.push(encodedKey + '=' + encodedValue);
+                }
+                formBody = formBody.join('&');
+
+                fetch(authorization_url, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type':
+                      'application/x-www-form-urlencoded;charset=UTF-8',
+                  },
+                  body: formBody,
+                })
+                  .then((response) => {
+                    return response.json();
+                  })
+                  .then((responseData) => {
+                    console.log(responseData);
+                    return responseData;
+                  })
+                  .then((data) => {
+                    console.log(data);
+                    let at = data['access_token'];
+                    const headers = {
+                      Accept: 'application/json',
+                      Authorization: 'Bearer ' + at,
+                    };
+                    const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?orderBy=startTime&singleEvents=true&timeMax=${end}&timeMin=${start}&key=${API_KEY}`;
+                    axios
+                      .get(url, {
+                        headers: headers,
+                      })
+                      .then((response) => {
+                        console.log('day events ', response.data.items);
+                        const temp = [];
+
+                        for (let i = 0; i < response.data.items.length; i++) {
+                          temp.push(response.data.items[i]);
+                        }
+                        temp.sort((a, b) => {
+                          // console.log('a = ', a, '\nb = ', b);
+                          const [a_start, b_start] = [
+                            a['start']['dateTime'],
+                            b['start']['dateTime'],
+                          ];
+                          console.log(
+                            'a_start = ',
+                            a_start,
+                            '\nb_start = ',
+                            b_start
+                          );
+                          const [a_end, b_end] = [
+                            a['end']['dateTime'],
+                            b['end']['dateTime'],
+                          ];
+
+                          const [a_start_time, b_start_time] = getTimes(
+                            a['start']['dateTime'],
+                            b['start']['dateTime']
+                          );
+                          const [a_end_time, b_end_time] = getTimes(
+                            a['end']['dateTime'],
+                            b['end']['dateTime']
+                          );
+
+                          if (a_start_time < b_start_time) return -1;
+                          else if (a_start_time > b_start_time) return 1;
+                          else {
+                            if (a_end_time < b_end_time) return -1;
+                            else if (a_end_time > b_end_time) return 1;
+                            else {
+                              if (a_start < b_start) return -1;
+                              else if (a_start > b_start) return 1;
+                              else {
+                                if (a_end < b_end) return -1;
+                                else if (a_end > b_end) return 1;
+                              }
+                            }
+                          }
+
+                          return 0;
+                        });
+
+                        console.log('homeTemp = ', temp);
+
+                        setEvents(temp);
+                      })
+                      .catch((error) => console.log(error));
+
+                    console.log('in events', at);
+                    let updateURL = BASE_URL + 'UpdateUserAccessToken/';
+                    axios
+                      .post(updateURL + user_id, {
+                        google_auth_token: at,
+                      })
+                      .then((response) => {})
+                      .catch((err) => {
+                        console.log(err);
+                      });
+                    return;
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              } else {
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+          console.log('in events', refreshToken);
+        })
+        .catch((error) => {
+          console.log('Error in events' + error);
+        });
+    }, [userID, stateValue.dateContext, editingEvent.editing]);
+  }
+
+  function GoogleEvents() {
+    let url = BASE_URL + 'calenderEvents/';
+    let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+    let endofWeek = moment(stateValue.dateContext).add(6, 'days');
+    let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
+    let id = userID;
+
+    const getTimes = (a_day_time, b_day_time) => {
+      const [a_start_time, b_start_time] = [
+        a_day_time.substring(10, a_day_time.length),
+        b_day_time.substring(10, b_day_time.length),
+      ];
+      const [a_HMS, b_HMS] = [
+        a_start_time
+          .substring(0, a_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+        b_start_time
+          .substring(0, b_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+      ];
+      const [a_parity, b_parity] = [
+        a_start_time
+          .substring(a_start_time.length - 3, a_start_time.length)
+          .replace(/\s{1,}/, ''),
+        b_start_time
+          .substring(b_start_time.length - 3, b_start_time.length)
+          .replace(/\s{1,}/, ''),
+      ];
+
+      let [a_time, b_time] = [0, 0];
+      if (a_parity === 'PM' && a_HMS[0] !== '12') {
+        const hoursInt = parseInt(a_HMS[0]) + 12;
+        a_HMS[0] = `${hoursInt}`;
+      } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+
+      if (b_parity === 'PM' && b_HMS[0] !== '12') {
+        const hoursInt = parseInt(b_HMS[0]) + 12;
+        b_HMS[0] = `${hoursInt}`;
+      } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+
+      for (let i = 0; i < a_HMS.length; i++) {
+        a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+        b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+      }
+
+      return [a_time, b_time];
+    };
+    useEffect(() => {
+      if (userID == '') return;
+      console.log(
+        'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
+        [userID, editingEvent.editing]
+      );
+
+      axios
+        .post(
+          url + id.toString() + ',' + start.toString() + ',' + end.toString()
+        )
+        .then((response) => {
+          console.log('day events ', response.data.items);
+          const temp = [];
+
+          for (let i = 0; i < response.data.length; i++) {
+            temp.push(response.data[i]);
+          }
+          temp.sort((a, b) => {
+            // console.log('a = ', a, '\nb = ', b);
+            const [a_start, b_start] = [
+              a['start']['dateTime'],
+              b['start']['dateTime'],
+            ];
+            console.log('a_start = ', a_start, '\nb_start = ', b_start);
+            const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
+
+            const [a_start_time, b_start_time] = getTimes(
+              a['start']['dateTime'],
+              b['start']['dateTime']
+            );
+            const [a_end_time, b_end_time] = getTimes(
+              a['end']['dateTime'],
+              b['end']['dateTime']
+            );
+
+            if (a_start_time < b_start_time) return -1;
+            else if (a_start_time > b_start_time) return 1;
             else {
-              if (a_start < b_start) return -1;
-              else if (a_start > b_start) return 1;
+              if (a_end_time < b_end_time) return -1;
+              else if (a_end_time > b_end_time) return 1;
               else {
-                if (a_end < b_end) return -1;
-                else if (a_end > b_end) return 1;
+                if (a_start < b_start) return -1;
+                else if (a_start > b_start) return 1;
+                else {
+                  if (a_end < b_end) return -1;
+                  else if (a_end > b_end) return 1;
+                }
               }
             }
-          }
 
-          return 0;
+            return 0;
+          });
+
+          console.log('homeTemp = ', temp);
+
+          setEvents(temp);
+        })
+        .catch((error) => {
+          console.log('here: Error in getting goals and routines ' + error);
         });
+    }, [userID, stateValue.dateContext, editingEvent.editing]);
+  }
 
-        console.log('homeTemp = ', temp);
-
-        setEvents(temp);
-      })
-      .catch((error) => {
-        console.log('here: Error in getting goals and routines ' + error);
-      });
-  }, [userID, stateValue.dateContext, editingEvent.editing]);
-}
-  //   function GrabFireBaseRoutinesData() {
-  //   let url = BASE_URL + 'calenderEvents/';
-  //   let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
-  //   let endofWeek = moment(stateValue.dateContext).add(6, 'days');
-  //   let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
-  //   let id = userID;
-
-  //   const getTimes = (a_day_time, b_day_time) => {
-  //     const [a_start_time, b_start_time] = [
-  //       a_day_time.substring(10, a_day_time.length),
-  //       b_day_time.substring(10, b_day_time.length),
-  //     ];
-  //     const [a_HMS, b_HMS] = [
-  //       a_start_time
-  //         .substring(0, a_start_time.length - 3)
-  //         .replace(/\s{1,}/, '')
-  //         .split(':'),
-  //       b_start_time
-  //         .substring(0, b_start_time.length - 3)
-  //         .replace(/\s{1,}/, '')
-  //         .split(':'),
-  //     ];
-  //     const [a_parity, b_parity] = [
-  //       a_start_time
-  //         .substring(a_start_time.length - 3, a_start_time.length)
-  //         .replace(/\s{1,}/, ''),
-  //       b_start_time
-  //         .substring(b_start_time.length - 3, b_start_time.length)
-  //         .replace(/\s{1,}/, ''),
-  //     ];
-
-  //     let [a_time, b_time] = [0, 0];
-  //     if (a_parity === 'PM' && a_HMS[0] !== '12') {
-  //       const hoursInt = parseInt(a_HMS[0]) + 12;
-  //       a_HMS[0] = `${hoursInt}`;
-  //     } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
-
-  //     if (b_parity === 'PM' && b_HMS[0] !== '12') {
-  //       const hoursInt = parseInt(b_HMS[0]) + 12;
-  //       b_HMS[0] = `${hoursInt}`;
-  //     } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
-
-  //     for (let i = 0; i < a_HMS.length; i++) {
-  //       a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
-  //       b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
-  //     }
-
-  //     return [a_time, b_time];
-  //   };
-  //   useEffect(() => {
-  //     if (userID == '') return;
-  //     console.log(
-  //       'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-  //       [
-  //         userID,          
-  //         editingEvent.editing,
-  //       ]
-  //     );
-
-  //     axios
-  //       .post(
-  //         url + id.toString() + ',' + start.toString() + ',' + end.toString()
-  //       )
-  //       .then((response) => {
-  //         console.log('day events ', response.data);
-  //         const temp = [];
-
-  //         for (let i = 0; i < response.data.length; i++) {
-  //           temp.push(response.data[i]);
-  //         }
-  //         temp.sort((a, b) => {
-  //           console.log('a = ', a, '\nb = ', b);
-  //           const [a_start, b_start] = [
-  //             a['start']['dateTime'],
-  //             b['start']['dateTime'],
-  //           ];
-  //           console.log('a_start = ', a_start, '\nb_start = ', b_start);
-  //           const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
-
-  //           const [a_start_time, b_start_time] = getTimes(
-  //             a['start']['dateTime'],
-  //             b['start']['dateTime']
-  //           );
-  //           const [a_end_time, b_end_time] = getTimes(
-  //             a['end']['dateTime'],
-  //             b['end']['dateTime']
-  //           );
-
-  //           if (a_start_time < b_start_time) return -1;
-  //           else if (a_start_time > b_start_time) return 1;
-  //           else {
-  //             if (a_end_time < b_end_time) return -1;
-  //             else if (a_end_time > b_end_time) return 1;
-  //             else {
-  //               if (a_start < b_start) return -1;
-  //               else if (a_start > b_start) return 1;
-  //               else {
-  //                 if (a_end < b_end) return -1;
-  //                 else if (a_end > b_end) return 1;
-  //               }
-  //             }
-  //           }
-
-  //           return 0;
-  //         });
-
-  //         console.log('homeTemp = ', temp);
-
-  //         setEvents(temp);
-  //       })
-  //       .catch((error) => {
-  //         console.log('here: Error in getting goals and routines ' + error);
-  //       });
-  //   }, [
-  //     userID,
-  //     editingRTS.editing,
-  //     editingATS.editing,
-  //     editingIS.editing,
-  //     editingEvent.editing,
-  //   ]);
-  // }
-  useEffect(() => console.log('here: 4'), [editingRTS.editing.item, editingEvent.editing.item]);
-  // const openDeleteRecurringModal = () => {
-  //   console.log("opendeleterecurringmodal called");
-  //  setStateValue({
-  //    showDeleteRecurringModal: true,
-  //  });
-  // };
-
-  // const closeDeleteRecurringModal = () => {
-  //   setStateValue({
-  //     showDeleteRecurringModal: false,
-  //   });
-  //   // if (!this.state.repeatOption) {
-  //   //   this.setState({
-  //   //     repeatOptionDropDown: "Does not repeat",
-  //   //   });
-  //   // }
-  // };
-  const updateFBGR = () => {
-    GrabFireBaseRoutinesGoalsData();
-    // props.refresh();
-    // useEffect(() => {
-    // window.location.reload();
-    // }, []);
-  };
+  useEffect(
+    () => console.log('here: 4'),
+    [editingRTS.editing.item, editingEvent.editing.item]
+  );
 
   function ToggleShowAbout() {
     history.push('/about');
   }
-  // if (loginContext.loginState.loggedIn == false) {
-  //   history.push('/')
-  // }
 
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
@@ -2134,7 +2278,7 @@ function GoogleEvents() {
     let startObject = stateValue.dateContext;
     startWeek = startObject.startOf('week');
   }
-  console.log('stateValue', stateValue);
+
   let curDate = startWeek.clone();
   //let today = new Date();
   const tz = {
@@ -2196,7 +2340,8 @@ function GoogleEvents() {
                   stateValue.closeRoutine,
                   GrabFireBaseRoutinesGoalsData(),
                   //GrabFireBaseRoutinesData(),
-                  GoogleEvents(),
+                  // GoogleEvents(),
+                  GetUserAcessToken(),
                   stateValue.BASE_URL)
                 }
               >
@@ -2220,7 +2365,7 @@ function GoogleEvents() {
                       className={classes.buttonSelection}
                       onClick={() => {
                         toggleShowEvents();
-                        
+
                         getAuthToGoogle();
                       }}
                       id="one"
@@ -2310,9 +2455,7 @@ function GoogleEvents() {
                           showDeleteRecurringModal={
                             stateValue.showDeleteRecurringModal
                           }
-                          showEditModal={
-                            stateValue.showEditModal
-                          }
+                          showEditModal={stateValue.showEditModal}
                           showEditRecurringModal={
                             stateValue.showEditRecurringModal
                           }

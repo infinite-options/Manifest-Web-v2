@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Toolbar from '@material-ui/core/Toolbar';
 import AppBar from '@material-ui/core/AppBar';
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -38,12 +38,27 @@ export default function Login() {
   console.log('in login page');
   const classes = useStyles();
   const history = useHistory();
-
+  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loggedIn, setLoggedIn] = useState();
   const [validation, setValidation] = useState('');
   const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
+
+  useEffect(() => {
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    }
+  }, [loginContext.loginState.reload]);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -54,7 +69,7 @@ export default function Login() {
   };
 
   const responseGoogle = (response) => {
-     // console.log(response);
+    // console.log(response);
     if (response.profileObj) {
       // console.log('Google login successful');
       let email = response.profileObj.email;
@@ -95,7 +110,7 @@ export default function Login() {
             usersOfTA: [],
             curUser: '',
             curUserTimeZone: '',
-            curUserEmail:'',
+            curUserEmail: '',
           });
           console.log('Login successful');
           console.log(email);
@@ -123,9 +138,8 @@ export default function Login() {
     axios
       .get(BASE_URL + 'loginTA/' + email.toString() + '/' + password.toString())
       .then((response) => {
-        
         if (response.data.result !== false) {
-          console.log('respnse true', response.data.result)
+          console.log('respnse true', response.data.result);
           console.log('response', response.data);
           document.cookie = 'ta_uid=' + response.data.result;
           document.cookie = 'ta_email=' + email;
@@ -160,7 +174,7 @@ export default function Login() {
       });
   };
 
-/*   const responseGoogle = (response) => {
+  /*   const responseGoogle = (response) => {
     console.log('response', response);
     if (response.profileObj !== null || response.profileObj !== undefined) {
       let e = response.profileObj.email;
@@ -310,7 +324,7 @@ export default function Login() {
           </Box>
           <Box>
             <GoogleLogin
-              clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
+              clientId={CLIENT_ID}
               render={(renderProps) => (
                 <Button
                   style={{

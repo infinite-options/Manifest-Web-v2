@@ -13,7 +13,8 @@ import Google from '../manifest/LoginAssets/Google.svg';
 import Apple from '../manifest/LoginAssets/Apple.svg';
 import LoginContext from 'LoginContext';
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
-const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
 function SocialLogin(props) {
   // const Auth = useContext(AuthContext);
   const loginContext = useContext(LoginContext);
@@ -25,7 +26,19 @@ function SocialLogin(props) {
   const [newFName, setNewFName] = useState('');
   const [newLName, setNewLName] = useState('');
   const [newEmployer, setNewEmployer] = useState('');
- 
+  useEffect(() => {
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    }
+  }, [loginContext.loginState.reload]);
 
   const responseGoogle = (response) => {
     console.log('response', response);
@@ -34,7 +47,7 @@ function SocialLogin(props) {
       let email = response.profileObj.email;
       let accessToken = response.accessToken;
       let socialId = response.googleId;
-      _socialLoginAttempt(email,accessToken,socialId);
+      _socialLoginAttempt(email, accessToken, socialId);
     } else {
       console.log('Google login unsuccessful');
     }
@@ -47,18 +60,15 @@ function SocialLogin(props) {
       let email = response.email;
       let accessToken = response.accessToken;
       let socialId = response.id;
-      _socialLoginAttempt(email,accessToken,socialId);
+      _socialLoginAttempt(email, accessToken, socialId);
     } else {
       console.log('Facebook login unsuccessful');
     }
   };
 
-  const _socialLoginAttempt = (email,accessToken,socialId) => {
+  const _socialLoginAttempt = (email, accessToken, socialId) => {
     axios
-      .get(
-        BASE_URL + 'loginSocialTA/' +
-        email
-      )
+      .get(BASE_URL + 'loginSocialTA/' + email)
       .then((res) => {
         console.log(res);
         if (res.data.result !== false) {

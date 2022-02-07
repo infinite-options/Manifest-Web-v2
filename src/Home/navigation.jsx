@@ -16,9 +16,8 @@ import { CompareSharp } from '@material-ui/icons';
 import { faYenSign } from '@fortawesome/free-solid-svg-icons';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
-const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-
-const CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
+let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
 
 /* Custom Hook to make styles */
 const useStyles = makeStyles({
@@ -94,8 +93,22 @@ export function Navigation() {
   var curUserID = '';
   var curUserTZ = '';
 
-  const client_id = CLIENT_ID;
-  const client_secret = CLIENT_SECRET;
+  let client_id = CLIENT_ID;
+  let client_secret = CLIENT_SECRET;
+
+  useEffect(() => {
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      client_id = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+      client_secret = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+      console.log(client_id, CLIENT_SECRET);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      client_id = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+      client_secret = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+      console.log(client_id, client_secret);
+    }
+  }, [loginContext.loginState.reload]);
 
   // const selectedUser = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
   // const [selectedUser, setSelectedUser] = useState('')
@@ -542,9 +555,9 @@ export function Navigation() {
       code: auth_code,
       client_id: client_id,
       client_secret: client_secret,
-      redirect_uri: redirecturi,
+      //redirect_uri: redirecturi,
       //redirect_uri: 'https://manifestmy.space',
-      //redirect_uri: 'http://localhost:3000',
+      redirect_uri: 'http://localhost:3000',
       grant_type: 'authorization_code',
     };
 
@@ -946,13 +959,13 @@ export function Navigation() {
                     prompt="consent"
                     responseType="code"
                     buttonText="Log In"
-                    redirectUri={
-                      BASE_URL.substring(8, 18) == '3s3sftsr90'
-                        ? 'https://manifestmy.space'
-                        : 'https://manifestmy.life'
-                    }
+                    // redirectUri={
+                    //   BASE_URL.substring(8, 18) == '3s3sftsr90'
+                    //     ? 'https://manifestmy.space'
+                    //     : 'https://manifestmy.life'
+                    // }
                     //redirectUri="https://manifestmy.space"
-                    //redirectUri="http://localhost:3000"
+                    redirectUri="http://localhost:3000"
                     scope="https://www.googleapis.com/auth/calendar"
                     onSuccess={responseGoogle}
                     onFailure={responseGoogle}

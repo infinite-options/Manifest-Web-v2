@@ -38,9 +38,12 @@ import EditIS from './EditIS/EditIS';
 import LoginContext from '../LoginContext';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
+const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
 export default function GoalHome(props) {
   console.log('In home');
+  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
   const loginContext = useContext(LoginContext);
   var selectedUser = loginContext.loginState.curUser;
   console.log(loginContext.loginState.curUser);
@@ -55,7 +58,7 @@ export default function GoalHome(props) {
 
   var userID = '';
   var userTime_zone = '';
-  var userEmail='';
+  var userEmail = '';
   if (
     document.cookie
       .split(';')
@@ -79,7 +82,7 @@ export default function GoalHome(props) {
     console.log('document cookie', document.cookie);
     userID = loginContext.loginState.curUser;
     userEmail = loginContext.loginState.curUserEmail;
-   
+
     if (loginContext.loginState.usersOfTA.length === 0) {
       userTime_zone = 'America/Tijuana';
     } else {
@@ -133,7 +136,8 @@ export default function GoalHome(props) {
           console.log('timezone', curUserTZ);
           GrabFireBaseRoutinesGoalsData();
           GrabFireBaseGoalsData();
-          GoogleEvents();
+          GetUserAcessToken();
+          //  GoogleEvents();
           // return userID;
         } else {
           console.log('No User Found');
@@ -145,6 +149,20 @@ export default function GoalHome(props) {
   }, [loginContext.loginState.reload]);
   // }
   console.log(loginContext.loginState.curUserTimeZone);
+
+  useEffect(() => {
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    }
+  }, [loginContext.loginState.reload]);
   /*----------------------------Use states to define variables----------------------------*/
   const [signedin, setSignedIn] = useState(false);
   const [routineID, setRoutineID] = useState('');
@@ -524,120 +542,120 @@ export default function GoalHome(props) {
       },
     },
   };
-const initialEditingEventState = {
-  editing: false,
-  user_id: userID,
-  theCurrentUserEmail: userEmail,
-  newItem: {
-    newEventID: '', //save the event ID for possible future use
-    newEventRecurringID: '',
-    newEventName: '',
-    newEventGuests: '',
-    newEventLocation: '',
-    newEventNotification: 30,
-    newEventDescription: '',
-    newEventStart0: new Date(), //start and end for a event... it's currently set to today
-    newEventEnd0: new Date(), //start and end for a event... it's currently set to today
-    isEvent: false, // use to check whether we clicked on a event and populate extra buttons in event form
-    repeatOption: false,
-    repeatOptionDropDown: 'Does not repeat',
-    repeatDropDown: 'DAY',
-    repeatDropDown_temp: 'DAY',
-    repeatMonthlyDropDown: 'Monthly on day 13',
-    repeatInputValue: '1',
-    repeatInputValue_temp: '1',
-    repeatOccurrence: '1',
-    repeatOccurrence_temp: '1',
-    repeatRadio: 'Never',
-    repeatRadio_temp: 'Never',
-    repeatEndDate: '',
-    repeatEndDate_temp: '',
-    showNoTitleError: '',
-    showDateError: '',
-    byDay: {
-      0: '',
-      1: '',
-      2: '',
-      3: '',
-      4: '',
-      5: '',
-      6: '',
+  const initialEditingEventState = {
+    editing: false,
+    user_id: userID,
+    theCurrentUserEmail: userEmail,
+    newItem: {
+      newEventID: '', //save the event ID for possible future use
+      newEventRecurringID: '',
+      newEventName: '',
+      newEventGuests: '',
+      newEventLocation: '',
+      newEventNotification: 30,
+      newEventDescription: '',
+      newEventStart0: new Date(), //start and end for a event... it's currently set to today
+      newEventEnd0: new Date(), //start and end for a event... it's currently set to today
+      isEvent: false, // use to check whether we clicked on a event and populate extra buttons in event form
+      repeatOption: false,
+      repeatOptionDropDown: 'Does not repeat',
+      repeatDropDown: 'DAY',
+      repeatDropDown_temp: 'DAY',
+      repeatMonthlyDropDown: 'Monthly on day 13',
+      repeatInputValue: '1',
+      repeatInputValue_temp: '1',
+      repeatOccurrence: '1',
+      repeatOccurrence_temp: '1',
+      repeatRadio: 'Never',
+      repeatRadio_temp: 'Never',
+      repeatEndDate: '',
+      repeatEndDate_temp: '',
+      showNoTitleError: '',
+      showDateError: '',
+      byDay: {
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
+      },
+      byDay_temp: {
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
+      },
+      repeatSummary: '',
+      recurrenceRule: '',
+      eventNotifications: {},
+      showDeleteRecurringModal: false,
+      deleteRecurringOption: 'This event',
+      showEditRecurringModal: false,
+      editRecurringOption: '',
     },
-    byDay_temp: {
-      0: '',
-      1: '',
-      2: '',
-      3: '',
-      4: '',
-      5: '',
-      6: '',
+  };
+  const newEditingEventState = {
+    editing: true,
+    user_id: userID,
+    theCurrentUserEmail: userEmail,
+    newItem: {
+      newEventID: '', //save the event ID for possible future use
+      newEventRecurringID: '',
+      newEventName: '',
+      newEventGuests: '',
+      newEventLocation: '',
+      newEventNotification: 30,
+      newEventDescription: '',
+      newEventStart0: new Date(), //start and end for a event... it's currently set to today
+      newEventEnd0: new Date(), //start and end for a event... it's currently set to today
+      isEvent: false, // use to check whether we clicked on a event and populate extra buttons in event form
+      repeatOption: false,
+      repeatOptionDropDown: 'Does not repeat',
+      repeatDropDown: 'DAY',
+      repeatDropDown_temp: 'DAY',
+      repeatMonthlyDropDown: 'Monthly on day 13',
+      repeatInputValue: '1',
+      repeatInputValue_temp: '1',
+      repeatOccurrence: '1',
+      repeatOccurrence_temp: '1',
+      repeatRadio: 'Never',
+      repeatRadio_temp: 'Never',
+      repeatEndDate: '',
+      repeatEndDate_temp: '',
+      showNoTitleError: '',
+      showDateError: '',
+      byDay: {
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
+      },
+      byDay_temp: {
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
+      },
+      repeatSummary: '',
+      recurrenceRule: '',
+      eventNotifications: {},
+      showDeleteRecurringModal: false,
+      deleteRecurringOption: 'This event',
+      showEditRecurringModal: false,
+      editRecurringOption: '',
     },
-    repeatSummary: '',
-    recurrenceRule: '',
-    eventNotifications: {},
-    showDeleteRecurringModal: false,
-    deleteRecurringOption: 'This event',
-    showEditRecurringModal: false,
-    editRecurringOption: '',
-  },
-};
-const newEditingEventState = {
-  editing: true,
-  user_id: userID,
-  theCurrentUserEmail: userEmail,
-  newItem: {
-    newEventID: '', //save the event ID for possible future use
-    newEventRecurringID: '',
-    newEventName: '',
-    newEventGuests: '',
-    newEventLocation: '',
-    newEventNotification: 30,
-    newEventDescription: '',
-    newEventStart0: new Date(), //start and end for a event... it's currently set to today
-    newEventEnd0: new Date(), //start and end for a event... it's currently set to today
-    isEvent: false, // use to check whether we clicked on a event and populate extra buttons in event form
-    repeatOption: false,
-    repeatOptionDropDown: 'Does not repeat',
-    repeatDropDown: 'DAY',
-    repeatDropDown_temp: 'DAY',
-    repeatMonthlyDropDown: 'Monthly on day 13',
-    repeatInputValue: '1',
-    repeatInputValue_temp: '1',
-    repeatOccurrence: '1',
-    repeatOccurrence_temp: '1',
-    repeatRadio: 'Never',
-    repeatRadio_temp: 'Never',
-    repeatEndDate: '',
-    repeatEndDate_temp: '',
-    showNoTitleError: '',
-    showDateError: '',
-    byDay: {
-      0: '',
-      1: '',
-      2: '',
-      3: '',
-      4: '',
-      5: '',
-      6: '',
-    },
-    byDay_temp: {
-      0: '',
-      1: '',
-      2: '',
-      3: '',
-      4: '',
-      5: '',
-      6: '',
-    },
-    repeatSummary: '',
-    recurrenceRule: '',
-    eventNotifications: {},
-    showDeleteRecurringModal: false,
-    deleteRecurringOption: 'This event',
-    showEditRecurringModal: false,
-    editRecurringOption: '',
-  },
-};
+  };
   const newEditingATSState = {
     editing: true,
     type: '',
@@ -782,12 +800,11 @@ const newEditingEventState = {
   }
 
   function toggleShowEvents(props) {
-    history.push('/events')
+    history.push('/events');
   }
   function toggleShowRoutine(props) {
     history.push('/home');
   }
-
 
   /*-----------------------------updateEventsArray:-----------------------------*/
   /*updates the array if the month view changes to a different month.*/
@@ -1554,122 +1571,388 @@ const newEditingEventState = {
       editingEvent.editing,
     ]);
   }
+  function GetUserAcessToken() {
+    let url = BASE_URL + 'usersToken/';
+    let user_id = userID;
+    let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+    let endofWeek = moment(stateValue.dateContext).add(6, 'days');
+    let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
 
+    const getTimes = (a_day_time, b_day_time) => {
+      const [a_start_time, b_start_time] = [
+        a_day_time.substring(10, a_day_time.length),
+        b_day_time.substring(10, b_day_time.length),
+      ];
+      const [a_HMS, b_HMS] = [
+        a_start_time
+          .substring(0, a_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+        b_start_time
+          .substring(0, b_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+      ];
+      const [a_parity, b_parity] = [
+        a_start_time
+          .substring(a_start_time.length - 3, a_start_time.length)
+          .replace(/\s{1,}/, ''),
+        b_start_time
+          .substring(b_start_time.length - 3, b_start_time.length)
+          .replace(/\s{1,}/, ''),
+      ];
+
+      let [a_time, b_time] = [0, 0];
+      if (a_parity === 'PM' && a_HMS[0] !== '12') {
+        const hoursInt = parseInt(a_HMS[0]) + 12;
+        a_HMS[0] = `${hoursInt}`;
+      } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+
+      if (b_parity === 'PM' && b_HMS[0] !== '12') {
+        const hoursInt = parseInt(b_HMS[0]) + 12;
+        b_HMS[0] = `${hoursInt}`;
+      } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+
+      for (let i = 0; i < a_HMS.length; i++) {
+        a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+        b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+      }
+
+      return [a_time, b_time];
+    };
+    useEffect(() => {
+      if (userID == '') return;
+      console.log(
+        'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
+        [userID, editingEvent.editing]
+      );
+
+      axios
+        .get(url + user_id)
+        .then((response) => {
+          console.log('in events', response);
+
+          var old_at = response['data']['google_auth_token'];
+          var refreshToken = response['data']['google_refresh_token'];
+          console.log('in events', old_at);
+          const headers = {
+            Accept: 'application/json',
+            Authorization: 'Bearer ' + old_at,
+          };
+          const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?orderBy=startTime&singleEvents=true&timeMax=${end}&timeMin=${start}&key=${API_KEY}`;
+          axios
+            .get(url, {
+              headers: headers,
+            })
+            .then((response) => {
+              console.log('day events ', response.data.items);
+              const temp = [];
+
+              for (let i = 0; i < response.data.items.length; i++) {
+                temp.push(response.data.items[i]);
+              }
+              temp.sort((a, b) => {
+                // console.log('a = ', a, '\nb = ', b);
+                const [a_start, b_start] = [
+                  a['start']['dateTime'],
+                  b['start']['dateTime'],
+                ];
+                console.log('a_start = ', a_start, '\nb_start = ', b_start);
+                const [a_end, b_end] = [
+                  a['end']['dateTime'],
+                  b['end']['dateTime'],
+                ];
+
+                const [a_start_time, b_start_time] = getTimes(
+                  a['start']['dateTime'],
+                  b['start']['dateTime']
+                );
+                const [a_end_time, b_end_time] = getTimes(
+                  a['end']['dateTime'],
+                  b['end']['dateTime']
+                );
+
+                if (a_start_time < b_start_time) return -1;
+                else if (a_start_time > b_start_time) return 1;
+                else {
+                  if (a_end_time < b_end_time) return -1;
+                  else if (a_end_time > b_end_time) return 1;
+                  else {
+                    if (a_start < b_start) return -1;
+                    else if (a_start > b_start) return 1;
+                    else {
+                      if (a_end < b_end) return -1;
+                      else if (a_end > b_end) return 1;
+                    }
+                  }
+                }
+
+                return 0;
+              });
+
+              console.log('homeTemp = ', temp);
+
+              setEvents(temp);
+            })
+            .catch((error) => console.log(error));
+          fetch(
+            `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`,
+            {
+              method: 'GET',
+            }
+          )
+            .then((response) => {
+              console.log('in events', response);
+              if (response['status'] === 400) {
+                console.log('in events if');
+                let authorization_url =
+                  'https://accounts.google.com/o/oauth2/token';
+
+                var details = {
+                  refresh_token: refreshToken,
+                  client_id: CLIENT_ID,
+                  client_secret: CLIENT_SECRET,
+                  grant_type: 'refresh_token',
+                };
+
+                var formBody = [];
+                for (var property in details) {
+                  var encodedKey = encodeURIComponent(property);
+                  var encodedValue = encodeURIComponent(details[property]);
+                  formBody.push(encodedKey + '=' + encodedValue);
+                }
+                formBody = formBody.join('&');
+
+                fetch(authorization_url, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type':
+                      'application/x-www-form-urlencoded;charset=UTF-8',
+                  },
+                  body: formBody,
+                })
+                  .then((response) => {
+                    return response.json();
+                  })
+                  .then((responseData) => {
+                    console.log(responseData);
+                    return responseData;
+                  })
+                  .then((data) => {
+                    console.log(data);
+                    let at = data['access_token'];
+                    const headers = {
+                      Accept: 'application/json',
+                      Authorization: 'Bearer ' + at,
+                    };
+                    const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?orderBy=startTime&singleEvents=true&timeMax=${end}&timeMin=${start}&key=${API_KEY}`;
+                    axios
+                      .get(url, {
+                        headers: headers,
+                      })
+                      .then((response) => {
+                        console.log('day events ', response.data.items);
+                        const temp = [];
+
+                        for (let i = 0; i < response.data.items.length; i++) {
+                          temp.push(response.data.items[i]);
+                        }
+                        temp.sort((a, b) => {
+                          // console.log('a = ', a, '\nb = ', b);
+                          const [a_start, b_start] = [
+                            a['start']['dateTime'],
+                            b['start']['dateTime'],
+                          ];
+                          console.log(
+                            'a_start = ',
+                            a_start,
+                            '\nb_start = ',
+                            b_start
+                          );
+                          const [a_end, b_end] = [
+                            a['end']['dateTime'],
+                            b['end']['dateTime'],
+                          ];
+
+                          const [a_start_time, b_start_time] = getTimes(
+                            a['start']['dateTime'],
+                            b['start']['dateTime']
+                          );
+                          const [a_end_time, b_end_time] = getTimes(
+                            a['end']['dateTime'],
+                            b['end']['dateTime']
+                          );
+
+                          if (a_start_time < b_start_time) return -1;
+                          else if (a_start_time > b_start_time) return 1;
+                          else {
+                            if (a_end_time < b_end_time) return -1;
+                            else if (a_end_time > b_end_time) return 1;
+                            else {
+                              if (a_start < b_start) return -1;
+                              else if (a_start > b_start) return 1;
+                              else {
+                                if (a_end < b_end) return -1;
+                                else if (a_end > b_end) return 1;
+                              }
+                            }
+                          }
+
+                          return 0;
+                        });
+
+                        console.log('homeTemp = ', temp);
+
+                        setEvents(temp);
+                      })
+                      .catch((error) => console.log(error));
+
+                    console.log('in events', at);
+                    let updateURL = BASE_URL + 'UpdateUserAccessToken/';
+                    axios
+                      .post(updateURL + user_id, {
+                        google_auth_token: at,
+                      })
+                      .then((response) => {})
+                      .catch((err) => {
+                        console.log(err);
+                      });
+                    return;
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              } else {
+                //setAccessToken(old_at);
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+          console.log('in events', refreshToken);
+        })
+        .catch((error) => {
+          console.log('Error in events' + error);
+        });
+    }, [userID, stateValue.dateContext, editingEvent.editing]);
+  }
   function GoogleEvents() {
-  let url = BASE_URL + 'calenderEvents/';
-  let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
-  let endofWeek = moment(stateValue.dateContext).add(6, 'days');
-  let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
-  let id = userID;
-  
-  const getTimes = (a_day_time, b_day_time) => {
-    const [a_start_time, b_start_time] = [
-      a_day_time.substring(10, a_day_time.length),
-      b_day_time.substring(10, b_day_time.length),
-    ];
-    const [a_HMS, b_HMS] = [
-      a_start_time
-        .substring(0, a_start_time.length - 3)
-        .replace(/\s{1,}/, '')
-        .split(':'),
-      b_start_time
-        .substring(0, b_start_time.length - 3)
-        .replace(/\s{1,}/, '')
-        .split(':'),
-    ];
-    const [a_parity, b_parity] = [
-      a_start_time
-        .substring(a_start_time.length - 3, a_start_time.length)
-        .replace(/\s{1,}/, ''),
-      b_start_time
-        .substring(b_start_time.length - 3, b_start_time.length)
-        .replace(/\s{1,}/, ''),
-    ];
+    let url = BASE_URL + 'calenderEvents/';
+    let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+    let endofWeek = moment(stateValue.dateContext).add(6, 'days');
+    let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
+    let id = userID;
 
-    let [a_time, b_time] = [0, 0];
-    if (a_parity === 'PM' && a_HMS[0] !== '12') {
-      const hoursInt = parseInt(a_HMS[0]) + 12;
-      a_HMS[0] = `${hoursInt}`;
-    } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+    const getTimes = (a_day_time, b_day_time) => {
+      const [a_start_time, b_start_time] = [
+        a_day_time.substring(10, a_day_time.length),
+        b_day_time.substring(10, b_day_time.length),
+      ];
+      const [a_HMS, b_HMS] = [
+        a_start_time
+          .substring(0, a_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+        b_start_time
+          .substring(0, b_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+      ];
+      const [a_parity, b_parity] = [
+        a_start_time
+          .substring(a_start_time.length - 3, a_start_time.length)
+          .replace(/\s{1,}/, ''),
+        b_start_time
+          .substring(b_start_time.length - 3, b_start_time.length)
+          .replace(/\s{1,}/, ''),
+      ];
 
-    if (b_parity === 'PM' && b_HMS[0] !== '12') {
-      const hoursInt = parseInt(b_HMS[0]) + 12;
-      b_HMS[0] = `${hoursInt}`;
-    } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+      let [a_time, b_time] = [0, 0];
+      if (a_parity === 'PM' && a_HMS[0] !== '12') {
+        const hoursInt = parseInt(a_HMS[0]) + 12;
+        a_HMS[0] = `${hoursInt}`;
+      } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
 
-    for (let i = 0; i < a_HMS.length; i++) {
-      a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
-      b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
-    }
+      if (b_parity === 'PM' && b_HMS[0] !== '12') {
+        const hoursInt = parseInt(b_HMS[0]) + 12;
+        b_HMS[0] = `${hoursInt}`;
+      } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
 
-    return [a_time, b_time];
-  };
-  useEffect(() => {
-    if (userID == '') return;
-    console.log(
-      'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-      [
-        userID,
-        editingRTS.editing,
-        editingATS.editing,
-        editingIS.editing,
-        editingEvent.editing,
-      ]
-    );
+      for (let i = 0; i < a_HMS.length; i++) {
+        a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+        b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+      }
 
-    axios
-      .post(url + id.toString() + ',' + start.toString() + ',' + end.toString())
-      .then((response) => {
-        console.log('day events ', response.data);
-        const temp = [];
+      return [a_time, b_time];
+    };
+    useEffect(() => {
+      if (userID == '') return;
+      console.log(
+        'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
+        [
+          userID,
+          editingRTS.editing,
+          editingATS.editing,
+          editingIS.editing,
+          editingEvent.editing,
+        ]
+      );
 
-        for (let i = 0; i < response.data.length; i++) {
-          temp.push(response.data[i]);
-        }
-        temp.sort((a, b) => {
-          const [a_start, b_start] = [
-            a['start']['dateTime'],
-            b['start']['dateTime'],
-          ];
-          console.log('a_start = ', a_start, '\nb_start = ', b_start);
-          const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
+      axios
+        .post(
+          url + id.toString() + ',' + start.toString() + ',' + end.toString()
+        )
+        .then((response) => {
+          console.log('day events ', response.data);
+          const temp = [];
 
-          const [a_start_time, b_start_time] = getTimes(
-            a['start']['dateTime'],
-            b['start']['dateTime']
-          );
-          const [a_end_time, b_end_time] = getTimes(
-            a['end']['dateTime'],
-            b['end']['dateTime']
-          );
+          for (let i = 0; i < response.data.length; i++) {
+            temp.push(response.data[i]);
+          }
+          temp.sort((a, b) => {
+            const [a_start, b_start] = [
+              a['start']['dateTime'],
+              b['start']['dateTime'],
+            ];
+            console.log('a_start = ', a_start, '\nb_start = ', b_start);
+            const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
 
-          if (a_start_time < b_start_time) return -1;
-          else if (a_start_time > b_start_time) return 1;
-          else {
-            if (a_end_time < b_end_time) return -1;
-            else if (a_end_time > b_end_time) return 1;
+            const [a_start_time, b_start_time] = getTimes(
+              a['start']['dateTime'],
+              b['start']['dateTime']
+            );
+            const [a_end_time, b_end_time] = getTimes(
+              a['end']['dateTime'],
+              b['end']['dateTime']
+            );
+
+            if (a_start_time < b_start_time) return -1;
+            else if (a_start_time > b_start_time) return 1;
             else {
-              if (a_start < b_start) return -1;
-              else if (a_start > b_start) return 1;
+              if (a_end_time < b_end_time) return -1;
+              else if (a_end_time > b_end_time) return 1;
               else {
-                if (a_end < b_end) return -1;
-                else if (a_end > b_end) return 1;
+                if (a_start < b_start) return -1;
+                else if (a_start > b_start) return 1;
+                else {
+                  if (a_end < b_end) return -1;
+                  else if (a_end > b_end) return 1;
+                }
               }
             }
-          }
 
-          return 0;
+            return 0;
+          });
+
+          console.log('homeTemp = ', temp);
+
+          setEvents(temp);
+        })
+        .catch((error) => {
+          console.log('here: Error in getting goals and routines ' + error);
         });
-
-        console.log('homeTemp = ', temp);
-
-        setEvents(temp);
-      })
-      .catch((error) => {
-        console.log('here: Error in getting goals and routines ' + error);
-      });
-  }, [userID, stateValue.dateContext, stateValue.todayDateObject]);
-}
+    }, [userID, stateValue.dateContext, stateValue.todayDateObject]);
+  }
   function GrabFireBaseGoalsData() {
     let url = BASE_URL + 'getgoals/';
     let routine = [];
@@ -2249,7 +2532,8 @@ const newEditingEventState = {
                   stateValue.closeRoutine,
                   GrabFireBaseRoutinesGoalsData(),
                   GrabFireBaseGoalsData(),
-                  GoogleEvents(),
+                  GetUserAcessToken(),
+                  // GoogleEvents(),
                   stateValue.BASE_URL)
                 }
               >

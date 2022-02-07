@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import Button from '@material-ui/core/Button';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { useHistory,} from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import './Home.css';
-import { Container,Row,Col} from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,7 +14,7 @@ import {
   faChevronRight,
   faCalendar,
   faCalendarDay,
-  faCalendarWeek
+  faCalendarWeek,
 } from '@fortawesome/free-solid-svg-icons';
 import 'react-datepicker/dist/react-datepicker.css';
 import FirebaseV2 from './Firebasev2';
@@ -38,8 +38,11 @@ import EditIS from './EditIS/EditIS';
 import LoginContext from '../LoginContext';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
+const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
 export default function Home(props) {
+  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
   console.log('In home');
   const loginContext = useContext(LoginContext);
   var selectedUser = loginContext.loginState.curUser;
@@ -55,7 +58,7 @@ export default function Home(props) {
 
   var userID = '';
   var userTime_zone = '';
-  var userEmail='';
+  var userEmail = '';
   if (
     document.cookie
       .split(';')
@@ -79,7 +82,7 @@ export default function Home(props) {
     console.log('document cookie', document.cookie);
     userID = loginContext.loginState.curUser;
     userEmail = loginContext.loginState.curUserEmail;
-   
+
     if (loginContext.loginState.usersOfTA.length === 0) {
       userTime_zone = 'America/Tijuana';
     } else {
@@ -133,7 +136,8 @@ export default function Home(props) {
           console.log('timezone', curUserTZ);
           GrabFireBaseRoutinesGoalsData();
           GrabFireBaseRoutinesData();
-          GoogleEvents()
+          GetUserAcessToken();
+          //GoogleEvents();
           // return userID;
         } else {
           console.log('No User Found');
@@ -144,7 +148,19 @@ export default function Home(props) {
       });
   }, [loginContext.loginState.reload]);
   // }
-  
+  useEffect(() => {
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    }
+  }, [loginContext.loginState.reload]);
   /*----------------------------Use states to define variables----------------------------*/
   const [signedin, setSignedIn] = useState(false);
   const [routineID, setRoutineID] = useState('');
@@ -153,12 +169,12 @@ export default function Home(props) {
   const [getRoutinesEndPoint, setGetRoutinesEndPoint] = useState([]);
   const [getActionsEndPoint, setGetActionsEndPoint] = useState({});
   const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
-  const [events, setEvents] = useState({})
+  const [events, setEvents] = useState({});
   const [hightlight, setHightlight] = useState('');
   const [stateValue, setStateValue] = useState({
     itemToEdit: {
       title: '',
-      id:'',
+      id: '',
       // is_persistent: this.props.isRoutine,
       photo: '',
       photo_url: '',
@@ -788,7 +804,6 @@ export default function Home(props) {
     history.push('/events');
   }
 
-
   /*-----------------------------updateEventsArray:-----------------------------*/
   /*updates the array if the month view changes to a different month.*/
 
@@ -832,133 +847,133 @@ export default function Home(props) {
     }
   };
 
-    const nextDay = () => {
-      let dateContext = Object.assign({}, stateValue.todayDateObject);
-      console.log(dateContext);
-      dateContext = moment(dateContext).add(1, 'days');
-      console.log('todayDateObject', dateContext);
-      console.log('todayDateObject', dateContext.toString());
-      //console.log(end.toString());
-      setStateValue((prevState) => {
-        return {
-          ...prevState,
-          todayDateObject: dateContext,
-          dayEvents: [],
-        };
-        //updateEventsArray();
-      });
-      console.log(stateValue.dateContext, stateValue.dayEvents);
-    };
+  const nextDay = () => {
+    let dateContext = Object.assign({}, stateValue.todayDateObject);
+    console.log(dateContext);
+    dateContext = moment(dateContext).add(1, 'days');
+    console.log('todayDateObject', dateContext);
+    console.log('todayDateObject', dateContext.toString());
+    //console.log(end.toString());
+    setStateValue((prevState) => {
+      return {
+        ...prevState,
+        todayDateObject: dateContext,
+        dayEvents: [],
+      };
+      //updateEventsArray();
+    });
+    console.log(stateValue.dateContext, stateValue.dayEvents);
+  };
 
-    const prevDay = () => {
-      let dateContext = Object.assign({}, stateValue.todayDateObject);
+  const prevDay = () => {
+    let dateContext = Object.assign({}, stateValue.todayDateObject);
 
-      dateContext = moment(dateContext).subtract(1, 'days');
-      console.log('todayDateObject', dateContext);
-      console.log('todayDateObject', dateContext.toString());
-      setStateValue((prevState) => {
-        return {
-          ...prevState,
-          todayDateObject: dateContext,
-          dayEvents: [],
-        };
-        //updateEventsArray();
-      });
-      console.log(stateValue.dateContext, stateValue.dayEvents);
-    };
+    dateContext = moment(dateContext).subtract(1, 'days');
+    console.log('todayDateObject', dateContext);
+    console.log('todayDateObject', dateContext.toString());
+    setStateValue((prevState) => {
+      return {
+        ...prevState,
+        todayDateObject: dateContext,
+        dayEvents: [],
+      };
+      //updateEventsArray();
+    });
+    console.log(stateValue.dateContext, stateValue.dayEvents);
+  };
 
-    const curDay = () => {
-      let dateContext = Object.assign({}, stateValue.todayDateObject);
-      let today = new Date();
-      dateContext = moment(dateContext);
-      console.log('today timezone curDay', dateContext);
+  const curDay = () => {
+    let dateContext = Object.assign({}, stateValue.todayDateObject);
+    let today = new Date();
+    dateContext = moment(dateContext);
+    console.log('today timezone curDay', dateContext);
 
-      {
-        0 <= today.getDate().toString() - dateContext.format('D') &&
-        today.getDate().toString() - dateContext.format('D') <= 6 &&
-        (today.getMonth() + 1).toString() - dateContext.format('M') === 0
-          ? setStateValue((prevState) => {
-              return {
-                ...prevState,
-                todayDateObject: moment(today),
-                dayEvents: [],
-              };
-              //updateEventsArray();
-            })
-          : setStateValue((prevState) => {
-              return {
-                ...prevState,
-                todayDateObject: moment(today),
-                dayEvents: [],
-              };
-              //updateEventsArray();
-            });
-      }
+    {
+      0 <= today.getDate().toString() - dateContext.format('D') &&
+      today.getDate().toString() - dateContext.format('D') <= 6 &&
+      (today.getMonth() + 1).toString() - dateContext.format('M') === 0
+        ? setStateValue((prevState) => {
+            return {
+              ...prevState,
+              todayDateObject: moment(today),
+              dayEvents: [],
+            };
+            //updateEventsArray();
+          })
+        : setStateValue((prevState) => {
+            return {
+              ...prevState,
+              todayDateObject: moment(today),
+              dayEvents: [],
+            };
+            //updateEventsArray();
+          });
+    }
 
-      console.log('today timezone curDay');
-    };
+    console.log('today timezone curDay');
+  };
 
-    const nextWeek = () => {
-      let dateContext = Object.assign({}, stateValue.dateContext);
-      console.log('today timezone nextWeek', dateContext);
-      dateContext = moment(dateContext).add(1, 'week');
-      console.log('today timezone nextWeek', dateContext);
-      setStateValue((prevState) => {
-        return {
-          ...prevState,
-          dateContext: dateContext,
-          dayEvents: [],
-        };
-        // updateEventsArray();
-      });
-      console.log('today timezone nextWeek');
-    };
+  const nextWeek = () => {
+    let dateContext = Object.assign({}, stateValue.dateContext);
+    console.log('today timezone nextWeek', dateContext);
+    dateContext = moment(dateContext).add(1, 'week');
+    console.log('today timezone nextWeek', dateContext);
+    setStateValue((prevState) => {
+      return {
+        ...prevState,
+        dateContext: dateContext,
+        dayEvents: [],
+      };
+      // updateEventsArray();
+    });
+    console.log('today timezone nextWeek');
+  };
 
-    const prevWeek = () => {
-      let dateContext = Object.assign({}, stateValue.dateContext);
-      dateContext = moment(dateContext).subtract(1, 'week');
-      console.log('today timezone prevWeek', dateContext);
-      setStateValue((prevState) => {
-        return {
-          ...prevState,
-          dateContext: dateContext,
-          dayEvents: [],
-        };
-        // updateEventsArray();
-      });
-      console.log('today timezone prevWeek');
-    };
-    const curWeek = () => {
-      let dateContext = Object.assign({}, stateValue.dateContext);
-      let today = new Date();
-      dateContext = moment(dateContext);
-      console.log('today timezone curWeek', dateContext);
+  const prevWeek = () => {
+    let dateContext = Object.assign({}, stateValue.dateContext);
+    dateContext = moment(dateContext).subtract(1, 'week');
+    console.log('today timezone prevWeek', dateContext);
+    setStateValue((prevState) => {
+      return {
+        ...prevState,
+        dateContext: dateContext,
+        dayEvents: [],
+      };
+      // updateEventsArray();
+    });
+    console.log('today timezone prevWeek');
+  };
+  const curWeek = () => {
+    let dateContext = Object.assign({}, stateValue.dateContext);
+    let today = new Date();
+    dateContext = moment(dateContext);
+    console.log('today timezone curWeek', dateContext);
 
-      {
-        0 <= today.getDate().toString() - dateContext.format('D') &&
-        today.getDate().toString() - dateContext.format('D') <= 6 &&
-        (today.getMonth() + 1).toString() - dateContext.format('M') === 0
-          ? setStateValue((prevState) => {
-              return {
-                ...prevState,
-                dateContext: dateContext,
-                dayEvents: [],
-              };
-              // updateEventsArray();
-            })
-          : setStateValue((prevState) => {
-              return {
-                ...prevState,
-                dateContext: moment(today),
-                dayEvents: [],
-              };
-              // updateEventsArray();
-            });
-      }
+    {
+      0 <= today.getDate().toString() - dateContext.format('D') &&
+      today.getDate().toString() - dateContext.format('D') <= 6 &&
+      (today.getMonth() + 1).toString() - dateContext.format('M') === 0
+        ? setStateValue((prevState) => {
+            return {
+              ...prevState,
+              dateContext: dateContext,
+              dayEvents: [],
+            };
+            // updateEventsArray();
+          })
+        : setStateValue((prevState) => {
+            return {
+              ...prevState,
+              dateContext: moment(today),
+              dayEvents: [],
+            };
+            // updateEventsArray();
+          });
+    }
 
-      console.log('today timezone curWeek');
-    };
-  
+    console.log('today timezone curWeek');
+  };
+
   // getYear:
   // returns the year based on year format
   const getYear = () => {
@@ -1148,8 +1163,8 @@ export default function Home(props) {
               a.gr_end_day_and_time,
               b.gr_end_day_and_time
             );
-            
-         if (a_start_time < b_start_time) return -1;
+
+            if (a_start_time < b_start_time) return -1;
             else if (a_start_time > b_start_time) return 1;
             else {
               if (a_end_time < b_end_time) return -1;
@@ -1555,627 +1570,895 @@ export default function Home(props) {
     ]);
   }
 
-function GoogleEvents() {
-  let url = BASE_URL + 'calenderEvents/';
-  let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
-  let endofWeek = moment(stateValue.dateContext).add(6, 'days');
-  let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
-  let id = userID;
-  
-  const getTimes = (a_day_time, b_day_time) => {
-    const [a_start_time, b_start_time] = [
-      a_day_time.substring(10, a_day_time.length),
-      b_day_time.substring(10, b_day_time.length),
-    ];
-    const [a_HMS, b_HMS] = [
-      a_start_time
-        .substring(0, a_start_time.length - 3)
-        .replace(/\s{1,}/, '')
-        .split(':'),
-      b_start_time
-        .substring(0, b_start_time.length - 3)
-        .replace(/\s{1,}/, '')
-        .split(':'),
-    ];
-    const [a_parity, b_parity] = [
-      a_start_time
-        .substring(a_start_time.length - 3, a_start_time.length)
-        .replace(/\s{1,}/, ''),
-      b_start_time
-        .substring(b_start_time.length - 3, b_start_time.length)
-        .replace(/\s{1,}/, ''),
-    ];
+  function GetUserAcessToken() {
+    let url = BASE_URL + 'usersToken/';
+    let user_id = userID;
+    let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+    let endofWeek = moment(stateValue.dateContext).add(6, 'days');
+    let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
 
-    let [a_time, b_time] = [0, 0];
-    if (a_parity === 'PM' && a_HMS[0] !== '12') {
-      const hoursInt = parseInt(a_HMS[0]) + 12;
-      a_HMS[0] = `${hoursInt}`;
-    } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+    const getTimes = (a_day_time, b_day_time) => {
+      const [a_start_time, b_start_time] = [
+        a_day_time.substring(10, a_day_time.length),
+        b_day_time.substring(10, b_day_time.length),
+      ];
+      const [a_HMS, b_HMS] = [
+        a_start_time
+          .substring(0, a_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+        b_start_time
+          .substring(0, b_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+      ];
+      const [a_parity, b_parity] = [
+        a_start_time
+          .substring(a_start_time.length - 3, a_start_time.length)
+          .replace(/\s{1,}/, ''),
+        b_start_time
+          .substring(b_start_time.length - 3, b_start_time.length)
+          .replace(/\s{1,}/, ''),
+      ];
 
-    if (b_parity === 'PM' && b_HMS[0] !== '12') {
-      const hoursInt = parseInt(b_HMS[0]) + 12;
-      b_HMS[0] = `${hoursInt}`;
-    } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+      let [a_time, b_time] = [0, 0];
+      if (a_parity === 'PM' && a_HMS[0] !== '12') {
+        const hoursInt = parseInt(a_HMS[0]) + 12;
+        a_HMS[0] = `${hoursInt}`;
+      } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
 
-    for (let i = 0; i < a_HMS.length; i++) {
-      a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
-      b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
-    }
+      if (b_parity === 'PM' && b_HMS[0] !== '12') {
+        const hoursInt = parseInt(b_HMS[0]) + 12;
+        b_HMS[0] = `${hoursInt}`;
+      } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
 
-    return [a_time, b_time];
-  };
-  useEffect(() => {
-    if (userID == '') return;
-    console.log(
-      'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-      [
-        userID,
-        editingRTS.editing,
-        editingATS.editing,
-        editingIS.editing,
-        editingEvent.editing,
-      ]
-    );
+      for (let i = 0; i < a_HMS.length; i++) {
+        a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+        b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+      }
 
-    axios
-      .post(url + id.toString() + ',' + start.toString() + ',' + end.toString())
-      .then((response) => {
-        console.log('day events ', response.data);
-        const temp = [];
+      return [a_time, b_time];
+    };
+    useEffect(() => {
+      if (userID == '') return;
+      console.log(
+        'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
+        [userID, editingEvent.editing]
+      );
 
-        for (let i = 0; i < response.data.length; i++) {
-          temp.push(response.data[i]);
-        }
-        temp.sort((a, b) => {
-          const [a_start, b_start] = [
-            a['start']['dateTime'],
-            b['start']['dateTime'],
-          ];
+      axios
+        .get(url + user_id)
+        .then((response) => {
+          console.log('in events', response);
 
-          const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
+          var old_at = response['data']['google_auth_token'];
+          var refreshToken = response['data']['google_refresh_token'];
+          console.log('in events', old_at);
+          const headers = {
+            Accept: 'application/json',
+            Authorization: 'Bearer ' + old_at,
+          };
+          const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?orderBy=startTime&singleEvents=true&timeMax=${end}&timeMin=${start}&key=${API_KEY}`;
+          axios
+            .get(url, {
+              headers: headers,
+            })
+            .then((response) => {
+              console.log('day events ', response.data.items);
+              const temp = [];
 
-          const [a_start_time, b_start_time] = getTimes(
-            a['start']['dateTime'],
-            b['start']['dateTime']
-          );
-          const [a_end_time, b_end_time] = getTimes(
-            a['end']['dateTime'],
-            b['end']['dateTime']
-          );
-
-          if (a_start_time < b_start_time) return -1;
-          else if (a_start_time > b_start_time) return 1;
-          else {
-            if (a_end_time < b_end_time) return -1;
-            else if (a_end_time > b_end_time) return 1;
-            else {
-              if (a_start < b_start) return -1;
-              else if (a_start > b_start) return 1;
-              else {
-                if (a_end < b_end) return -1;
-                else if (a_end > b_end) return 1;
+              for (let i = 0; i < response.data.items.length; i++) {
+                temp.push(response.data.items[i]);
               }
+              temp.sort((a, b) => {
+                // console.log('a = ', a, '\nb = ', b);
+                const [a_start, b_start] = [
+                  a['start']['dateTime'],
+                  b['start']['dateTime'],
+                ];
+                console.log('a_start = ', a_start, '\nb_start = ', b_start);
+                const [a_end, b_end] = [
+                  a['end']['dateTime'],
+                  b['end']['dateTime'],
+                ];
+
+                const [a_start_time, b_start_time] = getTimes(
+                  a['start']['dateTime'],
+                  b['start']['dateTime']
+                );
+                const [a_end_time, b_end_time] = getTimes(
+                  a['end']['dateTime'],
+                  b['end']['dateTime']
+                );
+
+                if (a_start_time < b_start_time) return -1;
+                else if (a_start_time > b_start_time) return 1;
+                else {
+                  if (a_end_time < b_end_time) return -1;
+                  else if (a_end_time > b_end_time) return 1;
+                  else {
+                    if (a_start < b_start) return -1;
+                    else if (a_start > b_start) return 1;
+                    else {
+                      if (a_end < b_end) return -1;
+                      else if (a_end > b_end) return 1;
+                    }
+                  }
+                }
+
+                return 0;
+              });
+
+              console.log('homeTemp = ', temp);
+
+              setEvents(temp);
+            })
+            .catch((error) => console.log(error));
+          fetch(
+            `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`,
+            {
+              method: 'GET',
             }
-          }
+          )
+            .then((response) => {
+              console.log('in events', response);
+              if (response['status'] === 400) {
+                console.log('in events if');
+                let authorization_url =
+                  'https://accounts.google.com/o/oauth2/token';
 
-          return 0;
+                var details = {
+                  refresh_token: refreshToken,
+                  client_id: CLIENT_ID,
+                  client_secret: CLIENT_SECRET,
+                  grant_type: 'refresh_token',
+                };
+
+                var formBody = [];
+                for (var property in details) {
+                  var encodedKey = encodeURIComponent(property);
+                  var encodedValue = encodeURIComponent(details[property]);
+                  formBody.push(encodedKey + '=' + encodedValue);
+                }
+                formBody = formBody.join('&');
+
+                fetch(authorization_url, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type':
+                      'application/x-www-form-urlencoded;charset=UTF-8',
+                  },
+                  body: formBody,
+                })
+                  .then((response) => {
+                    return response.json();
+                  })
+                  .then((responseData) => {
+                    console.log(responseData);
+                    return responseData;
+                  })
+                  .then((data) => {
+                    console.log(data);
+                    let at = data['access_token'];
+                    const headers = {
+                      Accept: 'application/json',
+                      Authorization: 'Bearer ' + at,
+                    };
+                    const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?orderBy=startTime&singleEvents=true&timeMax=${end}&timeMin=${start}&key=${API_KEY}`;
+                    axios
+                      .get(url, {
+                        headers: headers,
+                      })
+                      .then((response) => {
+                        console.log('day events ', response.data.items);
+                        const temp = [];
+
+                        for (let i = 0; i < response.data.items.length; i++) {
+                          temp.push(response.data.items[i]);
+                        }
+                        temp.sort((a, b) => {
+                          // console.log('a = ', a, '\nb = ', b);
+                          const [a_start, b_start] = [
+                            a['start']['dateTime'],
+                            b['start']['dateTime'],
+                          ];
+                          console.log(
+                            'a_start = ',
+                            a_start,
+                            '\nb_start = ',
+                            b_start
+                          );
+                          const [a_end, b_end] = [
+                            a['end']['dateTime'],
+                            b['end']['dateTime'],
+                          ];
+
+                          const [a_start_time, b_start_time] = getTimes(
+                            a['start']['dateTime'],
+                            b['start']['dateTime']
+                          );
+                          const [a_end_time, b_end_time] = getTimes(
+                            a['end']['dateTime'],
+                            b['end']['dateTime']
+                          );
+
+                          if (a_start_time < b_start_time) return -1;
+                          else if (a_start_time > b_start_time) return 1;
+                          else {
+                            if (a_end_time < b_end_time) return -1;
+                            else if (a_end_time > b_end_time) return 1;
+                            else {
+                              if (a_start < b_start) return -1;
+                              else if (a_start > b_start) return 1;
+                              else {
+                                if (a_end < b_end) return -1;
+                                else if (a_end > b_end) return 1;
+                              }
+                            }
+                          }
+
+                          return 0;
+                        });
+
+                        console.log('homeTemp = ', temp);
+
+                        setEvents(temp);
+                      })
+                      .catch((error) => console.log(error));
+
+                    console.log('in events', at);
+                    let updateURL = BASE_URL + 'UpdateUserAccessToken/';
+                    axios
+                      .post(updateURL + user_id, {
+                        google_auth_token: at,
+                      })
+                      .then((response) => {})
+                      .catch((err) => {
+                        console.log(err);
+                      });
+                    return;
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              } else {
+                //setAccessToken(old_at);
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+          console.log('in events', refreshToken);
+        })
+        .catch((error) => {
+          console.log('Error in events' + error);
         });
+    }, [userID, stateValue.dateContext, editingEvent.editing]);
+  }
 
-        console.log('homeTemp = ', temp);
+  function GoogleEvents() {
+    let url = BASE_URL + 'calenderEvents/';
+    let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+    let endofWeek = moment(stateValue.dateContext).add(6, 'days');
+    let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
+    let id = userID;
 
-        setEvents(temp);
-      })
-      .catch((error) => {
-        console.log('here: Error in getting goals and routines ' + error);
-      });
-  }, [userID, stateValue.dateContext, stateValue.todayDateObject]);
-}
-function GrabFireBaseRoutinesData() {
-  let url = BASE_URL + 'getroutines/';
-  let routine = [];
-  let routine_ids = [];
-  let goal = [];
-  let goal_ids = [];
-  const getTimes = (a_day_time, b_day_time) => {
-    const [a_start_time, b_start_time] = [
-      a_day_time.substring(10, a_day_time.length),
-      b_day_time.substring(10, b_day_time.length),
-    ];
-    const [a_HMS, b_HMS] = [
-      a_start_time
-        .substring(0, a_start_time.length - 3)
-        .replace(/\s{1,}/, '')
-        .split(':'),
-      b_start_time
-        .substring(0, b_start_time.length - 3)
-        .replace(/\s{1,}/, '')
-        .split(':'),
-    ];
-    const [a_parity, b_parity] = [
-      a_start_time
-        .substring(a_start_time.length - 3, a_start_time.length)
-        .replace(/\s{1,}/, ''),
-      b_start_time
-        .substring(b_start_time.length - 3, b_start_time.length)
-        .replace(/\s{1,}/, ''),
-    ];
+    const getTimes = (a_day_time, b_day_time) => {
+      const [a_start_time, b_start_time] = [
+        a_day_time.substring(10, a_day_time.length),
+        b_day_time.substring(10, b_day_time.length),
+      ];
+      const [a_HMS, b_HMS] = [
+        a_start_time
+          .substring(0, a_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+        b_start_time
+          .substring(0, b_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+      ];
+      const [a_parity, b_parity] = [
+        a_start_time
+          .substring(a_start_time.length - 3, a_start_time.length)
+          .replace(/\s{1,}/, ''),
+        b_start_time
+          .substring(b_start_time.length - 3, b_start_time.length)
+          .replace(/\s{1,}/, ''),
+      ];
 
-    let [a_time, b_time] = [0, 0];
-    if (a_parity === 'PM' && a_HMS[0] !== '12') {
-      const hoursInt = parseInt(a_HMS[0]) + 12;
-      a_HMS[0] = `${hoursInt}`;
-    } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+      let [a_time, b_time] = [0, 0];
+      if (a_parity === 'PM' && a_HMS[0] !== '12') {
+        const hoursInt = parseInt(a_HMS[0]) + 12;
+        a_HMS[0] = `${hoursInt}`;
+      } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
 
-    if (b_parity === 'PM' && b_HMS[0] !== '12') {
-      const hoursInt = parseInt(b_HMS[0]) + 12;
-      b_HMS[0] = `${hoursInt}`;
-    } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+      if (b_parity === 'PM' && b_HMS[0] !== '12') {
+        const hoursInt = parseInt(b_HMS[0]) + 12;
+        b_HMS[0] = `${hoursInt}`;
+      } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
 
-    for (let i = 0; i < a_HMS.length; i++) {
-      a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
-      b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
-    }
+      for (let i = 0; i < a_HMS.length; i++) {
+        a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+        b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+      }
 
-    return [a_time, b_time];
-  };
+      return [a_time, b_time];
+    };
+    useEffect(() => {
+      if (userID == '') return;
+      console.log(
+        'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
+        [
+          userID,
+          editingRTS.editing,
+          editingATS.editing,
+          editingIS.editing,
+          editingEvent.editing,
+        ]
+      );
 
-  useEffect(() => {
-    if (userID == '') return;
-    console.log(
-      'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-      [
-        userID,
-        editingRTS.editing,
-        editingATS.editing,
-        editingIS.editing,
-        editingEvent.editing,
-      ]
-    );
+      axios
+        .post(
+          url + id.toString() + ',' + start.toString() + ',' + end.toString()
+        )
+        .then((response) => {
+          console.log('day events ', response.data);
+          const temp = [];
 
-    axios
-      .get(url + userID)
-      .then((response) => {
-        console.log(
-          'here: Obtained user information with res = ',
-          response.data.result
-        );
-        const temp = [];
-
-        for (let i = 0; i < response.data.result.length; i++) {
-          temp.push(response.data.result[i]);
-        }
-        temp.sort((a, b) => {
-          const [a_start, b_start] = [
-            a.gr_start_day_and_time,
-            b.gr_start_day_and_time,
-          ];
-          const [a_end, b_end] = [
-            a.gr_end_day_and_time,
-             b.gr_end_day_and_time
+          for (let i = 0; i < response.data.length; i++) {
+            temp.push(response.data[i]);
+          }
+          temp.sort((a, b) => {
+            const [a_start, b_start] = [
+              a['start']['dateTime'],
+              b['start']['dateTime'],
             ];
 
-          const [a_start_time, b_start_time] = getTimes(
-            a.gr_start_day_and_time,
-            b.gr_start_day_and_time
-          );
-          const [a_end_time, b_end_time] = getTimes(
-            a.gr_end_day_and_time,
-            b.gr_end_day_and_time
-          );
+            const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
 
-          if (a_start_time < b_start_time) return -1;
-          else if (a_start_time > b_start_time) return 1;
-          else {
-            if (a_end_time < b_end_time) return -1;
-            else if (a_end_time > b_end_time) return 1;
+            const [a_start_time, b_start_time] = getTimes(
+              a['start']['dateTime'],
+              b['start']['dateTime']
+            );
+            const [a_end_time, b_end_time] = getTimes(
+              a['end']['dateTime'],
+              b['end']['dateTime']
+            );
+
+            if (a_start_time < b_start_time) return -1;
+            else if (a_start_time > b_start_time) return 1;
             else {
-              if (a_start < b_start) return -1;
-              else if (a_start > b_start) return 1;
+              if (a_end_time < b_end_time) return -1;
+              else if (a_end_time > b_end_time) return 1;
               else {
-                if (a_end < b_end) return -1;
-                else if (a_end > b_end) return 1;
-              }
-            }
-          }
-
-          return 0;
-        });
-
-        console.log('homeTemp = ', temp);
-
-        setGetRoutinesEndPoint(temp);
-        if (response.data.result && response.data.result.length !== 0) {
-          let x = response.data.result;
-          console.log('response', x);
-          x.sort((a, b) => {
-            let datetimeA = new Date(
-              a['gr_start_day_and_time'].replace(/-/g, '/')
-            );
-            console.log('datetimeA', datetimeA);
-            let datetimeB = new Date(
-              b['gr_start_day_and_time'].replace(/-/g, '/')
-            );
-            console.log('datetimeB', datetimeB);
-            let timeA =
-              new Date(datetimeA).getHours() * 60 +
-              new Date(datetimeA).getMinutes();
-
-            let timeB =
-              new Date(datetimeB).getHours() * 60 +
-              new Date(datetimeB).getMinutes();
-
-            return timeA - timeB;
-          });
-
-          let gr_array = [];
-
-          for (let i = 0; i < x.length; ++i) {
-            let gr = {};
-            gr.audio = '';
-            gr.datetime_completed = x[i].gr_datetime_completed;
-            gr.datetime_started = x[i].gr_datetime_started;
-            gr.end_day_and_time = x[i].gr_end_day_and_time;
-            gr.expected_completion_time = x[i].expected_completion_time;
-            gr.gr_unique_id = x[i].gr_unique_id;
-
-            gr.is_available = x[i].is_available.toLowerCase() === 'true';
-
-            gr.is_complete = x[i].is_complete.toLowerCase() === 'true';
-            gr.is_displayed_today =
-              x[i].is_displayed_today.toLowerCase() === 'true';
-            gr.is_in_progress = x[i].is_in_progress.toLowerCase() === 'true';
-            gr.is_persistent = x[i].is_persistent.toLowerCase() === 'true';
-            gr.is_sublist_available =
-              x[i].is_sublist_available.toLowerCase() === 'true';
-            gr.is_timed = x[i].is_timed.toLowerCase() === 'true';
-
-            gr.photo = x[i].photo;
-            gr.repeat = x[i].repeat.toLowerCase() === 'true';
-            gr.repeat_type = x[i].repeat_type || 'Never';
-            gr.repeat_ends_on = x[i].repeat_ends_on;
-            gr.repeat_every = x[i].repeat_every;
-            gr.repeat_frequency = x[i].repeat_frequency;
-            gr.repeat_occurences = x[i].repeat_occurences;
-
-            const repeat_week_days_json = JSON.parse(x[i].repeat_week_days);
-
-            if (repeat_week_days_json) {
-              gr.repeat_week_days = {
-                0:
-                  repeat_week_days_json.Sunday &&
-                  repeat_week_days_json.Sunday.toLowerCase() === 'true'
-                    ? 'Sunday'
-                    : '',
-                1:
-                  repeat_week_days_json.Monday &&
-                  repeat_week_days_json.Monday.toLowerCase() === 'true'
-                    ? 'Monday'
-                    : '',
-                2:
-                  repeat_week_days_json.Tuesday &&
-                  repeat_week_days_json.Tuesday.toLowerCase() === 'true'
-                    ? 'Tuesday'
-                    : '',
-                3:
-                  repeat_week_days_json.Wednesday &&
-                  repeat_week_days_json.Wednesday.toLowerCase() === 'true'
-                    ? 'Wednesday'
-                    : '',
-                4:
-                  repeat_week_days_json.Thursday &&
-                  repeat_week_days_json.Thursday.toLowerCase() === 'true'
-                    ? 'Thursday'
-                    : '',
-                5:
-                  repeat_week_days_json.Friday &&
-                  repeat_week_days_json.Friday.toLowerCase() === 'true'
-                    ? 'Friday'
-                    : '',
-                6:
-                  repeat_week_days_json.Saturday &&
-                  repeat_week_days_json.Saturday.toLowerCase() === 'true'
-                    ? 'Saturday'
-                    : '',
-              };
-            } else {
-              gr.repeat_week_days = {
-                0: '',
-                1: '',
-                2: '',
-                3: '',
-                4: '',
-                5: '',
-                6: '',
-              };
-            }
-
-            gr.start_day_and_time = x[i].gr_start_day_and_time;
-
-            // const first_notifications = x[i].notifications[0];
-            // const second_notifications = x[i].notifications[1];
-            // console.log(first_notifications);
-            // console.log(second_notifications);
-
-            for (let k = 0; k < x[i].notifications.length; ++k) {
-              const first_notifications = x[i].notifications[k];
-              if (first_notifications) {
-                if (first_notifications.user_ta_id.charAt(0) === '1') {
-                  gr.user_notifications = {
-                    before: {
-                      is_enabled:
-                        first_notifications.before_is_enable.toLowerCase() ===
-                        'true',
-                      is_set:
-                        first_notifications.before_is_set.toLowerCase() ===
-                        'true',
-                      message: first_notifications.before_message,
-                      time: first_notifications.before_time,
-                    },
-                    during: {
-                      is_enabled:
-                        first_notifications.during_is_enable.toLowerCase() ===
-                        'true',
-                      is_set:
-                        first_notifications.during_is_set.toLowerCase() ===
-                        'true',
-                      message: first_notifications.during_message,
-                      time: first_notifications.during_time,
-                    },
-                    after: {
-                      is_enabled:
-                        first_notifications.after_is_enable.toLowerCase() ===
-                        'true',
-                      is_set: first_notifications.after_is_set.toLowerCase(),
-                      message: first_notifications.after_message,
-                      time: first_notifications.after_time,
-                    },
-                  };
-                } else if (
-                  first_notifications.user_ta_id.charAt(0) === '2' &&
-                  first_notifications.user_ta_id === stateValue.ta_people_id
-                ) {
-                  gr.ta_notifications = {
-                    before: {
-                      is_enabled:
-                        first_notifications.before_is_enable.toLowerCase() ===
-                        'true',
-                      is_set:
-                        first_notifications.before_is_set.toLowerCase() ===
-                        'true',
-                      message: first_notifications.before_message,
-                      time: first_notifications.before_time,
-                    },
-                    during: {
-                      is_enabled:
-                        first_notifications.during_is_enable.toLowerCase() ===
-                        'true',
-                      is_set: first_notifications.during_is_set.toLowerCase(),
-                      message: first_notifications.during_message,
-                      time: first_notifications.during_time,
-                    },
-                    after: {
-                      is_enabled:
-                        first_notifications.after_is_enable.toLowerCase() ===
-                        'true',
-                      is_set:
-                        first_notifications.after_is_set.toLowerCase() ===
-                        'true',
-                      message: first_notifications.after_message,
-                      time: first_notifications.after_time,
-                    },
-                  };
+                if (a_start < b_start) return -1;
+                else if (a_start > b_start) return 1;
+                else {
+                  if (a_end < b_end) return -1;
+                  else if (a_end > b_end) return 1;
                 }
               }
             }
 
-            // if (!gr.ta_notifications) {
-            //   gr.ta_notifications = {
-            //     before: {
-            //       is_enabled: false,
-            //       is_set: false,
-            //       message: "",
-            //       time: gr.user_notifications.before.time,
-            //     },
-            //     during: {
-            //       is_enabled: false,
-            //       is_set: false,
-            //       message: "",
-            //       time: gr.user_notifications.during.time,
-            //     },
-            //     after: {
-            //       is_enabled: false,
-            //       is_set: false,
-            //       message: "",
-            //       time: gr.user_notifications.after.time,
-            //     },
-            //   };
-            // }
+            return 0;
+          });
 
-            // console.log(gr);
-            gr.title = x[i].gr_title;
-            // console.log('X', x);
-            // console.log(gr.title, gr.is_sublist_available);
-            var goalDate = new Date(gr.end_day_and_time.replace(/-/g, '/'));
-            console.log(goalDate);
-            //For Today Goals and Routines
-            let startOfDay = moment(goalDate);
-            let endOfDay = moment(goalDate);
-            let begOfTheDay = startOfDay.startOf('day');
-            let endOfTheDay = endOfDay.endOf('day');
-            // console.log(begOfTheDay);
-            // console.log(endOfTheDay);
-            let todayStartDate = new Date(begOfTheDay.format('MM/DD/YYYY'));
-            let todayEndDate = new Date(endOfTheDay.format('MM/DD/YYYY'));
-            todayStartDate.setHours(0, 0, 0);
-            todayEndDate.setHours(23, 59, 59);
-            // console.log(todayStartDate);
-            // console.log(todayEndDate);
-            // console.log(goalDate);
+          console.log('homeTemp = ', temp);
 
-            //For Week Goals and Routines
-            let startWeek = moment(goalDate);
-            let endWeek = moment(goalDate);
-            let startDay = startWeek.startOf('week');
-            let endDay = endWeek.endOf('week');
-            // console.log(startDay);
-            // console.log(endDay);
-            let startDate = new Date(startDay.format('MM/DD/YYYY'));
-            let endDate = new Date(endDay.format('MM/DD/YYYY'));
-            startDate.setHours(0, 0, 0);
-            endDate.setHours(23, 59, 59);
-            //console.log(startDate);
-            //console.log(endDate);
+          setEvents(temp);
+        })
+        .catch((error) => {
+          console.log('here: Error in getting goals and routines ' + error);
+        });
+    }, [userID, stateValue.dateContext, stateValue.todayDateObject]);
+  }
+  function GrabFireBaseRoutinesData() {
+    let url = BASE_URL + 'getroutines/';
+    let routine = [];
+    let routine_ids = [];
+    let goal = [];
+    let goal_ids = [];
+    const getTimes = (a_day_time, b_day_time) => {
+      const [a_start_time, b_start_time] = [
+        a_day_time.substring(10, a_day_time.length),
+        b_day_time.substring(10, b_day_time.length),
+      ];
+      const [a_HMS, b_HMS] = [
+        a_start_time
+          .substring(0, a_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+        b_start_time
+          .substring(0, b_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+      ];
+      const [a_parity, b_parity] = [
+        a_start_time
+          .substring(a_start_time.length - 3, a_start_time.length)
+          .replace(/\s{1,}/, ''),
+        b_start_time
+          .substring(b_start_time.length - 3, b_start_time.length)
+          .replace(/\s{1,}/, ''),
+      ];
 
-            //For Months Goals and Routines
-            let startMonth = moment(goalDate);
-            let endMonth = moment(goalDate);
-            let startDayMonth = startMonth.startOf('month');
-            let endDayMonth = endMonth.endOf('month');
-            // console.log(startDayMonth);
-            // console.log(endDayMonth);
-            let monthStartDate = new Date(startDayMonth.format('MM/DD/YYYY'));
-            let monthEndDate = new Date(endDayMonth.format('MM/DD/YYYY'));
-            monthStartDate.setHours(0, 0, 0);
-            monthEndDate.setHours(23, 59, 59);
-            // console.log(monthStartDate);
-            // console.log(monthEndDate);
+      let [a_time, b_time] = [0, 0];
+      if (a_parity === 'PM' && a_HMS[0] !== '12') {
+        const hoursInt = parseInt(a_HMS[0]) + 12;
+        a_HMS[0] = `${hoursInt}`;
+      } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
 
-            if (
-              stateValue.calendarView === 'Day' &&
-              goalDate.getTime() > todayStartDate.getTime() &&
-              goalDate.getTime() < todayEndDate.getTime()
-            ) {
-              gr_array.push(gr);
-            }
-            if (
-              stateValue.calendarView === 'Week' &&
-              goalDate.getTime() > startDate.getTime() &&
-              goalDate.getTime() < endDate.getTime()
-            ) {
-              gr_array.push(gr);
-            }
-            // if (
-            //   this.state.calendarView === "Month" &&
-            //   goalDate.getTime() > monthStartDate.getTime() &&
-            //   goalDate.getTime() < monthEndDate.getTime()
-            // ) {
-            //   gr_array.push(gr);
-            // }
-            // console.log(gr_array);
-            if (x[i]['is_persistent'].toLowerCase() === 'true') {
-              // routine_ids.push(i);
+      if (b_parity === 'PM' && b_HMS[0] !== '12') {
+        const hoursInt = parseInt(b_HMS[0]) + 12;
+        b_HMS[0] = `${hoursInt}`;
+      } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
 
-              // routine_ids.push(x[i]["gr_unique_id"]);
-              // routine.push(x[i]);
+      for (let i = 0; i < a_HMS.length; i++) {
+        a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+        b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+      }
 
-              if (
-                stateValue.calendarView === 'Day' &&
-                goalDate.getTime() > todayStartDate.getTime() &&
-                goalDate.getTime() < todayEndDate.getTime()
-              ) {
-                routine_ids.push(gr['gr_unique_id']);
-                routine.push(gr);
+      return [a_time, b_time];
+    };
+
+    useEffect(() => {
+      if (userID == '') return;
+      console.log(
+        'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
+        [
+          userID,
+          editingRTS.editing,
+          editingATS.editing,
+          editingIS.editing,
+          editingEvent.editing,
+        ]
+      );
+
+      axios
+        .get(url + userID)
+        .then((response) => {
+          console.log(
+            'here: Obtained user information with res = ',
+            response.data.result
+          );
+          const temp = [];
+
+          for (let i = 0; i < response.data.result.length; i++) {
+            temp.push(response.data.result[i]);
+          }
+          temp.sort((a, b) => {
+            const [a_start, b_start] = [
+              a.gr_start_day_and_time,
+              b.gr_start_day_and_time,
+            ];
+            const [a_end, b_end] = [
+              a.gr_end_day_and_time,
+              b.gr_end_day_and_time,
+            ];
+
+            const [a_start_time, b_start_time] = getTimes(
+              a.gr_start_day_and_time,
+              b.gr_start_day_and_time
+            );
+            const [a_end_time, b_end_time] = getTimes(
+              a.gr_end_day_and_time,
+              b.gr_end_day_and_time
+            );
+
+            if (a_start_time < b_start_time) return -1;
+            else if (a_start_time > b_start_time) return 1;
+            else {
+              if (a_end_time < b_end_time) return -1;
+              else if (a_end_time > b_end_time) return 1;
+              else {
+                if (a_start < b_start) return -1;
+                else if (a_start > b_start) return 1;
+                else {
+                  if (a_end < b_end) return -1;
+                  else if (a_end > b_end) return 1;
+                }
               }
-              if (
-                stateValue.calendarView === 'Week' &&
-                goalDate.getTime() > todayStartDate.getTime() &&
-                goalDate.getTime() < todayEndDate.getTime()
-              ) {
-                routine_ids.push(gr['gr_unique_id']);
-                routine.push(gr);
+            }
+
+            return 0;
+          });
+
+          console.log('homeTemp = ', temp);
+
+          setGetRoutinesEndPoint(temp);
+          if (response.data.result && response.data.result.length !== 0) {
+            let x = response.data.result;
+            console.log('response', x);
+            x.sort((a, b) => {
+              let datetimeA = new Date(
+                a['gr_start_day_and_time'].replace(/-/g, '/')
+              );
+              console.log('datetimeA', datetimeA);
+              let datetimeB = new Date(
+                b['gr_start_day_and_time'].replace(/-/g, '/')
+              );
+              console.log('datetimeB', datetimeB);
+              let timeA =
+                new Date(datetimeA).getHours() * 60 +
+                new Date(datetimeA).getMinutes();
+
+              let timeB =
+                new Date(datetimeB).getHours() * 60 +
+                new Date(datetimeB).getMinutes();
+
+              return timeA - timeB;
+            });
+
+            let gr_array = [];
+
+            for (let i = 0; i < x.length; ++i) {
+              let gr = {};
+              gr.audio = '';
+              gr.datetime_completed = x[i].gr_datetime_completed;
+              gr.datetime_started = x[i].gr_datetime_started;
+              gr.end_day_and_time = x[i].gr_end_day_and_time;
+              gr.expected_completion_time = x[i].expected_completion_time;
+              gr.gr_unique_id = x[i].gr_unique_id;
+
+              gr.is_available = x[i].is_available.toLowerCase() === 'true';
+
+              gr.is_complete = x[i].is_complete.toLowerCase() === 'true';
+              gr.is_displayed_today =
+                x[i].is_displayed_today.toLowerCase() === 'true';
+              gr.is_in_progress = x[i].is_in_progress.toLowerCase() === 'true';
+              gr.is_persistent = x[i].is_persistent.toLowerCase() === 'true';
+              gr.is_sublist_available =
+                x[i].is_sublist_available.toLowerCase() === 'true';
+              gr.is_timed = x[i].is_timed.toLowerCase() === 'true';
+
+              gr.photo = x[i].photo;
+              gr.repeat = x[i].repeat.toLowerCase() === 'true';
+              gr.repeat_type = x[i].repeat_type || 'Never';
+              gr.repeat_ends_on = x[i].repeat_ends_on;
+              gr.repeat_every = x[i].repeat_every;
+              gr.repeat_frequency = x[i].repeat_frequency;
+              gr.repeat_occurences = x[i].repeat_occurences;
+
+              const repeat_week_days_json = JSON.parse(x[i].repeat_week_days);
+
+              if (repeat_week_days_json) {
+                gr.repeat_week_days = {
+                  0:
+                    repeat_week_days_json.Sunday &&
+                    repeat_week_days_json.Sunday.toLowerCase() === 'true'
+                      ? 'Sunday'
+                      : '',
+                  1:
+                    repeat_week_days_json.Monday &&
+                    repeat_week_days_json.Monday.toLowerCase() === 'true'
+                      ? 'Monday'
+                      : '',
+                  2:
+                    repeat_week_days_json.Tuesday &&
+                    repeat_week_days_json.Tuesday.toLowerCase() === 'true'
+                      ? 'Tuesday'
+                      : '',
+                  3:
+                    repeat_week_days_json.Wednesday &&
+                    repeat_week_days_json.Wednesday.toLowerCase() === 'true'
+                      ? 'Wednesday'
+                      : '',
+                  4:
+                    repeat_week_days_json.Thursday &&
+                    repeat_week_days_json.Thursday.toLowerCase() === 'true'
+                      ? 'Thursday'
+                      : '',
+                  5:
+                    repeat_week_days_json.Friday &&
+                    repeat_week_days_json.Friday.toLowerCase() === 'true'
+                      ? 'Friday'
+                      : '',
+                  6:
+                    repeat_week_days_json.Saturday &&
+                    repeat_week_days_json.Saturday.toLowerCase() === 'true'
+                      ? 'Saturday'
+                      : '',
+                };
+              } else {
+                gr.repeat_week_days = {
+                  0: '',
+                  1: '',
+                  2: '',
+                  3: '',
+                  4: '',
+                  5: '',
+                  6: '',
+                };
               }
-              // if (
-              //   this.state.calendarView === "Month" &&
-              //   goalDate.getTime() > monthStartDate.getTime() &&
-              //   goalDate.getTime() < monthEndDate.getTime()
-              // ) {
-              //   routine_ids.push(gr["gr_unique_id"]);
-              //   routine.push(gr);
+
+              gr.start_day_and_time = x[i].gr_start_day_and_time;
+
+              // const first_notifications = x[i].notifications[0];
+              // const second_notifications = x[i].notifications[1];
+              // console.log(first_notifications);
+              // console.log(second_notifications);
+
+              for (let k = 0; k < x[i].notifications.length; ++k) {
+                const first_notifications = x[i].notifications[k];
+                if (first_notifications) {
+                  if (first_notifications.user_ta_id.charAt(0) === '1') {
+                    gr.user_notifications = {
+                      before: {
+                        is_enabled:
+                          first_notifications.before_is_enable.toLowerCase() ===
+                          'true',
+                        is_set:
+                          first_notifications.before_is_set.toLowerCase() ===
+                          'true',
+                        message: first_notifications.before_message,
+                        time: first_notifications.before_time,
+                      },
+                      during: {
+                        is_enabled:
+                          first_notifications.during_is_enable.toLowerCase() ===
+                          'true',
+                        is_set:
+                          first_notifications.during_is_set.toLowerCase() ===
+                          'true',
+                        message: first_notifications.during_message,
+                        time: first_notifications.during_time,
+                      },
+                      after: {
+                        is_enabled:
+                          first_notifications.after_is_enable.toLowerCase() ===
+                          'true',
+                        is_set: first_notifications.after_is_set.toLowerCase(),
+                        message: first_notifications.after_message,
+                        time: first_notifications.after_time,
+                      },
+                    };
+                  } else if (
+                    first_notifications.user_ta_id.charAt(0) === '2' &&
+                    first_notifications.user_ta_id === stateValue.ta_people_id
+                  ) {
+                    gr.ta_notifications = {
+                      before: {
+                        is_enabled:
+                          first_notifications.before_is_enable.toLowerCase() ===
+                          'true',
+                        is_set:
+                          first_notifications.before_is_set.toLowerCase() ===
+                          'true',
+                        message: first_notifications.before_message,
+                        time: first_notifications.before_time,
+                      },
+                      during: {
+                        is_enabled:
+                          first_notifications.during_is_enable.toLowerCase() ===
+                          'true',
+                        is_set: first_notifications.during_is_set.toLowerCase(),
+                        message: first_notifications.during_message,
+                        time: first_notifications.during_time,
+                      },
+                      after: {
+                        is_enabled:
+                          first_notifications.after_is_enable.toLowerCase() ===
+                          'true',
+                        is_set:
+                          first_notifications.after_is_set.toLowerCase() ===
+                          'true',
+                        message: first_notifications.after_message,
+                        time: first_notifications.after_time,
+                      },
+                    };
+                  }
+                }
+              }
+
+              // if (!gr.ta_notifications) {
+              //   gr.ta_notifications = {
+              //     before: {
+              //       is_enabled: false,
+              //       is_set: false,
+              //       message: "",
+              //       time: gr.user_notifications.before.time,
+              //     },
+              //     during: {
+              //       is_enabled: false,
+              //       is_set: false,
+              //       message: "",
+              //       time: gr.user_notifications.during.time,
+              //     },
+              //     after: {
+              //       is_enabled: false,
+              //       is_set: false,
+              //       message: "",
+              //       time: gr.user_notifications.after.time,
+              //     },
+              //   };
               // }
-            }
-            if (x[i]['is_persistent'].toLowerCase() === 'false') {
-              // goal_ids.push(i);
 
-              // goal_ids.push(x[i]["gr_unique_id"]);
-              // goal.push(x[i]);
+              // console.log(gr);
+              gr.title = x[i].gr_title;
+              // console.log('X', x);
+              // console.log(gr.title, gr.is_sublist_available);
+              var goalDate = new Date(gr.end_day_and_time.replace(/-/g, '/'));
+              console.log(goalDate);
+              //For Today Goals and Routines
+              let startOfDay = moment(goalDate);
+              let endOfDay = moment(goalDate);
+              let begOfTheDay = startOfDay.startOf('day');
+              let endOfTheDay = endOfDay.endOf('day');
+              // console.log(begOfTheDay);
+              // console.log(endOfTheDay);
+              let todayStartDate = new Date(begOfTheDay.format('MM/DD/YYYY'));
+              let todayEndDate = new Date(endOfTheDay.format('MM/DD/YYYY'));
+              todayStartDate.setHours(0, 0, 0);
+              todayEndDate.setHours(23, 59, 59);
+              // console.log(todayStartDate);
+              // console.log(todayEndDate);
+              // console.log(goalDate);
+
+              //For Week Goals and Routines
+              let startWeek = moment(goalDate);
+              let endWeek = moment(goalDate);
+              let startDay = startWeek.startOf('week');
+              let endDay = endWeek.endOf('week');
+              // console.log(startDay);
+              // console.log(endDay);
+              let startDate = new Date(startDay.format('MM/DD/YYYY'));
+              let endDate = new Date(endDay.format('MM/DD/YYYY'));
+              startDate.setHours(0, 0, 0);
+              endDate.setHours(23, 59, 59);
+              //console.log(startDate);
+              //console.log(endDate);
+
+              //For Months Goals and Routines
+              let startMonth = moment(goalDate);
+              let endMonth = moment(goalDate);
+              let startDayMonth = startMonth.startOf('month');
+              let endDayMonth = endMonth.endOf('month');
+              // console.log(startDayMonth);
+              // console.log(endDayMonth);
+              let monthStartDate = new Date(startDayMonth.format('MM/DD/YYYY'));
+              let monthEndDate = new Date(endDayMonth.format('MM/DD/YYYY'));
+              monthStartDate.setHours(0, 0, 0);
+              monthEndDate.setHours(23, 59, 59);
+              // console.log(monthStartDate);
+              // console.log(monthEndDate);
 
               if (
                 stateValue.calendarView === 'Day' &&
                 goalDate.getTime() > todayStartDate.getTime() &&
                 goalDate.getTime() < todayEndDate.getTime()
               ) {
-                goal_ids.push(gr['gr_unique_id']);
-                goal.push(gr);
+                gr_array.push(gr);
               }
               if (
                 stateValue.calendarView === 'Week' &&
                 goalDate.getTime() > startDate.getTime() &&
                 goalDate.getTime() < endDate.getTime()
               ) {
-                goal_ids.push(gr['gr_unique_id']);
-                goal.push(gr);
+                gr_array.push(gr);
               }
               // if (
               //   this.state.calendarView === "Month" &&
               //   goalDate.getTime() > monthStartDate.getTime() &&
               //   goalDate.getTime() < monthEndDate.getTime()
               // ) {
-              //   goal_ids.push(gr["gr_unique_id"]);
-              //   goal.push(gr);
+              //   gr_array.push(gr);
               // }
-            }
-          }
+              // console.log(gr_array);
+              if (x[i]['is_persistent'].toLowerCase() === 'true') {
+                // routine_ids.push(i);
 
-          setStateValue((prevState) => {
-            return {
-              ...prevState,
-              originalGoalsAndRoutineArr: gr_array,
-              goals: goal,
-              addNewGRModalShow: false,
-              routine_ids: routine_ids,
-              goal_ids: goal_ids,
-              routines: routine,
-            };
-          });
-          setEditingRTS({
-            ...editingRTS,
-            gr_array: gr_array,
-          });
-          setEditingATS({
-            ...editingATS,
-            gr_array: gr_array,
-          });
-        } else {
-          setStateValue((prevState) => {
-            return {
-              ...prevState,
-              originalGoalsAndRoutineArr: [],
-              goals: goal,
-              addNewGRModalShow: false,
-              routine_ids: routine_ids,
-              goal_ids: goal_ids,
-              routines: routine,
-            };
-          });
-        }
-      })
-      .catch((error) => {
-        console.log('Error in getting goals and routines ' + error);
-      });
-  }, [
-    userID,
-    editingRTS.editing,
-    editingATS.editing,
-    editingIS.editing,
-    editingEvent.editing,
-  ]);
-}
+                // routine_ids.push(x[i]["gr_unique_id"]);
+                // routine.push(x[i]);
+
+                if (
+                  stateValue.calendarView === 'Day' &&
+                  goalDate.getTime() > todayStartDate.getTime() &&
+                  goalDate.getTime() < todayEndDate.getTime()
+                ) {
+                  routine_ids.push(gr['gr_unique_id']);
+                  routine.push(gr);
+                }
+                if (
+                  stateValue.calendarView === 'Week' &&
+                  goalDate.getTime() > todayStartDate.getTime() &&
+                  goalDate.getTime() < todayEndDate.getTime()
+                ) {
+                  routine_ids.push(gr['gr_unique_id']);
+                  routine.push(gr);
+                }
+                // if (
+                //   this.state.calendarView === "Month" &&
+                //   goalDate.getTime() > monthStartDate.getTime() &&
+                //   goalDate.getTime() < monthEndDate.getTime()
+                // ) {
+                //   routine_ids.push(gr["gr_unique_id"]);
+                //   routine.push(gr);
+                // }
+              }
+              if (x[i]['is_persistent'].toLowerCase() === 'false') {
+                // goal_ids.push(i);
+
+                // goal_ids.push(x[i]["gr_unique_id"]);
+                // goal.push(x[i]);
+
+                if (
+                  stateValue.calendarView === 'Day' &&
+                  goalDate.getTime() > todayStartDate.getTime() &&
+                  goalDate.getTime() < todayEndDate.getTime()
+                ) {
+                  goal_ids.push(gr['gr_unique_id']);
+                  goal.push(gr);
+                }
+                if (
+                  stateValue.calendarView === 'Week' &&
+                  goalDate.getTime() > startDate.getTime() &&
+                  goalDate.getTime() < endDate.getTime()
+                ) {
+                  goal_ids.push(gr['gr_unique_id']);
+                  goal.push(gr);
+                }
+                // if (
+                //   this.state.calendarView === "Month" &&
+                //   goalDate.getTime() > monthStartDate.getTime() &&
+                //   goalDate.getTime() < monthEndDate.getTime()
+                // ) {
+                //   goal_ids.push(gr["gr_unique_id"]);
+                //   goal.push(gr);
+                // }
+              }
+            }
+
+            setStateValue((prevState) => {
+              return {
+                ...prevState,
+                originalGoalsAndRoutineArr: gr_array,
+                goals: goal,
+                addNewGRModalShow: false,
+                routine_ids: routine_ids,
+                goal_ids: goal_ids,
+                routines: routine,
+              };
+            });
+            setEditingRTS({
+              ...editingRTS,
+              gr_array: gr_array,
+            });
+            setEditingATS({
+              ...editingATS,
+              gr_array: gr_array,
+            });
+          } else {
+            setStateValue((prevState) => {
+              return {
+                ...prevState,
+                originalGoalsAndRoutineArr: [],
+                goals: goal,
+                addNewGRModalShow: false,
+                routine_ids: routine_ids,
+                goal_ids: goal_ids,
+                routines: routine,
+              };
+            });
+          }
+        })
+        .catch((error) => {
+          console.log('Error in getting goals and routines ' + error);
+        });
+    }, [
+      userID,
+      editingRTS.editing,
+      editingATS.editing,
+      editingIS.editing,
+      editingEvent.editing,
+    ]);
+  }
   useEffect(() => console.log('here: 4'), [editingRTS.editing.item]);
 
   function ToggleShowAbout() {
     history.push('/about');
   }
-  
+
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
   ) {
@@ -2249,7 +2532,8 @@ function GrabFireBaseRoutinesData() {
                   stateValue.closeRoutine,
                   GrabFireBaseRoutinesGoalsData(),
                   GrabFireBaseRoutinesData(),
-                  GoogleEvents(),
+                  GetUserAcessToken(),
+                  // GoogleEvents(),
                   stateValue.BASE_URL)
                 }
               >
@@ -2401,7 +2685,8 @@ function GrabFireBaseRoutinesData() {
                               >
                                 {0 <= today.format('D') - curDate.format('D') &&
                                 today.format('D') - curDate.format('D') <= 6 &&
-                                today.format('M') - curDate.format('M') === 0 ? (
+                                today.format('M') - curDate.format('M') ===
+                                  0 ? (
                                   <p
                                     style={{
                                       font: 'normal normal bold 28px SF Pro',
