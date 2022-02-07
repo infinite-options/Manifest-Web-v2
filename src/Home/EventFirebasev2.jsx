@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useModal } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import moment from 'moment';
 import {
@@ -17,8 +17,10 @@ import {
   updateTheCalenderEvent,
   deleteTheCalenderEvent,
 } from './GoogleApiService';
+import LoginContext from '../LoginContext';
 import DeleteEventModal from './DeleteEventModal';
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
+const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
 const useStyles = makeStyles({
   table: {
@@ -52,8 +54,12 @@ const useStyles = makeStyles({
 export default function EventFirebasev2(props) {
   console.log('curdate today firebase props ', props);
   console.log('curdate today firebase props ', document.cookie);
+
+  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
   const history = useHistory();
   const inRange = [];
+  const loginContext = useContext(LoginContext);
   const currentUser = props.theCurrentUserID;
   //var currentUser = ''
 
@@ -66,7 +72,19 @@ export default function EventFirebasev2(props) {
   //   } else {
   //     currentUser = props.theCurrentUserID;
   //   }
-
+  useEffect(() => {
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    }
+  }, [loginContext.loginState.reload]);
   const [listOfBlocks, setlistOfBlocks] = useState([]);
   const [recList, setRecList] = useState({});
   const [historyGot, setHG] = useState([]);
@@ -89,7 +107,8 @@ export default function EventFirebasev2(props) {
   }, [props.theCurrentUserID, props.stateValue.dateContext, props.editEvent]);
 
   useEffect(() => {
-    makeActionDisplays();
+    //makeActionDisplays();
+    GetUserAcessToken();
     // console.log('here-2: gsep on useEffect = ', props.getStepsEndPoint);
   }, [props.events, props.theCurrentUserID, recList, props.editEvent]);
 
@@ -163,8 +182,459 @@ export default function EventFirebasev2(props) {
       });
   }, [props.currentUser]);
 
-  //makes listOfBlocks with list of displays routines and such
+  function GetUserAcessToken() {
+    let url = BASE_URL + 'usersToken/';
+    let user_id = props.theCurrentUserID;
+    let start =
+      props.stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+    let endofWeek = moment(props.stateValue.dateContext).add(6, 'days');
+    let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
 
+    const getTimes = (a_day_time, b_day_time) => {
+      const [a_start_time, b_start_time] = [
+        a_day_time.substring(10, a_day_time.length),
+        b_day_time.substring(10, b_day_time.length),
+      ];
+      const [a_HMS, b_HMS] = [
+        a_start_time
+          .substring(0, a_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+        b_start_time
+          .substring(0, b_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+      ];
+      const [a_parity, b_parity] = [
+        a_start_time
+          .substring(a_start_time.length - 3, a_start_time.length)
+          .replace(/\s{1,}/, ''),
+        b_start_time
+          .substring(b_start_time.length - 3, b_start_time.length)
+          .replace(/\s{1,}/, ''),
+      ];
+
+      let [a_time, b_time] = [0, 0];
+      if (a_parity === 'PM' && a_HMS[0] !== '12') {
+        const hoursInt = parseInt(a_HMS[0]) + 12;
+        a_HMS[0] = `${hoursInt}`;
+      } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+
+      if (b_parity === 'PM' && b_HMS[0] !== '12') {
+        const hoursInt = parseInt(b_HMS[0]) + 12;
+        b_HMS[0] = `${hoursInt}`;
+      } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+
+      for (let i = 0; i < a_HMS.length; i++) {
+        a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+        b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+      }
+
+      return [a_time, b_time];
+    };
+    axios
+      .get(url + user_id)
+      .then((response) => {
+        console.log('in events', response);
+
+        var old_at = response['data']['google_auth_token'];
+        var refreshToken = response['data']['google_refresh_token'];
+        console.log('in events', old_at);
+        const headers = {
+          Accept: 'application/json',
+          Authorization: 'Bearer ' + old_at,
+        };
+        const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?orderBy=startTime&singleEvents=true&timeMax=${end}&timeMin=${start}&key=${API_KEY}`;
+        axios
+          .get(url, {
+            headers: headers,
+          })
+          .then((response) => {
+            console.log('day events ', response.data.items);
+            const temp = [];
+
+            for (let i = 0; i < response.data.items.length; i++) {
+              temp.push(response.data.items[i]);
+            }
+            const filteredRecEvents = Array.from(
+              new Set(temp.map((a) => a.recurringEventId))
+            ).map((recurringEventId) => {
+              return temp.find((a) => a.recurringEventId === recurringEventId);
+            });
+            const filteredNonRecEvents = Array.from(
+              new Set(temp.filter((a) => !a.recurringEventId))
+            );
+            const filteredEvents =
+              filteredRecEvents.concat(filteredNonRecEvents);
+            console.log('recurring', filteredRecEvents);
+            console.log('recurring', filteredNonRecEvents);
+            console.log('recurring', filteredEvents);
+            filteredEvents.sort((a, b) => {
+              // console.log('a = ', a, '\nb = ', b);
+              const [a_start, b_start] = [
+                moment(a['start']['dateTime']).format('YYYY-MM-DD hh:mm:ss a'),
+                moment(b['start']['dateTime']).format('YYYY-MM-DD hh:mm:ss a'),
+              ];
+              console.log('a_start = ', a_start, '\nb_start = ', b_start);
+              const [a_end, b_end] = [
+                moment(a['end']['dateTime']).format('YYYY-MM-DD hh:mm:ss a'),
+                moment(b['end']['dateTime']).format('YYYY-MM-DD hh:mm:ss a'),
+              ];
+              console.log('a_end = ', a_end, '\nb_end = ', b_end);
+              const [a_start_time, b_start_time] = getTimes(
+                moment(a['start']['dateTime']).format('YYYY-MM-DD hh:mm:ss a'),
+                moment(b['start']['dateTime']).format('YYYY-MM-DD hh:mm:ss a')
+              );
+              const [a_end_time, b_end_time] = getTimes(
+                moment(a['end']['dateTime']).format('YYYY-MM-DD hh:mm:ss a'),
+                moment(b['end']['dateTime']).format('YYYY-MM-DD hh:mm:ss a')
+              );
+              console.log(
+                'a_start_time = ',
+                a_start_time,
+                '\nb_start_time = ',
+                b_start_time
+              );
+              console.log(
+                'a_end_time = ',
+                a_end_time,
+                '\nb_end_time = ',
+                b_end_time
+              );
+              if (a_start_time < b_start_time) return -1;
+              else if (a_start_time > b_start_time) return 1;
+              else {
+                if (a_end_time < b_end_time) return -1;
+                else if (a_end_time > b_end_time) return 1;
+                else {
+                  if (a_start < b_start) return -1;
+                  else if (a_start > b_start) return 1;
+                  else {
+                    if (a_end < b_end) return -1;
+                    else if (a_end > b_end) return 1;
+                  }
+                }
+              }
+
+              return 0;
+            });
+            console.log('recurring', filteredEvents);
+            //setActions(temp);
+            setActions(filteredEvents);
+          })
+          .catch((error) => {
+            console.log('here: Error in getting goals and routines ' + error);
+          });
+
+        var tempRows = [];
+        var tempID = [];
+        var tempIsID = [];
+        console.log('only 0.1.0', getActions);
+        const uniqueObjects = [
+          ...new Map(getActions.map((item) => [item.id, item])).values(),
+        ];
+
+        console.log('unique obj', uniqueObjects, getActions);
+        for (var i = 0; i < uniqueObjects.length; i++) {
+          tempRows.push(displayRoutines(getActions[i]));
+          console.log('p.ggep[i] = ', getActions[i].id);
+          console.log('p.ggep[i] = ', recList[getActions[i].recurringEventId]);
+          console.log('p.ggep[i] = ', recList);
+          if (recList[getActions[i].recurringEventId]) {
+            for (
+              var j = 0;
+              j < recList[getActions[i].recurringEventId].length;
+              j++
+            ) {
+              console.log(
+                'in if1 ggep',
+                recList[getActions[i].recurringEventId].length
+              );
+              if (
+                getActions[i].recurringEventId ===
+                recList[getActions[i].recurringEventId][j].recurringEventId
+              ) {
+                console.log(
+                  'in if2 ggep',
+                  recList[getActions[i].recurringEventId][j].recurringEventId
+                );
+                if (
+                  tempID.includes(
+                    recList[getActions[i].recurringEventId][j].id
+                  ) === false
+                ) {
+                  console.log(
+                    'in if3 ggep',
+                    tempID,
+                    recList[getActions[i].recurringEventId][j].id
+                  );
+                  tempRows.push(
+                    displayActions(
+                      recList[getActions[i].recurringEventId][j],
+                      getActions[i]
+                    )
+                  );
+                  tempID.push(recList[getActions[i].recurringEventId][j].id);
+                  console.log('only ggep', tempID);
+                }
+              }
+            }
+          }
+        }
+        console.log('tempRows', tempRows, tempID);
+        setlistOfBlocks(tempRows);
+        fetch(
+          `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`,
+          {
+            method: 'GET',
+          }
+        )
+          .then((response) => {
+            console.log('in events', response);
+            if (response['status'] === 400) {
+              console.log('in events if');
+              let authorization_url =
+                'https://accounts.google.com/o/oauth2/token';
+
+              var details = {
+                refresh_token: refreshToken,
+                client_id: CLIENT_ID,
+                client_secret: CLIENT_SECRET,
+                grant_type: 'refresh_token',
+              };
+
+              var formBody = [];
+              for (var property in details) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + '=' + encodedValue);
+              }
+              formBody = formBody.join('&');
+
+              fetch(authorization_url, {
+                method: 'POST',
+                headers: {
+                  'Content-Type':
+                    'application/x-www-form-urlencoded;charset=UTF-8',
+                },
+                body: formBody,
+              })
+                .then((response) => {
+                  return response.json();
+                })
+                .then((responseData) => {
+                  console.log(responseData);
+                  return responseData;
+                })
+                .then((data) => {
+                  console.log(data);
+                  let at = data['access_token'];
+                  const headers = {
+                    Accept: 'application/json',
+                    Authorization: 'Bearer ' + at,
+                  };
+                  const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?orderBy=startTime&singleEvents=true&timeMax=${end}&timeMin=${start}&key=${API_KEY}`;
+                  axios
+                    .get(url, {
+                      headers: headers,
+                    })
+                    .then((response) => {
+                      console.log('day events ', response.data.items);
+                      const temp = [];
+
+                      for (let i = 0; i < response.data.items.length; i++) {
+                        temp.push(response.data.items[i]);
+                      }
+                      const filteredRecEvents = Array.from(
+                        new Set(temp.map((a) => a.recurringEventId))
+                      ).map((recurringEventId) => {
+                        return temp.find(
+                          (a) => a.recurringEventId === recurringEventId
+                        );
+                      });
+                      const filteredNonRecEvents = Array.from(
+                        new Set(temp.filter((a) => !a.recurringEventId))
+                      );
+                      const filteredEvents =
+                        filteredRecEvents.concat(filteredNonRecEvents);
+                      console.log('recurring', filteredRecEvents);
+                      console.log('recurring', filteredNonRecEvents);
+                      console.log('recurring', filteredEvents);
+                      filteredEvents.sort((a, b) => {
+                        // console.log('a = ', a, '\nb = ', b);
+                        const [a_start, b_start] = [
+                          moment(a['start']['dateTime']).format(
+                            'YYYY-MM-DD hh:mm:ss a'
+                          ),
+                          moment(b['start']['dateTime']).format(
+                            'YYYY-MM-DD hh:mm:ss a'
+                          ),
+                        ];
+                        console.log(
+                          'a_start = ',
+                          a_start,
+                          '\nb_start = ',
+                          b_start
+                        );
+                        const [a_end, b_end] = [
+                          moment(a['end']['dateTime']).format(
+                            'YYYY-MM-DD hh:mm:ss a'
+                          ),
+                          moment(b['end']['dateTime']).format(
+                            'YYYY-MM-DD hh:mm:ss a'
+                          ),
+                        ];
+                        console.log('a_end = ', a_end, '\nb_end = ', b_end);
+                        const [a_start_time, b_start_time] = getTimes(
+                          moment(a['start']['dateTime']).format(
+                            'YYYY-MM-DD hh:mm:ss a'
+                          ),
+                          moment(b['start']['dateTime']).format(
+                            'YYYY-MM-DD hh:mm:ss a'
+                          )
+                        );
+                        const [a_end_time, b_end_time] = getTimes(
+                          moment(a['end']['dateTime']).format(
+                            'YYYY-MM-DD hh:mm:ss a'
+                          ),
+                          moment(b['end']['dateTime']).format(
+                            'YYYY-MM-DD hh:mm:ss a'
+                          )
+                        );
+                        console.log(
+                          'a_start_time = ',
+                          a_start_time,
+                          '\nb_start_time = ',
+                          b_start_time
+                        );
+                        console.log(
+                          'a_end_time = ',
+                          a_end_time,
+                          '\nb_end_time = ',
+                          b_end_time
+                        );
+                        if (a_start_time < b_start_time) return -1;
+                        else if (a_start_time > b_start_time) return 1;
+                        else {
+                          if (a_end_time < b_end_time) return -1;
+                          else if (a_end_time > b_end_time) return 1;
+                          else {
+                            if (a_start < b_start) return -1;
+                            else if (a_start > b_start) return 1;
+                            else {
+                              if (a_end < b_end) return -1;
+                              else if (a_end > b_end) return 1;
+                            }
+                          }
+                        }
+
+                        return 0;
+                      });
+                      console.log('recurring', filteredEvents);
+                      //setActions(temp);
+                      setActions(filteredEvents);
+                    })
+                    .catch((error) => {
+                      console.log(
+                        'here: Error in getting goals and routines ' + error
+                      );
+                    });
+
+                  var tempRows = [];
+                  var tempID = [];
+                  var tempIsID = [];
+                  console.log('only 0.1.0', getActions);
+                  const uniqueObjects = [
+                    ...new Map(
+                      getActions.map((item) => [item.id, item])
+                    ).values(),
+                  ];
+
+                  console.log('unique obj', uniqueObjects, getActions);
+                  for (var i = 0; i < uniqueObjects.length; i++) {
+                    tempRows.push(displayRoutines(getActions[i]));
+                    console.log('p.ggep[i] = ', getActions[i].id);
+                    console.log(
+                      'p.ggep[i] = ',
+                      recList[getActions[i].recurringEventId]
+                    );
+                    console.log('p.ggep[i] = ', recList);
+                    if (recList[getActions[i].recurringEventId]) {
+                      for (
+                        var j = 0;
+                        j < recList[getActions[i].recurringEventId].length;
+                        j++
+                      ) {
+                        console.log(
+                          'in if1 ggep',
+                          recList[getActions[i].recurringEventId].length
+                        );
+                        if (
+                          getActions[i].recurringEventId ===
+                          recList[getActions[i].recurringEventId][j]
+                            .recurringEventId
+                        ) {
+                          console.log(
+                            'in if2 ggep',
+                            recList[getActions[i].recurringEventId][j]
+                              .recurringEventId
+                          );
+                          if (
+                            tempID.includes(
+                              recList[getActions[i].recurringEventId][j].id
+                            ) === false
+                          ) {
+                            console.log(
+                              'in if3 ggep',
+                              tempID,
+                              recList[getActions[i].recurringEventId][j].id
+                            );
+                            tempRows.push(
+                              displayActions(
+                                recList[getActions[i].recurringEventId][j],
+                                getActions[i]
+                              )
+                            );
+                            tempID.push(
+                              recList[getActions[i].recurringEventId][j].id
+                            );
+                            console.log('only ggep', tempID);
+                          }
+                        }
+                      }
+                    }
+                  }
+                  console.log('tempRows', tempRows, tempID);
+                  setlistOfBlocks(tempRows);
+
+                  console.log('in events', at);
+                  let updateURL = BASE_URL + 'UpdateUserAccessToken/';
+                  axios
+                    .post(updateURL + user_id, {
+                      google_auth_token: at,
+                    })
+                    .then((response) => {})
+                    .catch((err) => {
+                      console.log(err);
+                    });
+                  return;
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+            } else {
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        console.log('in events', refreshToken);
+      })
+      .catch((error) => {
+        console.log('Error in events' + error);
+      });
+  }
+  //makes listOfBlocks with list of displays routines and such
   function makeActionDisplays() {
     let url = BASE_URL + 'calenderEvents/';
     let start =
@@ -813,7 +1283,8 @@ export default function EventFirebasev2(props) {
                             });
                           console.log('here-1: gaep = ', recList);
 
-                          makeActionDisplays();
+                          //makeActionDisplays();
+                          GetUserAcessToken();
                         }}
                         size="sm"
                       />
