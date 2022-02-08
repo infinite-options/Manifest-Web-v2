@@ -12,20 +12,29 @@ import Facebook from '../manifest/LoginAssets/Facebook.svg';
 import Google from '../manifest/LoginAssets/Google.svg';
 import Apple from '../manifest/LoginAssets/Apple.svg';
 import LoginContext from 'LoginContext';
+
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
 let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+
 function SocialLogin(props) {
   // const Auth = useContext(AuthContext);
   const loginContext = useContext(LoginContext);
   const history = useHistory();
   const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
   const [newEmail, setNewEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [newPhoneNumber, setNewPhoneNumber] = useState('');
   const [newFName, setNewFName] = useState('');
   const [newLName, setNewLName] = useState('');
   const [newEmployer, setNewEmployer] = useState('');
+
+  const [socialId, setSocialId] = useState('');
+  const [refreshToken, setrefreshToken] = useState('');
+  const [accessToken, setAccessToken] = useState('');
+  const [accessExpiresIn, setaccessExpiresIn] = useState('');
+  let redirecturi = 'https://manifestmy.space';
   useEffect(() => {
     if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
       console.log('base_url', BASE_URL.substring(8, 18));
@@ -40,17 +49,159 @@ function SocialLogin(props) {
     }
   }, [loginContext.loginState.reload]);
 
+  // const responseGoogle = (response) => {
+  //   console.log('response', response);
+  //   if (response.profileObj) {
+  //     console.log('Google login successful');
+  //     let email = response.profileObj.email;
+  //     let accessToken = response.accessToken;
+  //     let socialId = response.googleId;
+  //     _socialLoginAttempt(email, accessToken, socialId);
+  //   } else {
+  //     console.log('Google login unsuccessful');
+  //   }
+  // };
   const responseGoogle = (response) => {
     console.log('response', response);
-    if (response.profileObj) {
-      console.log('Google login successful');
-      let email = response.profileObj.email;
-      let accessToken = response.accessToken;
-      let socialId = response.googleId;
-      _socialLoginAttempt(email, accessToken, socialId);
+
+    let auth_code = response.code;
+    let authorization_url = 'https://accounts.google.com/o/oauth2/token';
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      redirecturi = 'https://manifestmy.space';
+      console.log('base_url', redirecturi);
     } else {
-      console.log('Google login unsuccessful');
+      console.log('base_url', BASE_URL.substring(8, 18));
+      redirecturi = 'https://manifestmy.life';
+      console.log('base_url', redirecturi);
     }
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    }
+
+    console.log('auth_code', auth_code);
+    var details = {
+      code: auth_code,
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      redirect_uri: 'http://localhost:3000',
+      //redirect_uri: redirecturi,
+      grant_type: 'authorization_code',
+    };
+
+    var formBody = [];
+    for (var property in details) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(details[property]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    formBody = formBody.join('&');
+
+    fetch(authorization_url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+      body: formBody,
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        console.log(responseData);
+        return responseData;
+      })
+      .then((data) => {
+        console.log(data);
+        let at = data['access_token'];
+        let rt = data['refresh_token'];
+        let ax = data['expires_in'];
+        setAccessToken(at);
+        setrefreshToken(rt);
+        setaccessExpiresIn(ax);
+        console.log('res', at, rt);
+
+        axios
+          .get(
+            'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' +
+              at
+          )
+          .then((response) => {
+            console.log(response.data);
+
+            let data = response.data;
+            //setUserInfo(data);
+            let e = data['email'];
+            let fn = data['given_name'];
+            let ln = data['family_name'];
+            let si = data['id'];
+
+            setNewEmail(e);
+            setNewFName(fn);
+            setNewLName(ln);
+            setSocialId(si);
+            axios.get(BASE_URL + 'GetTAEmailId/' + e).then((response) => {
+              console.log(response.data);
+              if (response.data.message === 'User ID doesnt exist') {
+                setSocialSignUpModalShow(!socialSignUpModalShow);
+              } else {
+                console.log('ACCESS', accessToken);
+                document.cookie = 'ta_uid=' + response.data.result;
+                document.cookie = 'ta_email=' + newEmail;
+                document.cookie = 'patient_name=Loading';
+                loginContext.setLoginState({
+                  ...loginContext.loginState,
+                  loggedIn: true,
+                  ta: {
+                    ...loginContext.loginState.ta,
+                    id: response.data.result.toString(),
+                    email: newEmail.toString(),
+                  },
+                  usersOfTA: [],
+                  curUser: '',
+                  curUserTimeZone: '',
+                  curUserEmail: '',
+                });
+                //setLoggedIn(true);
+
+                history.push({
+                  pathname: '/home',
+                  state: {
+                    email: e.toString(),
+                    accessToken: accessToken.toString(),
+                  },
+                });
+              }
+            });
+          })
+          .catch((error) => {
+            console.log('its in landing page');
+            console.log(error);
+          });
+
+        // setSocialSignUpModalShow(!socialSignUpModalShow);
+
+        return (
+          accessToken,
+          refreshToken,
+          accessExpiresIn,
+          newEmail,
+          newFName,
+          newLName,
+          socialId
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   console.log(newEmail);
   const responseFacebook = (response) => {
@@ -147,6 +298,10 @@ function SocialLogin(props) {
         phone_number: newPhoneNumber,
         employer: newEmployer,
         ta_time_zone: '',
+        ta_google_auth_token: accessToken,
+        ta_google_refresh_token: refreshToken,
+        ta_social_id: socialId,
+        ta_access_expires_in: accessExpiresIn.toString(),
       })
       .then((response) => {
         console.log(response);
@@ -331,13 +486,31 @@ function SocialLogin(props) {
         <Button style={{}}>
           <GoogleLogin
             //clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-            clientId={CLIENT_ID}
-            onSuccess={responseGoogle}
-            onFailure={responseGoogle}
+            //clientId={CLIENT_ID}
+            clientId={
+              BASE_URL.substring(8, 18) == '3s3sftsr90'
+                ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
+                : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
+            }
+            accessType="offline"
+            prompt="consent"
+            responseType="code"
+            buttonText="Log In"
+            ux_mode="redirect"
             isSignedIn={false}
             buttonText="Continue with Google"
-            disable={false}
+            disable={true}
             cookiePolicy={'single_host_origin'}
+            // redirectUri={
+            //   BASE_URL.substring(8, 18) == '3s3sftsr90'
+            //     ? 'https://manifestmy.space'
+            //     : 'https://manifestmy.life'
+            // }
+            //redirectUri="https://manifestmy.space"
+            scope="https://www.googleapis.com/auth/calendar"
+            redirectUri="http://localhost:3000"
+            onSuccess={responseGoogle}
+            onFailure={responseGoogle}
             render={(renderProps) => (
               <img
                 src={Google}
@@ -347,6 +520,7 @@ function SocialLogin(props) {
               ></img>
             )}
           />
+          {console.log(CLIENT_ID)}
         </Button>
       </Grid>
 

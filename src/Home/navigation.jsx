@@ -16,8 +16,8 @@ import { CompareSharp } from '@material-ui/icons';
 import { faYenSign } from '@fortawesome/free-solid-svg-icons';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
-let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+const ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+const SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
 
 /* Custom Hook to make styles */
 const useStyles = makeStyles({
@@ -78,9 +78,6 @@ const useStyles = makeStyles({
 
 /* Navigation Bar component function */
 export function Navigation() {
-  console.log('CLIENT ID', typeof CLIENT_ID, CLIENT_ID);
-  console.log('CLIENT ID', typeof CLIENT_SECRET, CLIENT_SECRET);
-  console.log('CLIENT ID', typeof BASE_URL, BASE_URL);
   const history = useHistory();
 
   const classes = useStyles();
@@ -93,23 +90,23 @@ export function Navigation() {
   var curUserID = '';
   var curUserTZ = '';
 
-  let client_id = CLIENT_ID;
-  let client_secret = CLIENT_SECRET;
+  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
 
   useEffect(() => {
     if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
       console.log('base_url', BASE_URL.substring(8, 18));
-      client_id = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-      client_secret = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-      console.log(client_id, CLIENT_SECRET);
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
     } else {
       console.log('base_url', BASE_URL.substring(8, 18));
-      client_id = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-      client_secret = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-      console.log(client_id, client_secret);
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
     }
-  }, [loginContext.loginState.reload]);
-
+  });
+  console.log(CLIENT_ID, CLIENT_SECRET);
   // const selectedUser = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
   // const [selectedUser, setSelectedUser] = useState('')
   const [showNewUser, toggleNewUser] = useState(false);
@@ -536,7 +533,7 @@ export function Navigation() {
     console.log('response', response);
 
     let auth_code = response.code;
-    let authorization_url = 'https://accounts.google.com/o/oauth2/token';
+    let authorization_url = 'https://oauth2.googleapis.com/token';
 
     console.log('auth_code', auth_code);
 
@@ -551,10 +548,22 @@ export function Navigation() {
       redirecturi = 'https://manifestmy.life';
       console.log('base_url', redirecturi);
     }
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    }
+
     var details = {
       code: auth_code,
-      client_id: client_id,
-      client_secret: client_secret,
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
       //redirect_uri: redirecturi,
       //redirect_uri: 'https://manifestmy.space',
       redirect_uri: 'http://localhost:3000',
@@ -943,7 +952,12 @@ export function Navigation() {
                   </Button> */}
                   <GoogleLogin
                     //clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
-                    clientId={CLIENT_ID}
+                    clientId={
+                      BASE_URL.substring(8, 18) == '3s3sftsr90'
+                        ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
+                        : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
+                    }
+                    //clientId={ID}
                     render={(renderProps) => (
                       <Button
                         className={classes.myButton}
@@ -955,10 +969,15 @@ export function Navigation() {
                         Create New User
                       </Button>
                     )}
+                    // accessType="offline"
+                    // prompt="consent"
+                    // responseType="code"
+                    // buttonText="Log In"
                     accessType="offline"
                     prompt="consent"
                     responseType="code"
                     buttonText="Log In"
+                    ux_mode="redirect"
                     // redirectUri={
                     //   BASE_URL.substring(8, 18) == '3s3sftsr90'
                     //     ? 'https://manifestmy.space'

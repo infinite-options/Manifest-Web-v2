@@ -45,6 +45,10 @@ export default function Login() {
   const [loggedIn, setLoggedIn] = useState();
   const [validation, setValidation] = useState('');
   const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
+  const [accessToken, setAccessToken] = useState('');
+  const [idToken, setIdToken] = useState('');
+  const [socialId, setSocialId] = useState('');
+  const [taID, setTaID] = useState('');
 
   useEffect(() => {
     if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
@@ -69,15 +73,140 @@ export default function Login() {
   };
 
   const responseGoogle = (response) => {
-    // console.log(response);
+    console.log(response);
     if (response.profileObj) {
-      // console.log('Google login successful');
       let email = response.profileObj.email;
-      let accessToken = response.accessToken;
-      let socialId = response.googleId;
+      let ta_id = '';
+      setSocialId(response.googleId);
+      axios.get(BASE_URL + `taTokenEmail/${email}`).then((response) => {
+        console.log(
+          'in events',
+          response['data']['ta_unique_id'],
+          response['data']['ta_google_auth_token']
+        );
+        console.log('in events', response);
+        setAccessToken(response['data']['ta_google_auth_token']);
+        let url =
+          'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
+        document.cookie = 'ta_uid=' + response['data']['ta_unique_id'];
+        document.cookie = 'ta_email=' + email;
+        document.cookie = 'patient_name=Loading';
+        loginContext.setLoginState({
+          ...loginContext.loginState,
+          loggedIn: true,
+          ta: {
+            ...loginContext.loginState.ta,
+            id: response['data']['ta_unique_id'],
+            email: email.toString(),
+          },
+          usersOfTA: [],
+          curUser: '',
+          curUserTimeZone: '',
+          curUserEmail: '',
+        });
+        console.log('Login successful');
+        console.log(email);
+        history.push({
+          pathname: '/home',
+          state: email,
+        });
+        setTaID(response['data']['ta_unique_id']);
+        ta_id = response['data']['ta_unique_id'];
+        var old_at = response['data']['ta_google_auth_token'];
+        console.log('in events', old_at);
+        var refreshToken = response['data']['ta_google_refresh_token'];
+
+        let checkExp_url = url + old_at;
+        console.log('in events', checkExp_url);
+        fetch(
+          `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`,
+          {
+            method: 'GET',
+          }
+        )
+          .then((response) => {
+            console.log('in events', response);
+            if (response['status'] === 400) {
+              console.log('in events if');
+              let authorization_url =
+                'https://accounts.google.com/o/oauth2/token';
+
+              var details = {
+                refresh_token: refreshToken,
+                client_id: CLIENT_ID,
+                client_secret: CLIENT_SECRET,
+                grant_type: 'refresh_token',
+              };
+
+              var formBody = [];
+              for (var property in details) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + '=' + encodedValue);
+              }
+              formBody = formBody.join('&');
+
+              fetch(authorization_url, {
+                method: 'POST',
+                headers: {
+                  'Content-Type':
+                    'application/x-www-form-urlencoded;charset=UTF-8',
+                },
+                body: formBody,
+              })
+                .then((response) => {
+                  return response.json();
+                })
+                .then((responseData) => {
+                  console.log(responseData);
+                  return responseData;
+                })
+                .then((data) => {
+                  console.log(data);
+                  let at = data['access_token'];
+                  var id_token = data['id_token'];
+                  setAccessToken(at);
+                  setIdToken(id_token);
+                  console.log('in events', at);
+                  let url = BASE_URL + `UpdateAccessToken/${ta_id}`;
+                  axios
+                    .post(url, {
+                      google_auth_token: at,
+                    })
+                    .then((response) => {})
+                    .catch((err) => {
+                      console.log(err);
+                    });
+                  return accessToken;
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+            } else {
+              setAccessToken(old_at);
+              console.log(old_at);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        console.log('in events', refreshToken, accessToken);
+      });
+
       _socialLoginAttempt(email, accessToken, socialId, 'GOOGLE');
     }
   };
+
+  // const responseGoogle = (response) => {
+  //   // console.log(response);
+  //   if (response.profileObj) {
+  //     // console.log('Google login successful');
+  //     let email = response.profileObj.email;
+  //     let accessToken = response.accessToken;
+  //     let socialId = response.googleId;
+  //     _socialLoginAttempt(email, accessToken, socialId, 'GOOGLE');
+  //   }
+  // };
 
   const responseFacebook = (response) => {
     // console.log(response);
@@ -90,7 +219,7 @@ export default function Login() {
     }
   };
 
-  const _socialLoginAttempt = (email, accessToken, socialId, platform) => {
+  const _socialLoginAttempt = (email, at, socialId, platform) => {
     axios
       .get(BASE_URL + 'loginSocialTA/' + email)
       .then((res) => {
@@ -99,6 +228,8 @@ export default function Login() {
           document.cookie = 'ta_uid=' + res.data.result;
           document.cookie = 'ta_email=' + email;
           document.cookie = 'patient_name=Loading';
+          setAccessToken(res.data.result[1]);
+          setLoggedIn(true);
           loginContext.setLoginState({
             ...loginContext.loginState,
             loggedIn: true,

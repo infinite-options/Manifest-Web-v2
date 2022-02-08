@@ -88,6 +88,10 @@ export default function SocialSignUp({ ...props }) {
           phone_number: newPhoneNumber,
           employer: newEmployer,
           ta_time_zone: '',
+          ta_social_id: '',
+          ta_google_auth_token: '',
+          ta_google_refresh_token: '',
+          ta_access_expires_in: '',
         },
         {
           headers: {

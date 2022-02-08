@@ -53,12 +53,6 @@ export default function Login() {
   const [newEmployer, setNewEmployer] = useState('');
   const [newClients, setNewClients] = useState([]);
 
-
-  const handleSignUp = (event) => {
-    console.log('sign up clicked');
-    setSignUpModalShow(true);
-    setSocialSignUpModalShow(false);
-  };
   const hideSignUp = () => {
     //setSignUpModalShow(false);
     setSocialSignUpModalShow(false);
@@ -115,180 +109,110 @@ export default function Login() {
         console.log(error);
       });
   };
-  const handleSocialSignUpDone = () => {
-    axios
-      .post('/TASocialSignUp', {
-        email_id: newEmail,
-        first_name: newFName,
-        last_name: newLName,
-        phone_number: newPhoneNumber,
-        employer: newEmployer,
-      })
-      .then((response) => {
-        console.log(response.data);
-        hideSignUp();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  // const handleSocialSignUpDone = () => {
+  //   axios
+  //     .post('/TASocialSignUp', {
+  //       email_id: newEmail,
+  //       first_name: newFName,
+  //       last_name: newLName,
+  //       phone_number: newPhoneNumber,
+  //       employer: newEmployer,
+  //     })
+  //     .then((response) => {
+  //       console.log(response.data);
+  //       hideSignUp();
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
 
-  const socialSignUpModal = () => {
-    return (
-      <Modal show={socialSignUpModalShow} onHide={hideSignUp}>
-        <Form as={Container}>
-          <h3 className="bigfancytext formEltMargin">
-            Sign Up with Social Media
-          </h3>
-          <Form.Group as={Row} className="formEltMargin">
-            <Form.Label column sm="4">
-              Email
-            </Form.Label>
-            <Col sm="8">
-              <Form.Control plaintext readOnly value={newEmail} />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="formEltMargin">
-            <Form.Label column sm="4">
-              Phone Number
-            </Form.Label>
-            <Col sm="8">
-              <Form.Control
-                type="tel"
-                pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                placeholder="123-4567-8901"
-                value={newPhoneNumber}
-                onChange={handleNewPhoneNumberChange}
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="formEltMargin">
-            <Form.Label column sm="2">
-              First Name
-            </Form.Label>
-            <Col sm="4">
-              <Form.Control
-                type="text"
-                placeholder="John"
-                value={newFName}
-                onChange={handleNewFNameChange}
-              />
-            </Col>
-            <Form.Label column sm="2">
-              Last Name
-            </Form.Label>
-            <Col sm="4">
-              <Form.Control
-                type="text"
-                placeholder="Doe"
-                value={newLName}
-                onChange={handleNewLNameChange}
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="formEltMargin">
-            <Form.Label column sm="4">
-              Employer
-            </Form.Label>
-            <Col sm="8">
-              <Form.Control
-                type="text"
-                value={newEmployer}
-                onChange={handleNewEmployerChange}
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="formEltMargin">
-            <Col>
-              <Button
-                variant="primary"
-                type="submit"
-                onClick={handleSocialSignUpDone}
-              >
-                Sign Up
-              </Button>
-            </Col>
-            <Col>
-              <Button variant="primary" type="submit" onClick={hideSignUp}>
-                Cancel
-              </Button>
-            </Col>
-          </Form.Group>
-        </Form>
-      </Modal>
-    );
-  };
+  // const socialSignUpModal = () => {
+  //   return (
+  //     <Modal show={socialSignUpModalShow} onHide={hideSignUp}>
+  //       <Form as={Container}>
+  //         <h3 className="bigfancytext formEltMargin">
+  //           Sign Up with Social Media
+  //         </h3>
+  //         <Form.Group as={Row} className="formEltMargin">
+  //           <Form.Label column sm="4">
+  //             Email
+  //           </Form.Label>
+  //           <Col sm="8">
+  //             <Form.Control plaintext readOnly value={newEmail} />
+  //           </Col>
+  //         </Form.Group>
+  //         <Form.Group as={Row} className="formEltMargin">
+  //           <Form.Label column sm="4">
+  //             Phone Number
+  //           </Form.Label>
+  //           <Col sm="8">
+  //             <Form.Control
+  //               type="tel"
+  //               pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+  //               placeholder="123-4567-8901"
+  //               value={newPhoneNumber}
+  //               onChange={handleNewPhoneNumberChange}
+  //             />
+  //           </Col>
+  //         </Form.Group>
+  //         <Form.Group as={Row} className="formEltMargin">
+  //           <Form.Label column sm="2">
+  //             First Name
+  //           </Form.Label>
+  //           <Col sm="4">
+  //             <Form.Control
+  //               type="text"
+  //               placeholder="John"
+  //               value={newFName}
+  //               onChange={handleNewFNameChange}
+  //             />
+  //           </Col>
+  //           <Form.Label column sm="2">
+  //             Last Name
+  //           </Form.Label>
+  //           <Col sm="4">
+  //             <Form.Control
+  //               type="text"
+  //               placeholder="Doe"
+  //               value={newLName}
+  //               onChange={handleNewLNameChange}
+  //             />
+  //           </Col>
+  //         </Form.Group>
+  //         <Form.Group as={Row} className="formEltMargin">
+  //           <Form.Label column sm="4">
+  //             Employer
+  //           </Form.Label>
+  //           <Col sm="8">
+  //             <Form.Control
+  //               type="text"
+  //               value={newEmployer}
+  //               onChange={handleNewEmployerChange}
+  //             />
+  //           </Col>
+  //         </Form.Group>
+  //         <Form.Group as={Row} className="formEltMargin">
+  //           <Col>
+  //             <Button
+  //               variant="primary"
+  //               type="submit"
+  //               onClick={handleSocialSignUpDone}
+  //             >
+  //               Sign Up
+  //             </Button>
+  //           </Col>
+  //           <Col>
+  //             <Button variant="primary" type="submit" onClick={hideSignUp}>
+  //               Cancel
+  //             </Button>
+  //           </Col>
+  //         </Form.Group>
+  //       </Form>
+  //     </Modal>
+  //   );
+  // };
 
-  /* const responseGoogle = (response) => {
-    console.log('response', response);
-    if (response.profileObj !== null || response.profileObj !== undefined) {
-      let e = response.profileObj.email;
-      let at = response.accessToken;
-      let rt = response.googleId;
-      let first_name = response.profileObj.givenName;
-      let last_name = response.profileObj.familyName;
-      console.log(e, at, rt, first_name, last_name);
-      axios
-        .get(
-          '
-            e
-        ) //, {
-        // username: e,  1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com
-        //})
-        .then((response) => {
-          console.log(response.data);
-          if (response.data !== false) {
-            console.log('Login successful');
-            console.log(e);
-            history.push({
-              pathname: '/home',
-              state: e,
-            });
-          } else {
-            console.log('social sign up with', e);
-            setSocialSignUpModalShow(true);
-            setNewEmail(e);
-            /*  this.setState({
-              socialSignUpModal: true,
-              newEmail: e,
-            }); */
-  /* console.log('social sign up modal displayed');
-          }
-        })
-        .catch((error) => {
-          console.log('error', error);
-        });
-    } */
-  // }; */
-  const responseGoogle = (response) => {
-    console.log('clicked on sign up google');
-    if (response.profileObj !== null || response.profileObj !== undefined) {
-      let e = response.profileObj.email;
-      let at = response.accessToken;
-      let rt = response.googleId;
-      let first_name = response.profileObj.givenName;
-      let last_name = response.profileObj.familyName;
-      console.log(e, at, rt, first_name, last_name);
-      axios
-        .post(BASE_URL + 'TASocialLogIn/', {
-          username: e,
-        })
-        .then((response) => {
-          console.log(response.data);
-          if (response.data !== false) {
-            setLoggedIn(true);
-          } else {
-            console.log('social sign up with', e);
-            setSocialSignUpModalShow(true);
-            setNewEmail(e);
-            console.log('social sign up modal displayed');
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  };
   return (
     <Box
       display="flex"
@@ -503,7 +427,7 @@ export default function Login() {
       <Box style={{ position: 'fixed', right: '-100px', bottom: '-100px' }}>
         <img src={Ellipse} alt="Ellipse" />
       </Box>
-      {socialSignUpModal()}
+      {/* {socialSignUpModal()} */}
 
       {/* <Box hidden={loggedIn === true}>
                   <Loading/>
