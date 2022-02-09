@@ -1094,6 +1094,17 @@ export default function EditEventModal(props) {
     //     ...editingEventContext.editingEvent,
     //     editing: true,
     //   });
+    let organizer = 'calendar@manifestmy.space';
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      organizer = 'calendar@manifestmy.space';
+      console.log(organizer);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      organizer = 'calendar@manifestmy.life';
+      console.log(organizer);
+    }
+
     if (props.event.recurringEventId === undefined) {
       var event = {
         id: props.event.id,
@@ -1101,11 +1112,11 @@ export default function EditEventModal(props) {
         description,
         location,
         creator: {
-          email: 'calendar@manifestmy.life',
+          email: organizer,
           self: true,
         },
         organizer: {
-          email: 'calendar@manifestmy.life',
+          email: organizer,
           self: true,
         },
         start: {
@@ -1120,7 +1131,12 @@ export default function EditEventModal(props) {
         attendees: fields,
         reminders: {
           useDefault: false,
-          overrides: [{ method: reminderMethod, minutes: reminderMinutes }],
+          overrides: [
+            {
+              method: reminderMethod == '' ? 'email' : reminderMethod,
+              minutes: reminderMinutes == '' ? 0 : reminderMinutes,
+            },
+          ],
         },
       };
       updateTheCalenderEvent(event);
@@ -1137,11 +1153,11 @@ export default function EditEventModal(props) {
         description,
         location,
         creator: {
-          email: 'calendar@manifestmy.life',
+          email: organizer,
           self: true,
         },
         organizer: {
-          email: 'calendar@manifestmy.life',
+          email: organizer,
           self: true,
         },
         start: {
@@ -1156,7 +1172,12 @@ export default function EditEventModal(props) {
         attendees: fields,
         reminders: {
           useDefault: false,
-          overrides: [{ method: reminderMethod, minutes: reminderMinutes }],
+          overrides: [
+            {
+              method: reminderMethod == '' ? 'email' : reminderMethod,
+              minutes: reminderMinutes == '' ? 0 : reminderMinutes,
+            },
+          ],
         },
       };
       openEditRecurringModal(event);
@@ -1172,6 +1193,17 @@ export default function EditEventModal(props) {
   function UpdateRecurring(event) {
     //e.preventDefault();
     //console.log('editrecuuring', event);
+    let organizer = 'calendar@manifestmy.space';
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      organizer = 'calendar@manifestmy.space';
+      console.log(organizer);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      organizer = 'calendar@manifestmy.life';
+      console.log(organizer);
+    }
+
     if (editRecurringOption === 'This event') {
       //console.log('edit this event', event);
       //deleteTheCalenderEvent(event.id);
@@ -1181,11 +1213,11 @@ export default function EditEventModal(props) {
         description,
         location,
         creator: {
-          email: 'calendar@manifestmy.life',
+          email: organizer,
           self: true,
         },
         organizer: {
-          email: 'calendar@manifestmy.life',
+          email: organizer,
           self: true,
         },
         start: {
@@ -1200,7 +1232,12 @@ export default function EditEventModal(props) {
         attendees: fields,
         reminders: {
           useDefault: false,
-          overrides: [{ method: reminderMethod, minutes: reminderMinutes }],
+          overrides: [
+            {
+              method: reminderMethod == '' ? 'email' : reminderMethod,
+              minutes: reminderMinutes == '' ? 0 : reminderMinutes,
+            },
+          ],
         },
       };
       console.log(event);
@@ -1259,11 +1296,11 @@ export default function EditEventModal(props) {
               description,
               location,
               creator: {
-                email: 'calendar@manifestmy.life',
+                email: organizer,
                 self: true,
               },
               organizer: {
-                email: 'calendar@manifestmy.life',
+                email: organizer,
                 self: true,
               },
               start: {
@@ -1279,7 +1316,10 @@ export default function EditEventModal(props) {
               reminders: {
                 useDefault: false,
                 overrides: [
-                  { method: reminderMethod, minutes: reminderMinutes },
+                  {
+                    method: reminderMethod == '' ? 'email' : reminderMethod,
+                    minutes: reminderMinutes == '' ? 0 : reminderMinutes,
+                  },
                 ],
               },
             };
@@ -1507,11 +1547,11 @@ export default function EditEventModal(props) {
               description,
               location,
               creator: {
-                email: 'calendar@manifestmy.life',
+                email: organizer,
                 self: true,
               },
               organizer: {
-                email: 'calendar@manifestmy.life',
+                email: organizer,
                 self: true,
               },
               start: {
@@ -1527,7 +1567,10 @@ export default function EditEventModal(props) {
               reminders: {
                 useDefault: false,
                 overrides: [
-                  { method: reminderMethod, minutes: reminderMinutes },
+                  {
+                    method: reminderMethod == '' ? 'email' : reminderMethod,
+                    minutes: reminderMinutes == '' ? 0 : reminderMinutes,
+                  },
                 ],
               },
             };

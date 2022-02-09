@@ -10,6 +10,7 @@ import {
   Dropdown,
   DropdownButton,
 } from 'react-bootstrap';
+import axios from 'axios';
 import trash from '../manifest/LoginAssets/Trash.png';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -17,6 +18,10 @@ import './DatePicker.css';
 import LoginContext from '../LoginContext';
 import EditEventContext from './EditEventContext';
 import moment from 'moment';
+
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
+const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
+
 export default function GoogleEventComponent(props) {
   //const classes = useStyles();
   console.log('in add events', props);
@@ -910,16 +915,27 @@ export default function GoogleEventComponent(props) {
       ...editingEventContext.editingEvent,
       editing: true,
     });
+    let organizer = 'calendar@manifestmy.space';
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      organizer = 'calendar@manifestmy.space';
+      console.log(organizer);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      organizer = 'calendar@manifestmy.life';
+      console.log(organizer);
+    }
+
     var event = {
       summary,
       description,
       location,
       creator: {
-        email: 'calendar@manifestmy.life',
+        email: organizer,
         self: true,
       },
       organizer: {
-        email: 'calendar@manifestmy.life',
+        email: organizer,
         self: true,
       },
       start: {
@@ -934,10 +950,34 @@ export default function GoogleEventComponent(props) {
       attendees: fields,
       reminders: {
         useDefault: false,
-        overrides: [{ method: reminderMethod, minutes: reminderMinutes }],
+        overrides: [
+          {
+            method: reminderMethod == '' ? 'email' : reminderMethod,
+            minutes: reminderMinutes == '' ? 0 : reminderMinutes,
+          },
+        ],
       },
     };
     publishTheCalenderEvent(event);
+    // const headers = {
+    //   'Content-Type': 'application/json',
+    //   Accept: 'application/json',
+    //   Authorization: 'Bearer ' + props.accessToken,
+    // };
+    // axios
+    //   .post(
+    //     `https://www.googleapis.com/calendar/v3/calendars/primary/events?key=${API_KEY}`,
+    //     event,
+    //     {
+    //       headers: headers,
+    //     }
+    //   )
+    //   .then((response) => {
+    //     console.log(response);
+    //   })
+    //   .catch((error) => {
+    //     console.log('error', error);
+    //   });
     editingEventContext.setEditingEvent({
       ...editingEventContext.editingEvent,
       editing: false,

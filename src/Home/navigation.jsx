@@ -564,9 +564,9 @@ export function Navigation() {
       code: auth_code,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
-      //redirect_uri: redirecturi,
+      redirect_uri: redirecturi,
       //redirect_uri: 'https://manifestmy.space',
-      redirect_uri: 'http://localhost:3000',
+      //redirect_uri: 'http://localhost:3000',
       grant_type: 'authorization_code',
     };
 
@@ -978,13 +978,13 @@ export function Navigation() {
                     responseType="code"
                     buttonText="Log In"
                     ux_mode="redirect"
-                    // redirectUri={
-                    //   BASE_URL.substring(8, 18) == '3s3sftsr90'
-                    //     ? 'https://manifestmy.space'
-                    //     : 'https://manifestmy.life'
-                    // }
+                    redirectUri={
+                      BASE_URL.substring(8, 18) == '3s3sftsr90'
+                        ? 'https://manifestmy.space'
+                        : 'https://manifestmy.life'
+                    }
                     //redirectUri="https://manifestmy.space"
-                    redirectUri="http://localhost:3000"
+                    //redirectUri="http://localhost:3000"
                     scope="https://www.googleapis.com/auth/calendar"
                     onSuccess={responseGoogle}
                     onFailure={responseGoogle}

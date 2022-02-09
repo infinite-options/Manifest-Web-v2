@@ -93,7 +93,7 @@ function SocialLogin(props) {
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
       redirect_uri: 'http://localhost:3000',
-      //redirect_uri: redirecturi,
+      redirect_uri: redirecturi,
       grant_type: 'authorization_code',
     };
 
@@ -501,14 +501,14 @@ function SocialLogin(props) {
             buttonText="Continue with Google"
             disable={true}
             cookiePolicy={'single_host_origin'}
-            // redirectUri={
-            //   BASE_URL.substring(8, 18) == '3s3sftsr90'
-            //     ? 'https://manifestmy.space'
-            //     : 'https://manifestmy.life'
-            // }
+            redirectUri={
+              BASE_URL.substring(8, 18) == '3s3sftsr90'
+                ? 'https://manifestmy.space'
+                : 'https://manifestmy.life'
+            }
             //redirectUri="https://manifestmy.space"
             scope="https://www.googleapis.com/auth/calendar"
-            redirectUri="http://localhost:3000"
+            //redirectUri="http://localhost:3000"
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
             render={(renderProps) => (

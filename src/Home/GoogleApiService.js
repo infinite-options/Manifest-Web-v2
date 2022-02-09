@@ -87,10 +87,21 @@ export const checkSignInStatus = async () => {
 };
 
 export const signInToGoogle = async () => {
+  let organizer = 'calendar@manifestmy.space';
+  if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+    console.log('base_url', BASE_URL.substring(8, 18));
+    organizer = 'calendar@manifestmy.space';
+    console.log(organizer);
+  } else {
+    console.log('base_url', BASE_URL.substring(8, 18));
+    organizer = 'calendar@manifestmy.life';
+    console.log(organizer);
+  }
+
   try {
     let googleuser = await gapi.auth2
       .getAuthInstance()
-      .signIn({ prompt: 'none', login_hint: 'calendar@manifestmy.life' });
+      .signIn({ prompt: 'none', login_hint: organizer });
     if (googleuser) {
       return true;
     }

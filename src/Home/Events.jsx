@@ -2839,6 +2839,7 @@ export default function Events(props) {
                           currentEmail={userEmail}
                           stateValue={stateValue}
                           setStateValue={setStateValue}
+                          accessToken={accessToken}
                         />
                       ) : stateValue.showDeleteRecurringModal ? (
                         <DeleteEventModal
