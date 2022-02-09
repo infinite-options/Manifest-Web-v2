@@ -7,18 +7,6 @@ const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
 let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
 
-if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
-  console.log('base_url', BASE_URL.substring(8, 18));
-  CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-  CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-  console.log(CLIENT_ID, CLIENT_SECRET);
-} else {
-  console.log('base_url', BASE_URL.substring(8, 18));
-  CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-  CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-  console.log(CLIENT_ID, CLIENT_SECRET);
-}
-
 const SCOPES = 'https://www.googleapis.com/auth/calendar.events email';
 
 var userID = '';
@@ -53,6 +41,17 @@ console.log('in add events', document.cookie);
 console.log('in add events', userID);
 
 export function initClient(callback) {
+  if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+    console.log('base_url', BASE_URL.substring(8, 18));
+    CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+    CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+    console.log(CLIENT_ID, CLIENT_SECRET);
+  } else {
+    console.log('base_url', BASE_URL.substring(8, 18));
+    CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+    CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+    console.log(CLIENT_ID, CLIENT_SECRET);
+  }
   gapi.load('client:auth2', () => {
     try {
       gapi.client
@@ -91,7 +90,7 @@ export const signInToGoogle = async () => {
   try {
     let googleuser = await gapi.auth2
       .getAuthInstance()
-      .signIn({ prompt: 'none', login_hint: 'calendar@manifestmy.space' });
+      .signIn({ prompt: 'none', login_hint: 'calendar@manifestmy.life' });
     if (googleuser) {
       return true;
     }
