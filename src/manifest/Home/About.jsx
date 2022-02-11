@@ -1,10 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import {
-  Box,
-  FormControl,
-  Select,
-  MenuItem,
-} from '@material-ui/core';
+import { Box, FormControl, Select, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import SettingPage from '../Home/SettingPage';
 import {
@@ -17,16 +12,14 @@ import {
   ModalBody,
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faEdit,
-} from '@fortawesome/free-solid-svg-icons';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import MiniNavigation from '../miniNavigation';
 import LoginContext from '../../LoginContext';
-import { useHistory, } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import AddIconModal from '../../Home/AddIconModal';
 import UploadImage from '../../Home/UploadImage';
 import TAUploadImage from '../../Home/TAUploadImage';
@@ -57,33 +50,33 @@ export default function AboutModal(props) {
   const classes = useStyles();
   const loginContext = useContext(LoginContext);
   //states
-    const [currentUser, setCU] = useState(loginContext.loginState.curUser);
-    // Kyle cookie code
-    var userID = '';
-    var userTime_zone = '';
-    var userEmail='';
-    if (
-      document.cookie
-        .split(';')
-        .some((item) => item.trim().startsWith('patient_uid='))
-    ) {
-      userID = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('patient_uid='))
-        .split('=')[1];
-      userTime_zone = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('patient_timeZone='))
-        .split('=')[1];
-      userEmail = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('patient_email='))
-        .split('=')[1];
-    } else {
-      userID = loginContext.loginState.curUser;
-      userTime_zone = loginContext.loginState.curUserTimeZone;
-      userEmail = loginContext.loginState.curUserEmail;
-    }
+  const [currentUser, setCU] = useState(loginContext.loginState.curUser);
+  // Kyle cookie code
+  var userID = '';
+  var userTime_zone = '';
+  var userEmail = '';
+  if (
+    document.cookie
+      .split(';')
+      .some((item) => item.trim().startsWith('patient_uid='))
+  ) {
+    userID = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_uid='))
+      .split('=')[1];
+    userTime_zone = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_timeZone='))
+      .split('=')[1];
+    userEmail = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_email='))
+      .split('=')[1];
+  } else {
+    userID = loginContext.loginState.curUser;
+    userTime_zone = loginContext.loginState.curUserTimeZone;
+    userEmail = loginContext.loginState.curUserEmail;
+  }
 
   const [imageChanged, setImageChanged] = useState(false);
   const [firstName, setFirstName] = useState('');
@@ -206,7 +199,7 @@ export default function AboutModal(props) {
                 pic: taPhotoURL,
                 photo_url: '',
               });
-              setTaPhoto(taPhotoURL)
+              setTaPhoto(taPhotoURL);
               console.log('URL: ', taPhotoURL);
             }}
           >
@@ -466,7 +459,7 @@ export default function AboutModal(props) {
           setAboutMeObject(x);
           setFirstName(details.user_first_name);
           setLastName(details.user_last_name);
-          setUserPhoto(details.user_picture)
+          setUserPhoto(details.user_picture);
         } else {
           console.log('No user details');
         }
@@ -856,19 +849,17 @@ export default function AboutModal(props) {
         if (response.data.message == 'TA already exists.') {
           alert(response.data.message);
           toggleConfirmed(false);
-        }
-        else{
+        } else {
           toggleConfirmed(true);
           axios
-              .get(BASE_URL + 'listPeople/' + userID)
-              .then((response) => {
-                setListPeople(response.data.result.result);
-              })
-              .catch((error) => {
-                console.log(error);
-              });
+            .get(BASE_URL + 'listPeople/' + userID)
+            .then((response) => {
+              setListPeople(response.data.result.result);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         }
-        
       })
       .catch((error) => {
         console.log(error);
@@ -1046,6 +1037,7 @@ export default function AboutModal(props) {
                         width: '5rem',
                         backgroundColor: '#ffffff',
                         borderRadius: '10px',
+                        objectFit: 'cover',
                       }}
                       src={taPhoto}
                     />
@@ -1509,19 +1501,19 @@ export default function AboutModal(props) {
                     }}
                   ></div>
                 ) : ( */}
-                  <img
-                    style={{
-                      display: 'block',
-                      float: 'right',
-                      width: '5rem',
-                      height: '5rem',
-                      objectFit: 'cover',
-                      marginTop:'15px'
-                      //marginBottom: '15px',
-                    }}
-                    src={userPhoto}
-                    alt="Profile"
-                  />
+                <img
+                  style={{
+                    display: 'block',
+                    float: 'right',
+                    width: '5rem',
+                    height: '5rem',
+                    objectFit: 'cover',
+                    marginTop: '15px',
+                    //marginBottom: '15px',
+                  }}
+                  src={userPhoto}
+                  alt="Profile"
+                />
                 {/* )} */}
               </Col>
               {/* <Col style={{ float: 'right' }} xs={4}>
@@ -2148,7 +2140,7 @@ export default function AboutModal(props) {
               color: 'white',
             }}
           >
-            <Form.Label>Family Contacts</Form.Label>
+            <Form.Label>Message Day</Form.Label>
             <Form.Control
               style={{ borderRadius: '10px', height: '100px' }}
               as="textarea"
@@ -2173,7 +2165,7 @@ export default function AboutModal(props) {
                 color: 'white',
               }}
             >
-              Current Medication
+              Message Card
             </Form.Label>
             <Form.Control
               style={{ borderRadius: '10px', height: '100px' }}
@@ -2199,7 +2191,7 @@ export default function AboutModal(props) {
                 color: 'white',
               }}
             >
-              Medicine Schedule
+              Major Events
             </Form.Label>
             <Form.Control
               style={{ borderRadius: '10px', height: '100px' }}
@@ -2253,7 +2245,7 @@ export default function AboutModal(props) {
                         style={{
                           width: '5rem',
                           height: '5rem',
-                          objectFit: 'fill',
+                          objectFit: 'cover',
                           backgroundColor: '#ffffff',
                           borderRadius: '10px',
                         }}

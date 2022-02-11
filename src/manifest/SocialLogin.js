@@ -66,24 +66,18 @@ function SocialLogin(props) {
 
     let auth_code = response.code;
     let authorization_url = 'https://accounts.google.com/o/oauth2/token';
-    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      redirecturi = 'https://manifestmy.space';
-      console.log('base_url', redirecturi);
-    } else {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      redirecturi = 'https://manifestmy.life';
-      console.log('base_url', redirecturi);
-    }
+
     if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
       console.log('base_url', BASE_URL.substring(8, 18));
       CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
       CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+      redirecturi = 'https://manifestmy.space';
       console.log(CLIENT_ID, CLIENT_SECRET);
     } else {
       console.log('base_url', BASE_URL.substring(8, 18));
       CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
       CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+      redirecturi = 'https://manifestmy.life';
       console.log(CLIENT_ID, CLIENT_SECRET);
     }
 
@@ -92,7 +86,7 @@ function SocialLogin(props) {
       code: auth_code,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
-      redirect_uri: 'http://localhost:3000',
+      //redirect_uri: 'http://localhost:3000',
       redirect_uri: redirecturi,
       grant_type: 'authorization_code',
     };
@@ -221,9 +215,9 @@ function SocialLogin(props) {
     axios
       .get(BASE_URL + 'loginSocialTA/' + email)
       .then((res) => {
-        console.log(res);
+        console.log('loginSocialTA', res);
         if (res.data.result !== false) {
-          document.cookie = 'ta_uid=' + res.data.result;
+          document.cookie = 'ta_uid=' + res.data.result[0];
           document.cookie = 'ta_email=' + email;
           document.cookie = 'patient_name=Loading';
           loginContext.setLoginState({
@@ -506,7 +500,6 @@ function SocialLogin(props) {
                 ? 'https://manifestmy.space'
                 : 'https://manifestmy.life'
             }
-            //redirectUri="https://manifestmy.space"
             scope="https://www.googleapis.com/auth/calendar"
             //redirectUri="http://localhost:3000"
             onSuccess={responseGoogle}

@@ -223,9 +223,9 @@ export default function Login() {
     axios
       .get(BASE_URL + 'loginSocialTA/' + email)
       .then((res) => {
-        console.log(res);
+        console.log('loginSocialTA', res.data.result);
         if (res.data.result !== false) {
-          document.cookie = 'ta_uid=' + res.data.result;
+          document.cookie = 'ta_uid=' + res.data.result[0];
           document.cookie = 'ta_email=' + email;
           document.cookie = 'patient_name=Loading';
           setAccessToken(res.data.result[1]);

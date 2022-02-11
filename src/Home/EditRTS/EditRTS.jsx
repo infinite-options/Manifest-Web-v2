@@ -14,8 +14,8 @@ const EditRTS = (props) => {
   const [photo, setPhoto] = useState(
     editingRTSContext.editingRTS.newItem.gr_photo
   );
-  
-  const user = props.CurrentId
+
+  const user = props.CurrentId;
 
   console.log('obj. ', editingRTSContext.editingRTS.newItem.user_id);
   const tz = {
@@ -83,7 +83,7 @@ const EditRTS = (props) => {
   };
 
   console.log('today timezone', editingRTSContext.editingRTS.newItem);
-  
+
   const updateRTS = (e) => {
     console.log(' today timezone here: entering updateRTS function');
     console.log('today timezone timezone', tz);
@@ -91,7 +91,7 @@ const EditRTS = (props) => {
       ...editingRTSContext.editingRTS,
       editing: true,
     });
-    
+
     // editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing;
     e.stopPropagation();
     let object = { ...editingRTSContext.editingRTS.newItem };
@@ -174,10 +174,11 @@ const EditRTS = (props) => {
     delete object.end_day;
     delete object.end_time;
     // Get expected_completion_time
-    const numHours = object.numMins >= 60 ? Math.floor(object.numMins / 60 ): '00';
+    const numHours =
+      object.numMins >= 60 ? Math.floor(object.numMins / 60) : '00';
     let numMins = object.numMins % 60;
     if (numMins < 10) numMins = '0' + numMins;
-    console.log(numHours)
+    console.log(numHours);
     object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
     object.gr_unique_id = editingRTSContext.editingRTS.id;
@@ -214,12 +215,11 @@ const EditRTS = (props) => {
     }
     console.log('object.id');
     console.log(object.gr_unique_id);
-    let url=''
-    if(object.is_persistent == 'True'){
-      url= 'getroutines/'
-    }
-    else{
-      url='getgoals/'
+    let url = '';
+    if (object.is_persistent == 'True') {
+      url = 'getroutines/';
+    } else {
+      url = 'getgoals/';
     }
     console.log('url', url, object.is_persistent);
     console.log(object.gr_unique_id);
@@ -233,7 +233,8 @@ const EditRTS = (props) => {
             console.log('editrts', _);
             const gr_array_index =
               editingRTSContext.editingRTS.gr_array.findIndex(
-                (elt) => elt.gr_unique_id === editingRTSContext.editingRTS.gr_unique_id
+                (elt) =>
+                  elt.gr_unique_id === editingRTSContext.editingRTS.gr_unique_id
               );
             const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
             new_gr_array[gr_array_index] = object;
@@ -318,7 +319,8 @@ const EditRTS = (props) => {
             console.log(_);
             const gr_array_index =
               editingRTSContext.editingRTS.gr_array.findIndex(
-                (elt) => elt.gr_unique_id === editingRTSContext.editingRTS.gr_unique_id
+                (elt) =>
+                  elt.gr_unique_id === editingRTSContext.editingRTS.gr_unique_id
               );
             const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
             new_gr_array[gr_array_index] = object;
@@ -437,7 +439,10 @@ const EditRTS = (props) => {
                   photo_url: '',
                 },
               });
-              console.log('xxx RTS photo',editingRTSContext.editingRTS.newItem.photo);
+              console.log(
+                'xxx RTS photo',
+                editingRTSContext.editingRTS.newItem.photo
+              );
             }}
           >
             Upload
@@ -448,7 +453,10 @@ const EditRTS = (props) => {
             height="300"
             width="400"
           />
-          {console.log('xxx RTS photo',editingRTSContext.editingRTS.newItem.photo)}
+          {console.log(
+            'xxx RTS photo',
+            editingRTSContext.editingRTS.newItem.photo
+          )}
         </Modal.Body>
 
         <Modal.Footer>
@@ -1087,10 +1095,28 @@ const EditRTS = (props) => {
                         fontWeight: 'bold',
                       }}
                       type="number"
+                      // min="0"
+                      // oninput="validity.valid||(value='')"
+                      // value={
+                      //   editingRTSContext.editingRTS.newItem.repeat_occurences
+                      // }
                       value={
-                        editingRTSContext.editingRTS.newItem.repeat_occurences
+                        editingRTSContext.editingRTS.newItem.repeat ===
+                          'False' ||
+                        editingRTSContext.editingRTS.newItem.repeat === false
+                          ? 1
+                          : editingRTSContext.editingRTS.newItem
+                              .repeat_occurences
                       }
                       onChange={(e) => {
+                        if (
+                          (e.target.value !== '' && e.target.value < 1) ||
+                          editingRTSContext.editingRTS.newItem.repeat ===
+                            'False' ||
+                          editingRTSContext.editingRTS.newItem.repeat === false
+                        )
+                          return;
+
                         editingRTSContext.setEditingRTS({
                           ...editingRTSContext.editingRTS,
                           newItem: {

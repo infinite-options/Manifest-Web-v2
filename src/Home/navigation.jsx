@@ -537,26 +537,17 @@ export function Navigation() {
 
     console.log('auth_code', auth_code);
 
-    //const redirecturi = 'https://manifestmy.space';
-    console.log('base_url', redirecturi);
-    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      redirecturi = 'https://manifestmy.space';
-      console.log('base_url', redirecturi);
-    } else {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      redirecturi = 'https://manifestmy.life';
-      console.log('base_url', redirecturi);
-    }
     if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
       console.log('base_url', BASE_URL.substring(8, 18));
       CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
       CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+      redirecturi = 'https://manifestmy.space';
       console.log(CLIENT_ID, CLIENT_SECRET);
     } else {
       console.log('base_url', BASE_URL.substring(8, 18));
       CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
       CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+      redirecturi = 'https://manifestmy.life';
       console.log(CLIENT_ID, CLIENT_SECRET);
     }
 
@@ -565,7 +556,6 @@ export function Navigation() {
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
       redirect_uri: redirecturi,
-      //redirect_uri: 'https://manifestmy.space',
       //redirect_uri: 'http://localhost:3000',
       grant_type: 'authorization_code',
     };
@@ -983,7 +973,6 @@ export function Navigation() {
                         ? 'https://manifestmy.space'
                         : 'https://manifestmy.life'
                     }
-                    //redirectUri="https://manifestmy.space"
                     //redirectUri="http://localhost:3000"
                     scope="https://www.googleapis.com/auth/calendar"
                     onSuccess={responseGoogle}
