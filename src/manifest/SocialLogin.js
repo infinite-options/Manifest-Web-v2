@@ -452,11 +452,18 @@ function SocialLogin(props) {
     <Grid
       container
       spacing={3}
-      display="flex"
-      flexDirection="row"
+      // display="flex"
+      direction="row"
       justifyContent="center"
+      align="center"
     >
-      <Grid item xs={4}>
+      <Grid
+        item
+        xs={4}
+        direction="column"
+        align="center"
+        justifyContent="center"
+      >
         <FacebookLogin
           appId={process.env.REACT_APP_FACEBOOK_APP_ID}
           autoLoad={false}
