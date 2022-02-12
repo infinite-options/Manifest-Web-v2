@@ -286,17 +286,51 @@ export default function Login() {
             marginTop: '1rem',
           }}
         >
-          {' '}
-          <Box
-            marginTop="1rem"
-            display="flex"
-            justifyContent="center"
-            alignIems="center"
-            style={{ fontWeight: 'bold' }}
-            onClick={() => setShowSignUp(!showSignUp)}
+          <Row
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '500px',
+            }}
           >
-            Or continue with Email
-          </Box>
+            {' '}
+            <h3
+              className="bigfancytext formEltMargin"
+              style={{
+                //textAlign: 'center',
+                letterSpacing: '0.49px',
+                color: '#000000',
+                opacity: 1,
+              }}
+            >
+              Or
+            </h3>
+          </Row>
+          <Row
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '500px',
+            }}
+          >
+            <Button
+              variant="primary"
+              type="submit"
+              onClick={() => setShowSignUp(!showSignUp)}
+              style={{
+                background: '#F8BE28 0% 0% no-repeat padding-box',
+                borderRadius: '20px',
+                opacity: 1,
+                width: '300px',
+              }}
+            >
+              Continue with Email
+            </Button>
+          </Row>
         </Row>
         <Row
           style={{
