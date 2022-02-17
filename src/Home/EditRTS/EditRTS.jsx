@@ -147,6 +147,10 @@ const EditRTS = (props) => {
 
     object.start_day_and_time =
       `${object.start_day}` + ' ' + convertedStartTime; //start_day_and_time_string;
+    object.is_displayed_today =
+      object.start_day.substring(8, 10) > new Date().getDate() ? false : true;
+    console.log(object.start_day.substring(7, 9));
+    console.log(new Date().getDate());
     delete object.start_day;
     delete object.start_time;
     object.title = object.gr_title;
@@ -171,6 +175,7 @@ const EditRTS = (props) => {
     );
     console.log('convertedEndTime', convertedEndTime);
     object.end_day_and_time = `${object.end_day}` + ' ' + convertedEndTime;
+
     delete object.end_day;
     delete object.end_time;
     // Get expected_completion_time
