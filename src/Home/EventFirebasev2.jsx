@@ -95,6 +95,7 @@ export default function EventFirebasev2(props) {
   const [showDeleteRecurringModal, setShowDeleteRecurringModal] =
     useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [accessToken, setAccessToken] = useState('');
   // var copiedRoutineName = ''
 
   useEffect(() => {
@@ -239,6 +240,7 @@ export default function EventFirebasev2(props) {
 
         var old_at = response['data']['google_auth_token'];
         var refreshToken = response['data']['google_refresh_token'];
+        setAccessToken(old_at);
         console.log('in events', old_at);
         const headers = {
           Accept: 'application/json',
@@ -429,6 +431,7 @@ export default function EventFirebasev2(props) {
                 .then((data) => {
                   console.log(data);
                   let at = data['access_token'];
+                  setAccessToken(at);
                   const headers = {
                     Accept: 'application/json',
                     Authorization: 'Bearer ' + at,
@@ -1246,16 +1249,20 @@ export default function EventFirebasev2(props) {
                             return;
                           }
                           e.preventDefault();
-
-                          let url = BASE_URL + 'googleRecurringInstances/';
-                          let id = currentUser;
                           let eventId = r.recurringEventId;
+                          let url = `https://content.googleapis.com/calendar/v3/calendars/primary/events/${eventId}/instances?key=${API_KEY}`;
+                          let id = currentUser;
 
+                          const headers = {
+                            Accept: 'application/json',
+                            Authorization: 'Bearer ' + accessToken,
+                          };
                           axios
-                            .post(
-                              url + id.toString() + ',' + eventId.toString()
-                            )
+                            .get(url, {
+                              headers: headers,
+                            })
                             .then((response) => {
+                              console.log('rec events', response.data);
                               const temp = [];
                               for (var i = 0; i < response.data.length; i++) {
                                 temp.push(response.data[i]);
