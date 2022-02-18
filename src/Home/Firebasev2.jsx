@@ -1513,13 +1513,10 @@ export default function Firebasev2(props) {
       tempRows.push(displayRoutines(props.getGoalsEndPoint[i]));
       console.log('p.ggep[i] = ', props.getGoalsEndPoint[i].gr_unique_id);
       console.log(
-         'p.ggep[i] = ',
-         props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id]
-       );
-       console.log(
-         'p.ggep[i] = ',
-         props.getActionsEndPoint
-       );
+        'p.ggep[i] = ',
+        props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id]
+      );
+      console.log('p.ggep[i] = ', props.getActionsEndPoint);
       if (props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id]) {
         for (
           var j = 0;
@@ -1540,13 +1537,14 @@ export default function Firebasev2(props) {
                 ][j].at_unique_id
               ) === false
             ) {
-               console.log(
-                 'in if3 ggep',
-                 j,tempID,
-                 props.getActionsEndPoint[
-                   props.getGoalsEndPoint[i].gr_unique_id
-                 ][j].at_unique_id
-               );
+              console.log(
+                'in if3 ggep',
+                j,
+                tempID,
+                props.getActionsEndPoint[
+                  props.getGoalsEndPoint[i].gr_unique_id
+                ][j].at_unique_id
+              );
               tempRows.push(
                 displayActions(
                   props.getActionsEndPoint[
@@ -1681,7 +1679,7 @@ export default function Firebasev2(props) {
       return 'E';
     }
 
-    if (r.is_available == 'True' ) {
+    if (r.is_available == 'True') {
       // console.log('match true',GR[i].is_available)
       return (
         <div>
@@ -1766,7 +1764,7 @@ export default function Firebasev2(props) {
                   return '#FF6B4A';
                 } else if (r.is_persistent == 'False') {
                   return '#376DAC';
-                } else{
+                } else {
                   return '#9b4aff';
                 }
               })(),
@@ -1970,7 +1968,7 @@ export default function Firebasev2(props) {
                         /> */}
                 {/* <div style={{ marginLeft: '5px' }}> */}
                 <FontAwesomeIcon
-                  title="Delete Item 1"
+                  title="Delete Item"
                   onMouseOver={(event) => {
                     event.target.style.color = '#48D6D2';
                   }}
@@ -2481,8 +2479,8 @@ export default function Firebasev2(props) {
     //    }
   }
 
-  function displayActions(a,r) {
-    console.log('displayActions', a,r);
+  function displayActions(a, r) {
+    console.log('displayActions', a, r);
     /* const start_time = a.at_datetime_started.substring(11, 16).split(/[:\s+]/);
     // Need to strip trailing zeros because the data in the database
     // is inconsistent about this
@@ -2548,7 +2546,6 @@ export default function Firebasev2(props) {
                 }}
               >
                 {a['at_title']}
-                
               </div>
 
               {/* ({date}) */}
@@ -2617,7 +2614,8 @@ export default function Firebasev2(props) {
             >
               <div>
                 <div>
-                  {(a.is_available == 'True') && (r.is_displayed_today == 'True') ? (
+                  {a.is_available == 'True' &&
+                  r.is_displayed_today == 'True' ? (
                     <div>
                       <FontAwesomeIcon
                         title="Available to the user"
@@ -2864,8 +2862,8 @@ export default function Firebasev2(props) {
     );
   }
 
-  function displayInstructions(i,a,r) {
-    console.log('displaySteps', i, a,r);
+  function displayInstructions(i, a, r) {
+    console.log('displaySteps', i, a, r);
     return (
       <div
         key={i.is_unique_id}

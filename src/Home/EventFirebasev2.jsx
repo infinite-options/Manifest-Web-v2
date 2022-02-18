@@ -191,48 +191,6 @@ export default function EventFirebasev2(props) {
     let endofWeek = moment(props.stateValue.dateContext).add(6, 'days');
     let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
 
-    const getTimes = (a_day_time, b_day_time) => {
-      const [a_start_time, b_start_time] = [
-        a_day_time.substring(10, a_day_time.length),
-        b_day_time.substring(10, b_day_time.length),
-      ];
-      const [a_HMS, b_HMS] = [
-        a_start_time
-          .substring(0, a_start_time.length - 3)
-          .replace(/\s{1,}/, '')
-          .split(':'),
-        b_start_time
-          .substring(0, b_start_time.length - 3)
-          .replace(/\s{1,}/, '')
-          .split(':'),
-      ];
-      const [a_parity, b_parity] = [
-        a_start_time
-          .substring(a_start_time.length - 3, a_start_time.length)
-          .replace(/\s{1,}/, ''),
-        b_start_time
-          .substring(b_start_time.length - 3, b_start_time.length)
-          .replace(/\s{1,}/, ''),
-      ];
-
-      let [a_time, b_time] = [0, 0];
-      if (a_parity === 'PM' && a_HMS[0] !== '12') {
-        const hoursInt = parseInt(a_HMS[0]) + 12;
-        a_HMS[0] = `${hoursInt}`;
-      } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
-
-      if (b_parity === 'PM' && b_HMS[0] !== '12') {
-        const hoursInt = parseInt(b_HMS[0]) + 12;
-        b_HMS[0] = `${hoursInt}`;
-      } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
-
-      for (let i = 0; i < a_HMS.length; i++) {
-        a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
-        b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
-      }
-
-      return [a_time, b_time];
-    };
     axios
       .get(url + user_id)
       .then((response) => {
@@ -277,12 +235,11 @@ export default function EventFirebasev2(props) {
                 moment(a['start']['dateTime']).format('YYYY-MM-DD hh:mm:ss a'),
                 moment(b['start']['dateTime']).format('YYYY-MM-DD hh:mm:ss a'),
               ];
-              console.log('a_start = ', a_start, '\nb_start = ', b_start);
               const [a_end, b_end] = [
                 moment(a['end']['dateTime']).format('YYYY-MM-DD hh:mm:ss a'),
                 moment(b['end']['dateTime']).format('YYYY-MM-DD hh:mm:ss a'),
               ];
-              console.log('a_end = ', a_end, '\nb_end = ', b_end);
+
               const [a_start_time, b_start_time] = getTimes(
                 moment(a['start']['dateTime']).format('YYYY-MM-DD hh:mm:ss a'),
                 moment(b['start']['dateTime']).format('YYYY-MM-DD hh:mm:ss a')
@@ -291,18 +248,7 @@ export default function EventFirebasev2(props) {
                 moment(a['end']['dateTime']).format('YYYY-MM-DD hh:mm:ss a'),
                 moment(b['end']['dateTime']).format('YYYY-MM-DD hh:mm:ss a')
               );
-              console.log(
-                'a_start_time = ',
-                a_start_time,
-                '\nb_start_time = ',
-                b_start_time
-              );
-              console.log(
-                'a_end_time = ',
-                a_end_time,
-                '\nb_end_time = ',
-                b_end_time
-              );
+
               if (a_start_time < b_start_time) return -1;
               else if (a_start_time > b_start_time) return 1;
               else {
@@ -473,12 +419,7 @@ export default function EventFirebasev2(props) {
                             'YYYY-MM-DD hh:mm:ss a'
                           ),
                         ];
-                        console.log(
-                          'a_start = ',
-                          a_start,
-                          '\nb_start = ',
-                          b_start
-                        );
+
                         const [a_end, b_end] = [
                           moment(a['end']['dateTime']).format(
                             'YYYY-MM-DD hh:mm:ss a'
@@ -487,7 +428,6 @@ export default function EventFirebasev2(props) {
                             'YYYY-MM-DD hh:mm:ss a'
                           ),
                         ];
-                        console.log('a_end = ', a_end, '\nb_end = ', b_end);
                         const [a_start_time, b_start_time] = getTimes(
                           moment(a['start']['dateTime']).format(
                             'YYYY-MM-DD hh:mm:ss a'
@@ -504,18 +444,7 @@ export default function EventFirebasev2(props) {
                             'YYYY-MM-DD hh:mm:ss a'
                           )
                         );
-                        console.log(
-                          'a_start_time = ',
-                          a_start_time,
-                          '\nb_start_time = ',
-                          b_start_time
-                        );
-                        console.log(
-                          'a_end_time = ',
-                          a_end_time,
-                          '\nb_end_time = ',
-                          b_end_time
-                        );
+
                         if (a_start_time < b_start_time) return -1;
                         else if (a_start_time > b_start_time) return 1;
                         else {
@@ -534,7 +463,7 @@ export default function EventFirebasev2(props) {
                         return 0;
                       });
                       console.log('recurring', filteredEvents);
-                      //setActions(temp);
+
                       setActions(filteredEvents);
                     })
                     .catch((error) => {
@@ -545,7 +474,6 @@ export default function EventFirebasev2(props) {
 
                   var tempRows = [];
                   var tempID = [];
-                  var tempIsID = [];
                   console.log('only 0.1.0', getActions);
                   const uniqueObjects = [
                     ...new Map(
@@ -916,7 +844,7 @@ export default function EventFirebasev2(props) {
                 </div>
                 <div style={{ flex: '1' }}>
                   <FontAwesomeIcon
-                    title="Delete Item 1"
+                    title="Delete Item"
                     onMouseOver={(event) => {
                       event.target.style.color = '#48D6D2';
                     }}
@@ -1049,6 +977,7 @@ export default function EventFirebasev2(props) {
     // Need to strip trailing zeros because the data in the database
     // is inconsistent about this
     if (end_time[0][0] == '0') end_time[0] = end_time[0][1];
+    console.log('displayRoutines', r);
     return (
       <div>
         <ListGroup.Item
@@ -1203,7 +1132,7 @@ export default function EventFirebasev2(props) {
 
                 <div style={{ flex: '1' }}>
                   <FontAwesomeIcon
-                    title="Delete Item 1"
+                    title="Delete Item"
                     onMouseOver={(event) => {
                       event.target.style.color = '#48D6D2';
                     }}
@@ -1223,7 +1152,7 @@ export default function EventFirebasev2(props) {
                   {r.recurringEventId !== undefined ? (
                     <div>
                       <FontAwesomeIcon
-                        title="Delete Item 1"
+                        title="Recurring Events"
                         onMouseOver={(event) => {
                           event.target.style.color = '#48D6D2';
                         }}
@@ -1250,7 +1179,15 @@ export default function EventFirebasev2(props) {
                           }
                           e.preventDefault();
                           let eventId = r.recurringEventId;
-                          let url = `https://content.googleapis.com/calendar/v3/calendars/primary/events/${eventId}/instances?key=${API_KEY}`;
+                          let start =
+                            props.stateValue.dateContext.format('YYYY-MM-DD') +
+                            'T00:00:00-07:00';
+                          let endofWeek = moment(
+                            props.stateValue.dateContext
+                          ).add(6, 'days');
+                          let end =
+                            endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
+                          let url = `https://content.googleapis.com/calendar/v3/calendars/primary/events/${eventId}/instances?timeMax=${end}&timeMin=${start}&key=${API_KEY}`;
                           let id = currentUser;
 
                           const headers = {
@@ -1264,28 +1201,21 @@ export default function EventFirebasev2(props) {
                             .then((response) => {
                               console.log('rec events', response.data);
                               const temp = [];
-                              for (var i = 0; i < response.data.length; i++) {
-                                temp.push(response.data[i]);
+                              for (
+                                var i = 0;
+                                i < response.data.items.length;
+                                i++
+                              ) {
+                                temp.push(response.data.items[i]);
                               }
 
                               const tempObj = {};
                               for (const key in recList) {
                                 tempObj[key] = recList[key];
                               }
-                              console.log(
-                                'here-0: temp = ',
-                                temp,
-                                '\ntempObj = ',
-                                tempObj
-                              );
-                              tempObj[r.recurringEventId] = temp;
-                              console.log(
-                                'here-0: temp = ',
-                                temp,
-                                '\ntempObj = ',
-                                tempObj
-                              );
 
+                              tempObj[r.recurringEventId] = temp;
+                              console.log(tempObj);
                               setRecList(tempObj);
                             });
                           console.log('here-1: gaep = ', recList);
