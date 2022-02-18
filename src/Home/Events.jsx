@@ -2388,7 +2388,7 @@ export default function Events(props) {
                       className={classes.buttonSelection}
                       onClick={() => {
                         toggleShowEvents();
-
+                        getAcessToken();
                         getAuthToGoogle();
                       }}
                       id="one"
