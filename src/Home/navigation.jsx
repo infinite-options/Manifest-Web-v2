@@ -94,7 +94,7 @@ export function Navigation() {
   let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
 
   useEffect(() => {
-    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
       console.log('base_url', BASE_URL.substring(8, 18));
       CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
       CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
@@ -537,7 +537,7 @@ export function Navigation() {
 
     console.log('auth_code', auth_code);
 
-    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
       console.log('base_url', BASE_URL.substring(8, 18));
       CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
       CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
@@ -556,7 +556,7 @@ export function Navigation() {
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
       redirect_uri: redirecturi,
-      //redirect_uri: 'http://localhost:3000',
+      // redirect_uri: 'http://localhost:3000',
       grant_type: 'authorization_code',
     };
 
@@ -943,7 +943,7 @@ export function Navigation() {
                   <GoogleLogin
                     //clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
                     clientId={
-                      BASE_URL.substring(8, 18) == '3s3sftsr90'
+                      BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
                         ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
                         : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
                     }
@@ -969,11 +969,11 @@ export function Navigation() {
                     buttonText="Log In"
                     ux_mode="redirect"
                     redirectUri={
-                      BASE_URL.substring(8, 18) == '3s3sftsr90'
+                      BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
                         ? 'https://manifestmy.space'
                         : 'https://manifestmy.life'
                     }
-                    //redirectUri="http://localhost:3000"
+                    // redirectUri="http://localhost:3000"
                     scope="https://www.googleapis.com/auth/calendar"
                     onSuccess={responseGoogle}
                     onFailure={responseGoogle}

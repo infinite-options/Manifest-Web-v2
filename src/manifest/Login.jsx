@@ -51,7 +51,7 @@ export default function Login() {
   const [taID, setTaID] = useState('');
 
   useEffect(() => {
-    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
       console.log('base_url', BASE_URL.substring(8, 18));
       CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
       CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;

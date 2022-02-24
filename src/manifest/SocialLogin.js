@@ -36,7 +36,7 @@ function SocialLogin(props) {
   const [accessExpiresIn, setaccessExpiresIn] = useState('');
   let redirecturi = 'https://manifestmy.space';
   useEffect(() => {
-    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
       console.log('base_url', BASE_URL.substring(8, 18));
       CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
       CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
@@ -67,7 +67,7 @@ function SocialLogin(props) {
     let auth_code = response.code;
     let authorization_url = 'https://accounts.google.com/o/oauth2/token';
 
-    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
       console.log('base_url', BASE_URL.substring(8, 18));
       CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
       CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
@@ -86,7 +86,7 @@ function SocialLogin(props) {
       code: auth_code,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
-      //redirect_uri: 'http://localhost:3000',
+      // redirect_uri: 'http://localhost:3000',
       redirect_uri: redirecturi,
       grant_type: 'authorization_code',
     };
@@ -489,7 +489,7 @@ function SocialLogin(props) {
             //clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
             //clientId={CLIENT_ID}
             clientId={
-              BASE_URL.substring(8, 18) == '3s3sftsr90'
+              BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
                 ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
                 : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
             }
@@ -503,12 +503,12 @@ function SocialLogin(props) {
             disable={true}
             cookiePolicy={'single_host_origin'}
             redirectUri={
-              BASE_URL.substring(8, 18) == '3s3sftsr90'
+              BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
                 ? 'https://manifestmy.space'
                 : 'https://manifestmy.life'
             }
             scope="https://www.googleapis.com/auth/calendar"
-            //redirectUri="http://localhost:3000"
+            // redirectUri="http://localhost:3000"
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
             render={(renderProps) => (
