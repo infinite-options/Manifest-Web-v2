@@ -71,14 +71,21 @@ function SocialLogin(props) {
       console.log('base_url', BASE_URL.substring(8, 18));
       CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
       CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-      redirecturi = 'https://manifestmy.space';
+
       console.log(CLIENT_ID, CLIENT_SECRET);
     } else {
       console.log('base_url', BASE_URL.substring(8, 18));
       CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
       CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-      redirecturi = 'https://manifestmy.life';
+
       console.log(CLIENT_ID, CLIENT_SECRET);
+    }
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      redirecturi = 'https://manifestmy.space';
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      redirecturi = 'https://manifestmy.life';
     }
 
     console.log('auth_code', auth_code);
@@ -503,7 +510,7 @@ function SocialLogin(props) {
             disable={true}
             cookiePolicy={'single_host_origin'}
             redirectUri={
-              BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
+              BASE_URL.substring(8, 18) == '3s3sftsr90'
                 ? 'https://manifestmy.space'
                 : 'https://manifestmy.life'
             }
