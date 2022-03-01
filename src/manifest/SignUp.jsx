@@ -221,8 +221,33 @@ export default function Login() {
       alignIems="center"
       style={{ width: '100%', height: '100vh', backgroundColor: '#F2F7FC' }}
     >
-      <Box style={{ position: 'fixed', top: '100px', left: '-100px' }}>
+      {/* <Box style={{ position: 'fixed', top: '100px', left: '-100px' }}>
         <img src={Ellipse} alt="Ellipse" />
+      </Box> */}
+      <Box style={{ position: 'fixed', top: '100px', left: '-80px' }}>
+        <div
+          style={{ position: 'relative', textAlign: 'center', color: 'white' }}
+        >
+          <img src={Ellipse} alt="Ellipse" />
+          <div
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+            }}
+          >
+            <div style={{ font: 'normal normal bold 21px SF Pro' }}>
+              What is Manifest My Life
+            </div>
+            <div style={{ font: 'normal normal normal 18px SF Pro' }}>
+              Sometimes life is better with a Coach or Advisor. Manifest is an
+              web app designed for Coaches and Advisors to create customized
+              daily routines for their clients thus enabling clients to achieve
+              their goals and live their best life.
+            </div>
+          </div>
+        </div>
       </Box>
       {/* <Box display="flex" marginTop="35%" marginLeft="30%"> */}
       {/* <Button
@@ -326,6 +351,9 @@ export default function Login() {
                 borderRadius: '20px',
                 opacity: 1,
                 width: '300px',
+                font: 'normal normal bold 16px/19px SF Pro',
+                color: '#FFFFFF',
+                textTransform: 'none',
               }}
             >
               Continue with Email
@@ -459,6 +487,9 @@ export default function Login() {
                       borderRadius: '20px',
                       opacity: 1,
                       width: '300px',
+                      font: 'normal normal bold 16px/19px SF Pro',
+                      color: '#FFFFFF',
+                      textTransform: 'none',
                     }}
                   >
                     Sign Up
@@ -474,6 +505,9 @@ export default function Login() {
                       borderRadius: '20px',
                       opacity: 1,
                       width: '300px',
+                      font: 'normal normal bold 16px/19px SF Pro',
+                      color: '#FFFFFF',
+                      textTransform: 'none',
                     }}
                   >
                     Cancel
@@ -507,7 +541,7 @@ export default function Login() {
         </Row>
       </Box>
 
-      <Box
+      {/* <Box
         style={{
           position: 'fixed',
           right: '-100px',
@@ -516,6 +550,33 @@ export default function Login() {
         }}
       >
         <img src={Ellipse} alt="Ellipse" />
+      </Box> */}
+      <Box style={{ position: 'fixed', right: '-50px', bottom: '-50px' }}>
+        <div
+          style={{ position: 'relative', textAlign: 'center', color: 'white' }}
+        >
+          <img src={Ellipse} alt="Ellipse" />
+          <div
+            style={{
+              position: 'absolute',
+              top: '45%',
+              left: '45%',
+              transform: 'translate(-50%, -50%)',
+            }}
+          >
+            <div style={{ font: 'normal normal bold 18px SF Pro' }}>
+              How we use your data
+            </div>
+            <div style={{ font: 'normal normal normal 15px SF Pro' }}>
+              Manifest My Life uses social media data to obtain your name,
+              modify your calendar, and access your photos. This information
+              allows the Coach or Advisor to login, confirm they are modifying
+              the correct client’s data, create custom events for the client to
+              attend, and enhance the client’s user experience by incorporating
+              relevant photos.
+            </div>
+          </div>
+        </div>
       </Box>
       {/* {socialSignUpModal()} */}
 
