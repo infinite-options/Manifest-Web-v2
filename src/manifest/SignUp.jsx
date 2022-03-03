@@ -18,6 +18,8 @@ import { GoogleLogin } from 'react-google-login';
 import axios from 'axios';
 import { useState, useContext } from 'react';
 import SocialLogin from './SocialLogin';
+
+import './login.css';
 const moment = require('moment');
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
@@ -224,28 +226,31 @@ export default function Login() {
       {/* <Box style={{ position: 'fixed', top: '100px', left: '-100px' }}>
         <img src={Ellipse} alt="Ellipse" />
       </Box> */}
-      <Box style={{ position: 'fixed', top: '100px', left: '-80px' }}>
-        <div
-          style={{ position: 'relative', textAlign: 'center', color: 'white' }}
-        >
-          <img src={Ellipse} alt="Ellipse" />
+      <Box style={{ position: 'fixed', top: '100px', left: '-100px' }}>
+        <div style={{ position: 'relative', color: 'white' }}>
+          <img
+            src={Ellipse}
+            style={{ width: '120%', height: '100%' }}
+            alt="Ellipse"
+          />
           <div
             style={{
               position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
+              top: '65%',
+              left: '40%',
+              transform: 'translate(-45%, -50%)',
             }}
+            className="main"
           >
-            <div style={{ font: 'normal normal bold 21px SF Pro' }}>
+            <div style={{ font: 'normal normal bold 20px SF Pro' }}>
               What is Manifest My Life
             </div>
-            <div style={{ font: 'normal normal normal 18px SF Pro' }}>
+            <p style={{ font: 'normal normal normal 18px SF Pro' }}>
               Sometimes life is better with a Coach or Advisor. Manifest is an
               web app designed for Coaches and Advisors to create customized
               daily routines for their clients thus enabling clients to achieve
               their goals and live their best life.
-            </div>
+            </p>
           </div>
         </div>
       </Box>
@@ -551,30 +556,33 @@ export default function Login() {
       >
         <img src={Ellipse} alt="Ellipse" />
       </Box> */}
-      <Box style={{ position: 'fixed', right: '-50px', bottom: '-50px' }}>
-        <div
-          style={{ position: 'relative', textAlign: 'center', color: 'white' }}
-        >
-          <img src={Ellipse} alt="Ellipse" />
+      <Box style={{ position: 'fixed', right: '-30px', bottom: '-50px' }}>
+        <div style={{ position: 'relative', color: 'white' }}>
+          <img src={Ellipse} style={{ width: '120%' }} alt="Ellipse" />
           <div
             style={{
               position: 'absolute',
-              top: '45%',
-              left: '45%',
-              transform: 'translate(-50%, -50%)',
+              top: '60%',
+              left: '40%',
+              transform: 'translate(-45%, -50%)',
             }}
+            className="text"
           >
-            <div style={{ font: 'normal normal bold 18px SF Pro' }}>
-              How we use your data
-            </div>
-            <div style={{ font: 'normal normal normal 15px SF Pro' }}>
+            <p style={{ font: 'normal normal normal 18px SF Pro' }}>
+              <div
+                style={{
+                  font: 'normal normal bold 21px SF Pro',
+                }}
+              >
+                How we use your data
+              </div>
               Manifest My Life uses social media data to obtain your name,
               modify your calendar, and access your photos. This information
               allows the Coach or Advisor to login, confirm they are modifying
               the correct client’s data, create custom events for the client to
               attend, and enhance the client’s user experience by incorporating
               relevant photos.
-            </div>
+            </p>
           </div>
         </div>
       </Box>
