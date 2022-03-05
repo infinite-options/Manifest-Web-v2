@@ -16,16 +16,17 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './DatePicker.css';
 import {
   deleteTheCalenderEvent,
-  instancesTheCalenderEvent,
   publishTheCalenderEvent,
   updateTheCalenderEvent,
 } from './GoogleApiService';
 import LoginContext from '../LoginContext';
 import moment from 'moment';
 
+const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 export default function EditEventModal(props) {
+  console.log('in edit event', props);
   const loginContext = useContext(LoginContext);
   var userID = '';
   var userTime_zone = '';
@@ -1139,7 +1140,26 @@ export default function EditEventModal(props) {
           ],
         },
       };
-      updateTheCalenderEvent(event);
+      // updateTheCalenderEvent(event);
+      const headers = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + props.accessToken,
+      };
+      axios
+        .put(
+          `https://www.googleapis.com/calendar/v3/calendars/primary/events/${event.id}?key=${API_KEY}`,
+          event,
+          {
+            headers: headers,
+          }
+        )
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log('error', error);
+        });
       props.setStateValue((prevState) => {
         return {
           ...prevState,
@@ -1483,7 +1503,26 @@ export default function EditEventModal(props) {
         if (secondEventCount !== 0) {
           console.log('Before createEvent/newEvent: ', newEvent);
           //insert
-          publishTheCalenderEvent(newEvent);
+          //publishTheCalenderEvent(newEvent);
+          const headers = {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: 'Bearer ' + props.accessToken,
+          };
+          axios
+            .post(
+              `https://www.googleapis.com/calendar/v3/calendars/primary/events?key=${API_KEY}`,
+              newEvent,
+              {
+                headers: headers,
+              }
+            )
+            .then((response) => {
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log('error', error);
+            });
         }
 
         if (firstEventCount === 0) {
@@ -1495,7 +1534,26 @@ export default function EditEventModal(props) {
           console.log('event: ', recEvent);
           console.log('eventId: ', eventId);
           //update
-          updateTheCalenderEvent(recEvent);
+          // updateTheCalenderEvent(recEvent);
+          const headers = {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: 'Bearer ' + props.accessToken,
+          };
+          axios
+            .put(
+              `https://www.googleapis.com/calendar/v3/calendars/primary/events/${recEvent.id}?key=${API_KEY}`,
+              recEvent,
+              {
+                headers: headers,
+              }
+            )
+            .then((response) => {
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log('error', error);
+            });
         }
         setShowEditRecurringModal(!showEditRecurringModal);
         props.setStateValue((prevState) => {
@@ -1737,17 +1795,77 @@ export default function EditEventModal(props) {
 
         if (secondEventCount !== 0) {
           console.log('Before createEvent/newEvent: ', newEvent);
-          publishTheCalenderEvent(newEvent);
+          //publishTheCalenderEvent(newEvent);
+          const headers = {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: 'Bearer ' + props.accessToken,
+          };
+          axios
+            .post(
+              `https://www.googleapis.com/calendar/v3/calendars/primary/events?key=${API_KEY}`,
+              newEvent,
+              {
+                headers: headers,
+              }
+            )
+            .then((response) => {
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log('error', error);
+            });
+          // editingEventContext.setEditingEvent({
+          //   ...editingEventContext.editingEvent,
+          //   editing: false,
+          // });
         }
 
         if (firstEventCount === 0) {
           console.log('Before deleteEvent/eventId: ', eventId);
-          deleteTheCalenderEvent(eventId);
+          // deleteTheCalenderEvent(eventId);
+          const headers = {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: 'Bearer ' + props.accessToken,
+          };
+          axios
+            .delete(
+              `https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}?key=${API_KEY}`,
+              {
+                headers: headers,
+              }
+            )
+            .then((response) => {
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log('error', error);
+            });
         } else {
           console.log('Before updateEvent: ');
           console.log('event: ', recEvent);
           console.log('eventId: ', eventId);
-          updateTheCalenderEvent(recEvent);
+          // updateTheCalenderEvent(recEvent);
+          const headers = {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: 'Bearer ' + props.accessToken,
+          };
+          axios
+            .put(
+              `https://www.googleapis.com/calendar/v3/calendars/primary/events/${recEvent.id}?key=${API_KEY}`,
+              recEvent,
+              {
+                headers: headers,
+              }
+            )
+            .then((response) => {
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log('error', error);
+            });
         }
 
         setShowEditRecurringModal(!showEditRecurringModal);
@@ -1841,7 +1959,26 @@ export default function EditEventModal(props) {
     }
   }
   const updateSubmit = (event) => {
-    updateTheCalenderEvent(event);
+    // updateTheCalenderEvent(event);
+    const headers = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      Authorization: 'Bearer ' + props.accessToken,
+    };
+    axios
+      .put(
+        `https://www.googleapis.com/calendar/v3/calendars/primary/events/${event.id}?key=${API_KEY}`,
+        event,
+        {
+          headers: headers,
+        }
+      )
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log('error', error);
+      });
     setShowEditRecurringModal(!showEditRecurringModal);
     props.setStateValue((prevState) => {
       return {
@@ -1852,7 +1989,7 @@ export default function EditEventModal(props) {
   };
   return (
     <div>
-      {!props.signedin ? (
+      {!showEditModal ? (
         <div className="google-login"></div>
       ) : (
         <div

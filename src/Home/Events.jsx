@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {
-  signInToGoogle,
-  initClient,
-  getSignedInUserEmail,
-  signOutFromGoogle,
-} from './GoogleApiService';
+// import {
+//   signInToGoogle,
+//   initClient,
+//   getSignedInUserEmail,
+//   signOutFromGoogle,
+// } from './GoogleApiService';
 import axios from 'axios';
 import Button from '@material-ui/core/Button';
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -855,267 +855,386 @@ export default function Events(props) {
   //   !stateValue.showRoutineModal;
   /*----------------------------toggleShowRoutine----------------------------*/
   useEffect(() => {
-    initClient((success) => {
-      if (success) {
-        getGoogleAuthorizedEmail();
-      }
-    });
+    getAccessToken();
   }, []);
 
-  const getGoogleAuthorizedEmail = async () => {
-    let email = await getSignedInUserEmail();
-    console.log(email);
-    if (email) {
-      setSignedIn(true);
-      setgoogleAuthedEmail(email);
-    }
-  };
-  const getAuthToGoogle = async (e) => {
-    console.log('here in getAuthToGoogle ', e);
-    let email = e;
-    let successfull = await signInToGoogle(email);
-    console.log(successfull);
-    if (successfull) {
-      getGoogleAuthorizedEmail();
-    }
-  };
-  const _signOutFromGoogle = () => {
-    let status = signOutFromGoogle();
-    if (status) {
-      setSignedIn(false);
-      setgoogleAuthedEmail(null);
-    }
-  };
+  // useEffect(() => {
+  //   initClient((success) => {
+  //     if (success) {
+  //       getGoogleAuthorizedEmail();
+  //     }
+  //   });
+  // }, []);
 
-  const getAcessToken = () => {
+  // const getGoogleAuthorizedEmail = async () => {
+  //   let email = await getSignedInUserEmail();
+  //   console.log(email);
+  //   if (email) {
+  //     setSignedIn(true);
+  //     setgoogleAuthedEmail(email);
+  //   }
+  // };
+  // const getAuthToGoogle = async (e) => {
+  //   console.log('here in getAuthToGoogle ', e);
+  //   let email = e;
+  //   let successfull = await signInToGoogle(email);
+  //   console.log(successfull);
+  //   if (successfull) {
+  //     getGoogleAuthorizedEmail();
+  //   }
+  // };
+  // const _signOutFromGoogle = () => {
+  //   let status = signOutFromGoogle();
+  //   if (status) {
+  //     setSignedIn(false);
+  //     setgoogleAuthedEmail(null);
+  //   }
+  // };
+
+  // const getAcessToken = () => {
+  //   let url = BASE_URL + 'taToken/';
+  //   let ta_id = taID;
+  //   console.log('here in getacc', taID);
+  //   axios
+  //     .get(url + ta_id)
+  //     .then((response) => {
+  //       console.log(
+  //         'in events',
+  //         response.data.ta_google_auth_token,
+  //         response.data.ta_google_auth_token === null
+  //       );
+  //       if (response.data.ta_google_auth_token === null) {
+  //         let url = BASE_URL + 'taToken/';
+  //         let ta_id = '200-000002';
+  //         axios
+  //           .get(url + ta_id)
+  //           .then((response) => {
+  //             console.log('in events', response);
+  //             let url =
+  //               'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
+  //             loginContext.setLoginState({
+  //               ...loginContext.loginState,
+  //               ta: {
+  //                 id: '200-000002',
+  //                 email: response['data']['ta_email_id'],
+  //               },
+  //             });
+  //             console.log('here in', response['data']['ta_email_id']);
+  //             setEmail(response['data']['ta_email_id']);
+  //             setSignedIn(true);
+  //             //getAuthToGoogle(response['data']['ta_email_id']);
+  //             //setEditingEvent(newEditingEventState);
+  //             var old_at = response['data']['ta_google_auth_token'];
+  //             console.log('in events', old_at);
+  //             var refreshToken = response['data']['ta_google_refresh_token'];
+
+  //             let checkExp_url = url + old_at;
+  //             console.log('in events', checkExp_url);
+  //             fetch(
+  //               `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`,
+  //               {
+  //                 method: 'GET',
+  //               }
+  //             )
+  //               .then((response) => {
+  //                 console.log('in events', response);
+  //                 if (response['status'] === 400) {
+  //                   console.log('in events if');
+  //                   let authorization_url =
+  //                     'https://accounts.google.com/o/oauth2/token';
+  //                   if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+  //                     console.log('base_url', BASE_URL.substring(8, 18));
+  //                     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  //                     CLIENT_SECRET =
+  //                       process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+  //                     console.log(CLIENT_ID, CLIENT_SECRET);
+  //                   } else {
+  //                     console.log('base_url', BASE_URL.substring(8, 18));
+  //                     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+  //                     CLIENT_SECRET =
+  //                       process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+  //                     console.log(CLIENT_ID, CLIENT_SECRET);
+  //                   }
+  //                   var details = {
+  //                     refresh_token: refreshToken,
+  //                     client_id: CLIENT_ID,
+  //                     client_secret: CLIENT_SECRET,
+  //                     grant_type: 'refresh_token',
+  //                   };
+
+  //                   var formBody = [];
+  //                   for (var property in details) {
+  //                     var encodedKey = encodeURIComponent(property);
+  //                     var encodedValue = encodeURIComponent(details[property]);
+  //                     formBody.push(encodedKey + '=' + encodedValue);
+  //                   }
+  //                   formBody = formBody.join('&');
+
+  //                   fetch(authorization_url, {
+  //                     method: 'POST',
+  //                     headers: {
+  //                       'Content-Type':
+  //                         'application/x-www-form-urlencoded;charset=UTF-8',
+  //                     },
+  //                     body: formBody,
+  //                   })
+  //                     .then((response) => {
+  //                       return response.json();
+  //                     })
+  //                     .then((responseData) => {
+  //                       console.log(responseData);
+  //                       return responseData;
+  //                     })
+  //                     .then((data) => {
+  //                       console.log(data);
+  //                       let at = data['access_token'];
+  //                       var id_token = data['id_token'];
+  //                       setAccessToken(at);
+  //                       setIdToken(id_token);
+  //                       console.log('in events', at);
+  //                       let url = BASE_URL + 'UpdateAccessToken/';
+  //                       axios
+  //                         .post(url + ta_id, {
+  //                           ta_google_auth_token: at,
+  //                         })
+  //                         .then((response) => {})
+  //                         .catch((err) => {
+  //                           console.log(err);
+  //                         });
+  //                       return accessToken;
+  //                     })
+  //                     .catch((err) => {
+  //                       console.log(err);
+  //                     });
+  //                 } else {
+  //                   setAccessToken(old_at);
+  //                 }
+  //               })
+  //               .catch((err) => {
+  //                 console.log(err);
+  //               });
+  //             console.log('in events', refreshToken);
+  //           })
+  //           .catch((error) => {
+  //             console.log('Error in events' + error);
+  //           });
+  //       } else {
+  //         let url =
+  //           'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
+  //         loginContext.setLoginState({
+  //           ...loginContext.loginState,
+  //           ta: {
+  //             id: taID,
+  //             email: response['data']['ta_email_id'],
+  //           },
+  //         });
+  //         console.log('here in', response['data']['ta_email_id']);
+  //         setEmail(response['data']['ta_email_id']);
+  //         //getAuthToGoogle(response['data']['ta_email_id']);
+  //         var old_at = response['data']['ta_google_auth_token'];
+  //         console.log('in events', old_at);
+  //         var refreshToken = response['data']['ta_google_refresh_token'];
+
+  //         let checkExp_url = url + old_at;
+  //         console.log('in events', checkExp_url);
+  //         fetch(
+  //           `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`,
+  //           {
+  //             method: 'GET',
+  //           }
+  //         )
+  //           .then((response) => {
+  //             console.log('in events', response);
+  //             if (response['status'] === 400) {
+  //               console.log('in events if');
+  //               let authorization_url =
+  //                 'https://accounts.google.com/o/oauth2/token';
+  //               if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+  //                 console.log('base_url', BASE_URL.substring(8, 18));
+  //                 CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  //                 CLIENT_SECRET =
+  //                   process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+  //                 console.log(CLIENT_ID, CLIENT_SECRET);
+  //               } else {
+  //                 console.log('base_url', BASE_URL.substring(8, 18));
+  //                 CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+  //                 CLIENT_SECRET =
+  //                   process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+  //                 console.log(CLIENT_ID, CLIENT_SECRET);
+  //               }
+  //               var details = {
+  //                 refresh_token: refreshToken,
+  //                 client_id: CLIENT_ID,
+  //                 client_secret: CLIENT_SECRET,
+  //                 grant_type: 'refresh_token',
+  //               };
+
+  //               var formBody = [];
+  //               for (var property in details) {
+  //                 var encodedKey = encodeURIComponent(property);
+  //                 var encodedValue = encodeURIComponent(details[property]);
+  //                 formBody.push(encodedKey + '=' + encodedValue);
+  //               }
+  //               formBody = formBody.join('&');
+
+  //               fetch(authorization_url, {
+  //                 method: 'POST',
+  //                 headers: {
+  //                   'Content-Type':
+  //                     'application/x-www-form-urlencoded;charset=UTF-8',
+  //                 },
+  //                 body: formBody,
+  //               })
+  //                 .then((response) => {
+  //                   return response.json();
+  //                 })
+  //                 .then((responseData) => {
+  //                   console.log(responseData);
+  //                   return responseData;
+  //                 })
+  //                 .then((data) => {
+  //                   console.log(data);
+  //                   let at = data['access_token'];
+  //                   var id_token = data['id_token'];
+  //                   setAccessToken(at);
+  //                   setIdToken(id_token);
+  //                   console.log('in events', at);
+  //                   let url = BASE_URL + 'UpdateAccessToken/';
+  //                   axios
+  //                     .post(url + ta_id, {
+  //                       ta_google_auth_token: at,
+  //                     })
+  //                     .then((response) => {})
+  //                     .catch((err) => {
+  //                       console.log(err);
+  //                     });
+  //                   return accessToken;
+  //                 })
+  //                 .catch((err) => {
+  //                   console.log(err);
+  //                 });
+  //             } else {
+  //               setAccessToken(old_at);
+  //             }
+  //           })
+  //           .catch((err) => {
+  //             console.log(err);
+  //           });
+  //         console.log('in events', refreshToken);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log('Error in events' + error);
+  //     });
+  // };
+
+  const getAccessToken = () => {
     let url = BASE_URL + 'taToken/';
-    let ta_id = taID;
-    console.log('here in getacc', taID);
+    let ta_id = '200-000002';
     axios
       .get(url + ta_id)
       .then((response) => {
-        console.log(
-          'in events',
-          response.data.ta_google_auth_token,
-          response.data.ta_google_auth_token === null
-        );
-        if (response.data.ta_google_auth_token === null) {
-          let url = BASE_URL + 'taToken/';
-          let ta_id = '200-000002';
-          axios
-            .get(url + ta_id)
-            .then((response) => {
-              console.log('in events', response);
-              let url =
-                'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
-              loginContext.setLoginState({
-                ...loginContext.loginState,
-                ta: {
-                  id: '200-000002',
-                  email: response['data']['ta_email_id'],
+        console.log('in events', response);
+        let url =
+          'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
+        loginContext.setLoginState({
+          ...loginContext.loginState,
+          ta: {
+            id: '200-000002',
+            email: response['data']['ta_email_id'],
+          },
+        });
+        setEmail(response['data']['ta_email_id']);
+        setSignedIn(true);
+        var old_at = response['data']['ta_google_auth_token'];
+        console.log('in events', old_at);
+        var refreshToken = response['data']['ta_google_refresh_token'];
+
+        let checkExp_url = url + old_at;
+        console.log('in events', checkExp_url);
+        fetch(
+          `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`,
+          {
+            method: 'GET',
+          }
+        )
+          .then((response) => {
+            console.log('in events', response);
+            if (response['status'] === 400) {
+              console.log('in events if');
+              let authorization_url =
+                'https://accounts.google.com/o/oauth2/token';
+              if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+                console.log('base_url', BASE_URL.substring(8, 18));
+                CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+                CLIENT_SECRET =
+                  process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+                console.log(CLIENT_ID, CLIENT_SECRET);
+              } else {
+                console.log('base_url', BASE_URL.substring(8, 18));
+                CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+                CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+                console.log(CLIENT_ID, CLIENT_SECRET);
+              }
+              var details = {
+                refresh_token: refreshToken,
+                client_id: CLIENT_ID,
+                client_secret: CLIENT_SECRET,
+                grant_type: 'refresh_token',
+              };
+
+              var formBody = [];
+              for (var property in details) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + '=' + encodedValue);
+              }
+              formBody = formBody.join('&');
+
+              fetch(authorization_url, {
+                method: 'POST',
+                headers: {
+                  'Content-Type':
+                    'application/x-www-form-urlencoded;charset=UTF-8',
                 },
-              });
-              console.log('here in', response['data']['ta_email_id']);
-              setEmail(response['data']['ta_email_id']);
-              getAuthToGoogle(response['data']['ta_email_id']);
-              var old_at = response['data']['ta_google_auth_token'];
-              console.log('in events', old_at);
-              var refreshToken = response['data']['ta_google_refresh_token'];
-
-              let checkExp_url = url + old_at;
-              console.log('in events', checkExp_url);
-              fetch(
-                `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`,
-                {
-                  method: 'GET',
-                }
-              )
+                body: formBody,
+              })
                 .then((response) => {
-                  console.log('in events', response);
-                  if (response['status'] === 400) {
-                    console.log('in events if');
-                    let authorization_url =
-                      'https://accounts.google.com/o/oauth2/token';
-                    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-                      console.log('base_url', BASE_URL.substring(8, 18));
-                      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-                      CLIENT_SECRET =
-                        process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-                      console.log(CLIENT_ID, CLIENT_SECRET);
-                    } else {
-                      console.log('base_url', BASE_URL.substring(8, 18));
-                      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-                      CLIENT_SECRET =
-                        process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-                      console.log(CLIENT_ID, CLIENT_SECRET);
-                    }
-                    var details = {
-                      refresh_token: refreshToken,
-                      client_id: CLIENT_ID,
-                      client_secret: CLIENT_SECRET,
-                      grant_type: 'refresh_token',
-                    };
-
-                    var formBody = [];
-                    for (var property in details) {
-                      var encodedKey = encodeURIComponent(property);
-                      var encodedValue = encodeURIComponent(details[property]);
-                      formBody.push(encodedKey + '=' + encodedValue);
-                    }
-                    formBody = formBody.join('&');
-
-                    fetch(authorization_url, {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type':
-                          'application/x-www-form-urlencoded;charset=UTF-8',
-                      },
-                      body: formBody,
+                  return response.json();
+                })
+                .then((responseData) => {
+                  console.log(responseData);
+                  return responseData;
+                })
+                .then((data) => {
+                  console.log(data);
+                  let at = data['access_token'];
+                  var id_token = data['id_token'];
+                  setAccessToken(at);
+                  setIdToken(id_token);
+                  console.log('in events', at);
+                  let url = BASE_URL + 'UpdateAccessToken/';
+                  axios
+                    .post(url + ta_id, {
+                      ta_google_auth_token: at,
                     })
-                      .then((response) => {
-                        return response.json();
-                      })
-                      .then((responseData) => {
-                        console.log(responseData);
-                        return responseData;
-                      })
-                      .then((data) => {
-                        console.log(data);
-                        let at = data['access_token'];
-                        var id_token = data['id_token'];
-                        setAccessToken(at);
-                        setIdToken(id_token);
-                        console.log('in events', at);
-                        let url = BASE_URL + 'UpdateAccessToken/';
-                        axios
-                          .post(url + ta_id, {
-                            ta_google_auth_token: at,
-                          })
-                          .then((response) => {})
-                          .catch((err) => {
-                            console.log(err);
-                          });
-                        return accessToken;
-                      })
-                      .catch((err) => {
-                        console.log(err);
-                      });
-                  } else {
-                    setAccessToken(old_at);
-                  }
+                    .then((response) => {})
+                    .catch((err) => {
+                      console.log(err);
+                    });
+                  return accessToken;
                 })
                 .catch((err) => {
                   console.log(err);
                 });
-              console.log('in events', refreshToken);
-            })
-            .catch((error) => {
-              console.log('Error in events' + error);
-            });
-        } else {
-          let url =
-            'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
-          loginContext.setLoginState({
-            ...loginContext.loginState,
-            ta: {
-              id: taID,
-              email: response['data']['ta_email_id'],
-            },
-          });
-          console.log('here in', response['data']['ta_email_id']);
-          setEmail(response['data']['ta_email_id']);
-          getAuthToGoogle(response['data']['ta_email_id']);
-          var old_at = response['data']['ta_google_auth_token'];
-          console.log('in events', old_at);
-          var refreshToken = response['data']['ta_google_refresh_token'];
-
-          let checkExp_url = url + old_at;
-          console.log('in events', checkExp_url);
-          fetch(
-            `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`,
-            {
-              method: 'GET',
+            } else {
+              setAccessToken(old_at);
             }
-          )
-            .then((response) => {
-              console.log('in events', response);
-              if (response['status'] === 400) {
-                console.log('in events if');
-                let authorization_url =
-                  'https://accounts.google.com/o/oauth2/token';
-                if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-                  console.log('base_url', BASE_URL.substring(8, 18));
-                  CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-                  CLIENT_SECRET =
-                    process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-                  console.log(CLIENT_ID, CLIENT_SECRET);
-                } else {
-                  console.log('base_url', BASE_URL.substring(8, 18));
-                  CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-                  CLIENT_SECRET =
-                    process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-                  console.log(CLIENT_ID, CLIENT_SECRET);
-                }
-                var details = {
-                  refresh_token: refreshToken,
-                  client_id: CLIENT_ID,
-                  client_secret: CLIENT_SECRET,
-                  grant_type: 'refresh_token',
-                };
-
-                var formBody = [];
-                for (var property in details) {
-                  var encodedKey = encodeURIComponent(property);
-                  var encodedValue = encodeURIComponent(details[property]);
-                  formBody.push(encodedKey + '=' + encodedValue);
-                }
-                formBody = formBody.join('&');
-
-                fetch(authorization_url, {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type':
-                      'application/x-www-form-urlencoded;charset=UTF-8',
-                  },
-                  body: formBody,
-                })
-                  .then((response) => {
-                    return response.json();
-                  })
-                  .then((responseData) => {
-                    console.log(responseData);
-                    return responseData;
-                  })
-                  .then((data) => {
-                    console.log(data);
-                    let at = data['access_token'];
-                    var id_token = data['id_token'];
-                    setAccessToken(at);
-                    setIdToken(id_token);
-                    console.log('in events', at);
-                    let url = BASE_URL + 'UpdateAccessToken/';
-                    axios
-                      .post(url + ta_id, {
-                        ta_google_auth_token: at,
-                      })
-                      .then((response) => {})
-                      .catch((err) => {
-                        console.log(err);
-                      });
-                    return accessToken;
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                  });
-              } else {
-                setAccessToken(old_at);
-              }
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-          console.log('in events', refreshToken);
-        }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        console.log('in events', refreshToken);
       })
       .catch((error) => {
         console.log('Error in events' + error);
@@ -2545,7 +2664,8 @@ export default function Events(props) {
                       className={classes.buttonSelection}
                       onClick={() => {
                         toggleShowEvents();
-                        getAcessToken();
+                        getAccessToken();
+                        setSignedIn(true);
                         // getAuthToGoogle(email);
                       }}
                       id="one"
@@ -2573,10 +2693,11 @@ export default function Events(props) {
                       }}
                       id="one"
                       onClick={() => {
-                        getAcessToken();
+                        getAccessToken();
                         console.log('after get access token');
                         setEditingEvent(newEditingEventState);
                         console.log('after setEditingEvent');
+                        setSignedIn(true);
                         // getAuthToGoogle(email);
                         // console.log('after getAuthToGoogle');
                       }}
@@ -2607,7 +2728,7 @@ export default function Events(props) {
                       }}
                     ></div>
                   )} */}
-
+                    {console.log(accessToken)}
                     <div style={{ flex: '1' }}>
                       {userID != '' && (
                         <EventFirebaseV2
@@ -2643,6 +2764,7 @@ export default function Events(props) {
                           }
                           stateValue={stateValue}
                           setStateValue={setStateValue}
+                          accessToken={accessToken}
                         />
                       )}
                     </div>
@@ -2653,6 +2775,7 @@ export default function Events(props) {
               </div> */}
                   </div>
                   <div style={{ width: '70%', float: 'left' }}>
+                    {console.log(editingEvent.editing)}
                     {editingEvent.editing ? null : (
                       <Box
                         bgcolor="#889AB5"
@@ -2959,7 +3082,7 @@ export default function Events(props) {
                         </Container>
                       </Box>
                     )}
-                    {console.log(editingEvent.editing)}
+
                     <div style={{ width: '100%' }}>
                       {editingIS.editing ? (
                         <EditIS
@@ -3006,6 +3129,7 @@ export default function Events(props) {
                           event={stateValue.originalEvents}
                           stateValue={stateValue}
                           setStateValue={setStateValue}
+                          accessToken={accessToken}
                         />
                       ) : stateValue.showEditModal ? (
                         <EditEventModal
@@ -3015,6 +3139,7 @@ export default function Events(props) {
                           event={stateValue.originalEvents}
                           stateValue={stateValue}
                           setStateValue={setStateValue}
+                          accessToken={accessToken}
                         />
                       ) : (
                         showCalendarView()

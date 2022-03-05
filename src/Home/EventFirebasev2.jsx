@@ -931,7 +931,25 @@ export default function EventFirebasev2(props) {
     console.log('opendeleterecurringmodal called', r);
     if (r.recurringEventId === undefined) {
       console.log('opendeleterecurringmodal nonre', r);
-      deleteTheCalenderEvent(r.id);
+      // deleteTheCalenderEvent(r.id);
+      const headers = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + props.accessToken,
+      };
+      axios
+        .delete(
+          `https://www.googleapis.com/calendar/v3/calendars/primary/events/${r.id}?key=${API_KEY}`,
+          {
+            headers: headers,
+          }
+        )
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log('error', error);
+        });
       alert('Deleted');
     } else {
       console.log('opendeleterecurringmodal rec', r);

@@ -958,26 +958,26 @@ export default function GoogleEventComponent(props) {
         ],
       },
     };
-    publishTheCalenderEvent(event);
-    // const headers = {
-    //   'Content-Type': 'application/json',
-    //   Accept: 'application/json',
-    //   Authorization: 'Bearer ' + props.accessToken,
-    // };
-    // axios
-    //   .post(
-    //     `https://www.googleapis.com/calendar/v3/calendars/primary/events?key=${API_KEY}`,
-    //     event,
-    //     {
-    //       headers: headers,
-    //     }
-    //   )
-    //   .then((response) => {
-    //     console.log(response);
-    //   })
-    //   .catch((error) => {
-    //     console.log('error', error);
-    //   });
+    //publishTheCalenderEvent(event);
+    const headers = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      Authorization: 'Bearer ' + props.accessToken,
+    };
+    axios
+      .post(
+        `https://www.googleapis.com/calendar/v3/calendars/primary/events?key=${API_KEY}`,
+        event,
+        {
+          headers: headers,
+        }
+      )
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log('error', error);
+      });
     editingEventContext.setEditingEvent({
       ...editingEventContext.editingEvent,
       editing: false,
