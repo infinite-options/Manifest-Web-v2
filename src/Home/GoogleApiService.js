@@ -86,7 +86,7 @@ export const checkSignInStatus = async () => {
   }
 };
 
-export const signInToGoogle = async () => {
+export const signInToGoogle = async (email) => {
   let organizer = 'calendar@manifestmy.space';
   if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
     console.log('base_url', BASE_URL.substring(8, 18));
@@ -97,11 +97,11 @@ export const signInToGoogle = async () => {
     organizer = 'calendar@manifestmy.life';
     console.log(organizer);
   }
-
+  console.log('signintogoogle', email);
   try {
     let googleuser = await gapi.auth2
       .getAuthInstance()
-      .signIn({ prompt: 'none', login_hint: organizer });
+      .signIn({ prompt: 'none', login_hint: email });
     if (googleuser) {
       return true;
     }

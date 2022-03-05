@@ -1112,11 +1112,11 @@ export default function EditEventModal(props) {
         description,
         location,
         creator: {
-          email: organizer,
+          email: props.organizerEmail,
           self: true,
         },
         organizer: {
-          email: organizer,
+          email: props.organizerEmail,
           self: true,
         },
         start: {
@@ -1153,11 +1153,11 @@ export default function EditEventModal(props) {
         description,
         location,
         creator: {
-          email: organizer,
+          email: props.organizerEmail,
           self: true,
         },
         organizer: {
-          email: organizer,
+          email: props.organizerEmail,
           self: true,
         },
         start: {
@@ -1213,11 +1213,11 @@ export default function EditEventModal(props) {
         description,
         location,
         creator: {
-          email: organizer,
+          email: props.organizerEmail,
           self: true,
         },
         organizer: {
-          email: organizer,
+          email: props.organizerEmail,
           self: true,
         },
         start: {
@@ -1296,11 +1296,11 @@ export default function EditEventModal(props) {
               description,
               location,
               creator: {
-                email: organizer,
+                email: props.organizerEmail,
                 self: true,
               },
               organizer: {
-                email: organizer,
+                email: props.organizerEmail,
                 self: true,
               },
               start: {
@@ -1547,11 +1547,11 @@ export default function EditEventModal(props) {
               description,
               location,
               creator: {
-                email: organizer,
+                email: props.organizerEmail,
                 self: true,
               },
               organizer: {
-                email: organizer,
+                email: props.organizerEmail,
                 self: true,
               },
               start: {

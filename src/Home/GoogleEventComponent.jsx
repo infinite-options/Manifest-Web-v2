@@ -24,7 +24,7 @@ const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
 export default function GoogleEventComponent(props) {
   //const classes = useStyles();
-  console.log('in add events', props);
+  console.log('in add events', props.organizerEmail);
   const loginContext = useContext(LoginContext);
 
   console.log('in events', loginContext);
@@ -931,11 +931,11 @@ export default function GoogleEventComponent(props) {
       description,
       location,
       creator: {
-        email: organizer,
+        email: props.organizerEmail,
         self: true,
       },
       organizer: {
-        email: organizer,
+        email: props.organizerEmail,
         self: true,
       },
       start: {
