@@ -111,15 +111,7 @@ export default function EventFirebasev2(props) {
     //makeActionDisplays();
     GetUserAcessToken();
     // console.log('here-2: gsep on useEffect = ', props.getStepsEndPoint);
-  }, [
-    props.events,
-    props.theCurrentUserID,
-    recList,
-    props.editEvent,
-    props.showDeleteRecurringModal,
-    props.showEditModal,
-    props.showEditRecurringModal,
-  ]);
+  }, [props.events, props.theCurrentUserID, recList, props.editEvent]);
 
   const getTimes = (a_day_time, b_day_time) => {
     const [a_start_time, b_start_time] = [
