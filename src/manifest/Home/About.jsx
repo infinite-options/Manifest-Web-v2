@@ -24,6 +24,7 @@ import AddIconModal from '../../Home/AddIconModal';
 import UploadImage from '../../Home/UploadImage';
 import TAUploadImage from '../../Home/TAUploadImage';
 import momentTZ from 'moment-timezone';
+import GooglePhotos from '../../Home/GooglePhotos';
 
 const moment = require('moment');
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
@@ -1715,6 +1716,7 @@ export default function AboutModal(props) {
                   setPhotoUrl={setUserPhoto}
                   currentUserId={userID}
                 />
+                <GooglePhotos photoUrl={userPhoto} setPhotoUrl={setUserPhoto} />
               </Col>
               <Col xs={4}>
                 {/* {aboutMeObject.have_pic === false ? (

@@ -5,6 +5,7 @@ import moment from 'moment';
 import axios from 'axios';
 import AddIconModal from '../AddIconModal';
 import UploadImage from '../UploadImage';
+import GooglePhotos from '../GooglePhotos';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 const convertDateToDayString = (dateObject) => {
@@ -52,8 +53,6 @@ const EditATS = (props) => {
   );
   console.log('obj. ', props);
 
-
-  
   const [showUploadImage, setShowUploadImage] = useState(false);
   const [image, setImage] = useState(null);
   const [imageName, setImageName] = useState('');
@@ -129,7 +128,6 @@ const EditATS = (props) => {
 
     return [a_time, b_time];
   };
-
 
   useEffect(() => {
     if (editingATSContext.editingATS.newItem.at_unique_id === undefined) {
@@ -361,42 +359,42 @@ const EditATS = (props) => {
             for (var i = 0; i < response.data.result.length; i++) {
               temp.push(response.data.result[i]);
             }
-              temp.sort((a, b) => {
-                const [a_start, b_start] = [
-                  new Date(a.at_datetime_started),
-                  new Date(b.at_datetime_started),
-                ];
-                const [a_end, b_end] = [
-                  new Date(a.at_datetime_completed),
-                  new Date(b.at_datetime_completed),
-                ];
+            temp.sort((a, b) => {
+              const [a_start, b_start] = [
+                new Date(a.at_datetime_started),
+                new Date(b.at_datetime_started),
+              ];
+              const [a_end, b_end] = [
+                new Date(a.at_datetime_completed),
+                new Date(b.at_datetime_completed),
+              ];
 
-                const [a_start_time, b_start_time] = getTimes(
-                  a.at_datetime_started,
-                  b.at_datetime_started
-                );
-                const [a_end_time, b_end_time] = getTimes(
-                  a.at_datetime_completed,
-                  b.at_datetime_completed
-                );
+              const [a_start_time, b_start_time] = getTimes(
+                a.at_datetime_started,
+                b.at_datetime_started
+              );
+              const [a_end_time, b_end_time] = getTimes(
+                a.at_datetime_completed,
+                b.at_datetime_completed
+              );
 
-                if (a_start_time < b_start_time) return -1;
-                else if (a_start_time > b_start_time) return 1;
+              if (a_start_time < b_start_time) return -1;
+              else if (a_start_time > b_start_time) return 1;
+              else {
+                if (a_end_time < b_end_time) return -1;
+                else if (a_end_time > b_end_time) return 1;
                 else {
-                  if (a_end_time < b_end_time) return -1;
-                  else if (a_end_time > b_end_time) return 1;
+                  if (a_start < b_start) return -1;
+                  else if (a_start > b_start) return 1;
                   else {
-                    if (a_start < b_start) return -1;
-                    else if (a_start > b_start) return 1;
-                    else {
-                      if (a_end < b_end) return -1;
-                      else if (a_end > b_end) return 1;
-                    }
+                    if (a_end < b_end) return -1;
+                    else if (a_end > b_end) return 1;
                   }
                 }
+              }
 
-                return 0;
-              });
+              return 0;
+            });
             const tempObj = {};
             for (const key in props.getActionsEndPoint) {
               tempObj[key] = props.getActionsEndPoint[key];
@@ -467,7 +465,10 @@ const EditATS = (props) => {
                   photo_url: '',
                 },
               });
-              console.log('xxx ATS photo',editingATSContext.editingATS.newItem.photo);
+              console.log(
+                'xxx ATS photo',
+                editingATSContext.editingATS.newItem.photo
+              );
             }}
           >
             Upload
@@ -566,6 +567,7 @@ const EditATS = (props) => {
                   setPhotoUrl={setPhoto}
                   currentUserId={props.CurrentId}
                 />
+                <GooglePhotos photoUrl={photo} setPhotoUrl={setPhoto} />
               </Col>
               <Col>
                 <img alt="icon" src={photo} height="100" width="100" />

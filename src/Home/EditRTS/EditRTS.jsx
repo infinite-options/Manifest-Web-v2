@@ -5,7 +5,7 @@ import moment from 'moment';
 import axios from 'axios';
 import AddIconModal from '../AddIconModal';
 import UploadImage from '../UploadImage';
-
+import GooglePhotos from '../GooglePhotos';
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const EditRTS = (props) => {
@@ -606,6 +606,7 @@ const EditRTS = (props) => {
                 setPhotoUrl={setPhoto}
                 currentUserId={user}
               />
+              <GooglePhotos photoUrl={photo} setPhotoUrl={setPhoto} />
             </Col>
             <Col style={{ float: 'right' }} xs={4}>
               <img alt="icon" src={photo} style={{ width: '100%' }} />
@@ -1152,15 +1153,13 @@ const EditRTS = (props) => {
                     <input
                       style={{
                         borderRadius: '10px',
-                      }}
-                      name="repeatingEnd"
-                      type="radio"
-                      style={{
                         width: '10%',
                         height: '20px',
                         marginRight: '2%',
                         float: 'left',
                       }}
+                      name="repeatingEnd"
+                      type="radio"
                       value="Never"
                       checked={
                         editingRTSContext.editingRTS.newItem.repeat_type ===

@@ -5,6 +5,7 @@ import axios from 'axios';
 import AddIconModal from '../AddIconModal';
 import UploadImage from '../UploadImage';
 import { useEffect } from 'react';
+import GooglePhotos from '../GooglePhotos';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
@@ -357,6 +358,7 @@ const EditIS = (props) => {
                 setPhotoUrl={setPhoto}
                 currentUserId={props.CurrentId}
               />
+              <GooglePhotos photoUrl={photo} setPhotoUrl={setPhoto} />
             </Col>
             <Col style={{ width: '66%' }}>
               <img alt="icon" src={photo} height="100" width="100" />
