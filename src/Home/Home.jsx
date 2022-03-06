@@ -180,7 +180,7 @@ export default function Home(props) {
       .catch((error) => {
         console.log(error);
       });
-  }, [loginContext.loginState.loggedIn, loginContext.loginState.reload]);
+  }, [userID, loginContext.loginState.reload]);
   // }
   console.log('list of users home', loginContext.loginState.reload);
   useEffect(() => {
