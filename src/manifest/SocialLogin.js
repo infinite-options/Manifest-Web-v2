@@ -506,7 +506,6 @@ function SocialLogin(props) {
             buttonText="Log In"
             ux_mode="redirect"
             isSignedIn={false}
-            buttonText="Continue with Google"
             disable={true}
             cookiePolicy={'single_host_origin'}
             redirectUri={
@@ -514,7 +513,7 @@ function SocialLogin(props) {
                 ? 'https://manifestmy.space'
                 : 'https://manifestmy.life'
             }
-            scope="https://www.googleapis.com/auth/calendar"
+            scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
             // redirectUri="http://localhost:3000"
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
