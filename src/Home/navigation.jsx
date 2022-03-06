@@ -159,55 +159,64 @@ export function Navigation() {
         .find((row) => row.startsWith('ta_uid='))
         .split('=')[1];
 
-      console.log('list of users');
-      console.log(listOfUsers);
-      const elements = listOfUsers.map((user) => (
-        <option
-          key={user.user_unique_id}
-          // value={user.user_unique_id}
-          value={JSON.stringify({
-            user_unique_id: user.user_unique_id,
-            user_name: user.user_name,
-            time_zone: user.time_zone,
-            user_email_id: user.user_email_id,
-          })}
-        >
-          {user.user_name}
-        </option>
-      ));
+      console.log('list of users', listOfUsers);
+      let elements = [];
+      if (listOfUsers.length > 0) {
+        elements = listOfUsers.map((user) => (
+          <option
+            key={user.user_unique_id}
+            // value={user.user_unique_id}
+            value={JSON.stringify({
+              user_unique_id: user.user_unique_id,
+              user_name: user.user_name,
+              time_zone: user.time_zone,
+              user_email_id: user.user_email_id,
+            })}
+          >
+            {user.user_name}
+          </option>
+        ));
+      } else {
+        elements = 'Loading';
+      }
 
       console.log('document cookie', document.cookie);
-      if (
-        document.cookie
-          .split(';')
-          .some((item) => item.trim().startsWith('patient_name='))
-      ) {
+      if (listOfUsers.length > 0) {
         if (
           document.cookie
-            .split('; ')
-            .find((row) => row.startsWith('patient_name='))
-            .split('=')[1] == 'Loading'
+            .split(';')
+            .some((item) => item.trim().startsWith('patient_name='))
         ) {
-          console.log('do something here', listOfUsers);
+          if (
+            document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('patient_name='))
+              .split('=')[1] == 'Loading'
+          ) {
+            console.log('do something here', listOfUsers);
+            if (listOfUsers[0]) {
+              console.log('document cookie set to first user');
+              document.cookie = 'patient_name=' + listOfUsers[0].user_name;
+              document.cookie = 'patient_timeZone=' + listOfUsers[0].time_zone;
+              document.cookie = 'patient_uid=' + listOfUsers[0].user_unique_id;
+              document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
+            }
+          }
+        } else {
           if (listOfUsers[0]) {
             console.log('document cookie set to first user');
-            document.cookie = 'patient_name=' + listOfUsers[0].user_name;
-            document.cookie = 'patient_timeZone' + listOfUsers[0].time_zone;
-            document.cookie = 'patient_uid' + listOfUsers[0].user_unique_id;
             document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
+            document.cookie = 'patient_name=' + listOfUsers[0].user_name;
+            document.cookie = 'patient_timeZone=' + listOfUsers[0].time_zone;
+            document.cookie = 'patient_uid=' + listOfUsers[0].user_unique_id;
+          } else {
+            console.log('document cookie set to loading');
+            document.cookie = 'patient_name=Loading';
           }
         }
       } else {
-        if (listOfUsers[0]) {
-          console.log('document cookie set to first user');
-          document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
-          document.cookie = 'patient_name=' + listOfUsers[0].user_name;
-          document.cookie = 'patient_timeZone' + listOfUsers[0].time_zone;
-          document.cookie = 'patient_uid' + listOfUsers[0].user_unique_id;
-        } else {
-          console.log('document cookie set to loading');
-          document.cookie = 'patient_name=Loading';
-        }
+        console.log('document cookie set to loading');
+        document.cookie = 'patient_name=Loading';
       }
 
       return (
@@ -562,8 +571,8 @@ export function Navigation() {
       code: auth_code,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
-      redirect_uri: redirecturi,
-      // redirect_uri: 'http://localhost:3000',
+      //redirect_uri: redirecturi,
+      redirect_uri: 'http://localhost:3000',
       grant_type: 'authorization_code',
     };
 
@@ -670,7 +679,7 @@ export function Navigation() {
         console.log(response.data);
         loginContext.setLoginState({
           ...loginContext.loginState,
-          reload: true,
+          reload: !loginContext.loginState.reload,
         });
       })
       .catch((error) => {
@@ -879,9 +888,12 @@ export function Navigation() {
                       document.cookie = 'patient_uid=1;max-age=0';
                       document.cookie = 'patient_name=1;max-age=0';
                       document.cookie = 'patient_email=1;max-age=0';
+                      document.cookie = 'patient_timeZone=1;max-age=0';
+
                       loginContext.setLoginState({
                         ...loginContext.loginState,
                         loggedIn: false,
+                        reload: false,
                         ta: {
                           ...loginContext.loginState.ta,
                           id: '',
@@ -975,12 +987,12 @@ export function Navigation() {
                     responseType="code"
                     buttonText="Log In"
                     ux_mode="redirect"
-                    redirectUri={
-                      BASE_URL.substring(8, 18) == '3s3sftsr90'
-                        ? 'https://manifestmy.space'
-                        : 'https://manifestmy.life'
-                    }
-                    // redirectUri="http://localhost:3000"
+                    // redirectUri={
+                    //   BASE_URL.substring(8, 18) == '3s3sftsr90'
+                    //     ? 'https://manifestmy.space'
+                    //     : 'https://manifestmy.life'
+                    // }
+                    redirectUri="http://localhost:3000"
                     scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
                     onSuccess={responseGoogle}
                     onFailure={responseGoogle}

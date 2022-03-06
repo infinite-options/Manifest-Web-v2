@@ -974,14 +974,18 @@ export default function GoogleEventComponent(props) {
       )
       .then((response) => {
         console.log(response);
+        loginContext.setLoginState({
+          ...loginContext.loginState,
+          reload: !loginContext.loginState.reload,
+        });
+        editingEventContext.setEditingEvent({
+          ...editingEventContext.editingEvent,
+          editing: !editingEventContext.editingEvent.editing,
+        });
       })
       .catch((error) => {
         console.log('error', error);
       });
-    editingEventContext.setEditingEvent({
-      ...editingEventContext.editingEvent,
-      editing: false,
-    });
   };
 
   return (

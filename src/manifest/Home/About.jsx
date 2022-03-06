@@ -413,7 +413,7 @@ export default function AboutModal(props) {
       )
       .then((response) => {
         console.log(response);
-        if (response.result !== false) {
+        if (response.data.result.length > 0) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;
@@ -442,13 +442,20 @@ export default function AboutModal(props) {
           //GrabFireBaseRoutinesGoalsData();
           // return userID;
         } else {
+          loginContext.setLoginState({
+            ...loginContext.loginState,
+            usersOfTA: response.data.result,
+            curUser: '',
+            curUserTimeZone: '',
+            curUserEmail: '',
+          });
           console.log('No User Found');
         }
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [userID]);
+  }, [userID, loginContext.loginState.reload]);
 
   useEffect(() => {
     console.log('yayayayayay');
@@ -1340,21 +1347,21 @@ export default function AboutModal(props) {
                   axios.post(BASE_URL + 'deleteUser', body).then((response) => {
                     console.log('deleting');
                     console.log(response.data);
-                    setDeleteUser(!deleteUser);
-                    toggleCalled(!called);
-
                     document.cookie = 'patient_uid=1;max-age=0';
                     document.cookie = 'patient_name=1;max-age=0';
                     document.cookie = 'patient_email=1;max-age=0';
                     loginContext.setLoginState({
                       ...loginContext.loginState,
-                      reload: true,
+                      reload: !loginContext.loginState.reload,
                     });
+                    setDeleteUser(!deleteUser);
+                    toggleCalled(!called);
                     history.push('/home');
                   });
                 }}
               >
                 Yes
+                {console.log('list of users', loginContext.loginState.reload)}
               </button>
               <button
                 style={{
@@ -2740,20 +2747,25 @@ export default function AboutModal(props) {
               >
                 Cancel
               </Button>
-              <Button
-                variant="secondary"
-                onClick={() => setDeleteUser(!deleteUser)}
-                style={{
-                  color: 'white',
-                  backgroundColor: '#889AB5',
-                  border: '2px solid white',
-                  margin: '25px',
-                  borderRadius: '20px',
-                  padding: '10px 20px ',
-                }}
-              >
-                Delete User
-              </Button>
+              {taList.length == 1 ? (
+                <Button
+                  variant="secondary"
+                  onClick={() => setDeleteUser(!deleteUser)}
+                  style={{
+                    color: 'white',
+                    backgroundColor: '#889AB5',
+                    border: '2px solid white',
+                    margin: '25px',
+                    borderRadius: '20px',
+                    padding: '10px 20px ',
+                  }}
+                >
+                  Delete User
+                </Button>
+              ) : (
+                <div>{console.log('listalltauser here')}</div>
+              )}
+
               {console.log('listalltaUser', taList.length)}
               {taList.length == 1 ? (
                 <div>{console.log('listalltauser here')}</div>

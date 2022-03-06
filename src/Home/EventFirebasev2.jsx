@@ -105,13 +105,25 @@ export default function EventFirebasev2(props) {
     props.setEvents({});
     setActions([]);
     setRecList({});
-  }, [props.theCurrentUserID, props.stateValue.dateContext, props.editEvent]);
+  }, [
+    props.theCurrentUserID,
+    props.stateValue.dateContext,
+    props.editEvent,
+    loginContext.loginState.reload,
+  ]);
 
   useEffect(() => {
     //makeActionDisplays();
     GetUserAcessToken();
     // console.log('here-2: gsep on useEffect = ', props.getStepsEndPoint);
-  }, [props.events, props.theCurrentUserID, recList, props.editEvent]);
+  }, [
+    props.events,
+    props.theCurrentUserID,
+    recList,
+    props.editEvent,
+    props.stateValue.dateContext,
+    loginContext.loginState.reload,
+  ]);
 
   const getTimes = (a_day_time, b_day_time) => {
     const [a_start_time, b_start_time] = [

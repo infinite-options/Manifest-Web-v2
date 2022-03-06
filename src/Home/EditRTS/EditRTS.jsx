@@ -128,7 +128,11 @@ const EditRTS = (props) => {
       during: object.user_notifications.during.time,
       after: object.user_notifications.after.time,
     });
+    object.end_day = object.start_day;
+    console.log('end day', object.end_day);
+    console.log('end time', object.end_time);
     // Get start_day_and_time
+
     const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
     console.log('today timezone converted', start_day_and_time_simple_string);
     const end_day_and_time_simple_string = `${object.end_day} ${object.end_time}:00`;
@@ -171,8 +175,6 @@ const EditRTS = (props) => {
     // object.is_available = 'True';
     // Get end_day_and_time
 
-    console.log('end day', object.end_day);
-    console.log('end time', object.end_time);
     //const end_day_and_time_string = new Date(end_day_and_time_simple_string).toString();
     const convertedEndTime = moment(end_day_and_time_simple_string).format(
       'LTS'
@@ -735,7 +737,7 @@ const EditRTS = (props) => {
                     fontWeight: 'bold',
                   }}
                   type="date"
-                  value={editingRTSContext.editingRTS.newItem.end_day}
+                  value={editingRTSContext.editingRTS.newItem.start_day}
                   onChange={(e) => {
                     // const year = parseInt(e.target.value.substring(0, 4));
                     // if (
@@ -748,7 +750,7 @@ const EditRTS = (props) => {
                       ...editingRTSContext.editingRTS,
                       newItem: {
                         ...editingRTSContext.editingRTS.newItem,
-                        end_day: e.target.value,
+                        end_day: editingRTSContext.editingRTS.newItem.start_day,
                       },
                     });
                   }}

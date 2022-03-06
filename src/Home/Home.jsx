@@ -144,8 +144,8 @@ export default function Home(props) {
             .split('=')[1]
       )
       .then((response) => {
-        console.log(response);
-        if (response.result !== false) {
+        console.log('list of users home', response.data.result);
+        if (response.data.result.length > 0) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;
@@ -166,14 +166,23 @@ export default function Home(props) {
           //GoogleEvents();
           // return userID;
         } else {
+          // const usersOfTA = 'Loading';
+          loginContext.setLoginState({
+            ...loginContext.loginState,
+            usersOfTA: response.data.result,
+            curUser: '',
+            curUserTimeZone: '',
+            curUserEmail: '',
+          });
           console.log('No User Found');
         }
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [loginContext.loginState.reload]);
+  }, [loginContext.loginState.loggedIn, loginContext.loginState.reload]);
   // }
+  console.log('list of users home', loginContext.loginState.reload);
   useEffect(() => {
     if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
       console.log('base_url', BASE_URL.substring(8, 18));
@@ -187,9 +196,6 @@ export default function Home(props) {
       console.log(CLIENT_ID, CLIENT_SECRET);
     }
   }, [loginContext.loginState.reload]);
-  useEffect(() => {
-    getAccessToken();
-  }, []);
 
   /*----------------------------Use states to define variables----------------------------*/
   const [signedin, setSignedIn] = useState(false);
@@ -814,7 +820,9 @@ export default function Home(props) {
   });
 
   const classes = useStyles();
-
+  useEffect(() => {
+    getAccessToken();
+  }, [editingEvent.editing]);
   const getAccessToken = () => {
     let url = BASE_URL + 'taToken/';
     let ta_id = '200-000002';
@@ -1272,13 +1280,7 @@ export default function Home(props) {
       if (userID == '') return;
       console.log(
         'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-        [
-          userID,
-          editingRTS.editing,
-          editingATS.editing,
-          editingIS.editing,
-          editingEvent.editing,
-        ]
+        [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
       );
 
       axios
@@ -1708,13 +1710,7 @@ export default function Home(props) {
         .catch((error) => {
           console.log('Error in getting goals and routines ' + error);
         });
-    }, [
-      userID,
-      editingRTS.editing,
-      editingATS.editing,
-      editingIS.editing,
-      editingEvent.editing,
-    ]);
+    }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
 
   function GetUserAcessToken() {
@@ -2036,13 +2032,7 @@ export default function Home(props) {
       if (userID == '') return;
       console.log(
         'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-        [
-          userID,
-          editingRTS.editing,
-          editingATS.editing,
-          editingIS.editing,
-          editingEvent.editing,
-        ]
+        [userID, editingEvent.editing]
       );
 
       axios
@@ -2153,13 +2143,7 @@ export default function Home(props) {
       if (userID == '') return;
       console.log(
         'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-        [
-          userID,
-          editingRTS.editing,
-          editingATS.editing,
-          editingIS.editing,
-          editingEvent.editing,
-        ]
+        [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
       );
 
       axios
@@ -2592,13 +2576,7 @@ export default function Home(props) {
         .catch((error) => {
           console.log('Error in getting goals and routines ' + error);
         });
-    }, [
-      userID,
-      editingRTS.editing,
-      editingATS.editing,
-      editingIS.editing,
-      editingEvent.editing,
-    ]);
+    }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
   useEffect(() => console.log('here: 4'), [editingRTS.editing.item]);
 
