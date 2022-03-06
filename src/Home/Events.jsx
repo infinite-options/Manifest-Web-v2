@@ -1715,13 +1715,7 @@ export default function Events(props) {
       if (userID == '') return;
       console.log(
         'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing, editingEvent.editing] = ',
-        [
-          userID,
-          editingRTS.editing,
-          editingATS.editing,
-          editingIS.editing,
-          editingEvent.editing,
-        ]
+        [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
       );
 
       axios
@@ -2163,13 +2157,7 @@ export default function Events(props) {
         .catch((error) => {
           console.log('Error in getting goals and routines ' + error);
         });
-    }, [
-      userID,
-      editingRTS.editing,
-      editingATS.editing,
-      editingIS.editing,
-      editingEvent.editing,
-    ]);
+    }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
 
   function GetUserAcessToken() {
@@ -2225,7 +2213,7 @@ export default function Events(props) {
       if (userID == '') return;
       console.log(
         'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-        [userID, editingEvent.editing, loginContext.loginState.reload]
+        [userID, editingEvent.editing]
       );
 
       axios
@@ -2446,12 +2434,7 @@ export default function Events(props) {
         .catch((error) => {
           console.log('Error in events' + error);
         });
-    }, [
-      userID,
-      stateValue.dateContext,
-      editingEvent.editing,
-      loginContext.loginState.reload,
-    ]);
+    }, [userID, stateValue.dateContext, editingEvent.editing]);
   }
 
   // function GoogleEvents() {
@@ -3132,6 +3115,7 @@ export default function Events(props) {
                           stateValue={stateValue}
                           setStateValue={setStateValue}
                           accessToken={accessToken}
+                          setEvents={setEvents}
                         />
                       ) : stateValue.showDeleteRecurringModal ? (
                         <DeleteEventModal

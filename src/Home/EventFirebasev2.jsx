@@ -105,12 +105,7 @@ export default function EventFirebasev2(props) {
     props.setEvents({});
     setActions([]);
     setRecList({});
-  }, [
-    props.theCurrentUserID,
-    props.stateValue.dateContext,
-    props.editEvent,
-    loginContext.loginState.reload,
-  ]);
+  }, [props.theCurrentUserID, props.stateValue.dateContext, props.editEvent]);
 
   useEffect(() => {
     //makeActionDisplays();
@@ -122,7 +117,6 @@ export default function EventFirebasev2(props) {
     recList,
     props.editEvent,
     props.stateValue.dateContext,
-    loginContext.loginState.reload,
   ]);
 
   const getTimes = (a_day_time, b_day_time) => {
