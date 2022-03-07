@@ -123,18 +123,38 @@ export default function EditEventModal(props) {
   const [recEvent, setRecEvent] = useState({});
   useEffect(() => {
     if (props.event.recurringEventId !== undefined) {
-      var requestRecurringEvent = window.gapi.client.calendar.events.get({
-        calendarId: 'primary',
-        eventId: props.event.recurringEventId,
-      });
-      requestRecurringEvent.execute(function (resp) {
-        console.log(resp);
-        setRecEvent(resp);
-        let recurrence = resp.recurrence;
-        setRecurrence(recurrence);
-        setRecurrenceRule(recurrence);
-        return recurrence;
-      });
+      // var requestRecurringEvent = window.gapi.client.calendar.events.get({
+      //   calendarId: 'primary',
+      //   eventId: props.event.recurringEventId,
+      // });
+      // var requestRecurringEvent;
+      const headers = {
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + props.userAccessToken,
+      };
+      let url = `https://www.googleapis.com/calendar/v3/calendars/primary/events/${props.event.recurringEventId}/instances?key=${API_KEY}`;
+      axios
+        .get(url, {
+          headers: headers,
+        })
+        .then((response) => {
+          console.log('rec events', response.data.items);
+          setRecEvent(response.data.items);
+          if (response.data.items.recurrence != undefined) {
+            let recurrence = response.data.items.recurrence;
+            setRecurrence(recurrence);
+            setRecurrenceRule(recurrence);
+            return recurrence;
+          }
+        });
+      // requestRecurringEvent.execute(function (resp) {
+      //   console.log(resp);
+      //   setRecEvent(resp);
+      //   let recurrence = resp.recurrence;
+      //   setRecurrence(recurrence);
+      //   setRecurrenceRule(recurrence);
+      //   return recurrence;
+      // });
     }
   }, [props.event]);
 
@@ -146,6 +166,48 @@ export default function EditEventModal(props) {
     console.log('opendeletemodal rec', r, showEditRecurringModal);
     setShowEditRecurringModal(!showEditRecurringModal);
     //console.log(instancesTheCalenderEvent(r.recurringEventId))
+  };
+  const getTimes = (a_day_time, b_day_time) => {
+    const [a_start_time, b_start_time] = [
+      a_day_time.substring(10, a_day_time.length),
+      b_day_time.substring(10, b_day_time.length),
+    ];
+    const [a_HMS, b_HMS] = [
+      a_start_time
+        .substring(0, a_start_time.length - 3)
+        .replace(/\s{1,}/, '')
+        .split(':'),
+      b_start_time
+        .substring(0, b_start_time.length - 3)
+        .replace(/\s{1,}/, '')
+        .split(':'),
+    ];
+    const [a_parity, b_parity] = [
+      a_start_time
+        .substring(a_start_time.length - 3, a_start_time.length)
+        .replace(/\s{1,}/, ''),
+      b_start_time
+        .substring(b_start_time.length - 3, b_start_time.length)
+        .replace(/\s{1,}/, ''),
+    ];
+
+    let [a_time, b_time] = [0, 0];
+    if (a_parity === 'pm' && a_HMS[0] !== '12') {
+      const hoursInt = parseInt(a_HMS[0]) + 12;
+      a_HMS[0] = `${hoursInt}`;
+    } else if (a_parity === 'am' && a_HMS[0] === '12') a_HMS[0] = '00';
+
+    if (b_parity === 'pm' && b_HMS[0] !== '12') {
+      const hoursInt = parseInt(b_HMS[0]) + 12;
+      b_HMS[0] = `${hoursInt}`;
+    } else if (b_parity === 'am' && b_HMS[0] === '12') b_HMS[0] = '00';
+
+    for (let i = 0; i < a_HMS.length; i++) {
+      a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+      b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+    }
+
+    return [a_time, b_time];
   };
 
   const closeEditModal = () => {
@@ -1273,9 +1335,14 @@ export default function EditEventModal(props) {
     } else if (editRecurringOption === 'This and following events') {
       if (moment(event.start.dateTime) < moment()) {
         console.log('in if');
-        let url = BASE_URL + 'googleRecurringInstances/';
+        // let url = BASE_URL + 'googleRecurringInstances/';
         let id = userID;
         let eventId = props.event.recurringEventId;
+        const headers = {
+          Accept: 'application/json',
+          Authorization: 'Bearer ' + props.userAccessToken,
+        };
+        let url = `https://content.googleapis.com/calendar/v3/calendars/primary/events/${eventId}/instances?key=${API_KEY}`;
         //let eventId = '';
         var firstEventCount = -1;
         var secondEventCount = -1;
@@ -1284,18 +1351,20 @@ export default function EditEventModal(props) {
         var isNeverEnds = false;
         console.log(event);
         axios
-          .post(url + id.toString() + ',' + eventId.toString())
+          .get(url, {
+            headers: headers,
+          })
           .then((res) => {
-            console.log('/googleRecurringInstances: ', res.data);
-            parentEvent = res.data[0];
+            console.log('/googleRecurringInstances: ', res.data.items);
+            parentEvent = res.data.items[0];
 
             //event.summary = parentEvent.summary;
             //event.id = parentEvent.recurringEventId;
             console.log(parentEvent);
             console.log(parentEvent.start.dateTime, parentEvent.end.dateTime);
             clickedEventIndex = '';
-            for (let i = 0; i < res.data.length; i++) {
-              if (res.data[i].id === props.event.id) {
+            for (let i = 0; i < res.data.items.length; i++) {
+              if (res.data.items[i].id === props.event.id) {
                 clickedEventIndex = i;
                 break;
               }
@@ -1345,7 +1414,7 @@ export default function EditEventModal(props) {
             };
             console.log(event, parentEvent);
             let firstEventCount = clickedEventIndex;
-            let secondEventCount = res.data.length - clickedEventIndex;
+            let secondEventCount = res.data.items.length - clickedEventIndex;
             //the instance clicked on
             console.log('firstEventCount: ', firstEventCount);
             //the total occurences - instance clicked on
@@ -1564,9 +1633,14 @@ export default function EditEventModal(props) {
         });
       } else {
         console.log('In else');
-        let url = BASE_URL + 'googleRecurringInstances/';
+        // let url = BASE_URL + 'googleRecurringInstances/';
         let id = userID;
         let eventId = props.event.recurringEventId;
+        const headers = {
+          Accept: 'application/json',
+          Authorization: 'Bearer ' + props.userAccessToken,
+        };
+        let url = `https://content.googleapis.com/calendar/v3/calendars/primary/events/${eventId}/instances?key=${API_KEY}`;
         //let eventId = '';
         var firstEventCount = -1;
         var secondEventCount = -1;
@@ -1575,16 +1649,18 @@ export default function EditEventModal(props) {
         var isNeverEnds = false;
         console.log(event);
         axios
-          .post(url + id.toString() + ',' + eventId.toString())
+          .get(url, {
+            headers: headers,
+          })
           .then((res) => {
-            console.log('/googleRecurringInstances: ', res.data);
-            parentEvent = res.data[0];
+            console.log('/googleRecurringInstances: ', res.data.items);
+            parentEvent = res.data.items[0];
 
             console.log(parentEvent);
             console.log(parentEvent.start.dateTime, parentEvent.end.dateTime);
             clickedEventIndex = '';
-            for (let i = 0; i < res.data.length; i++) {
-              if (res.data[i].id === props.event.id) {
+            for (let i = 0; i < res.data.items.length; i++) {
+              if (res.data.items[i].id === props.event.id) {
                 clickedEventIndex = i;
                 break;
               }
@@ -1634,7 +1710,7 @@ export default function EditEventModal(props) {
             };
             console.log(event, parentEvent);
             let firstEventCount = clickedEventIndex;
-            let secondEventCount = res.data.length - clickedEventIndex;
+            let secondEventCount = res.data.items.length - clickedEventIndex;
             console.log('firstEventCount: ', firstEventCount);
             console.log('secondEventCount: ', secondEventCount);
 
@@ -1824,24 +1900,113 @@ export default function EditEventModal(props) {
         if (firstEventCount === 0) {
           console.log('Before deleteEvent/eventId: ', eventId);
           // deleteTheCalenderEvent(eventId);
-          const headers = {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: 'Bearer ' + props.taAccessToken,
+          // const headers = {
+          //   'Content-Type': 'application/json',
+          //   Accept: 'application/json',
+          //   Authorization: 'Bearer ' + props.taAccessToken,
+          // };
+          // axios
+          //   .delete(
+          //     `https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}?key=${API_KEY}`,
+          //     {
+          //       headers: headers,
+          //     }
+          //   )
+          //   .then((response) => {
+          //     console.log(response);
+          //   })
+          //   .catch((error) => {
+          //     console.log('error', error);
+          //   });
+          const deleteEvent = async () => {
+            const headersTa = {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              Authorization: 'Bearer ' + props.taAccessToken,
+            };
+            await axios
+              .delete(
+                `https://www.googleapis.com/calendar/v3/calendars/primary/events/${id}?key=${API_KEY}`,
+                {
+                  headers: headersTa,
+                }
+              )
+              .then((response) => {
+                console.log(response);
+              })
+              .catch((error) => {
+                console.log('error', error);
+              });
+            alert('Deleted');
+
+            let start =
+              props.stateValue.dateContext.format('YYYY-MM-DD') +
+              'T00:00:00-07:00';
+            let endofWeek = moment(props.stateValue.dateContext).add(6, 'days');
+            let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
+            const headersUser = {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              Authorization: 'Bearer ' + props.userAccessToken,
+            };
+            const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?orderBy=startTime&singleEvents=true&timeMax=${end}&timeMin=${start}&key=${API_KEY}`;
+            await axios
+              .get(url, {
+                headers: headersUser,
+              })
+              .then((response) => {
+                console.log('day events ', response.data.items);
+                const temp = [];
+
+                for (let i = 0; i < response.data.items.length; i++) {
+                  temp.push(response.data.items[i]);
+                }
+                temp.sort((a, b) => {
+                  // console.log('a = ', a, '\nb = ', b);
+                  const [a_start, b_start] = [
+                    a['start']['dateTime'],
+                    b['start']['dateTime'],
+                  ];
+                  console.log('a_start = ', a_start, '\nb_start = ', b_start);
+                  const [a_end, b_end] = [
+                    a['end']['dateTime'],
+                    b['end']['dateTime'],
+                  ];
+
+                  const [a_start_time, b_start_time] = getTimes(
+                    a['start']['dateTime'],
+                    b['start']['dateTime']
+                  );
+                  const [a_end_time, b_end_time] = getTimes(
+                    a['end']['dateTime'],
+                    b['end']['dateTime']
+                  );
+
+                  if (a_start_time < b_start_time) return -1;
+                  else if (a_start_time > b_start_time) return 1;
+                  else {
+                    if (a_end_time < b_end_time) return -1;
+                    else if (a_end_time > b_end_time) return 1;
+                    else {
+                      if (a_start < b_start) return -1;
+                      else if (a_start > b_start) return 1;
+                      else {
+                        if (a_end < b_end) return -1;
+                        else if (a_end > b_end) return 1;
+                      }
+                    }
+                  }
+
+                  return 0;
+                });
+
+                console.log('homeTemp = ', temp);
+
+                props.setEvents(temp);
+              })
+              .catch((error) => console.log(error));
           };
-          axios
-            .delete(
-              `https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}?key=${API_KEY}`,
-              {
-                headers: headers,
-              }
-            )
-            .then((response) => {
-              console.log(response);
-            })
-            .catch((error) => {
-              console.log('error', error);
-            });
+          deleteEvent();
         } else {
           console.log('Before updateEvent: ');
           console.log('event: ', recEvent);
@@ -1878,45 +2043,54 @@ export default function EditEventModal(props) {
       }
     } else if (editRecurringOption === 'All events') {
       let eventId = event.recurringEventId;
-      let url = BASE_URL + 'googleRecurringInstances/';
+      // let url = BASE_URL + 'googleRecurringInstances/';
       let id = userID;
+      const headers = {
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + props.userAccessToken,
+      };
+      let url = `https://content.googleapis.com/calendar/v3/calendars/primary/events/${eventId}/instances?key=${API_KEY}`;
       //let eventId = '';
       var firstEventCount = -1;
       var secondEventCount = -1;
       var clickedEventIndex = 0;
       var parentEvent = {};
       var isNeverEnds = false;
-      axios.post(url + id.toString() + ',' + eventId.toString()).then((res) => {
-        console.log('/getRecurringEventInstances: ', res.data);
-        parentEvent = res.data[0];
-        console.log(parentEvent, event);
-        // setting new start & end time in ISO time String
-        let startHour = new Date(event.start['dateTime']).getHours();
-        let startMin = new Date(event.start['dateTime']).getMinutes();
-        let endHour = new Date(event.end['dateTime']).getHours();
-        let endMin = new Date(event.end['dateTime']).getMinutes();
-        let newStartTime = new Date(parentEvent.start['dateTime']).setHours(
-          startHour
-        );
-        newStartTime = new Date(newStartTime).setMinutes(startMin);
-        let newEndTime = new Date(parentEvent.end['dateTime']).setHours(
-          endHour
-        );
-        newEndTime = new Date(newEndTime).setMinutes(endMin);
-        const newISOStartTime = new Date(newStartTime).toISOString();
-        const newISOEndTime = new Date(newEndTime).toISOString();
-        // assign new start and end time to event
-        event.start = {
-          dateTime: newISOStartTime,
-          timeZone: parentEvent.start['timeZone'],
-        };
-        event.end = {
-          dateTime: newISOEndTime,
-          timeZone: parentEvent.end['timeZone'],
-        };
-        event.recurrence = recurrenceRule;
-        console.log(event);
-      });
+      axios
+        .get(url, {
+          headers: headers,
+        })
+        .then((res) => {
+          console.log('/getRecurringEventInstances: ', res.data.items);
+          parentEvent = res.data.items[0];
+          console.log(parentEvent, event);
+          // setting new start & end time in ISO time String
+          let startHour = new Date(event.start['dateTime']).getHours();
+          let startMin = new Date(event.start['dateTime']).getMinutes();
+          let endHour = new Date(event.end['dateTime']).getHours();
+          let endMin = new Date(event.end['dateTime']).getMinutes();
+          let newStartTime = new Date(parentEvent.start['dateTime']).setHours(
+            startHour
+          );
+          newStartTime = new Date(newStartTime).setMinutes(startMin);
+          let newEndTime = new Date(parentEvent.end['dateTime']).setHours(
+            endHour
+          );
+          newEndTime = new Date(newEndTime).setMinutes(endMin);
+          const newISOStartTime = new Date(newStartTime).toISOString();
+          const newISOEndTime = new Date(newEndTime).toISOString();
+          // assign new start and end time to event
+          event.start = {
+            dateTime: newISOStartTime,
+            timeZone: parentEvent.start['timeZone'],
+          };
+          event.end = {
+            dateTime: newISOEndTime,
+            timeZone: parentEvent.end['timeZone'],
+          };
+          event.recurrence = recurrenceRule;
+          console.log(event);
+        });
 
       //  var event = {
       //    id: eventId,

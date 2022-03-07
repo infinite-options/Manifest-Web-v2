@@ -52,7 +52,7 @@ const useStyles = makeStyles({
 });
 
 export default function EventFirebasev2(props) {
-  console.log('curdate today firebase props ', props);
+  console.log('curdate today firebase props ', props.editEvent);
   console.log('curdate today firebase props ', document.cookie);
 
   let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
@@ -115,6 +115,7 @@ export default function EventFirebasev2(props) {
     props.theCurrentUserID,
     recList,
     props.editEvent,
+    // editingEvent.editing,
     props.stateValue.dateContext,
   ]);
 
@@ -677,88 +678,94 @@ export default function EventFirebasev2(props) {
     if (r.recurringEventId === undefined) {
       console.log('opendeleterecurringmodal nonre', r);
       // deleteTheCalenderEvent(r.id);
-      const headersTa = {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        Authorization: 'Bearer ' + props.taAccessToken,
-      };
-      axios
-        .delete(
-          `https://www.googleapis.com/calendar/v3/calendars/primary/events/${r.id}?key=${API_KEY}`,
-          {
-            headers: headersTa,
-          }
-        )
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log('error', error);
-        });
-      alert('Deleted');
+      const deleteEvent = async () => {
+        const headersTa = {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: 'Bearer ' + props.taAccessToken,
+        };
+        await axios
+          .delete(
+            `https://www.googleapis.com/calendar/v3/calendars/primary/events/${r.id}?key=${API_KEY}`,
+            {
+              headers: headersTa,
+            }
+          )
+          .then((response) => {
+            console.log(response);
+          })
+          .catch((error) => {
+            console.log('error', error);
+          });
+        alert('Deleted');
 
-      let start =
-        props.stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
-      let endofWeek = moment(props.stateValue.dateContext).add(6, 'days');
-      let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
-      const headersUser = {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        Authorization: 'Bearer ' + props.userAccessToken,
-      };
-      const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?orderBy=startTime&singleEvents=true&timeMax=${end}&timeMin=${start}&key=${API_KEY}`;
-      axios
-        .get(url, {
-          headers: headersUser,
-        })
-        .then((response) => {
-          console.log('day events ', response.data.items);
-          const temp = [];
+        let start =
+          props.stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+        let endofWeek = moment(props.stateValue.dateContext).add(6, 'days');
+        let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
+        const headersUser = {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: 'Bearer ' + props.userAccessToken,
+        };
+        const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?orderBy=startTime&singleEvents=true&timeMax=${end}&timeMin=${start}&key=${API_KEY}`;
+        await axios
+          .get(url, {
+            headers: headersUser,
+          })
+          .then((response) => {
+            console.log('day events ', response.data.items);
+            const temp = [];
 
-          for (let i = 0; i < response.data.items.length; i++) {
-            temp.push(response.data.items[i]);
-          }
-          temp.sort((a, b) => {
-            // console.log('a = ', a, '\nb = ', b);
-            const [a_start, b_start] = [
-              a['start']['dateTime'],
-              b['start']['dateTime'],
-            ];
-            console.log('a_start = ', a_start, '\nb_start = ', b_start);
-            const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
+            for (let i = 0; i < response.data.items.length; i++) {
+              temp.push(response.data.items[i]);
+            }
+            temp.sort((a, b) => {
+              // console.log('a = ', a, '\nb = ', b);
+              const [a_start, b_start] = [
+                a['start']['dateTime'],
+                b['start']['dateTime'],
+              ];
+              console.log('a_start = ', a_start, '\nb_start = ', b_start);
+              const [a_end, b_end] = [
+                a['end']['dateTime'],
+                b['end']['dateTime'],
+              ];
 
-            const [a_start_time, b_start_time] = getTimes(
-              a['start']['dateTime'],
-              b['start']['dateTime']
-            );
-            const [a_end_time, b_end_time] = getTimes(
-              a['end']['dateTime'],
-              b['end']['dateTime']
-            );
+              const [a_start_time, b_start_time] = getTimes(
+                a['start']['dateTime'],
+                b['start']['dateTime']
+              );
+              const [a_end_time, b_end_time] = getTimes(
+                a['end']['dateTime'],
+                b['end']['dateTime']
+              );
 
-            if (a_start_time < b_start_time) return -1;
-            else if (a_start_time > b_start_time) return 1;
-            else {
-              if (a_end_time < b_end_time) return -1;
-              else if (a_end_time > b_end_time) return 1;
+              if (a_start_time < b_start_time) return -1;
+              else if (a_start_time > b_start_time) return 1;
               else {
-                if (a_start < b_start) return -1;
-                else if (a_start > b_start) return 1;
+                if (a_end_time < b_end_time) return -1;
+                else if (a_end_time > b_end_time) return 1;
                 else {
-                  if (a_end < b_end) return -1;
-                  else if (a_end > b_end) return 1;
+                  if (a_start < b_start) return -1;
+                  else if (a_start > b_start) return 1;
+                  else {
+                    if (a_end < b_end) return -1;
+                    else if (a_end > b_end) return 1;
+                  }
                 }
               }
-            }
 
-            return 0;
-          });
+              return 0;
+            });
 
-          console.log('homeTemp = ', temp);
+            console.log('homeTemp = ', temp);
 
-          props.setEvents(temp);
-        })
-        .catch((error) => console.log(error));
+            props.setEvents(temp);
+          })
+          .catch((error) => console.log(error));
+      };
+      deleteEvent();
     } else {
       console.log('opendeleterecurringmodal rec', r);
       props.setStateValue((prevState) => {

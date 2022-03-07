@@ -104,6 +104,48 @@ export default function GoogleEventComponent(props) {
   const [reminderMethod, setReminderMethod] = useState('');
   const [reminderMinutes, setReminderMinutes] = useState('');
 
+  const getTimes = (a_day_time, b_day_time) => {
+    const [a_start_time, b_start_time] = [
+      a_day_time.substring(10, a_day_time.length),
+      b_day_time.substring(10, b_day_time.length),
+    ];
+    const [a_HMS, b_HMS] = [
+      a_start_time
+        .substring(0, a_start_time.length - 3)
+        .replace(/\s{1,}/, '')
+        .split(':'),
+      b_start_time
+        .substring(0, b_start_time.length - 3)
+        .replace(/\s{1,}/, '')
+        .split(':'),
+    ];
+    const [a_parity, b_parity] = [
+      a_start_time
+        .substring(a_start_time.length - 3, a_start_time.length)
+        .replace(/\s{1,}/, ''),
+      b_start_time
+        .substring(b_start_time.length - 3, b_start_time.length)
+        .replace(/\s{1,}/, ''),
+    ];
+
+    let [a_time, b_time] = [0, 0];
+    if (a_parity === 'PM' && a_HMS[0] !== '12') {
+      const hoursInt = parseInt(a_HMS[0]) + 12;
+      a_HMS[0] = `${hoursInt}`;
+    } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+
+    if (b_parity === 'PM' && b_HMS[0] !== '12') {
+      const hoursInt = parseInt(b_HMS[0]) + 12;
+      b_HMS[0] = `${hoursInt}`;
+    } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+
+    for (let i = 0; i < a_HMS.length; i++) {
+      a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+      b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+    }
+
+    return [a_time, b_time];
+  };
   const startTimePicker = () => {
     return (
       <DatePicker
@@ -976,57 +1018,15 @@ export default function GoogleEventComponent(props) {
         .then((response) => {
           console.log(response);
 
-          editingEventContext.setEditingEvent({
-            ...editingEventContext.editingEvent,
-            editing: false,
-          });
+          // editingEventContext.setEditingEvent({
+          //   ...editingEventContext.editingEvent,
+          //   editing: false,
+          // });
           // props.setEvents(event);
         })
         .catch((error) => {
           console.log('error', error);
         });
-      const getTimes = (a_day_time, b_day_time) => {
-        const [a_start_time, b_start_time] = [
-          a_day_time.substring(10, a_day_time.length),
-          b_day_time.substring(10, b_day_time.length),
-        ];
-        const [a_HMS, b_HMS] = [
-          a_start_time
-            .substring(0, a_start_time.length - 3)
-            .replace(/\s{1,}/, '')
-            .split(':'),
-          b_start_time
-            .substring(0, b_start_time.length - 3)
-            .replace(/\s{1,}/, '')
-            .split(':'),
-        ];
-        const [a_parity, b_parity] = [
-          a_start_time
-            .substring(a_start_time.length - 3, a_start_time.length)
-            .replace(/\s{1,}/, ''),
-          b_start_time
-            .substring(b_start_time.length - 3, b_start_time.length)
-            .replace(/\s{1,}/, ''),
-        ];
-
-        let [a_time, b_time] = [0, 0];
-        if (a_parity === 'PM' && a_HMS[0] !== '12') {
-          const hoursInt = parseInt(a_HMS[0]) + 12;
-          a_HMS[0] = `${hoursInt}`;
-        } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
-
-        if (b_parity === 'PM' && b_HMS[0] !== '12') {
-          const hoursInt = parseInt(b_HMS[0]) + 12;
-          b_HMS[0] = `${hoursInt}`;
-        } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
-
-        for (let i = 0; i < a_HMS.length; i++) {
-          a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
-          b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
-        }
-
-        return [a_time, b_time];
-      };
 
       let start =
         props.stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
@@ -1092,6 +1092,10 @@ export default function GoogleEventComponent(props) {
         .catch((error) => console.log(error));
     };
     createEvent();
+    editingEventContext.setEditingEvent({
+      ...editingEventContext.editingEvent,
+      editing: false,
+    });
   };
 
   return (

@@ -3120,6 +3120,7 @@ export default function Events(props) {
                           setStateValue={setStateValue}
                           userAccessToken={userAccessToken}
                           taAccessToken={taAccessToken}
+                          events={events}
                           setEvents={setEvents}
                         />
                       ) : stateValue.showDeleteRecurringModal ? (
@@ -3129,6 +3130,8 @@ export default function Events(props) {
                           setStateValue={setStateValue}
                           userAccessToken={userAccessToken}
                           taAccessToken={taAccessToken}
+                          events={events}
+                          setEvents={setEvents}
                         />
                       ) : stateValue.showEditModal ? (
                         <EditEventModal
@@ -3140,6 +3143,8 @@ export default function Events(props) {
                           setStateValue={setStateValue}
                           userAccessToken={userAccessToken}
                           taAccessToken={taAccessToken}
+                          events={events}
+                          setEvents={setEvents}
                         />
                       ) : (
                         showCalendarView()
