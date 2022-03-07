@@ -455,7 +455,7 @@ export default function AboutModal(props) {
       .catch((error) => {
         console.log(error);
       });
-  }, [userID, loginContext.loginState.reload]);
+  }, [loginContext.loginState.reload]);
 
   useEffect(() => {
     console.log('yayayayayay');

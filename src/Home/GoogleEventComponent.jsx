@@ -959,134 +959,139 @@ export default function GoogleEventComponent(props) {
       },
     };
     //publishTheCalenderEvent(event);
-    const headers = {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Authorization: 'Bearer ' + props.accessToken,
-    };
-    axios
-      .post(
-        `https://www.googleapis.com/calendar/v3/calendars/primary/events?key=${API_KEY}`,
-        event,
-        {
-          headers: headers,
-        }
-      )
-      .then((response) => {
-        console.log(response);
-
-        editingEventContext.setEditingEvent({
-          ...editingEventContext.editingEvent,
-          editing: !editingEventContext.editingEvent.editing,
-        });
-        // props.setEvents(event);
-        const getTimes = (a_day_time, b_day_time) => {
-          const [a_start_time, b_start_time] = [
-            a_day_time.substring(10, a_day_time.length),
-            b_day_time.substring(10, b_day_time.length),
-          ];
-          const [a_HMS, b_HMS] = [
-            a_start_time
-              .substring(0, a_start_time.length - 3)
-              .replace(/\s{1,}/, '')
-              .split(':'),
-            b_start_time
-              .substring(0, b_start_time.length - 3)
-              .replace(/\s{1,}/, '')
-              .split(':'),
-          ];
-          const [a_parity, b_parity] = [
-            a_start_time
-              .substring(a_start_time.length - 3, a_start_time.length)
-              .replace(/\s{1,}/, ''),
-            b_start_time
-              .substring(b_start_time.length - 3, b_start_time.length)
-              .replace(/\s{1,}/, ''),
-          ];
-
-          let [a_time, b_time] = [0, 0];
-          if (a_parity === 'PM' && a_HMS[0] !== '12') {
-            const hoursInt = parseInt(a_HMS[0]) + 12;
-            a_HMS[0] = `${hoursInt}`;
-          } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
-
-          if (b_parity === 'PM' && b_HMS[0] !== '12') {
-            const hoursInt = parseInt(b_HMS[0]) + 12;
-            b_HMS[0] = `${hoursInt}`;
-          } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
-
-          for (let i = 0; i < a_HMS.length; i++) {
-            a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
-            b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+    const createEvent = async () => {
+      const headersTa = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + props.taAccessToken,
+      };
+      await axios
+        .post(
+          `https://www.googleapis.com/calendar/v3/calendars/primary/events?key=${API_KEY}`,
+          event,
+          {
+            headers: headersTa,
           }
+        )
+        .then((response) => {
+          console.log(response);
 
-          return [a_time, b_time];
-        };
-        let user_id = userID;
-        let start =
-          props.stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
-        let endofWeek = moment(props.stateValue.dateContext).add(6, 'days');
-        let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
-        const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?orderBy=startTime&singleEvents=true&timeMax=${end}&timeMin=${start}&key=${API_KEY}`;
-        axios
-          .get(url, {
-            headers: headers,
-          })
-          .then((response) => {
-            console.log('day events ', response.data.items);
-            const temp = [];
+          editingEventContext.setEditingEvent({
+            ...editingEventContext.editingEvent,
+            editing: false,
+          });
+          // props.setEvents(event);
+        })
+        .catch((error) => {
+          console.log('error', error);
+        });
+      const getTimes = (a_day_time, b_day_time) => {
+        const [a_start_time, b_start_time] = [
+          a_day_time.substring(10, a_day_time.length),
+          b_day_time.substring(10, b_day_time.length),
+        ];
+        const [a_HMS, b_HMS] = [
+          a_start_time
+            .substring(0, a_start_time.length - 3)
+            .replace(/\s{1,}/, '')
+            .split(':'),
+          b_start_time
+            .substring(0, b_start_time.length - 3)
+            .replace(/\s{1,}/, '')
+            .split(':'),
+        ];
+        const [a_parity, b_parity] = [
+          a_start_time
+            .substring(a_start_time.length - 3, a_start_time.length)
+            .replace(/\s{1,}/, ''),
+          b_start_time
+            .substring(b_start_time.length - 3, b_start_time.length)
+            .replace(/\s{1,}/, ''),
+        ];
 
-            for (let i = 0; i < response.data.items.length; i++) {
-              temp.push(response.data.items[i]);
-            }
-            temp.sort((a, b) => {
-              // console.log('a = ', a, '\nb = ', b);
-              const [a_start, b_start] = [
-                a['start']['dateTime'],
-                b['start']['dateTime'],
-              ];
-              console.log('a_start = ', a_start, '\nb_start = ', b_start);
-              const [a_end, b_end] = [
-                a['end']['dateTime'],
-                b['end']['dateTime'],
-              ];
+        let [a_time, b_time] = [0, 0];
+        if (a_parity === 'PM' && a_HMS[0] !== '12') {
+          const hoursInt = parseInt(a_HMS[0]) + 12;
+          a_HMS[0] = `${hoursInt}`;
+        } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
 
-              const [a_start_time, b_start_time] = getTimes(
-                a['start']['dateTime'],
-                b['start']['dateTime']
-              );
-              const [a_end_time, b_end_time] = getTimes(
-                a['end']['dateTime'],
-                b['end']['dateTime']
-              );
+        if (b_parity === 'PM' && b_HMS[0] !== '12') {
+          const hoursInt = parseInt(b_HMS[0]) + 12;
+          b_HMS[0] = `${hoursInt}`;
+        } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
 
-              if (a_start_time < b_start_time) return -1;
-              else if (a_start_time > b_start_time) return 1;
+        for (let i = 0; i < a_HMS.length; i++) {
+          a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+          b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+        }
+
+        return [a_time, b_time];
+      };
+
+      let start =
+        props.stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+      let endofWeek = moment(props.stateValue.dateContext).add(6, 'days');
+      let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
+      const headersUser = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + props.userAccessToken,
+      };
+      const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?orderBy=startTime&singleEvents=true&timeMax=${end}&timeMin=${start}&key=${API_KEY}`;
+      await axios
+        .get(url, {
+          headers: headersUser,
+        })
+        .then((response) => {
+          console.log('day events ', response.data.items);
+          const temp = [];
+
+          for (let i = 0; i < response.data.items.length; i++) {
+            temp.push(response.data.items[i]);
+          }
+          temp.sort((a, b) => {
+            // console.log('a = ', a, '\nb = ', b);
+            const [a_start, b_start] = [
+              a['start']['dateTime'],
+              b['start']['dateTime'],
+            ];
+            console.log('a_start = ', a_start, '\nb_start = ', b_start);
+            const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
+
+            const [a_start_time, b_start_time] = getTimes(
+              a['start']['dateTime'],
+              b['start']['dateTime']
+            );
+            const [a_end_time, b_end_time] = getTimes(
+              a['end']['dateTime'],
+              b['end']['dateTime']
+            );
+
+            if (a_start_time < b_start_time) return -1;
+            else if (a_start_time > b_start_time) return 1;
+            else {
+              if (a_end_time < b_end_time) return -1;
+              else if (a_end_time > b_end_time) return 1;
               else {
-                if (a_end_time < b_end_time) return -1;
-                else if (a_end_time > b_end_time) return 1;
+                if (a_start < b_start) return -1;
+                else if (a_start > b_start) return 1;
                 else {
-                  if (a_start < b_start) return -1;
-                  else if (a_start > b_start) return 1;
-                  else {
-                    if (a_end < b_end) return -1;
-                    else if (a_end > b_end) return 1;
-                  }
+                  if (a_end < b_end) return -1;
+                  else if (a_end > b_end) return 1;
                 }
               }
+            }
 
-              return 0;
-            });
+            return 0;
+          });
 
-            console.log('homeTemp = ', temp);
+          console.log('homeTemp = ', temp);
 
-            props.setEvents(temp);
-          })
-          .catch((error) => console.log(error));
-      })
-      .catch((error) => {
-        console.log('error', error);
-      });
+          props.setEvents(temp);
+        })
+        .catch((error) => console.log(error));
+    };
+    createEvent();
   };
 
   return (

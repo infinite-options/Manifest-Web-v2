@@ -166,13 +166,13 @@ export default function GoalHome(props) {
           // return userID;
         } else {
           console.log('No User Found');
-          loginContext.setLoginState({
-            ...loginContext.loginState,
-            usersOfTA: response.data.result,
-            curUser: '',
-            curUserTimeZone: '',
-            curUserEmail: '',
-          });
+          // loginContext.setLoginState({
+          //   ...loginContext.loginState,
+          //   usersOfTA: response.data.result,
+          //   curUser: '',
+          //   curUserTimeZone: '',
+          //   curUserEmail: '',
+          // });
         }
       })
       .catch((error) => {
@@ -200,7 +200,8 @@ export default function GoalHome(props) {
   const [signedin, setSignedIn] = useState(false);
   const [email, setEmail] = useState(taEmail);
   const [idToken, setIdToken] = useState('');
-  const [accessToken, setAccessToken] = useState('');
+  const [taAccessToken, setTaAccessToken] = useState('');
+  const [userAccessToken, setUserAccessToken] = useState('');
   const [routineID, setRoutineID] = useState('');
   const [actionID, setActionID] = useState('');
   const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
@@ -902,7 +903,7 @@ export default function GoalHome(props) {
                   console.log(data);
                   let at = data['access_token'];
                   var id_token = data['id_token'];
-                  setAccessToken(at);
+                  setTaAccessToken(at);
                   setIdToken(id_token);
                   console.log('in events', at);
                   let url = BASE_URL + 'UpdateAccessToken/';
@@ -914,13 +915,13 @@ export default function GoalHome(props) {
                     .catch((err) => {
                       console.log(err);
                     });
-                  return accessToken;
+                  return taAccessToken;
                 })
                 .catch((err) => {
                   console.log(err);
                 });
             } else {
-              setAccessToken(old_at);
+              setTaAccessToken(old_at);
             }
           })
           .catch((err) => {
@@ -1878,6 +1879,7 @@ export default function GoalHome(props) {
                   .then((data) => {
                     console.log(data);
                     let at = data['access_token'];
+                    setUserAccessToken(at);
                     const headers = {
                       Accept: 'application/json',
                       Authorization: 'Bearer ' + at,
@@ -1960,7 +1962,7 @@ export default function GoalHome(props) {
                     console.log(err);
                   });
               } else {
-                //setAccessToken(old_at);
+                setUserAccessToken(old_at);
               }
             })
             .catch((err) => {
@@ -3040,6 +3042,8 @@ export default function GoalHome(props) {
                           currentEmail={userEmail}
                           stateValue={stateValue}
                           setStateValue={setStateValue}
+                          userAccessToken={userAccessToken}
+                          taAccessToken={taAccessToken}
                         />
                       ) : (
                         showCalendarView()

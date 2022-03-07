@@ -1144,7 +1144,7 @@ export default function EditEventModal(props) {
       const headers = {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        Authorization: 'Bearer ' + props.accessToken,
+        Authorization: 'Bearer ' + props.taAccessToken,
       };
       axios
         .put(
@@ -1507,7 +1507,7 @@ export default function EditEventModal(props) {
           const headers = {
             'Content-Type': 'application/json',
             Accept: 'application/json',
-            Authorization: 'Bearer ' + props.accessToken,
+            Authorization: 'Bearer ' + props.taAccessToken,
           };
           axios
             .post(
@@ -1538,7 +1538,7 @@ export default function EditEventModal(props) {
           const headers = {
             'Content-Type': 'application/json',
             Accept: 'application/json',
-            Authorization: 'Bearer ' + props.accessToken,
+            Authorization: 'Bearer ' + props.taAccessToken,
           };
           axios
             .put(
@@ -1799,7 +1799,7 @@ export default function EditEventModal(props) {
           const headers = {
             'Content-Type': 'application/json',
             Accept: 'application/json',
-            Authorization: 'Bearer ' + props.accessToken,
+            Authorization: 'Bearer ' + props.taAccessToken,
           };
           axios
             .post(
@@ -1827,7 +1827,7 @@ export default function EditEventModal(props) {
           const headers = {
             'Content-Type': 'application/json',
             Accept: 'application/json',
-            Authorization: 'Bearer ' + props.accessToken,
+            Authorization: 'Bearer ' + props.taAccessToken,
           };
           axios
             .delete(
@@ -1850,7 +1850,7 @@ export default function EditEventModal(props) {
           const headers = {
             'Content-Type': 'application/json',
             Accept: 'application/json',
-            Authorization: 'Bearer ' + props.accessToken,
+            Authorization: 'Bearer ' + props.taAccessToken,
           };
           axios
             .put(
@@ -1963,7 +1963,7 @@ export default function EditEventModal(props) {
     const headers = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      Authorization: 'Bearer ' + props.accessToken,
+      Authorization: 'Bearer ' + props.taAccessToken,
     };
     axios
       .put(

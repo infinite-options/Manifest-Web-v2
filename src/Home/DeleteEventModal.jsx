@@ -219,7 +219,7 @@ export default function DeleteEventModal(props) {
             const headers = {
               'Content-Type': 'application/json',
               Accept: 'application/json',
-              Authorization: 'Bearer ' + props.accessToken,
+              Authorization: 'Bearer ' + props.taAccessToken,
             };
             axios
               .put(
@@ -257,7 +257,7 @@ export default function DeleteEventModal(props) {
     const headers = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      Authorization: 'Bearer ' + props.accessToken,
+      Authorization: 'Bearer ' + props.taAccessToken,
     };
     axios
       .delete(

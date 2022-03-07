@@ -184,13 +184,13 @@ export default function Events(props) {
           // return userID;
         } else {
           console.log('No User Found');
-          loginContext.setLoginState({
-            ...loginContext.loginState,
-            usersOfTA: response.data.result,
-            curUser: '',
-            curUserTimeZone: '',
-            curUserEmail: '',
-          });
+          // loginContext.setLoginState({
+          //   ...loginContext.loginState,
+          //   usersOfTA: response.data.result,
+          //   curUser: '',
+          //   curUserTimeZone: '',
+          //   curUserEmail: '',
+          // });
         }
       })
       .catch((error) => {
@@ -214,7 +214,8 @@ export default function Events(props) {
   // }
   /*----------------------------Use states to define variables----------------------------*/
 
-  const [accessToken, setAccessToken] = useState('');
+  const [taAccessToken, setTaAccessToken] = useState('');
+  const [userAccessToken, setUserAccessToken] = useState('');
   const [signedin, setSignedIn] = useState(false);
   const [googleAuthedEmail, setgoogleAuthedEmail] = useState(null);
   const [email, setEmail] = useState(taEmail);
@@ -1217,7 +1218,7 @@ export default function Events(props) {
                   console.log(data);
                   let at = data['access_token'];
                   var id_token = data['id_token'];
-                  setAccessToken(at);
+                  setTaAccessToken(at);
                   setIdToken(id_token);
                   console.log('in events', at);
                   let url = BASE_URL + 'UpdateAccessToken/';
@@ -1229,13 +1230,13 @@ export default function Events(props) {
                     .catch((err) => {
                       console.log(err);
                     });
-                  return accessToken;
+                  return taAccessToken;
                 })
                 .catch((err) => {
                   console.log(err);
                 });
             } else {
-              setAccessToken(old_at);
+              setTaAccessToken(old_at);
             }
           })
           .catch((err) => {
@@ -1248,7 +1249,7 @@ export default function Events(props) {
       });
   };
 
-  console.log('in events setaccess', accessToken);
+  console.log('in events setaccess', taAccessToken);
 
   function toggleShowEvents(props) {
     setStateValue((prevState) => {
@@ -2342,6 +2343,7 @@ export default function Events(props) {
                   .then((data) => {
                     console.log(data);
                     let at = data['access_token'];
+                    setUserAccessToken(at);
                     const headers = {
                       Accept: 'application/json',
                       Authorization: 'Bearer ' + at,
@@ -2424,6 +2426,7 @@ export default function Events(props) {
                     console.log(err);
                   });
               } else {
+                setUserAccessToken(old_at);
               }
             })
             .catch((err) => {
@@ -2720,7 +2723,7 @@ export default function Events(props) {
                       }}
                     ></div>
                   )} */}
-                    {console.log(accessToken)}
+                    {console.log(userAccessToken)}
                     <div style={{ flex: '1' }}>
                       {userID != '' && (
                         <EventFirebaseV2
@@ -2756,7 +2759,8 @@ export default function Events(props) {
                           }
                           stateValue={stateValue}
                           setStateValue={setStateValue}
-                          accessToken={accessToken}
+                          userAccessToken={userAccessToken}
+                          taAccessToken={taAccessToken}
                         />
                       )}
                     </div>
@@ -3114,7 +3118,8 @@ export default function Events(props) {
                           currentEmail={userEmail}
                           stateValue={stateValue}
                           setStateValue={setStateValue}
-                          accessToken={accessToken}
+                          userAccessToken={userAccessToken}
+                          taAccessToken={taAccessToken}
                           setEvents={setEvents}
                         />
                       ) : stateValue.showDeleteRecurringModal ? (
@@ -3122,7 +3127,8 @@ export default function Events(props) {
                           event={stateValue.originalEvents}
                           stateValue={stateValue}
                           setStateValue={setStateValue}
-                          accessToken={accessToken}
+                          userAccessToken={userAccessToken}
+                          taAccessToken={taAccessToken}
                         />
                       ) : stateValue.showEditModal ? (
                         <EditEventModal
@@ -3132,7 +3138,8 @@ export default function Events(props) {
                           event={stateValue.originalEvents}
                           stateValue={stateValue}
                           setStateValue={setStateValue}
-                          accessToken={accessToken}
+                          userAccessToken={userAccessToken}
+                          taAccessToken={taAccessToken}
                         />
                       ) : (
                         showCalendarView()
