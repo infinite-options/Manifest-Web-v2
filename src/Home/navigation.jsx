@@ -111,8 +111,11 @@ export function Navigation() {
   // const [selectedUser, setSelectedUser] = useState('')
   const [showNewUser, toggleNewUser] = useState(false);
   const [showGiveAccess, toggleGiveAccess] = useState(false);
+  const [showAssignUser, toggleAssignUser] = useState(false);
   const [showConfirmed, toggleConfirmed] = useState(false);
+  const [showAssignConfirmed, toggleAssignConfirmed] = useState(false);
   const [taListCreated, toggleGetTAList] = useState(false);
+  const [uaListCreated, toggleGetUnassignedList] = useState(false);
   const [selectedTimezone, setSelectedTimezone] = useState({});
   const [timezone, setTimezone] = useState(
     Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -131,6 +134,7 @@ export function Navigation() {
   const [taName, setTAName] = useState('');
   const [taID, setTAID] = useState('');
   const [taList, setTAList] = useState([]);
+  const [uaList, setUnassignedList] = useState([]);
   let redirecturi = 'https://manifestmy.space';
   console.log(redirecturi);
 
@@ -237,6 +241,7 @@ export function Navigation() {
                 curUserEmail: JSON.parse(e.target.value).user_email_id,
               });
               toggleGetTAList(false);
+              toggleGetUnassignedList(false);
 
               setPatiantName(JSON.parse(e.target.value).user_name);
             }}
@@ -251,6 +256,32 @@ export function Navigation() {
             </option>
 
             {elements}
+          </select>
+
+          {/* Sanmesh3 Assign User Dropdown */}
+          <select
+            className={classes.myButton}
+            style={{textAlign: 'center',
+                    display: 'inline'
+                  }}
+            onChange={(e) => {
+              if (e.target.value != null) {
+                console.log('Assigning List', JSON.parse(e.target.value));
+                setTAName(
+                  JSON.parse(e.target.value).ua_first_name +
+                    ' ' +
+                    JSON.parse(e.target.value).ua_last_name
+                );
+                setTAID(JSON.parse(e.target.value).ua_unique_id);
+                toggleGiveAccess(true);
+              }
+            }}
+          >
+            {/* Assign User Dropdown */}
+            <option value="null" selected>
+              Assign User
+            </option>
+            {uaListRendered()}
           </select>
         </div>
       );
@@ -276,6 +307,24 @@ export function Navigation() {
     return elements;
   };
 
+  const uaListRendered = () => {
+    console.log('ua list', uaList);
+    // console.log(uaList)
+    // uaList.sort((a, b) => a.ua_first_name.localeCompare(b.ua_first_name));
+    const elements = uaList.map((ua) => (
+      <option
+        key={ua.user_unique_id}
+        value={JSON.stringify({
+          user_unique_id: ua.user_unique_id,
+          name: ua.name,
+        })}
+      >
+        {ua.name}
+      </option>
+    ));
+    return elements;
+  };
+
   const getTAList = () => {
     if (!taListCreated) {
       console.log('in getTAList: ' + selectedUser);
@@ -295,18 +344,28 @@ export function Navigation() {
           }
           console.log(err);
         });
+    }
+  };
 
-      //console.log(elements)
+  const getUnassignedList = () => {
+    if (!uaListCreated) {
+      console.log('in getUnassignedList: ');
+      axios
+        .get(BASE_URL + 'ListAllAdminUsers')
+        .then((response) => {
+          console.log(response.data);
+          //uaList = response.data.result
+          setUnassignedList(response.data.result);
+          console.log('ua list GET', uaList);
 
-      // const ret = elements.map((ta) => (
-      //   <option
-      //     key={ta.ta_unique_id}
-      //     // value={user.user_unique_id}
-      //     value={JSON.stringify({ta_unique_id: ta.ta_unique_id, ta_name: ta.ta_first_name + ' ' + ta.ta_last_name})}
-      //   >
-      //     {ta.ta_last_name + ', ' + ta.ta_first_name}
-      //   </option>
-      // ))
+          toggleGetUnassignedList(true);
+        })
+        .catch((err) => {
+          if (err.response) {
+            console.log(err.response);
+          }
+          console.log(err);
+        });
     }
   };
 
@@ -424,6 +483,103 @@ export function Navigation() {
     }
   };
 
+  /* Sanmesh3 Assign User Modal */
+  const assignUserModal = () => {
+    if (showAssignUser) {
+      return (
+        <div
+          style={{
+            height: '100%',
+            width: '100%',
+            zIndex: '101',
+            left: '0',
+            top: '0',
+            overflow: 'auto',
+            position: 'fixed',
+            display: 'grid',
+            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              justifySelf: 'center',
+              alignSelf: 'center',
+              display: 'block',
+              backgroundColor: '#889AB5',
+              width: '400px',
+              // height: "100px",
+              color: 'white',
+              padding: '40px',
+            }}
+          >
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Assign user to TA
+            </div>
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Are you sure you want to assign selected user to TA?
+            </div>
+            <div>
+              <button
+                style={{
+                  backgroundColor: 'red',
+                  color: 'white',
+                  border: 'solid',
+                  borderWidth: '2px',
+                  borderRadius: '25px',
+                  width: '30%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                }}
+                onClick={() => {
+                  toggleAssignUser(false);
+                }}
+              >
+                No
+              </button>
+              <button
+                style={{
+                  backgroundColor: 'green',
+                  color: 'white',
+                  border: 'solid',
+                  borderWidth: '2px',
+                  borderRadius: '25px',
+                  width: '30%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                }}
+                onClick={() => {
+                  // let myObj = {
+                  //   ta_people_id: taID,
+                  //   user_id: selectedUser
+                  // }
+                  // console.log('TA', taID, currentUser);
+
+                  axios
+                    .post(BASE_URL + 'AssociateUser', {
+                      ta_people_id: taID,
+                      user_id: currentUser,
+                    })
+                    .then((response) => {
+                      console.log(response);
+                    });
+
+                  toggleAssignConfirmed(true);
+                  toggleGetUnassignedList(false);
+                  toggleAssignUser(false);
+                }}
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  };
+
   const confirmedModal = () => {
     if (showConfirmed) {
       return (
@@ -486,10 +642,75 @@ export function Navigation() {
     }
   };
 
+  /* Sanmesh3 Assign User Modal */
+  const assignConfirmedModal = () => {
+    if (showAssignConfirmed) {
+      return (
+        <div
+          style={{
+            height: '100%',
+            width: '100%',
+            zIndex: '101',
+            left: '0',
+            top: '0',
+            overflow: 'auto',
+            position: 'fixed',
+            display: 'grid',
+            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              justifySelf: 'center',
+              alignSelf: 'center',
+              display: 'block',
+              backgroundColor: '#889AB5',
+              width: '400px',
+              // height: "100px",
+              color: 'white',
+              padding: '40px',
+            }}
+          >
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Access Granted
+            </div>
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Selected user now assigned to TA
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <button
+                style={{
+                  backgroundColor: '#889AB5',
+                  color: 'white',
+                  border: 'solid',
+                  borderWidth: '2px',
+                  borderRadius: '25px',
+                  width: '30%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                }}
+                onClick={() => {
+                  toggleAssignConfirmed(false);
+                }}
+              >
+                Okay
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  };
+
   console.log('from nav');
   console.log(loginContext);
   getTAList();
+  getUnassignedList();
   console.log(taList);
+  console.log(uaList);
   // const info = (accessToken) =>{
   //   fetch(
   //     `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${accessToken}`,
@@ -791,7 +1012,9 @@ export function Navigation() {
         </div>
       </Box>
       {giveAccessModal()}
+      {assignUserModal()}
       {confirmedModal()}
+      {assignConfirmedModal()}
       <AppBar className={classes.navigationBar} style={{ position: 'static' }}>
         <Toolbar>
           <div className={classes.displayNav}>
@@ -912,7 +1135,7 @@ export function Navigation() {
                   >
                     {/* Give another Advisor Access */}
                     <option value="null" selected>
-                      Give another Advisor Access
+                      Give Another Advisor Access
                     </option>
                     {/* <option>
                       test name
