@@ -135,6 +135,7 @@ export function Navigation() {
   const [taID, setTAID] = useState('');
   const [taList, setTAList] = useState([]);
   const [uaList, setUnassignedList] = useState([]);
+  const [userID, setUserID] = useState("");
   let redirecturi = 'https://manifestmy.space';
   console.log(redirecturi);
 
@@ -272,8 +273,9 @@ export function Navigation() {
                     ' ' +
                     JSON.parse(e.target.value).ua_last_name
                 );
-                setTAID(JSON.parse(e.target.value).ua_unique_id);
-                toggleGiveAccess(true);
+                // setTAID(JSON.parse(e.target.value).ua_unique_id);
+                setUserID(JSON.parse(e.target.value).user_unique_id);
+                toggleAssignUser(true);
               }
             }}
           >
@@ -557,8 +559,8 @@ export function Navigation() {
 
                   axios
                     .post(BASE_URL + 'AssociateUser', {
-                      ta_people_id: taID,
-                      user_id: currentUser,
+                      ta_people_id: selectedUser,
+                      user_id: userID,
                     })
                     .then((response) => {
                       console.log(response);
