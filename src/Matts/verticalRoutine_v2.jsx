@@ -113,7 +113,7 @@ const VerticalRoutine = ({
           marginBottom: '0px',
           marginTop: '2px',
         }}
-      >
+      > 
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <div
             flex="1"
@@ -817,8 +817,8 @@ const VerticalRoutine = ({
                 style={{
                   width: '22px',
                   height: '22px',
-                  border: '#000000',
-                  backgroundColor: '#000000',
+                  border: '2px solid #000000',
+                  backgroundColor: '#FFFFFF',
                 }}
               ></div>
               <p
