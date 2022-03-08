@@ -1656,7 +1656,11 @@ export default function Firebasev2(props) {
     console.log('titles2', temp2);
 
     console.log('current name', r.name, temp.indexOf(r.name));
-    console.log('current gr_unique_id', r.gr_unique_id, temp2.indexOf(r.gr_unique_id));
+    console.log(
+      'current gr_unique_id',
+      r.gr_unique_id,
+      temp2.indexOf(r.gr_unique_id)
+    );
 
     if (temp2.indexOf(r.gr_unique_id) == -1) {
       return 'E';
@@ -1949,7 +1953,7 @@ export default function Firebasev2(props) {
                         /> */}
                 {/* <div style={{ marginLeft: '5px' }}> */}
                 <FontAwesomeIcon
-                  title="Delete Item 1"
+                  title="Delete Item"
                   onMouseOver={(event) => {
                     event.target.style.color = '#48D6D2';
                   }}

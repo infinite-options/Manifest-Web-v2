@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Toolbar from '@material-ui/core/Toolbar';
 import AppBar from '@material-ui/core/AppBar';
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -18,7 +18,7 @@ import axios from 'axios';
 import { useState, useContext } from 'react';
 import LoginContext from 'LoginContext';
 import { AlternateEmail } from '@material-ui/icons';
-
+import './login.css';
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 /* Custom Hook to make styles */
@@ -38,12 +38,31 @@ export default function Login() {
   console.log('in login page');
   const classes = useStyles();
   const history = useHistory();
-
+  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loggedIn, setLoggedIn] = useState();
   const [validation, setValidation] = useState('');
   const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
+  const [accessToken, setAccessToken] = useState('');
+  const [idToken, setIdToken] = useState('');
+  const [socialId, setSocialId] = useState('');
+  const [taID, setTaID] = useState('');
+
+  useEffect(() => {
+    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    }
+  }, [loginContext.loginState.reload]);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -54,15 +73,140 @@ export default function Login() {
   };
 
   const responseGoogle = (response) => {
-     // console.log(response);
+    console.log(response);
     if (response.profileObj) {
-      // console.log('Google login successful');
       let email = response.profileObj.email;
-      let accessToken = response.accessToken;
-      let socialId = response.googleId;
+      let ta_id = '';
+      setSocialId(response.googleId);
+      axios.get(BASE_URL + `taTokenEmail/${email}`).then((response) => {
+        console.log(
+          'in events',
+          response['data']['ta_unique_id'],
+          response['data']['ta_google_auth_token']
+        );
+        console.log('in events', response);
+        setAccessToken(response['data']['ta_google_auth_token']);
+        let url =
+          'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
+        document.cookie = 'ta_uid=' + response['data']['ta_unique_id'];
+        document.cookie = 'ta_email=' + email;
+        document.cookie = 'patient_name=Loading';
+        loginContext.setLoginState({
+          ...loginContext.loginState,
+          loggedIn: true,
+          ta: {
+            ...loginContext.loginState.ta,
+            id: response['data']['ta_unique_id'],
+            email: email.toString(),
+          },
+          usersOfTA: [],
+          curUser: '',
+          curUserTimeZone: '',
+          curUserEmail: '',
+        });
+        console.log('Login successful');
+        console.log(email);
+        history.push({
+          pathname: '/home',
+          state: email,
+        });
+        setTaID(response['data']['ta_unique_id']);
+        ta_id = response['data']['ta_unique_id'];
+        var old_at = response['data']['ta_google_auth_token'];
+        console.log('in events', old_at);
+        var refreshToken = response['data']['ta_google_refresh_token'];
+
+        let checkExp_url = url + old_at;
+        console.log('in events', checkExp_url);
+        fetch(
+          `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`,
+          {
+            method: 'GET',
+          }
+        )
+          .then((response) => {
+            console.log('in events', response);
+            if (response['status'] === 400) {
+              console.log('in events if');
+              let authorization_url =
+                'https://accounts.google.com/o/oauth2/token';
+
+              var details = {
+                refresh_token: refreshToken,
+                client_id: CLIENT_ID,
+                client_secret: CLIENT_SECRET,
+                grant_type: 'refresh_token',
+              };
+
+              var formBody = [];
+              for (var property in details) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + '=' + encodedValue);
+              }
+              formBody = formBody.join('&');
+
+              fetch(authorization_url, {
+                method: 'POST',
+                headers: {
+                  'Content-Type':
+                    'application/x-www-form-urlencoded;charset=UTF-8',
+                },
+                body: formBody,
+              })
+                .then((response) => {
+                  return response.json();
+                })
+                .then((responseData) => {
+                  console.log(responseData);
+                  return responseData;
+                })
+                .then((data) => {
+                  console.log(data);
+                  let at = data['access_token'];
+                  var id_token = data['id_token'];
+                  setAccessToken(at);
+                  setIdToken(id_token);
+                  console.log('in events', at);
+                  let url = BASE_URL + `UpdateAccessToken/${ta_id}`;
+                  axios
+                    .post(url, {
+                      google_auth_token: at,
+                    })
+                    .then((response) => {})
+                    .catch((err) => {
+                      console.log(err);
+                    });
+                  return accessToken;
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+            } else {
+              setAccessToken(old_at);
+              console.log(old_at);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        console.log('in events', refreshToken, accessToken);
+      });
+
       _socialLoginAttempt(email, accessToken, socialId, 'GOOGLE');
     }
   };
+
+  // const responseGoogle = (response) => {
+  //   // console.log(response);
+  //   if (response.profileObj) {
+  //     // console.log('Google login successful');
+  //     let email = response.profileObj.email;
+  //     let accessToken = response.accessToken;
+  //     let socialId = response.googleId;
+  //     _socialLoginAttempt(email, accessToken, socialId, 'GOOGLE');
+  //   }
+  // };
 
   const responseFacebook = (response) => {
     // console.log(response);
@@ -75,15 +219,17 @@ export default function Login() {
     }
   };
 
-  const _socialLoginAttempt = (email, accessToken, socialId, platform) => {
+  const _socialLoginAttempt = (email, at, socialId, platform) => {
     axios
       .get(BASE_URL + 'loginSocialTA/' + email)
       .then((res) => {
-        console.log(res);
+        console.log('loginSocialTA', res.data.result);
         if (res.data.result !== false) {
-          document.cookie = 'ta_uid=' + res.data.result;
+          document.cookie = 'ta_uid=' + res.data.result[0];
           document.cookie = 'ta_email=' + email;
           document.cookie = 'patient_name=Loading';
+          setAccessToken(res.data.result[1]);
+          setLoggedIn(true);
           loginContext.setLoginState({
             ...loginContext.loginState,
             loggedIn: true,
@@ -95,7 +241,7 @@ export default function Login() {
             usersOfTA: [],
             curUser: '',
             curUserTimeZone: '',
-            curUserEmail:'',
+            curUserEmail: '',
           });
           console.log('Login successful');
           console.log(email);
@@ -123,9 +269,8 @@ export default function Login() {
     axios
       .get(BASE_URL + 'loginTA/' + email.toString() + '/' + password.toString())
       .then((response) => {
-        
         if (response.data.result !== false) {
-          console.log('respnse true', response.data.result)
+          console.log('respnse true', response.data.result);
           console.log('response', response.data);
           document.cookie = 'ta_uid=' + response.data.result;
           document.cookie = 'ta_email=' + email;
@@ -160,7 +305,7 @@ export default function Login() {
       });
   };
 
-/*   const responseGoogle = (response) => {
+  /*   const responseGoogle = (response) => {
     console.log('response', response);
     if (response.profileObj !== null || response.profileObj !== undefined) {
       let e = response.profileObj.email;
@@ -231,7 +376,32 @@ export default function Login() {
       style={{ width: '100%', height: '100%', backgroundColor: '#F2F7FC' }}
     >
       <Box style={{ position: 'fixed', top: '100px', left: '-100px' }}>
-        <img src={Ellipse} alt="Ellipse" />
+        <div style={{ position: 'relative', color: 'white' }}>
+          <img
+            src={Ellipse}
+            style={{ width: '120%', height: '100%' }}
+            alt="Ellipse"
+          />
+          <div
+            style={{
+              position: 'absolute',
+              top: '65%',
+              left: '40%',
+              transform: 'translate(-45%, -50%)',
+            }}
+            className="main"
+          >
+            <div style={{ font: 'normal normal bold 20px SF Pro' }}>
+              What is Manifest My Life
+            </div>
+            <p style={{ font: 'normal normal normal 18px SF Pro' }}>
+              Sometimes life is better with a Coach or Advisor. Manifest is an
+              web app designed for Coaches and Advisors to create customized
+              daily routines for their clients thus enabling clients to achieve
+              their goals and live their best life.
+            </p>
+          </div>
+        </div>
       </Box>
       <Box display="flex" marginTop="35%" marginLeft="30%">
         <Button
@@ -310,7 +480,7 @@ export default function Login() {
           </Box>
           <Box>
             <GoogleLogin
-              clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
+              clientId={CLIENT_ID}
               render={(renderProps) => (
                 <Button
                   style={{
@@ -367,8 +537,35 @@ export default function Login() {
         ></Button>
       </Box>
 
-      <Box style={{ position: 'fixed', right: '-100px', bottom: '-100px' }}>
-        <img src={Ellipse} alt="Ellipse" />
+      <Box style={{ position: 'fixed', right: '-30px', bottom: '-50px' }}>
+        <div style={{ position: 'relative', color: 'white' }}>
+          <img src={Ellipse} style={{ width: '120%' }} alt="Ellipse" />
+          <div
+            style={{
+              position: 'absolute',
+              top: '60%',
+              left: '40%',
+              transform: 'translate(-45%, -50%)',
+            }}
+            className="text"
+          >
+            <p style={{ font: 'normal normal normal 18px SF Pro' }}>
+              <div
+                style={{
+                  font: 'normal normal bold 21px SF Pro',
+                }}
+              >
+                How we use your data
+              </div>
+              Manifest My Life uses social media data to obtain your name,
+              modify your calendar, and access your photos. This information
+              allows the Coach or Advisor to login, confirm they are modifying
+              the correct client’s data, create custom events for the client to
+              attend, and enhance the client’s user experience by incorporating
+              relevant photos.
+            </p>
+          </div>
+        </div>
       </Box>
 
       {/* <Box hidden={loggedIn === true}>

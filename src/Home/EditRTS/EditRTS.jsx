@@ -5,7 +5,7 @@ import moment from 'moment';
 import axios from 'axios';
 import AddIconModal from '../AddIconModal';
 import UploadImage from '../UploadImage';
-
+import GooglePhotos from '../GooglePhotos';
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const EditRTS = (props) => {
@@ -14,8 +14,8 @@ const EditRTS = (props) => {
   const [photo, setPhoto] = useState(
     editingRTSContext.editingRTS.newItem.gr_photo
   );
-  
-  const user = props.CurrentId
+
+  const user = props.CurrentId;
 
   console.log('obj. ', editingRTSContext.editingRTS.newItem.user_id);
   const tz = {
@@ -83,7 +83,7 @@ const EditRTS = (props) => {
   };
 
   console.log('today timezone', editingRTSContext.editingRTS.newItem);
-  
+
   const updateRTS = (e) => {
     console.log(' today timezone here: entering updateRTS function');
     console.log('today timezone timezone', tz);
@@ -91,7 +91,7 @@ const EditRTS = (props) => {
       ...editingRTSContext.editingRTS,
       editing: true,
     });
-    
+
     // editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing;
     e.stopPropagation();
     let object = { ...editingRTSContext.editingRTS.newItem };
@@ -128,7 +128,11 @@ const EditRTS = (props) => {
       during: object.user_notifications.during.time,
       after: object.user_notifications.after.time,
     });
+    object.end_day = object.start_day;
+    console.log('end day', object.end_day);
+    console.log('end time', object.end_time);
     // Get start_day_and_time
+
     const start_day_and_time_simple_string = `${object.start_day} ${object.start_time}:00`;
     console.log('today timezone converted', start_day_and_time_simple_string);
     const end_day_and_time_simple_string = `${object.end_day} ${object.end_time}:00`;
@@ -147,6 +151,14 @@ const EditRTS = (props) => {
 
     object.start_day_and_time =
       `${object.start_day}` + ' ' + convertedStartTime; //start_day_and_time_string;
+    object.is_displayed_today =
+      object.start_day.substring(8, 10) > new Date().getDate()
+        ? false
+        : true || object.start_day.substring(5, 6) > new Date().getMonth()
+        ? false
+        : true;
+    console.log(object.start_day.substring(5, 6));
+    console.log(new Date().getDate());
     delete object.start_day;
     delete object.start_time;
     object.title = object.gr_title;
@@ -163,21 +175,21 @@ const EditRTS = (props) => {
     // object.is_available = 'True';
     // Get end_day_and_time
 
-    console.log('end day', object.end_day);
-    console.log('end time', object.end_time);
     //const end_day_and_time_string = new Date(end_day_and_time_simple_string).toString();
     const convertedEndTime = moment(end_day_and_time_simple_string).format(
       'LTS'
     );
     console.log('convertedEndTime', convertedEndTime);
     object.end_day_and_time = `${object.end_day}` + ' ' + convertedEndTime;
+
     delete object.end_day;
     delete object.end_time;
     // Get expected_completion_time
-    const numHours = object.numMins >= 60 ? Math.floor(object.numMins / 60 ): '00';
+    const numHours =
+      object.numMins >= 60 ? Math.floor(object.numMins / 60) : '00';
     let numMins = object.numMins % 60;
     if (numMins < 10) numMins = '0' + numMins;
-    console.log(numHours)
+    console.log(numHours);
     object.expected_completion_time = `${numHours}:${numMins}:00`;
     delete object.numMins;
     object.gr_unique_id = editingRTSContext.editingRTS.id;
@@ -214,12 +226,11 @@ const EditRTS = (props) => {
     }
     console.log('object.id');
     console.log(object.gr_unique_id);
-    let url=''
-    if(object.is_persistent == 'True'){
-      url= 'getroutines/'
-    }
-    else{
-      url='getgoals/'
+    let url = '';
+    if (object.is_persistent == 'True') {
+      url = 'getroutines/';
+    } else {
+      url = 'getgoals/';
     }
     console.log('url', url, object.is_persistent);
     console.log(object.gr_unique_id);
@@ -233,7 +244,8 @@ const EditRTS = (props) => {
             console.log('editrts', _);
             const gr_array_index =
               editingRTSContext.editingRTS.gr_array.findIndex(
-                (elt) => elt.gr_unique_id === editingRTSContext.editingRTS.gr_unique_id
+                (elt) =>
+                  elt.gr_unique_id === editingRTSContext.editingRTS.gr_unique_id
               );
             const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
             new_gr_array[gr_array_index] = object;
@@ -318,7 +330,8 @@ const EditRTS = (props) => {
             console.log(_);
             const gr_array_index =
               editingRTSContext.editingRTS.gr_array.findIndex(
-                (elt) => elt.gr_unique_id === editingRTSContext.editingRTS.gr_unique_id
+                (elt) =>
+                  elt.gr_unique_id === editingRTSContext.editingRTS.gr_unique_id
               );
             const new_gr_array = [...editingRTSContext.editingRTS.gr_array];
             new_gr_array[gr_array_index] = object;
@@ -437,7 +450,10 @@ const EditRTS = (props) => {
                   photo_url: '',
                 },
               });
-              console.log('xxx RTS photo',editingRTSContext.editingRTS.newItem.photo);
+              console.log(
+                'xxx RTS photo',
+                editingRTSContext.editingRTS.newItem.photo
+              );
             }}
           >
             Upload
@@ -448,7 +464,10 @@ const EditRTS = (props) => {
             height="300"
             width="400"
           />
-          {console.log('xxx RTS photo',editingRTSContext.editingRTS.newItem.photo)}
+          {console.log(
+            'xxx RTS photo',
+            editingRTSContext.editingRTS.newItem.photo
+          )}
         </Modal.Body>
 
         <Modal.Footer>
@@ -589,6 +608,7 @@ const EditRTS = (props) => {
                 setPhotoUrl={setPhoto}
                 currentUserId={user}
               />
+              <GooglePhotos photoUrl={photo} setPhotoUrl={setPhoto} />
             </Col>
             <Col style={{ float: 'right' }} xs={4}>
               <img alt="icon" src={photo} style={{ width: '100%' }} />
@@ -717,7 +737,7 @@ const EditRTS = (props) => {
                     fontWeight: 'bold',
                   }}
                   type="date"
-                  value={editingRTSContext.editingRTS.newItem.end_day}
+                  value={editingRTSContext.editingRTS.newItem.start_day}
                   onChange={(e) => {
                     // const year = parseInt(e.target.value.substring(0, 4));
                     // if (
@@ -730,7 +750,7 @@ const EditRTS = (props) => {
                       ...editingRTSContext.editingRTS,
                       newItem: {
                         ...editingRTSContext.editingRTS.newItem,
-                        end_day: e.target.value,
+                        end_day: editingRTSContext.editingRTS.newItem.start_day,
                       },
                     });
                   }}
@@ -1087,10 +1107,28 @@ const EditRTS = (props) => {
                         fontWeight: 'bold',
                       }}
                       type="number"
+                      // min="0"
+                      // oninput="validity.valid||(value='')"
+                      // value={
+                      //   editingRTSContext.editingRTS.newItem.repeat_occurences
+                      // }
                       value={
-                        editingRTSContext.editingRTS.newItem.repeat_occurences
+                        editingRTSContext.editingRTS.newItem.repeat ===
+                          'False' ||
+                        editingRTSContext.editingRTS.newItem.repeat === false
+                          ? 1
+                          : editingRTSContext.editingRTS.newItem
+                              .repeat_occurences
                       }
                       onChange={(e) => {
+                        if (
+                          (e.target.value !== '' && e.target.value < 1) ||
+                          editingRTSContext.editingRTS.newItem.repeat ===
+                            'False' ||
+                          editingRTSContext.editingRTS.newItem.repeat === false
+                        )
+                          return;
+
                         editingRTSContext.setEditingRTS({
                           ...editingRTSContext.editingRTS,
                           newItem: {
@@ -1117,15 +1155,13 @@ const EditRTS = (props) => {
                     <input
                       style={{
                         borderRadius: '10px',
-                      }}
-                      name="repeatingEnd"
-                      type="radio"
-                      style={{
                         width: '10%',
                         height: '20px',
                         marginRight: '2%',
                         float: 'left',
                       }}
+                      name="repeatingEnd"
+                      type="radio"
                       value="Never"
                       checked={
                         editingRTSContext.editingRTS.newItem.repeat_type ===

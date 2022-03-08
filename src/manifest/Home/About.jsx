@@ -1,10 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import {
-  Box,
-  FormControl,
-  Select,
-  MenuItem,
-} from '@material-ui/core';
+import { Box, FormControl, Select, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import SettingPage from '../Home/SettingPage';
 import {
@@ -17,20 +12,19 @@ import {
   ModalBody,
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faEdit,
-} from '@fortawesome/free-solid-svg-icons';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import MiniNavigation from '../miniNavigation';
 import LoginContext from '../../LoginContext';
-import { useHistory, } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import AddIconModal from '../../Home/AddIconModal';
 import UploadImage from '../../Home/UploadImage';
 import TAUploadImage from '../../Home/TAUploadImage';
 import momentTZ from 'moment-timezone';
+import GooglePhotos from '../../Home/GooglePhotos';
 
 const moment = require('moment');
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
@@ -57,34 +51,41 @@ export default function AboutModal(props) {
   const classes = useStyles();
   const loginContext = useContext(LoginContext);
   //states
-    const [currentUser, setCU] = useState(loginContext.loginState.curUser);
-    // Kyle cookie code
-    var userID = '';
-    var userTime_zone = '';
-    var userEmail='';
-    if (
-      document.cookie
-        .split(';')
-        .some((item) => item.trim().startsWith('patient_uid='))
-    ) {
-      userID = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('patient_uid='))
-        .split('=')[1];
-      userTime_zone = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('patient_timeZone='))
-        .split('=')[1];
-      userEmail = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('patient_email='))
-        .split('=')[1];
-    } else {
-      userID = loginContext.loginState.curUser;
-      userTime_zone = loginContext.loginState.curUserTimeZone;
-      userEmail = loginContext.loginState.curUserEmail;
-    }
 
+  console.log(document.cookie);
+  const [currentUser, setCU] = useState(loginContext.loginState.curUser);
+  // Kyle cookie code
+  var userID = '';
+  var taID = '';
+  var userTime_zone = '';
+  var userEmail = '';
+  if (
+    document.cookie
+      .split(';')
+      .some((item) => item.trim().startsWith('patient_uid='))
+  ) {
+    userID = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_uid='))
+      .split('=')[1];
+    taID = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('ta_uid='))
+      .split('=')[1];
+    userTime_zone = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_timeZone='))
+      .split('=')[1];
+    userEmail = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_email='))
+      .split('=')[1];
+  } else {
+    userID = loginContext.loginState.curUser;
+    userTime_zone = loginContext.loginState.curUserTimeZone;
+    userEmail = loginContext.loginState.curUserEmail;
+  }
+  console.log(taID);
   const [imageChanged, setImageChanged] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -94,6 +95,8 @@ export default function AboutModal(props) {
   const [ta_user_id, setTa_user_id] = useState('');
   const [photo, setPhoto] = useState('');
   const [showConfirmed, toggleConfirmed] = useState(false);
+  const [deleteUser, setDeleteUser] = useState(false);
+  const [relinquishRole, setRelinquishRole] = useState(false);
   const [called, toggleCalled] = useState(false);
   const [saveConfirm, toggleSave] = useState(false);
   const [editPerson, setPerson] = useState(false);
@@ -153,11 +156,39 @@ export default function AboutModal(props) {
 
   const [showUploadImage, toggleUploadImage] = useState(false);
   const [showImage, toggleImage] = useState(false);
+  const [taList, setTaList] = useState([]);
   //const userID = loginContext.loginState.curUser;
 
   console.log('currentUser: ' + currentUser);
   //const userID = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1];
 
+  // const getTAList = () => {
+  //   console.log('in getTAList: ' + currentUser);
+  //   axios
+  //     .get(BASE_URL + 'listAllTAUser/' + currentUser)
+  //     .then((response) => {
+  //       console.log(response.data);
+  //       setTaList(response.data.result);
+  //     })
+  //     .catch((err) => {
+  //       if (err.response) {
+  //         console.log(err.response);
+  //       }
+  //       console.log(err);
+  //     });
+  // };
+  useEffect(() => {
+    console.log('yayayayayay');
+    axios
+      .get(BASE_URL + 'ListAllTAUser/' + userID)
+      .then((response) => {
+        console.log('listAllTAUser', response.data.result);
+        setTaList(response.data.result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [firstName, called, people]);
   //upload from computer for TA
   const uploadImageModal = () => {
     return (
@@ -206,7 +237,7 @@ export default function AboutModal(props) {
                 pic: taPhotoURL,
                 photo_url: '',
               });
-              setTaPhoto(taPhotoURL)
+              setTaPhoto(taPhotoURL);
               console.log('URL: ', taPhotoURL);
             }}
           >
@@ -382,7 +413,7 @@ export default function AboutModal(props) {
       )
       .then((response) => {
         console.log(response);
-        if (response.result !== false) {
+        if (response.data.result.length > 0) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;
@@ -411,13 +442,20 @@ export default function AboutModal(props) {
           //GrabFireBaseRoutinesGoalsData();
           // return userID;
         } else {
+          loginContext.setLoginState({
+            ...loginContext.loginState,
+            usersOfTA: response.data.result,
+            curUser: '',
+            curUserTimeZone: '',
+            curUserEmail: '',
+          });
           console.log('No User Found');
         }
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [userID]);
+  }, [loginContext.loginState.reload]);
 
   useEffect(() => {
     console.log('yayayayayay');
@@ -466,7 +504,7 @@ export default function AboutModal(props) {
           setAboutMeObject(x);
           setFirstName(details.user_first_name);
           setLastName(details.user_last_name);
-          setUserPhoto(details.user_picture)
+          setUserPhoto(details.user_picture);
         } else {
           console.log('No user details');
         }
@@ -856,19 +894,17 @@ export default function AboutModal(props) {
         if (response.data.message == 'TA already exists.') {
           alert(response.data.message);
           toggleConfirmed(false);
-        }
-        else{
+        } else {
           toggleConfirmed(true);
           axios
-              .get(BASE_URL + 'listPeople/' + userID)
-              .then((response) => {
-                setListPeople(response.data.result.result);
-              })
-              .catch((error) => {
-                console.log(error);
-              });
+            .get(BASE_URL + 'listPeople/' + userID)
+            .then((response) => {
+              setListPeople(response.data.result.result);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         }
-        
       })
       .catch((error) => {
         console.log(error);
@@ -1046,6 +1082,7 @@ export default function AboutModal(props) {
                         width: '5rem',
                         backgroundColor: '#ffffff',
                         borderRadius: '10px',
+                        objectFit: 'cover',
                       }}
                       src={taPhoto}
                     />
@@ -1256,6 +1293,200 @@ export default function AboutModal(props) {
     }
   };
 
+  const deleteModal = () => {
+    if (deleteUser) {
+      return (
+        <div
+          style={{
+            height: '100%',
+            width: '100%',
+            zIndex: '101',
+            left: '0',
+            top: '0',
+            overflow: 'auto',
+            position: 'fixed',
+            display: 'grid',
+            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              justifySelf: 'center',
+              alignSelf: 'center',
+              display: 'block',
+              backgroundColor: '#889AB5',
+              width: '400px',
+              // height: "100px",
+              color: 'white',
+              padding: '40px',
+            }}
+          >
+            {/* <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Changes saved
+            </div> */}
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Are you sure you want to delete the user?
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <button
+                style={{
+                  backgroundColor: '#889AB5',
+                  color: 'white',
+                  border: 'solid',
+                  borderWidth: '2px',
+                  borderRadius: '25px',
+                  width: '30%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                }}
+                onClick={() => {
+                  let body = {
+                    user_id: userID,
+                  };
+                  axios.post(BASE_URL + 'deleteUser', body).then((response) => {
+                    console.log('deleting');
+                    console.log(response.data);
+                    document.cookie = 'patient_uid=1;max-age=0';
+                    document.cookie = 'patient_name=1;max-age=0';
+                    document.cookie = 'patient_email=1;max-age=0';
+                    loginContext.setLoginState({
+                      ...loginContext.loginState,
+                      reload: !loginContext.loginState.reload,
+                    });
+                    setDeleteUser(!deleteUser);
+                    toggleCalled(!called);
+                    history.push('/home');
+                  });
+                }}
+              >
+                Yes
+                {console.log('list of users', loginContext.loginState.reload)}
+              </button>
+              <button
+                style={{
+                  backgroundColor: '#889AB5',
+                  color: 'white',
+                  border: 'solid',
+                  borderWidth: '2px',
+                  borderRadius: '25px',
+                  width: '30%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                }}
+                onClick={() => {
+                  setDeleteUser(false);
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  };
+
+  const removeRoleModal = () => {
+    if (relinquishRole) {
+      return (
+        <div
+          style={{
+            height: '100%',
+            width: '100%',
+            zIndex: '101',
+            left: '0',
+            top: '0',
+            overflow: 'auto',
+            position: 'fixed',
+            display: 'grid',
+            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              justifySelf: 'center',
+              alignSelf: 'center',
+              display: 'block',
+              backgroundColor: '#889AB5',
+              width: '400px',
+              // height: "100px",
+              color: 'white',
+              padding: '40px',
+            }}
+          >
+            {/* <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Changes saved
+            </div> */}
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Are you sure you want to remove your role as the advisor?
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <button
+                style={{
+                  backgroundColor: '#889AB5',
+                  color: 'white',
+                  border: 'solid',
+                  borderWidth: '2px',
+                  borderRadius: '25px',
+                  width: '30%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                }}
+                onClick={() => {
+                  let body = {
+                    user_id: userID,
+                    ta_people_id: taID,
+                  };
+                  axios
+                    .post(BASE_URL + 'deletePeople', body)
+                    .then((response) => {
+                      console.log('deleting');
+                      console.log(response.data);
+                      setRelinquishRole(!relinquishRole);
+                      toggleCalled(!called);
+
+                      document.cookie = 'patient_uid=1;max-age=0';
+                      document.cookie = 'patient_name=1;max-age=0';
+                      document.cookie = 'patient_email=1;max-age=0';
+                      loginContext.setLoginState({
+                        ...loginContext.loginState,
+                        reload: true,
+                      });
+                      history.push('/home');
+                    });
+                }}
+              >
+                Yes
+              </button>
+              <button
+                style={{
+                  backgroundColor: '#889AB5',
+                  color: 'white',
+                  border: 'solid',
+                  borderWidth: '2px',
+                  borderRadius: '25px',
+                  width: '30%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                }}
+                onClick={() => {
+                  setRelinquishRole(!relinquishRole);
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  };
   const confirmedModal = () => {
     if (showConfirmed) {
       return (
@@ -1386,6 +1617,8 @@ export default function AboutModal(props) {
       {editPersonModal(taObject)}
       {confirmedModal()}
       {confirmSaveModal()}
+      {deleteModal()}
+      {removeRoleModal()}
       <div style={{ height: '3px' }}></div>
       <div backgroundColor="#bbc8d7">
         <MiniNavigation />
@@ -1490,6 +1723,7 @@ export default function AboutModal(props) {
                   setPhotoUrl={setUserPhoto}
                   currentUserId={userID}
                 />
+                <GooglePhotos photoUrl={userPhoto} setPhotoUrl={setUserPhoto} />
               </Col>
               <Col xs={4}>
                 {/* {aboutMeObject.have_pic === false ? (
@@ -1509,19 +1743,19 @@ export default function AboutModal(props) {
                     }}
                   ></div>
                 ) : ( */}
-                  <img
-                    style={{
-                      display: 'block',
-                      float: 'right',
-                      width: '5rem',
-                      height: '5rem',
-                      objectFit: 'cover',
-                      marginTop:'15px'
-                      //marginBottom: '15px',
-                    }}
-                    src={userPhoto}
-                    alt="Profile"
-                  />
+                <img
+                  style={{
+                    display: 'block',
+                    float: 'right',
+                    width: '5rem',
+                    height: '5rem',
+                    objectFit: 'cover',
+                    marginTop: '15px',
+                    //marginBottom: '15px',
+                  }}
+                  src={userPhoto}
+                  alt="Profile"
+                />
                 {/* )} */}
               </Col>
               {/* <Col style={{ float: 'right' }} xs={4}>
@@ -2148,7 +2382,7 @@ export default function AboutModal(props) {
               color: 'white',
             }}
           >
-            <Form.Label>Family Contacts</Form.Label>
+            <Form.Label>Message Day</Form.Label>
             <Form.Control
               style={{ borderRadius: '10px', height: '100px' }}
               as="textarea"
@@ -2173,7 +2407,7 @@ export default function AboutModal(props) {
                 color: 'white',
               }}
             >
-              Current Medication
+              Message Card
             </Form.Label>
             <Form.Control
               style={{ borderRadius: '10px', height: '100px' }}
@@ -2199,7 +2433,7 @@ export default function AboutModal(props) {
                 color: 'white',
               }}
             >
-              Medicine Schedule
+              Major Events
             </Form.Label>
             <Form.Control
               style={{ borderRadius: '10px', height: '100px' }}
@@ -2253,7 +2487,7 @@ export default function AboutModal(props) {
                         style={{
                           width: '5rem',
                           height: '5rem',
-                          objectFit: 'fill',
+                          objectFit: 'cover',
                           backgroundColor: '#ffffff',
                           borderRadius: '10px',
                         }}
@@ -2471,7 +2705,14 @@ export default function AboutModal(props) {
         {/* <hr style={{ border: '1px solid white' }} /> */}
 
         <div style={{ width: '100%', float: 'left' }}>
-          <div style={{ marginLeft: '40%' }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             <Row>
               <Button
                 style={{
@@ -2506,6 +2747,44 @@ export default function AboutModal(props) {
               >
                 Cancel
               </Button>
+              {taList.length == 1 ? (
+                <Button
+                  variant="secondary"
+                  onClick={() => setDeleteUser(!deleteUser)}
+                  style={{
+                    color: 'white',
+                    backgroundColor: '#889AB5',
+                    border: '2px solid white',
+                    margin: '25px',
+                    borderRadius: '20px',
+                    padding: '10px 20px ',
+                  }}
+                >
+                  Delete User
+                </Button>
+              ) : (
+                <div>{console.log('listalltauser here')}</div>
+              )}
+
+              {console.log('listalltaUser', taList.length)}
+              {taList.length == 1 ? (
+                <div>{console.log('listalltauser here')}</div>
+              ) : (
+                <Button
+                  variant="secondary"
+                  onClick={() => setRelinquishRole(!relinquishRole)}
+                  style={{
+                    color: 'white',
+                    backgroundColor: '#889AB5',
+                    border: '2px solid white',
+                    margin: '25px',
+                    borderRadius: '20px',
+                    padding: '10px 20px ',
+                  }}
+                >
+                  Relinquish Advisor Role
+                </Button>
+              )}
             </Row>
           </div>
         </div>

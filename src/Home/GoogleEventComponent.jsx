@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import {publishTheCalenderEvent} from './GoogleApiService';
+import { publishTheCalenderEvent } from './GoogleApiService';
 import {
   Form,
   Button,
@@ -10,6 +10,7 @@ import {
   Dropdown,
   DropdownButton,
 } from 'react-bootstrap';
+import axios from 'axios';
 import trash from '../manifest/LoginAssets/Trash.png';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -17,12 +18,16 @@ import './DatePicker.css';
 import LoginContext from '../LoginContext';
 import EditEventContext from './EditEventContext';
 import moment from 'moment';
+
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
+const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
+
 export default function GoogleEventComponent(props) {
   //const classes = useStyles();
   console.log('in add events', props);
   const loginContext = useContext(LoginContext);
 
-  console.log('in events', loginContext)
+  console.log('in events', loginContext);
   const editingEventContext = useContext(EditEventContext);
   const user = props.CurrentId;
   var userID = '';
@@ -53,51 +58,94 @@ export default function GoogleEventComponent(props) {
   console.log('in add events', userEmail);
   console.log('in add events', document.cookie);
   console.log('in add events', userID);
-  
+
   const [summary, setSummary] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
-  
+
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
-  const [repeatOptionDropDown, setRepeatOptionDropDown] =useState('Does not repeat');
+  const [repeatOptionDropDown, setRepeatOptionDropDown] =
+    useState('Does not repeat');
   const [repeatOption, setRepeatOption] = useState(false);
   const [showRepeatModal, setShowRepeatModal] = useState(false);
-  const [repeatDropDown , setRepeatDropDown]= useState('DAY');
-  const [repeatDropDown_temp , setRepeatDropDown_temp]= useState('DAY');
+  const [repeatDropDown, setRepeatDropDown] = useState('DAY');
+  const [repeatDropDown_temp, setRepeatDropDown_temp] = useState('DAY');
   const [repeatMonthlyDropDown, setRepeatMonthlyDropDown] =
     useState('Monthly on day 13');
-  const [repeatInputValue , setRepeatInputValue]= useState('1');
-  const [repeatInputValue_temp , setRepeatInputValue_temp]= useState('1');
-  const [repeatOccurrence , setRepeatOccurrence]= useState('1');
-  const [repeatOccurrence_temp , setRepeatOccurrence_temp]= useState('1');
-  const [repeatRadio , setRepeatRadio]= useState('Never');
-  const [repeatRadio_temp , setRepeatRadio_temp]= useState('Never');
-  const [repeatEndDate , setRepeatEndDate]= useState('');
-  const [repeatEndDate_temp , setRepeatEndDate_temp]= useState('');
-  
-  const [byDay , setByDay]= useState({
-        0: '',
-        1: '',
-        2: '',
-        3: '',
-        4: '',
-        5: '',
-        6: '',
-      });
-  const [byDay_temp,setByDay_temp]= useState({
-        0: '',
-        1: '',
-        2: '',
-        3: '',
-        4: '',
-        5: '',
-        6: '',
-      });
-  const [recurrenceRule, setRecurrenceRule]= useState('');
+  const [repeatInputValue, setRepeatInputValue] = useState('1');
+  const [repeatInputValue_temp, setRepeatInputValue_temp] = useState('1');
+  const [repeatOccurrence, setRepeatOccurrence] = useState('1');
+  const [repeatOccurrence_temp, setRepeatOccurrence_temp] = useState('1');
+  const [repeatRadio, setRepeatRadio] = useState('Never');
+  const [repeatRadio_temp, setRepeatRadio_temp] = useState('Never');
+  const [repeatEndDate, setRepeatEndDate] = useState('');
+  const [repeatEndDate_temp, setRepeatEndDate_temp] = useState('');
+
+  const [byDay, setByDay] = useState({
+    0: '',
+    1: '',
+    2: '',
+    3: '',
+    4: '',
+    5: '',
+    6: '',
+  });
+  const [byDay_temp, setByDay_temp] = useState({
+    0: '',
+    1: '',
+    2: '',
+    3: '',
+    4: '',
+    5: '',
+    6: '',
+  });
+  const [recurrenceRule, setRecurrenceRule] = useState('');
   const [reminderMethod, setReminderMethod] = useState('');
   const [reminderMinutes, setReminderMinutes] = useState('');
 
+  const getTimes = (a_day_time, b_day_time) => {
+    const [a_start_time, b_start_time] = [
+      a_day_time.substring(10, a_day_time.length),
+      b_day_time.substring(10, b_day_time.length),
+    ];
+    const [a_HMS, b_HMS] = [
+      a_start_time
+        .substring(0, a_start_time.length - 3)
+        .replace(/\s{1,}/, '')
+        .split(':'),
+      b_start_time
+        .substring(0, b_start_time.length - 3)
+        .replace(/\s{1,}/, '')
+        .split(':'),
+    ];
+    const [a_parity, b_parity] = [
+      a_start_time
+        .substring(a_start_time.length - 3, a_start_time.length)
+        .replace(/\s{1,}/, ''),
+      b_start_time
+        .substring(b_start_time.length - 3, b_start_time.length)
+        .replace(/\s{1,}/, ''),
+    ];
+
+    let [a_time, b_time] = [0, 0];
+    if (a_parity === 'PM' && a_HMS[0] !== '12') {
+      const hoursInt = parseInt(a_HMS[0]) + 12;
+      a_HMS[0] = `${hoursInt}`;
+    } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+
+    if (b_parity === 'PM' && b_HMS[0] !== '12') {
+      const hoursInt = parseInt(b_HMS[0]) + 12;
+      b_HMS[0] = `${hoursInt}`;
+    } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+
+    for (let i = 0; i < a_HMS.length; i++) {
+      a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+      b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+    }
+
+    return [a_time, b_time];
+  };
   const startTimePicker = () => {
     return (
       <DatePicker
@@ -141,49 +189,46 @@ export default function GoogleEventComponent(props) {
   };
 
   const closeRepeatModal = () => {
+    setShowRepeatModal(false);
+    setRepeatInputValue_temp((prevState) => {
+      return {
+        ...prevState,
+        repeatInputValue_temp: prevState.repeatInputValue,
+      };
+    });
+    setRepeatOccurrence_temp((prevState) => {
+      return {
+        ...prevState,
+        repeatOccurrence_temp: prevState.repeatOccurrence,
+      };
+    });
+    setRepeatDropDown_temp((prevState) => {
+      return {
+        ...prevState,
+        repeatDropDown_temp: prevState.repeatDropDown,
+      };
+    });
+    setRepeatRadio_temp((prevState) => {
+      return {
+        ...prevState,
+        repeatRadio_temp: prevState.repeatRadio,
+      };
+    });
+    setRepeatEndDate_temp((prevState) => {
+      return {
+        ...prevState,
+        repeatEndDate_temp: prevState.repeatEndDate,
+      };
+    });
+    setByDay_temp((prevState) => {
+      return {
+        ...prevState,
+        byDay_temp: prevState.byDay,
+      };
+    });
 
-     setShowRepeatModal(false);
-     setRepeatInputValue_temp((prevState) => {
-       return {
-         ...prevState,
-         repeatInputValue_temp: prevState.repeatInputValue, 
-       };
-     });
-     setRepeatOccurrence_temp((prevState) => {
-       return {
-         ...prevState,
-         repeatOccurrence_temp: prevState.repeatOccurrence, 
-       };
-     });
-     setRepeatDropDown_temp((prevState) => {
-       return {
-         ...prevState,
-         repeatDropDown_temp: prevState.repeatDropDown, 
-       };
-     });
-     setRepeatRadio_temp((prevState) => {
-       return {
-         ...prevState,
-         repeatRadio_temp: prevState.repeatRadio, 
-       };
-     });
-     setRepeatEndDate_temp((prevState) => {
-       return {
-         ...prevState,
-         repeatEndDate_temp: prevState.repeatEndDate, 
-       };
-     });
-     setByDay_temp((prevState) => {
-       return {
-         ...prevState,
-         byDay_temp: prevState.byDay, 
-       };
-     });
-    
-    if (
-      !repeatOption && repeatOptionDropDown === 'Custom...'
-    ) {
-      setRepeatOptionDropDown('Does not repeat')
+    if (!repeatOption && repeatOptionDropDown === 'Custom...') {
+      setRepeatOptionDropDown('Does not repeat');
     }
   };
 
@@ -191,22 +236,20 @@ export default function GoogleEventComponent(props) {
     if (eventKey === 'WEEK') {
       const newByDay = {
         ...byDay_temp,
-        [startTime.getDay()]:
-          week_days[startTime.getDay()],
+        [startTime.getDay()]: week_days[startTime.getDay()],
       };
       setRepeatDropDown_temp(eventKey);
       setByDay_temp(newByDay);
-      
     }
-     setRepeatDropDown_temp(eventKey);
+    setRepeatDropDown_temp(eventKey);
   };
 
   const handleRepeatMonthlyDropDown = (eventKey) => {
-    setRepeatMonthlyDropDown(eventKey)
+    setRepeatMonthlyDropDown(eventKey);
   };
 
   const handleRepeatEndDate = (date) => {
-    setRepeatEndDate_temp(date)
+    setRepeatEndDate_temp(date);
   };
 
   const handleRepeatInputValue = (eventKey) => {
@@ -221,43 +264,42 @@ export default function GoogleEventComponent(props) {
   };
 
   const saveRepeatChanges = () => {
-   
     setShowRepeatModal(false);
     setRepeatOption(true);
     setRepeatInputValue((prevState) => {
       return {
         ...prevState,
-        repeatInputValue: prevState.repeatInputValue_temp, 
+        repeatInputValue: prevState.repeatInputValue_temp,
       };
     });
     setRepeatOccurrence((prevState) => {
       return {
         ...prevState,
-        repeatOccurrence: prevState.repeatOccurrence_temp, 
+        repeatOccurrence: prevState.repeatOccurrence_temp,
       };
     });
     setRepeatDropDown((prevState) => {
       return {
         ...prevState,
-        repeatDropDown: prevState.repeatDropDown_temp, 
+        repeatDropDown: prevState.repeatDropDown_temp,
       };
     });
     setRepeatRadio((prevState) => {
       return {
         ...prevState,
-        repeatRadio: prevState.repeatRadio_temp, 
+        repeatRadio: prevState.repeatRadio_temp,
       };
     });
     setRepeatEndDate((prevState) => {
       return {
         ...prevState,
-        repeatEndDate: prevState.repeatEndDate_temp, 
+        repeatEndDate: prevState.repeatEndDate_temp,
       };
     });
     setByDay((prevState) => {
       return {
         ...prevState,
-        byDay: prevState.byDay_temp, 
+        byDay: prevState.byDay_temp,
       };
     });
     // ((prevState) => ({
@@ -312,14 +354,21 @@ export default function GoogleEventComponent(props) {
             ).format('LL')}`
           );
           setRecurrenceRule(
-            `RRULE:FREQ=DAILY;INTERVAL=${repeatInputValue_temp};UNTIL=${moment(repeatEndDate_temp).format('YYYYMMDD')}`);
+            `RRULE:FREQ=DAILY;INTERVAL=${repeatInputValue_temp};UNTIL=${moment(
+              repeatEndDate_temp
+            ).format('YYYYMMDD')}`
+          );
         } else {
           if (repeatOccurrence_temp === '1') {
             setRepeatOptionDropDown(`Once`);
             setRecurrenceRule(`RRULE:FREQ=DAILY;COUNT=1`);
           } else {
-            setRepeatOptionDropDown(`Every ${repeatInputValue_temp} days, ${repeatOccurrence_temp} times`);
-            setRecurrenceRule(`RRULE:FREQ=DAILY;INTERVAL=${repeatInputValue_temp};COUNT=${repeatOccurrence_temp}`);
+            setRepeatOptionDropDown(
+              `Every ${repeatInputValue_temp} days, ${repeatOccurrence_temp} times`
+            );
+            setRecurrenceRule(
+              `RRULE:FREQ=DAILY;INTERVAL=${repeatInputValue_temp};COUNT=${repeatOccurrence_temp}`
+            );
           }
         }
       }
@@ -333,7 +382,8 @@ export default function GoogleEventComponent(props) {
       }
       let selectedDaysRecurrence = [];
       for (let [key, value] of Object.entries(byDay_temp)) {
-        value !== '' && selectedDaysRecurrence.push(value.substring(0, 2).toUpperCase());
+        value !== '' &&
+          selectedDaysRecurrence.push(value.substring(0, 2).toUpperCase());
       }
       console.log(selectedDays, 'selectedDays week');
       if (repeatInputValue_temp === '1') {
@@ -344,34 +394,53 @@ export default function GoogleEventComponent(props) {
           } else {
             setRepeatOptionDropDown(`Weekly on ${selectedDays.join(', ')}`);
             setRecurrenceRule(
-              `RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=${selectedDaysRecurrence.join(',')}`
+              `RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=${selectedDaysRecurrence.join(
+                ','
+              )}`
             );
           }
         } else if (repeatRadio_temp === 'On') {
           if (selectedDays.length === 7) {
-            setRepeatOptionDropDown(`Weekly on all days, until ${moment(repeatEndDate_temp).format('LL')}`);
+            setRepeatOptionDropDown(
+              `Weekly on all days, until ${moment(repeatEndDate_temp).format(
+                'LL'
+              )}`
+            );
             setRecurrenceRule(
               `RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=${moment(
                 repeatEndDate_temp
               ).format('YYYYMMDD')}`
             );
           } else {
-            setRepeatOptionDropDown(`Weekly on ${selectedDays.join(', ')}, until ${moment(repeatEndDate_temp).format('LL')}`);
-            setRecurrenceRule(`RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=${selectedDaysRecurrence.join(',')};UNTIL=${moment(repeatEndDate_temp).format('YYYYMMDD')}`);
+            setRepeatOptionDropDown(
+              `Weekly on ${selectedDays.join(', ')}, until ${moment(
+                repeatEndDate_temp
+              ).format('LL')}`
+            );
+            setRecurrenceRule(
+              `RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=${selectedDaysRecurrence.join(
+                ','
+              )};UNTIL=${moment(repeatEndDate_temp).format('YYYYMMDD')}`
+            );
           }
         } else {
           if (repeatOccurrence_temp === '1') {
             setRepeatOptionDropDown(`Once`);
-            setRecurrenceRule(
-              `RRULE:FREQ=WEEKLY;INTERVAL=1;COUNT=1`);
+            setRecurrenceRule(`RRULE:FREQ=WEEKLY;INTERVAL=1;COUNT=1`);
           } else {
             if (selectedDays.length === 7) {
-              setRepeatOptionDropDown(`Weekly on all days, , ${repeatOccurrence_temp} times`);
+              setRepeatOptionDropDown(
+                `Weekly on all days, , ${repeatOccurrence_temp} times`
+              );
               setRecurrenceRule(
                 `RRULE:FREQ=WEEKLY;INTERVAL=1;COUNT=${repeatOccurrence_temp}`
               );
             } else {
-              setRepeatOptionDropDown(`Weekly on ${selectedDays.join(', ')}, ${repeatOccurrence_temp} times`);
+              setRepeatOptionDropDown(
+                `Weekly on ${selectedDays.join(
+                  ', '
+                )}, ${repeatOccurrence_temp} times`
+              );
               setRecurrenceRule(
                 `RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=${selectedDaysRecurrence.join(
                   ','
@@ -383,12 +452,18 @@ export default function GoogleEventComponent(props) {
       } else {
         if (repeatRadio_temp === 'Never') {
           if (selectedDays.length === 7) {
-            setRepeatOptionDropDown(`Every ${repeatInputValue_temp} weeks on all days`);
+            setRepeatOptionDropDown(
+              `Every ${repeatInputValue_temp} weeks on all days`
+            );
             setRecurrenceRule(
               `RRULE:FREQ=WEEKLY;INTERVAL=${repeatInputValue_temp}`
             );
           } else {
-            setRepeatOptionDropDown(`Every ${repeatInputValue_temp} weeks on ${selectedDays.join(', ')}`);
+            setRepeatOptionDropDown(
+              `Every ${repeatInputValue_temp} weeks on ${selectedDays.join(
+                ', '
+              )}`
+            );
             setRecurrenceRule(
               `RRULE:FREQ=WEEKLY;INTERVAL=${repeatInputValue_temp};BYDAY=${selectedDaysRecurrence.join(
                 ','
@@ -397,14 +472,22 @@ export default function GoogleEventComponent(props) {
           }
         } else if (repeatRadio_temp === 'On') {
           if (selectedDays.length === 7) {
-            setRepeatOptionDropDown(`Every ${repeatInputValue_temp} weeks on all days, until ${moment( repeatEndDate_temp).format('LL')}`);
+            setRepeatOptionDropDown(
+              `Every ${repeatInputValue_temp} weeks on all days, until ${moment(
+                repeatEndDate_temp
+              ).format('LL')}`
+            );
             setRecurrenceRule(
               `RRULE:FREQ=WEEKLY;INTERVAL=${repeatInputValue_temp};UNTIL=${moment(
                 repeatEndDate_temp
               ).format('YYYYMMDD')}`
             );
           } else {
-            setRepeatOptionDropDown(`Every ${repeatInputValue_temp} weeks on ${selectedDays.join(', ')}, until ${moment(repeatEndDate_temp).format('LL')}`);
+            setRepeatOptionDropDown(
+              `Every ${repeatInputValue_temp} weeks on ${selectedDays.join(
+                ', '
+              )}, until ${moment(repeatEndDate_temp).format('LL')}`
+            );
             setRecurrenceRule(
               `RRULE:FREQ=WEEKLY;INTERVAL=${repeatInputValue_temp};BYDAY=${selectedDaysRecurrence.join(
                 ','
@@ -419,12 +502,18 @@ export default function GoogleEventComponent(props) {
             );
           } else {
             if (selectedDays.length === 7) {
-              setRepeatOptionDropDown(`Every ${repeatInputValue_temp} weeks on all days, ${repeatOccurrence_temp} times`);
+              setRepeatOptionDropDown(
+                `Every ${repeatInputValue_temp} weeks on all days, ${repeatOccurrence_temp} times`
+              );
               setRecurrenceRule(
                 `RRULE:FREQ=WEEKLY;INTERVAL=${repeatInputValue_temp};COUNT=${repeatOccurrence_temp}`
               );
             } else {
-              setRepeatOptionDropDown(`Every ${repeatInputValue_temp} weeks on ${selectedDays.join(', ')}, ${repeatOccurrence_temp} times`);
+              setRepeatOptionDropDown(
+                `Every ${repeatInputValue_temp} weeks on ${selectedDays.join(
+                  ', '
+                )}, ${repeatOccurrence_temp} times`
+              );
               setRecurrenceRule(
                 `RRULE:FREQ=WEEKLY;INTERVAL=${repeatInputValue_temp};BYDAY=${selectedDaysRecurrence.join(
                   ','
@@ -442,7 +531,9 @@ export default function GoogleEventComponent(props) {
         if (repeatRadio_temp === 'Never') {
           setRepeatOptionDropDown('Monthly');
         } else if (repeatRadio_temp === 'On') {
-          setRepeatOptionDropDown(`Monthly, until ${moment(repeatEndDate_temp).format('LL')}`);
+          setRepeatOptionDropDown(
+            `Monthly, until ${moment(repeatEndDate_temp).format('LL')}`
+          );
         } else {
           if (repeatOccurrence_temp === '1') {
             setRepeatOptionDropDown(`Once`);
@@ -454,12 +545,18 @@ export default function GoogleEventComponent(props) {
         if (repeatRadio_temp === 'Never') {
           setRepeatOptionDropDown(`Every ${repeatInputValue_temp} months`);
         } else if (repeatRadio_temp === 'On') {
-          setRepeatOptionDropDown(`Every ${repeatInputValue_temp} months, until ${moment(repeatEndDate_temp).format('LL')}`);
+          setRepeatOptionDropDown(
+            `Every ${repeatInputValue_temp} months, until ${moment(
+              repeatEndDate_temp
+            ).format('LL')}`
+          );
         } else {
           if (repeatOccurrence_temp === '1') {
             setRepeatOptionDropDown(`Once`);
           } else {
-            setRepeatOptionDropDown(`Every ${repeatInputValue_temp} months, ${repeatOccurrence_temp} times`);
+            setRepeatOptionDropDown(
+              `Every ${repeatInputValue_temp} months, ${repeatOccurrence_temp} times`
+            );
           }
         }
       }
@@ -469,9 +566,11 @@ export default function GoogleEventComponent(props) {
     else if (repeatDropDown_temp === 'Year') {
       if (repeatInputValue_temp === '1') {
         if (repeatRadio_temp === 'Never') {
-          setRepeatOptionDropDown('Annually',);
+          setRepeatOptionDropDown('Annually');
         } else if (repeatRadio_temp === 'On') {
-          setRepeatOptionDropDown(`Annually, until ${moment(repeatEndDate_temp).format('LL')}`,);
+          setRepeatOptionDropDown(
+            `Annually, until ${moment(repeatEndDate_temp).format('LL')}`
+          );
         } else {
           if (repeatOccurrence_temp === '1') {
             setRepeatOptionDropDown(`Once`);
@@ -483,19 +582,24 @@ export default function GoogleEventComponent(props) {
         if (repeatRadio_temp === 'Never') {
           setRepeatOptionDropDown(`Every ${repeatInputValue_temp} years`);
         } else if (repeatRadio_temp === 'On') {
-          setRepeatOptionDropDown(`Every ${repeatInputValue_temp} years, until ${moment(repeatEndDate_temp).format('LL')}`);
+          setRepeatOptionDropDown(
+            `Every ${repeatInputValue_temp} years, until ${moment(
+              repeatEndDate_temp
+            ).format('LL')}`
+          );
         } else {
           if (repeatOccurrence_temp === '1') {
             setRepeatOptionDropDown(`Once`);
           } else {
-            setRepeatOptionDropDown(`Every ${repeatInputValue_temp} years, ${repeatOccurrence_temp} times`);
+            setRepeatOptionDropDown(
+              `Every ${repeatInputValue_temp} years, ${repeatOccurrence_temp} times`
+            );
           }
         }
       }
     }
-    console.log(showRepeatModal)
+    console.log(showRepeatModal);
   };
-
 
   const repeatModal = () => {
     // const [title, setTitle] = useState("DAY");
@@ -549,7 +653,7 @@ export default function GoogleEventComponent(props) {
     };
     const dotSelected = {
       backgroundColor: '#67ABFC',
-      color:'#ffffff'
+      color: '#ffffff',
     };
 
     // const radioInputStyle = { display: "flex", alignItems: "center" };
@@ -560,14 +664,14 @@ export default function GoogleEventComponent(props) {
       if (curClass.contains('selected')) {
         curClass.remove('selected');
         const newByDay = { ...byDay_temp, [index]: '' };
-       setByDay_temp(newByDay);
+        setByDay_temp(newByDay);
       } else {
         curClass.add('selected');
         const newByDay = {
           ...byDay_temp,
           [index]: week_days[index],
         };
-       setByDay_temp(newByDay);
+        setByDay_temp(newByDay);
       }
     };
 
@@ -784,8 +888,7 @@ export default function GoogleEventComponent(props) {
 
         <Modal.Footer>
           <Container>
-          <Row>
-            
+            <Row>
               <Col>
                 <button
                   style={{
@@ -820,14 +923,12 @@ export default function GoogleEventComponent(props) {
                   Save changes
                 </button>
               </Col>
-          
-          </Row>
+            </Row>
           </Container>
         </Modal.Footer>
       </Modal.Dialog>
     );
   };
-  
 
   const [fields, setFields] = useState([{ email: userEmail }]);
   function handleChange(i, event) {
@@ -848,25 +949,35 @@ export default function GoogleEventComponent(props) {
     setFields(emails);
   }
   const submit = (e) => {
-  
     e.preventDefault();
-    console.log(repeatOptionDropDown)
+    console.log(repeatOptionDropDown);
     let x = '2021-11-17T01:30:00-08:00';
     console.log(moment(x).format('ddd MMM DD YYYY hh:mm:ss [GMT]ZZ(PST)'));
     editingEventContext.setEditingEvent({
       ...editingEventContext.editingEvent,
       editing: true,
     });
+    let organizer = 'calendar@manifestmy.space';
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      organizer = 'calendar@manifestmy.space';
+      console.log(organizer);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      organizer = 'calendar@manifestmy.life';
+      console.log(organizer);
+    }
+
     var event = {
       summary,
       description,
       location,
       creator: {
-        email: 'calendar@manifestmy.space',
+        email: props.organizerEmail,
         self: true,
       },
       organizer: {
-        email: 'calendar@manifestmy.space',
+        email: props.organizerEmail,
         self: true,
       },
       start: {
@@ -882,12 +993,105 @@ export default function GoogleEventComponent(props) {
       reminders: {
         useDefault: false,
         overrides: [
-          { method: reminderMethod, 
-            minutes: reminderMinutes }
+          {
+            method: reminderMethod == '' ? 'email' : reminderMethod,
+            minutes: reminderMinutes == '' ? 0 : reminderMinutes,
+          },
         ],
       },
     };
-    publishTheCalenderEvent(event);
+    //publishTheCalenderEvent(event);
+    const createEvent = async () => {
+      const headersTa = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + props.taAccessToken,
+      };
+      await axios
+        .post(
+          `https://www.googleapis.com/calendar/v3/calendars/primary/events?key=${API_KEY}`,
+          event,
+          {
+            headers: headersTa,
+          }
+        )
+        .then((response) => {
+          console.log(response);
+
+          // editingEventContext.setEditingEvent({
+          //   ...editingEventContext.editingEvent,
+          //   editing: false,
+          // });
+          // props.setEvents(event);
+        })
+        .catch((error) => {
+          console.log('error', error);
+        });
+
+      let start =
+        props.stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+      let endofWeek = moment(props.stateValue.dateContext).add(6, 'days');
+      let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
+      const headersUser = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + props.userAccessToken,
+      };
+      const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?orderBy=startTime&singleEvents=true&timeMax=${end}&timeMin=${start}&key=${API_KEY}`;
+      await axios
+        .get(url, {
+          headers: headersUser,
+        })
+        .then((response) => {
+          console.log('day events ', response.data.items);
+          const temp = [];
+
+          for (let i = 0; i < response.data.items.length; i++) {
+            temp.push(response.data.items[i]);
+          }
+          temp.sort((a, b) => {
+            // console.log('a = ', a, '\nb = ', b);
+            const [a_start, b_start] = [
+              a['start']['dateTime'],
+              b['start']['dateTime'],
+            ];
+            console.log('a_start = ', a_start, '\nb_start = ', b_start);
+            const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
+
+            const [a_start_time, b_start_time] = getTimes(
+              a['start']['dateTime'],
+              b['start']['dateTime']
+            );
+            const [a_end_time, b_end_time] = getTimes(
+              a['end']['dateTime'],
+              b['end']['dateTime']
+            );
+
+            if (a_start_time < b_start_time) return -1;
+            else if (a_start_time > b_start_time) return 1;
+            else {
+              if (a_end_time < b_end_time) return -1;
+              else if (a_end_time > b_end_time) return 1;
+              else {
+                if (a_start < b_start) return -1;
+                else if (a_start > b_start) return 1;
+                else {
+                  if (a_end < b_end) return -1;
+                  else if (a_end > b_end) return 1;
+                }
+              }
+            }
+
+            return 0;
+          });
+
+          console.log('homeTemp = ', temp);
+
+          props.setEvents(temp);
+        })
+        .catch((error) => console.log(error));
+    };
+    createEvent();
     editingEventContext.setEditingEvent({
       ...editingEventContext.editingEvent,
       editing: false,

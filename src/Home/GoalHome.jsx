@@ -38,9 +38,12 @@ import EditIS from './EditIS/EditIS';
 import LoginContext from '../LoginContext';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
+const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
 export default function GoalHome(props) {
   console.log('In home');
+  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
   const loginContext = useContext(LoginContext);
   var selectedUser = loginContext.loginState.curUser;
   console.log(loginContext.loginState.curUser);
@@ -55,7 +58,10 @@ export default function GoalHome(props) {
 
   var userID = '';
   var userTime_zone = '';
-  var userEmail='';
+  var userEmail = '';
+
+  var taID = '';
+  var taEmail = '';
   if (
     document.cookie
       .split(';')
@@ -74,16 +80,38 @@ export default function GoalHome(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_email='))
       .split('=')[1];
+    taID = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('ta_uid='))
+      .split('=')[1];
+    taEmail = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('ta_email='))
+      .split('=')[1];
   } else {
     console.log('in here', console.log(loginContext.loginState));
     console.log('document cookie', document.cookie);
     userID = loginContext.loginState.curUser;
     userEmail = loginContext.loginState.curUserEmail;
-   
+
     if (loginContext.loginState.usersOfTA.length === 0) {
       userTime_zone = 'America/Tijuana';
     } else {
       userTime_zone = loginContext.loginState.usersOfTA[0].time_zone;
+    }
+    if (
+      document.cookie
+        .split(';')
+        .some((item) => item.trim().startsWith('ta_uid='))
+    ) {
+      taID = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('ta_uid='))
+        .split('=')[1];
+      taEmail = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('ta_email='))
+        .split('=')[1];
     }
     console.log('curUser', userID);
     console.log('curUser', userTime_zone);
@@ -116,7 +144,7 @@ export default function GoalHome(props) {
       )
       .then((response) => {
         console.log(response);
-        if (response.result !== false) {
+        if (response.data.result.length > 0) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;
@@ -133,10 +161,18 @@ export default function GoalHome(props) {
           console.log('timezone', curUserTZ);
           GrabFireBaseRoutinesGoalsData();
           GrabFireBaseGoalsData();
-          GoogleEvents();
+          GetUserAcessToken();
+          //  GoogleEvents();
           // return userID;
         } else {
           console.log('No User Found');
+          // loginContext.setLoginState({
+          //   ...loginContext.loginState,
+          //   usersOfTA: response.data.result,
+          //   curUser: '',
+          //   curUserTimeZone: '',
+          //   curUserEmail: '',
+          // });
         }
       })
       .catch((error) => {
@@ -145,8 +181,27 @@ export default function GoalHome(props) {
   }, [loginContext.loginState.reload]);
   // }
   console.log(loginContext.loginState.curUserTimeZone);
+
+  useEffect(() => {
+    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    }
+  }, [loginContext.loginState.reload]);
+
   /*----------------------------Use states to define variables----------------------------*/
   const [signedin, setSignedIn] = useState(false);
+  const [email, setEmail] = useState(taEmail);
+  const [idToken, setIdToken] = useState('');
+  const [taAccessToken, setTaAccessToken] = useState('');
+  const [userAccessToken, setUserAccessToken] = useState('');
   const [routineID, setRoutineID] = useState('');
   const [actionID, setActionID] = useState('');
   const [getGoalsEndPoint, setGetGoalsEndPoint] = useState([]);
@@ -524,120 +579,120 @@ export default function GoalHome(props) {
       },
     },
   };
-const initialEditingEventState = {
-  editing: false,
-  user_id: userID,
-  theCurrentUserEmail: userEmail,
-  newItem: {
-    newEventID: '', //save the event ID for possible future use
-    newEventRecurringID: '',
-    newEventName: '',
-    newEventGuests: '',
-    newEventLocation: '',
-    newEventNotification: 30,
-    newEventDescription: '',
-    newEventStart0: new Date(), //start and end for a event... it's currently set to today
-    newEventEnd0: new Date(), //start and end for a event... it's currently set to today
-    isEvent: false, // use to check whether we clicked on a event and populate extra buttons in event form
-    repeatOption: false,
-    repeatOptionDropDown: 'Does not repeat',
-    repeatDropDown: 'DAY',
-    repeatDropDown_temp: 'DAY',
-    repeatMonthlyDropDown: 'Monthly on day 13',
-    repeatInputValue: '1',
-    repeatInputValue_temp: '1',
-    repeatOccurrence: '1',
-    repeatOccurrence_temp: '1',
-    repeatRadio: 'Never',
-    repeatRadio_temp: 'Never',
-    repeatEndDate: '',
-    repeatEndDate_temp: '',
-    showNoTitleError: '',
-    showDateError: '',
-    byDay: {
-      0: '',
-      1: '',
-      2: '',
-      3: '',
-      4: '',
-      5: '',
-      6: '',
+  const initialEditingEventState = {
+    editing: false,
+    user_id: userID,
+    theCurrentUserEmail: userEmail,
+    newItem: {
+      newEventID: '', //save the event ID for possible future use
+      newEventRecurringID: '',
+      newEventName: '',
+      newEventGuests: '',
+      newEventLocation: '',
+      newEventNotification: 30,
+      newEventDescription: '',
+      newEventStart0: new Date(), //start and end for a event... it's currently set to today
+      newEventEnd0: new Date(), //start and end for a event... it's currently set to today
+      isEvent: false, // use to check whether we clicked on a event and populate extra buttons in event form
+      repeatOption: false,
+      repeatOptionDropDown: 'Does not repeat',
+      repeatDropDown: 'DAY',
+      repeatDropDown_temp: 'DAY',
+      repeatMonthlyDropDown: 'Monthly on day 13',
+      repeatInputValue: '1',
+      repeatInputValue_temp: '1',
+      repeatOccurrence: '1',
+      repeatOccurrence_temp: '1',
+      repeatRadio: 'Never',
+      repeatRadio_temp: 'Never',
+      repeatEndDate: '',
+      repeatEndDate_temp: '',
+      showNoTitleError: '',
+      showDateError: '',
+      byDay: {
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
+      },
+      byDay_temp: {
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
+      },
+      repeatSummary: '',
+      recurrenceRule: '',
+      eventNotifications: {},
+      showDeleteRecurringModal: false,
+      deleteRecurringOption: 'This event',
+      showEditRecurringModal: false,
+      editRecurringOption: '',
     },
-    byDay_temp: {
-      0: '',
-      1: '',
-      2: '',
-      3: '',
-      4: '',
-      5: '',
-      6: '',
+  };
+  const newEditingEventState = {
+    editing: true,
+    user_id: userID,
+    theCurrentUserEmail: userEmail,
+    newItem: {
+      newEventID: '', //save the event ID for possible future use
+      newEventRecurringID: '',
+      newEventName: '',
+      newEventGuests: '',
+      newEventLocation: '',
+      newEventNotification: 30,
+      newEventDescription: '',
+      newEventStart0: new Date(), //start and end for a event... it's currently set to today
+      newEventEnd0: new Date(), //start and end for a event... it's currently set to today
+      isEvent: false, // use to check whether we clicked on a event and populate extra buttons in event form
+      repeatOption: false,
+      repeatOptionDropDown: 'Does not repeat',
+      repeatDropDown: 'DAY',
+      repeatDropDown_temp: 'DAY',
+      repeatMonthlyDropDown: 'Monthly on day 13',
+      repeatInputValue: '1',
+      repeatInputValue_temp: '1',
+      repeatOccurrence: '1',
+      repeatOccurrence_temp: '1',
+      repeatRadio: 'Never',
+      repeatRadio_temp: 'Never',
+      repeatEndDate: '',
+      repeatEndDate_temp: '',
+      showNoTitleError: '',
+      showDateError: '',
+      byDay: {
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
+      },
+      byDay_temp: {
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
+      },
+      repeatSummary: '',
+      recurrenceRule: '',
+      eventNotifications: {},
+      showDeleteRecurringModal: false,
+      deleteRecurringOption: 'This event',
+      showEditRecurringModal: false,
+      editRecurringOption: '',
     },
-    repeatSummary: '',
-    recurrenceRule: '',
-    eventNotifications: {},
-    showDeleteRecurringModal: false,
-    deleteRecurringOption: 'This event',
-    showEditRecurringModal: false,
-    editRecurringOption: '',
-  },
-};
-const newEditingEventState = {
-  editing: true,
-  user_id: userID,
-  theCurrentUserEmail: userEmail,
-  newItem: {
-    newEventID: '', //save the event ID for possible future use
-    newEventRecurringID: '',
-    newEventName: '',
-    newEventGuests: '',
-    newEventLocation: '',
-    newEventNotification: 30,
-    newEventDescription: '',
-    newEventStart0: new Date(), //start and end for a event... it's currently set to today
-    newEventEnd0: new Date(), //start and end for a event... it's currently set to today
-    isEvent: false, // use to check whether we clicked on a event and populate extra buttons in event form
-    repeatOption: false,
-    repeatOptionDropDown: 'Does not repeat',
-    repeatDropDown: 'DAY',
-    repeatDropDown_temp: 'DAY',
-    repeatMonthlyDropDown: 'Monthly on day 13',
-    repeatInputValue: '1',
-    repeatInputValue_temp: '1',
-    repeatOccurrence: '1',
-    repeatOccurrence_temp: '1',
-    repeatRadio: 'Never',
-    repeatRadio_temp: 'Never',
-    repeatEndDate: '',
-    repeatEndDate_temp: '',
-    showNoTitleError: '',
-    showDateError: '',
-    byDay: {
-      0: '',
-      1: '',
-      2: '',
-      3: '',
-      4: '',
-      5: '',
-      6: '',
-    },
-    byDay_temp: {
-      0: '',
-      1: '',
-      2: '',
-      3: '',
-      4: '',
-      5: '',
-      6: '',
-    },
-    repeatSummary: '',
-    recurrenceRule: '',
-    eventNotifications: {},
-    showDeleteRecurringModal: false,
-    deleteRecurringOption: 'This event',
-    showEditRecurringModal: false,
-    editRecurringOption: '',
-  },
-};
+  };
   const newEditingATSState = {
     editing: true,
     type: '',
@@ -766,6 +821,119 @@ const newEditingEventState = {
 
   const classes = useStyles();
 
+  const getAccessToken = () => {
+    let url = BASE_URL + 'taToken/';
+    let ta_id = '200-000002';
+    axios
+      .get(url + ta_id)
+      .then((response) => {
+        console.log('in events', response);
+        let url =
+          'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
+        loginContext.setLoginState({
+          ...loginContext.loginState,
+          ta: {
+            id: '200-000002',
+            email: response['data']['ta_email_id'],
+          },
+        });
+        setEmail(response['data']['ta_email_id']);
+        setSignedIn(true);
+        var old_at = response['data']['ta_google_auth_token'];
+        console.log('in events', old_at);
+        var refreshToken = response['data']['ta_google_refresh_token'];
+
+        let checkExp_url = url + old_at;
+        console.log('in events', checkExp_url);
+        fetch(
+          `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`,
+          {
+            method: 'GET',
+          }
+        )
+          .then((response) => {
+            console.log('in events', response);
+            if (response['status'] === 400) {
+              console.log('in events if');
+              let authorization_url =
+                'https://accounts.google.com/o/oauth2/token';
+              if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+                console.log('base_url', BASE_URL.substring(8, 18));
+                CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+                CLIENT_SECRET =
+                  process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+                console.log(CLIENT_ID, CLIENT_SECRET);
+              } else {
+                console.log('base_url', BASE_URL.substring(8, 18));
+                CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+                CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+                console.log(CLIENT_ID, CLIENT_SECRET);
+              }
+              var details = {
+                refresh_token: refreshToken,
+                client_id: CLIENT_ID,
+                client_secret: CLIENT_SECRET,
+                grant_type: 'refresh_token',
+              };
+
+              var formBody = [];
+              for (var property in details) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + '=' + encodedValue);
+              }
+              formBody = formBody.join('&');
+
+              fetch(authorization_url, {
+                method: 'POST',
+                headers: {
+                  'Content-Type':
+                    'application/x-www-form-urlencoded;charset=UTF-8',
+                },
+                body: formBody,
+              })
+                .then((response) => {
+                  return response.json();
+                })
+                .then((responseData) => {
+                  console.log(responseData);
+                  return responseData;
+                })
+                .then((data) => {
+                  console.log(data);
+                  let at = data['access_token'];
+                  var id_token = data['id_token'];
+                  setTaAccessToken(at);
+                  setIdToken(id_token);
+                  console.log('in events', at);
+                  let url = BASE_URL + 'UpdateAccessToken/';
+                  axios
+                    .post(url + ta_id, {
+                      ta_google_auth_token: at,
+                    })
+                    .then((response) => {})
+                    .catch((err) => {
+                      console.log(err);
+                    });
+                  return taAccessToken;
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+            } else {
+              setTaAccessToken(old_at);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        console.log('in events', refreshToken);
+      })
+      .catch((error) => {
+        console.log('Error in events' + error);
+      });
+  };
+
   /*----------------------------toggleShowGoal----------------------------*/
   function toggleShowGoal(props) {
     setStateValue((prevState) => {
@@ -782,12 +950,11 @@ const newEditingEventState = {
   }
 
   function toggleShowEvents(props) {
-    history.push('/events')
+    history.push('/events');
   }
   function toggleShowRoutine(props) {
     history.push('/home');
   }
-
 
   /*-----------------------------updateEventsArray:-----------------------------*/
   /*updates the array if the month view changes to a different month.*/
@@ -1110,13 +1277,7 @@ const newEditingEventState = {
       if (userID == '') return;
       console.log(
         'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-        [
-          userID,
-          editingRTS.editing,
-          editingATS.editing,
-          editingIS.editing,
-          editingEvent.editing,
-        ]
+        [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
       );
 
       axios
@@ -1546,130 +1707,391 @@ const newEditingEventState = {
         .catch((error) => {
           console.log('Error in getting goals and routines ' + error);
         });
-    }, [
-      userID,
-      editingRTS.editing,
-      editingATS.editing,
-      editingIS.editing,
-      editingEvent.editing,
-    ]);
+    }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
+  function GetUserAcessToken() {
+    let url = BASE_URL + 'usersToken/';
+    let user_id = userID;
+    let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+    let endofWeek = moment(stateValue.dateContext).add(6, 'days');
+    let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
 
-  function GoogleEvents() {
-  let url = BASE_URL + 'calenderEvents/';
-  let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
-  let endofWeek = moment(stateValue.dateContext).add(6, 'days');
-  let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
-  let id = userID;
-  
-  const getTimes = (a_day_time, b_day_time) => {
-    const [a_start_time, b_start_time] = [
-      a_day_time.substring(10, a_day_time.length),
-      b_day_time.substring(10, b_day_time.length),
-    ];
-    const [a_HMS, b_HMS] = [
-      a_start_time
-        .substring(0, a_start_time.length - 3)
-        .replace(/\s{1,}/, '')
-        .split(':'),
-      b_start_time
-        .substring(0, b_start_time.length - 3)
-        .replace(/\s{1,}/, '')
-        .split(':'),
-    ];
-    const [a_parity, b_parity] = [
-      a_start_time
-        .substring(a_start_time.length - 3, a_start_time.length)
-        .replace(/\s{1,}/, ''),
-      b_start_time
-        .substring(b_start_time.length - 3, b_start_time.length)
-        .replace(/\s{1,}/, ''),
-    ];
+    const getTimes = (a_day_time, b_day_time) => {
+      const [a_start_time, b_start_time] = [
+        a_day_time.substring(10, a_day_time.length),
+        b_day_time.substring(10, b_day_time.length),
+      ];
+      const [a_HMS, b_HMS] = [
+        a_start_time
+          .substring(0, a_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+        b_start_time
+          .substring(0, b_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
+      ];
+      const [a_parity, b_parity] = [
+        a_start_time
+          .substring(a_start_time.length - 3, a_start_time.length)
+          .replace(/\s{1,}/, ''),
+        b_start_time
+          .substring(b_start_time.length - 3, b_start_time.length)
+          .replace(/\s{1,}/, ''),
+      ];
 
-    let [a_time, b_time] = [0, 0];
-    if (a_parity === 'PM' && a_HMS[0] !== '12') {
-      const hoursInt = parseInt(a_HMS[0]) + 12;
-      a_HMS[0] = `${hoursInt}`;
-    } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+      let [a_time, b_time] = [0, 0];
+      if (a_parity === 'PM' && a_HMS[0] !== '12') {
+        const hoursInt = parseInt(a_HMS[0]) + 12;
+        a_HMS[0] = `${hoursInt}`;
+      } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
 
-    if (b_parity === 'PM' && b_HMS[0] !== '12') {
-      const hoursInt = parseInt(b_HMS[0]) + 12;
-      b_HMS[0] = `${hoursInt}`;
-    } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+      if (b_parity === 'PM' && b_HMS[0] !== '12') {
+        const hoursInt = parseInt(b_HMS[0]) + 12;
+        b_HMS[0] = `${hoursInt}`;
+      } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
 
-    for (let i = 0; i < a_HMS.length; i++) {
-      a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
-      b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
-    }
+      for (let i = 0; i < a_HMS.length; i++) {
+        a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+        b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+      }
 
-    return [a_time, b_time];
-  };
-  useEffect(() => {
-    if (userID == '') return;
-    console.log(
-      'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-      [
-        userID,
-        editingRTS.editing,
-        editingATS.editing,
-        editingIS.editing,
-        editingEvent.editing,
-      ]
-    );
+      return [a_time, b_time];
+    };
+    useEffect(() => {
+      if (userID == '') return;
+      console.log(
+        'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
+        [userID, editingEvent.editing]
+      );
 
-    axios
-      .post(url + id.toString() + ',' + start.toString() + ',' + end.toString())
-      .then((response) => {
-        console.log('day events ', response.data);
-        const temp = [];
+      axios
+        .get(url + user_id)
+        .then((response) => {
+          console.log('in events', response);
 
-        for (let i = 0; i < response.data.length; i++) {
-          temp.push(response.data[i]);
-        }
-        temp.sort((a, b) => {
-          const [a_start, b_start] = [
-            a['start']['dateTime'],
-            b['start']['dateTime'],
-          ];
-          console.log('a_start = ', a_start, '\nb_start = ', b_start);
-          const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
+          var old_at = response['data']['google_auth_token'];
+          var refreshToken = response['data']['google_refresh_token'];
+          console.log('in events', old_at);
+          const headers = {
+            Accept: 'application/json',
+            Authorization: 'Bearer ' + old_at,
+          };
+          const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?orderBy=startTime&singleEvents=true&timeMax=${end}&timeMin=${start}&key=${API_KEY}`;
+          axios
+            .get(url, {
+              headers: headers,
+            })
+            .then((response) => {
+              console.log('day events ', response.data.items);
+              const temp = [];
 
-          const [a_start_time, b_start_time] = getTimes(
-            a['start']['dateTime'],
-            b['start']['dateTime']
-          );
-          const [a_end_time, b_end_time] = getTimes(
-            a['end']['dateTime'],
-            b['end']['dateTime']
-          );
-
-          if (a_start_time < b_start_time) return -1;
-          else if (a_start_time > b_start_time) return 1;
-          else {
-            if (a_end_time < b_end_time) return -1;
-            else if (a_end_time > b_end_time) return 1;
-            else {
-              if (a_start < b_start) return -1;
-              else if (a_start > b_start) return 1;
-              else {
-                if (a_end < b_end) return -1;
-                else if (a_end > b_end) return 1;
+              for (let i = 0; i < response.data.items.length; i++) {
+                temp.push(response.data.items[i]);
               }
+              temp.sort((a, b) => {
+                // console.log('a = ', a, '\nb = ', b);
+                const [a_start, b_start] = [
+                  a['start']['dateTime'],
+                  b['start']['dateTime'],
+                ];
+                console.log('a_start = ', a_start, '\nb_start = ', b_start);
+                const [a_end, b_end] = [
+                  a['end']['dateTime'],
+                  b['end']['dateTime'],
+                ];
+
+                const [a_start_time, b_start_time] = getTimes(
+                  a['start']['dateTime'],
+                  b['start']['dateTime']
+                );
+                const [a_end_time, b_end_time] = getTimes(
+                  a['end']['dateTime'],
+                  b['end']['dateTime']
+                );
+
+                if (a_start_time < b_start_time) return -1;
+                else if (a_start_time > b_start_time) return 1;
+                else {
+                  if (a_end_time < b_end_time) return -1;
+                  else if (a_end_time > b_end_time) return 1;
+                  else {
+                    if (a_start < b_start) return -1;
+                    else if (a_start > b_start) return 1;
+                    else {
+                      if (a_end < b_end) return -1;
+                      else if (a_end > b_end) return 1;
+                    }
+                  }
+                }
+
+                return 0;
+              });
+
+              console.log('homeTemp = ', temp);
+
+              setEvents(temp);
+            })
+            .catch((error) => console.log(error));
+          fetch(
+            `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`,
+            {
+              method: 'GET',
             }
-          }
+          )
+            .then((response) => {
+              console.log('in events', response);
+              if (response['status'] === 400) {
+                console.log('in events if');
+                let authorization_url =
+                  'https://accounts.google.com/o/oauth2/token';
 
-          return 0;
+                var details = {
+                  refresh_token: refreshToken,
+                  client_id: CLIENT_ID,
+                  client_secret: CLIENT_SECRET,
+                  grant_type: 'refresh_token',
+                };
+
+                var formBody = [];
+                for (var property in details) {
+                  var encodedKey = encodeURIComponent(property);
+                  var encodedValue = encodeURIComponent(details[property]);
+                  formBody.push(encodedKey + '=' + encodedValue);
+                }
+                formBody = formBody.join('&');
+
+                fetch(authorization_url, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type':
+                      'application/x-www-form-urlencoded;charset=UTF-8',
+                  },
+                  body: formBody,
+                })
+                  .then((response) => {
+                    return response.json();
+                  })
+                  .then((responseData) => {
+                    console.log(responseData);
+                    return responseData;
+                  })
+                  .then((data) => {
+                    console.log(data);
+                    let at = data['access_token'];
+                    setUserAccessToken(at);
+                    const headers = {
+                      Accept: 'application/json',
+                      Authorization: 'Bearer ' + at,
+                    };
+                    const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?orderBy=startTime&singleEvents=true&timeMax=${end}&timeMin=${start}&key=${API_KEY}`;
+                    axios
+                      .get(url, {
+                        headers: headers,
+                      })
+                      .then((response) => {
+                        console.log('day events ', response.data.items);
+                        const temp = [];
+
+                        for (let i = 0; i < response.data.items.length; i++) {
+                          temp.push(response.data.items[i]);
+                        }
+                        temp.sort((a, b) => {
+                          // console.log('a = ', a, '\nb = ', b);
+                          const [a_start, b_start] = [
+                            a['start']['dateTime'],
+                            b['start']['dateTime'],
+                          ];
+                          console.log(
+                            'a_start = ',
+                            a_start,
+                            '\nb_start = ',
+                            b_start
+                          );
+                          const [a_end, b_end] = [
+                            a['end']['dateTime'],
+                            b['end']['dateTime'],
+                          ];
+
+                          const [a_start_time, b_start_time] = getTimes(
+                            a['start']['dateTime'],
+                            b['start']['dateTime']
+                          );
+                          const [a_end_time, b_end_time] = getTimes(
+                            a['end']['dateTime'],
+                            b['end']['dateTime']
+                          );
+
+                          if (a_start_time < b_start_time) return -1;
+                          else if (a_start_time > b_start_time) return 1;
+                          else {
+                            if (a_end_time < b_end_time) return -1;
+                            else if (a_end_time > b_end_time) return 1;
+                            else {
+                              if (a_start < b_start) return -1;
+                              else if (a_start > b_start) return 1;
+                              else {
+                                if (a_end < b_end) return -1;
+                                else if (a_end > b_end) return 1;
+                              }
+                            }
+                          }
+
+                          return 0;
+                        });
+
+                        console.log('homeTemp = ', temp);
+
+                        setEvents(temp);
+                      })
+                      .catch((error) => console.log(error));
+
+                    console.log('in events', at);
+                    let updateURL = BASE_URL + 'UpdateUserAccessToken/';
+                    axios
+                      .post(updateURL + user_id, {
+                        google_auth_token: at,
+                      })
+                      .then((response) => {})
+                      .catch((err) => {
+                        console.log(err);
+                      });
+                    return;
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              } else {
+                setUserAccessToken(old_at);
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+          console.log('in events', refreshToken);
+        })
+        .catch((error) => {
+          console.log('Error in events' + error);
         });
+    }, [userID, stateValue.dateContext, editingEvent.editing]);
+  }
+  // function GoogleEvents() {
+  //   let url = BASE_URL + 'calenderEvents/';
+  //   let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+  //   let endofWeek = moment(stateValue.dateContext).add(6, 'days');
+  //   let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
+  //   let id = userID;
 
-        console.log('homeTemp = ', temp);
+  //   const getTimes = (a_day_time, b_day_time) => {
+  //     const [a_start_time, b_start_time] = [
+  //       a_day_time.substring(10, a_day_time.length),
+  //       b_day_time.substring(10, b_day_time.length),
+  //     ];
+  //     const [a_HMS, b_HMS] = [
+  //       a_start_time
+  //         .substring(0, a_start_time.length - 3)
+  //         .replace(/\s{1,}/, '')
+  //         .split(':'),
+  //       b_start_time
+  //         .substring(0, b_start_time.length - 3)
+  //         .replace(/\s{1,}/, '')
+  //         .split(':'),
+  //     ];
+  //     const [a_parity, b_parity] = [
+  //       a_start_time
+  //         .substring(a_start_time.length - 3, a_start_time.length)
+  //         .replace(/\s{1,}/, ''),
+  //       b_start_time
+  //         .substring(b_start_time.length - 3, b_start_time.length)
+  //         .replace(/\s{1,}/, ''),
+  //     ];
 
-        setEvents(temp);
-      })
-      .catch((error) => {
-        console.log('here: Error in getting goals and routines ' + error);
-      });
-  }, [userID, stateValue.dateContext, stateValue.todayDateObject]);
-}
+  //     let [a_time, b_time] = [0, 0];
+  //     if (a_parity === 'PM' && a_HMS[0] !== '12') {
+  //       const hoursInt = parseInt(a_HMS[0]) + 12;
+  //       a_HMS[0] = `${hoursInt}`;
+  //     } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+
+  //     if (b_parity === 'PM' && b_HMS[0] !== '12') {
+  //       const hoursInt = parseInt(b_HMS[0]) + 12;
+  //       b_HMS[0] = `${hoursInt}`;
+  //     } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+
+  //     for (let i = 0; i < a_HMS.length; i++) {
+  //       a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+  //       b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+  //     }
+
+  //     return [a_time, b_time];
+  //   };
+  //   useEffect(() => {
+  //     if (userID == '') return;
+  //     console.log(
+  //       'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
+  //       [
+  //         userID,
+  //         editingRTS.editing,
+  //         editingATS.editing,
+  //         editingIS.editing,
+  //         editingEvent.editing,
+  //       ]
+  //     );
+
+  //     axios
+  //       .post(
+  //         url + id.toString() + ',' + start.toString() + ',' + end.toString()
+  //       )
+  //       .then((response) => {
+  //         console.log('day events ', response.data);
+  //         const temp = [];
+
+  //         for (let i = 0; i < response.data.length; i++) {
+  //           temp.push(response.data[i]);
+  //         }
+  //         temp.sort((a, b) => {
+  //           const [a_start, b_start] = [
+  //             a['start']['dateTime'],
+  //             b['start']['dateTime'],
+  //           ];
+  //           console.log('a_start = ', a_start, '\nb_start = ', b_start);
+  //           const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
+
+  //           const [a_start_time, b_start_time] = getTimes(
+  //             a['start']['dateTime'],
+  //             b['start']['dateTime']
+  //           );
+  //           const [a_end_time, b_end_time] = getTimes(
+  //             a['end']['dateTime'],
+  //             b['end']['dateTime']
+  //           );
+
+  //           if (a_start_time < b_start_time) return -1;
+  //           else if (a_start_time > b_start_time) return 1;
+  //           else {
+  //             if (a_end_time < b_end_time) return -1;
+  //             else if (a_end_time > b_end_time) return 1;
+  //             else {
+  //               if (a_start < b_start) return -1;
+  //               else if (a_start > b_start) return 1;
+  //               else {
+  //                 if (a_end < b_end) return -1;
+  //                 else if (a_end > b_end) return 1;
+  //               }
+  //             }
+  //           }
+
+  //           return 0;
+  //         });
+
+  //         console.log('homeTemp = ', temp);
+
+  //         setEvents(temp);
+  //       })
+  //       .catch((error) => {
+  //         console.log('here: Error in getting goals and routines ' + error);
+  //       });
+  //   }, [userID, stateValue.dateContext, stateValue.todayDateObject]);
+  // }
   function GrabFireBaseGoalsData() {
     let url = BASE_URL + 'getgoals/';
     let routine = [];
@@ -1723,13 +2145,7 @@ const newEditingEventState = {
       if (userID == '') return;
       console.log(
         'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-        [
-          userID,
-          editingRTS.editing,
-          editingATS.editing,
-          editingIS.editing,
-          editingEvent.editing,
-        ]
+        [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
       );
 
       axios
@@ -2162,14 +2578,11 @@ const newEditingEventState = {
         .catch((error) => {
           console.log('Error in getting goals and routines ' + error);
         });
-    }, [
-      userID,
-      editingRTS.editing,
-      editingATS.editing,
-      editingIS.editing,
-      editingEvent.editing,
-    ]);
+    }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
+  useEffect(() => {
+    getAccessToken();
+  }, [editingEvent.editing]);
   useEffect(() => console.log('here: 4'), [editingRTS.editing.item]);
 
   function ToggleShowAbout() {
@@ -2249,7 +2662,8 @@ const newEditingEventState = {
                   stateValue.closeRoutine,
                   GrabFireBaseRoutinesGoalsData(),
                   GrabFireBaseGoalsData(),
-                  GoogleEvents(),
+                  GetUserAcessToken(),
+                  // GoogleEvents(),
                   stateValue.BASE_URL)
                 }
               >
@@ -2271,7 +2685,11 @@ const newEditingEventState = {
                     </Button>
                     <Button
                       className={classes.buttonSelection}
-                      onClick={toggleShowEvents}
+                      onClick={() => {
+                        toggleShowEvents();
+                        getAccessToken();
+                        setSignedIn(true);
+                      }}
                       id="one"
                     >
                       Events
@@ -2624,6 +3042,8 @@ const newEditingEventState = {
                           currentEmail={userEmail}
                           stateValue={stateValue}
                           setStateValue={setStateValue}
+                          userAccessToken={userAccessToken}
+                          taAccessToken={taAccessToken}
                         />
                       ) : (
                         showCalendarView()

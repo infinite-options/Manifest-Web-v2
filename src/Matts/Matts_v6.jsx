@@ -76,16 +76,16 @@ export default function MainPage(props) {
   // Kyle cookie code
   var userID = '';
   var userTime_zone = '';
-  var userEmail='';
+  var userEmail = '';
   if (
     document.cookie
       .split(';')
       .some((item) => item.trim().startsWith('patient_uid='))
   ) {
-     userID = document.cookie
-       .split('; ')
-       .find((row) => row.startsWith('patient_uid='))
-       .split('=')[1];
+    userID = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_uid='))
+      .split('=')[1];
     userTime_zone = document.cookie
       .split('; ')
       .find((row) => row.startsWith('patient_timeZone='))
@@ -183,7 +183,7 @@ export default function MainPage(props) {
         }
         // setHG(historyGot);
         console.log('hgot = ', historyGot);
-        setCurDate(m)
+        setCurDate(m);
         console.log(currentDate);
         cleanData(historyGot, currentDate);
         // console.log(response.data.result[1].details);
@@ -203,7 +203,7 @@ export default function MainPage(props) {
       )
       .then((response) => {
         console.log(response);
-        if (response.result !== false) {
+        if (response.data.result.length > 0) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;
@@ -221,13 +221,20 @@ export default function MainPage(props) {
           // GrabFireBaseRoutinesGoalsData();
           // return userID;
         } else {
+          loginContext.setLoginState({
+            ...loginContext.loginState,
+            usersOfTA: response.data.result,
+            curUser: '',
+            curUserTimeZone: '',
+            curUserEmail: '',
+          });
           console.log('No User Found');
         }
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [currentUser]);
+  }, [loginContext.loginState.loggedIn]);
 
   function formatTime(dateTime) {
     var temp = new Date(dateTime);
@@ -575,7 +582,7 @@ export default function MainPage(props) {
     var newRows = [];
     for (var r = 0; r < rows.length; r++) {
       if (rows[r].show) {
-        console.log("hgot here: " + rows[r].name);
+        console.log('hgot here: ' + rows[r].name);
         newRows.push(rows[r]);
       }
     }
@@ -650,7 +657,7 @@ export default function MainPage(props) {
     console.log('hgot clocked pre');
     setCurDate(new Date(currentDate.getTime() - 604800000));
     cleanData(historyGot, new Date(currentDate.getTime() - 604800000));
-    console.log('hgot',(new Date(Date.now())).getTime());
+    console.log('hgot', new Date(Date.now()).getTime());
     console.log('hgot', currentDate.getDate());
     setLoading(true);
     setLoading(false);
@@ -782,7 +789,6 @@ export default function MainPage(props) {
                           </p>
                         </Col>
                         <Col style={{ justifyContent: 'right' }}>
-                        
                           {new Date(Date.now()).getDate() !=
                           currentDate.getDate() ? (
                             <FontAwesomeIcon
@@ -796,9 +802,7 @@ export default function MainPage(props) {
                               }}
                             />
                           ) : (
-                            <div>
-                              
-                            </div>
+                            <div></div>
                           )}
                         </Col>
                       </Row>
@@ -821,22 +825,25 @@ export default function MainPage(props) {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                  {onlyAllowed().map((row) => (
-                      <TableRow key={row.number} >
-                          <TableCell align="right" height="98px">{row.sun}</TableCell>
-                          <TableCell align="right">{row.mon}</TableCell>
-                          <TableCell align="right">{row.tue}</TableCell>
-                          <TableCell align="right">{row.wed}</TableCell>
-                          <TableCell align="right">{row.thurs}</TableCell>
-                          <TableCell align="right">{row.fri}</TableCell>
-                          <TableCell align="right">{row.sat}</TableCell>
-                          <TableCell align="right" component="th" scope="row"
-                          onClick = {() => clickHandle(row.number)}
-                          >
-
-                          </TableCell>
+                    {onlyAllowed().map((row) => (
+                      <TableRow key={row.number}>
+                        <TableCell align="right" height="98px">
+                          {row.sun}
+                        </TableCell>
+                        <TableCell align="right">{row.mon}</TableCell>
+                        <TableCell align="right">{row.tue}</TableCell>
+                        <TableCell align="right">{row.wed}</TableCell>
+                        <TableCell align="right">{row.thurs}</TableCell>
+                        <TableCell align="right">{row.fri}</TableCell>
+                        <TableCell align="right">{row.sat}</TableCell>
+                        <TableCell
+                          align="right"
+                          component="th"
+                          scope="row"
+                          onClick={() => clickHandle(row.number)}
+                        ></TableCell>
                       </TableRow>
-                      ))}
+                    ))}
                   </TableBody>
                 </Table>
               </TableContainer>

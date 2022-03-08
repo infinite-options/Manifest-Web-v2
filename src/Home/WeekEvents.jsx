@@ -1,8 +1,6 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import moment from 'moment';
-import {
-     Container, Row, Col
-} from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 
 export default class WeekEvents extends Component {
   constructor(props) {
@@ -113,6 +111,7 @@ export default class WeekEvents extends Component {
   weekViewItems = () => {
     // this creates the events adjusting their div size to reflecting the time it's slotted for
     let dic = this.sortEvents();
+    console.log('dict events', dic);
     var res = [];
     for (let i = 0; i < 7; ++i) {
       var arr = [];
@@ -150,6 +149,7 @@ export default class WeekEvents extends Component {
 
   sortEvents = () => {
     var arr = this.props.weekEvents;
+    console.log('is_persistant', arr);
     var dic = {};
     for (let i = 0; i < arr.length; i++) {
       let tempStart = arr[i].start.dateTime;
@@ -167,13 +167,13 @@ export default class WeekEvents extends Component {
     }
     return dic;
   };
-   getEventItemFromDic = (day, hour, dic) => {
+  getEventItemFromDic = (day, hour, dic) => {
     let startObject = this.props.dateContext.clone();
     let startDay = startObject.startOf('week');
     let curDate = startDay.clone();
     curDate.add(day, 'days');
     var res = [];
-    let arr = [];
+    //let arr = [];
     var tempStart = null;
     var tempEnd = null;
     // var arr = dic[day+"_"+hour];
@@ -181,22 +181,25 @@ export default class WeekEvents extends Component {
     var addmarginLeft = 0;
     let itemWidth = this.state.eventBoxSize;
     var fontSize = 10;
-    for (var j = 0; j < 31; j++) {
-      for (var i = 0; i < 24; i++) {
-        if (dic[j + '_' + i] != null) {
-          arr.push(dic[j + '_' + i]);
-        }
-        if (arr == null) {
-          return;
-        }
-      }
-    }
-    //console.log(arr);
+    console.log('arr events dict', dic);
+    // for (var j = 0; j < 31; j++) {
+    //   for (var i = 0; i < 24; i++) {
+    //     if (dic[j + '_' + i] != null) {
+    //       arr.push(dic[j + '_' + i]);
+    //     }
+    //     if (arr == null) {
+    //       return;
+    //     }
+    //   }
+    // }
+    var arr = dic[day + '_' + hour];
+    console.log('arr events', arr);
     if (arr == null) {
       return;
     }
     for (let i = 0; i < arr.length; i++) {
-      var arr_i = arr[i][0];
+      var arr_i = arr[i];
+      console.log('week events', i, arr_i);
       tempStart = arr_i.start.dateTime;
       tempEnd = arr_i.end.dateTime;
       let tempStartTime = new Date(
@@ -232,8 +235,8 @@ export default class WeekEvents extends Component {
 
               //check if there is already an event there overlapping from another hour
               for (let i = 0; i < arr.length; i++) {
-                tempStart = arr[i][0].start.dateTime;
-                tempEnd = arr[i][0].end.dateTime;
+                tempStart = arr[i].start.dateTime;
+                tempEnd = arr[i].end.dateTime;
                 let tempStartTime = new Date(
                   new Date(tempStart).toLocaleString('en-US', {
                     timeZone: this.props.timeZone,
