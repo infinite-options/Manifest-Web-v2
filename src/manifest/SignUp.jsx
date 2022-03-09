@@ -581,7 +581,13 @@ export default function Login() {
               allows the Coach or Advisor to login, confirm they are modifying
               the correct client’s data, create custom events for the client to
               attend, and enhance the client’s user experience by incorporating
-              relevant photos.
+              relevant photos. <br></br><br></br>
+              <a
+                style={{color: "white", textDecoration: "underline"}}
+                href="/privacy"
+              >
+                View Our Privacy Policy
+              </a>
             </p>
           </div>
         </div>
