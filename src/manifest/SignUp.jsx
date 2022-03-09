@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Toolbar from '@material-ui/core/Toolbar';
 import AppBar from '@material-ui/core/AppBar';
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -582,6 +583,13 @@ export default function Login() {
               the correct client’s data, create custom events for the client to
               attend, and enhance the client’s user experience by incorporating
               relevant photos.
+              <br />
+              <Link
+                style={{ color: 'white', textDecoration: 'underline' }}
+                to="/privacy"
+              >
+                View our Privacy Policy
+              </Link>
             </p>
           </div>
         </div>

@@ -2072,13 +2072,20 @@ export default function EditEventModal(props) {
           let newStartTime = new Date(parentEvent.start['dateTime']).setHours(
             startHour
           );
+          console.log('newStartTime', newStartTime);
           newStartTime = new Date(newStartTime).setMinutes(startMin);
+          console.log('newStartTime', newStartTime);
           let newEndTime = new Date(parentEvent.end['dateTime']).setHours(
             endHour
           );
+
+          console.log('newEndTime', newEndTime);
           newEndTime = new Date(newEndTime).setMinutes(endMin);
+          console.log('newEndTime', newEndTime);
           const newISOStartTime = new Date(newStartTime).toISOString();
           const newISOEndTime = new Date(newEndTime).toISOString();
+          console.log('newisostart', newISOStartTime);
+          console.log('newisoend', newISOEndTime);
           // assign new start and end time to event
           event.start = {
             dateTime: newISOStartTime,
@@ -2092,34 +2099,34 @@ export default function EditEventModal(props) {
           console.log(event);
         });
 
-      //  var event = {
-      //    id: eventId,
-      //    summary,
-      //    description,
-      //    location,
-      //    creator: {
-      //      email: 'calendar@manifestmy.space',
-      //      self: true,
-      //    },
-      //    organizer: {
-      //      email: 'calendar@manifestmy.space',
-      //      self: true,
-      //    },
-      //    start: {
-      //      dateTime: moment(startTime),
-      //      timeZone: userTime_zone,
-      //    },
-      //    end: {
-      //      dateTime: moment(endTime),
-      //      timeZone: userTime_zone,
-      //    },
-      //    recurrence: repeatOption ? recurrenceRule : false,
-      //    attendees: fields,
-      //    reminders: {
-      //      useDefault: false,
-      //      overrides: [{ method: reminderMethod, minutes: reminderMinutes }],
-      //    },
-      //  };
+      // var event = {
+      //   id: eventId,
+      //   summary,
+      //   description,
+      //   location,
+      //   creator: {
+      //     email: 'calendar@manifestmy.space',
+      //     self: true,
+      //   },
+      //   organizer: {
+      //     email: 'calendar@manifestmy.space',
+      //     self: true,
+      //   },
+      //   start: {
+      //     dateTime: moment(startTime),
+      //     timeZone: userTime_zone,
+      //   },
+      //   end: {
+      //     dateTime: moment(endTime),
+      //     timeZone: userTime_zone,
+      //   },
+      //   recurrence: repeatOption ? recurrenceRule : false,
+      //   attendees: fields,
+      //   reminders: {
+      //     useDefault: false,
+      //     overrides: [{ method: reminderMethod, minutes: reminderMinutes }],
+      //   },
+      // };
 
       updateSubmit(event);
       //  updateTheCalenderEvent(event);
@@ -2134,25 +2141,93 @@ export default function EditEventModal(props) {
   }
   const updateSubmit = (event) => {
     // updateTheCalenderEvent(event);
-    const headers = {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Authorization: 'Bearer ' + props.taAccessToken,
+
+    const editEvent = async () => {
+      const headers = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + props.taAccessToken,
+      };
+      axios
+        .put(
+          `https://www.googleapis.com/calendar/v3/calendars/primary/events/${event.id}?key=${API_KEY}`,
+          event,
+          {
+            headers: headers,
+          }
+        )
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log('error', error);
+        });
+
+      let start =
+        props.stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+      let endofWeek = moment(props.stateValue.dateContext).add(6, 'days');
+      let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
+      const headersUser = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + props.userAccessToken,
+      };
+      const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?orderBy=startTime&singleEvents=true&timeMax=${end}&timeMin=${start}&key=${API_KEY}`;
+      await axios
+        .get(url, {
+          headers: headersUser,
+        })
+        .then((response) => {
+          console.log('day events ', response.data.items);
+          const temp = [];
+
+          for (let i = 0; i < response.data.items.length; i++) {
+            temp.push(response.data.items[i]);
+          }
+          temp.sort((a, b) => {
+            // console.log('a = ', a, '\nb = ', b);
+            const [a_start, b_start] = [
+              a['start']['dateTime'],
+              b['start']['dateTime'],
+            ];
+            console.log('a_start = ', a_start, '\nb_start = ', b_start);
+            const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
+
+            const [a_start_time, b_start_time] = getTimes(
+              a['start']['dateTime'],
+              b['start']['dateTime']
+            );
+            const [a_end_time, b_end_time] = getTimes(
+              a['end']['dateTime'],
+              b['end']['dateTime']
+            );
+
+            if (a_start_time < b_start_time) return -1;
+            else if (a_start_time > b_start_time) return 1;
+            else {
+              if (a_end_time < b_end_time) return -1;
+              else if (a_end_time > b_end_time) return 1;
+              else {
+                if (a_start < b_start) return -1;
+                else if (a_start > b_start) return 1;
+                else {
+                  if (a_end < b_end) return -1;
+                  else if (a_end > b_end) return 1;
+                }
+              }
+            }
+
+            return 0;
+          });
+
+          console.log('homeTemp = ', temp);
+
+          props.setEvents(temp);
+        })
+        .catch((error) => console.log(error));
     };
-    axios
-      .put(
-        `https://www.googleapis.com/calendar/v3/calendars/primary/events/${event.id}?key=${API_KEY}`,
-        event,
-        {
-          headers: headers,
-        }
-      )
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log('error', error);
-      });
+    editEvent();
+
     setShowEditRecurringModal(!showEditRecurringModal);
     props.setStateValue((prevState) => {
       return {
