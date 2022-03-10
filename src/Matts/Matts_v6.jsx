@@ -177,10 +177,48 @@ export default function MainPage(props) {
       .get(BASE_URL + 'getHistory/' + currentUser)
       .then((response) => {
         console.log('getHistory response = ', response.data);
-        for (var i = 0; i < response.data.result.length; i++) {
-          // console.log(response.data.result[i]);
-          historyGot.push(response.data.result[i]);
+        let thisWeek = getThisWeek();
+        for (var j = 0; j < thisWeek.length; j++) {
+          if (
+            response.data.result.filter((e) => e.date_affected === thisWeek[j])
+              .length > 0
+          ) {
+            response.data.result
+              .filter((e) => e.date_affected === thisWeek[j])
+              .map((x) => {
+                historyGot.push(x);
+              });
+          } else {
+            historyGot.push({
+              id: '',
+              user_id: '',
+              date:
+                Moment(thisWeek[j]).add('days', 1).format('YYYY-MM-DD') +
+                ' 00:07:40',
+              date_affected: thisWeek[j],
+              details: '',
+            });
+          }
         }
+
+        // for (var j = 0; j < thisWeek.length; j++) {
+        //   for (var i = 0; i < response.data.result.length; i++) {
+        //     // console.log(response.data.result[i].date_affected);
+        //     console.log(response.data.result[i].date_affected);
+        //     if (thisWeek[j] === response.data.result[i].date_affected) {
+        //       historyGot.push(response.data.result[i]);
+        //     } else {
+        //       historyGot.push({
+        //         id: '',
+        //         user_id: '',
+        //         date: '',
+        //         date_affected: '',
+        //         details: '',
+        //       });
+        //     }
+        //   }
+        //   // historyGot.push(response.data.result[i]);
+        // }
         // setHG(historyGot);
         console.log('hgot = ', historyGot);
         setCurDate(m);
@@ -234,7 +272,11 @@ export default function MainPage(props) {
       .catch((error) => {
         console.log(error);
       });
-  }, [loginContext.loginState.loggedIn]);
+  }, [
+    loginContext.loginState.loggedIn,
+    loginContext.loginState.reload,
+    currentUser,
+  ]);
 
   function formatTime(dateTime) {
     var temp = new Date(dateTime);
@@ -250,8 +292,8 @@ export default function MainPage(props) {
     // console.log(new Date().toISOString());
     const temp = [];
     console.log('historyGot = ', historyGot);
-    for (var i = 0; i < historyGot.length; i++) {
-      var historyDate = new Date(historyGot[i].date_affected);
+    for (var i = historyGot.length - 1; i >= 0; i--) {
+      console.log('hgot history date', i);
       console.log(
         'hgot history date',
         i,
@@ -259,6 +301,8 @@ export default function MainPage(props) {
         historyGot[i].date_affected,
         historyDate
       );
+      var historyDate = new Date(historyGot[i].date_affected);
+
       if (
         historyDate.getTime() >= useDate.getTime() - 691200000 && //filter for within 7 datets
         historyDate.getTime() <= useDate.getTime() - 86400000
@@ -274,6 +318,7 @@ export default function MainPage(props) {
     for (const item of temp) {
       console.log('temp1.1: item = ', item);
       if (!map.has(item.date)) {
+        console.log('item', item);
         map.set(item.date, true);
         inRange.push({
           date: item.date,
@@ -296,124 +341,126 @@ export default function MainPage(props) {
     var bigList = [];
     // for (var d = (inRange.length - 1); d >= 0; d--){
     for (var d = 0; d < inRange.length; d++) {
-      const obj = JSON.parse(inRange[d].details);
-      // console.log(obj);
+      if (inRange[d].details.length > 0) {
+        const obj = JSON.parse(inRange[d].details);
+        // console.log(obj);
 
-      //sort obj by time of day
-      obj.sort(custom_sort);
-      /* for (var r = 0; r < obj.length; r++) {
+        //sort obj by time of day
+        obj.sort(custom_sort);
+        /* for (var r = 0; r < obj.length; r++) {
         //FOR ROUTINES
         // console.log(obj[r]);
         if (obj[r].routine) {
           // console.log("gotem");
         }
       } */
-      for (var r = 0; r < obj.length; r++) {
-        //FOR ROUTINES
-        // console.log(r);
-        if (obj[r].title === 'DP - Test routine 2 (repeats)') {
-          console.log('start obj[r] = ', obj[r]);
-        }
-        if (obj[r].routine) {
-          // console.log("gere");
-          var isNewR = true;
-          for (var s = 0; s < bigList.length; s++) {
-            //check through and see if this is a new routine
-            if (
-              bigList[s].type == 'Routine' &&
-              bigList[s].number == obj[r].routine
-            ) {
-              if (obj[r].title === 'DP - Test routine 2 (repeats)') {
-                console.log(obj[r].days, ', d = ', d, 'start obj[r].days = ');
+        for (var r = 0; r < obj.length; r++) {
+          //FOR ROUTINES
+          // console.log(r);
+          if (obj[r].title === 'DP - Test routine 2 (repeats)') {
+            console.log('start obj[r] = ', obj[r]);
+          }
+          if (obj[r].routine) {
+            // console.log("gere");
+            var isNewR = true;
+            for (var s = 0; s < bigList.length; s++) {
+              //check through and see if this is a new routine
+              if (
+                bigList[s].type == 'Routine' &&
+                bigList[s].number == obj[r].routine
+              ) {
+                if (obj[r].title === 'DP - Test routine 2 (repeats)') {
+                  console.log(obj[r].days, ', d = ', d, 'start obj[r].days = ');
+                }
+                bigList[s].days[d] = obj[r].status; //if already there- just update that day status
+                isNewR = false;
+                break;
               }
-              bigList[s].days[d] = obj[r].status; //if already there- just update that day status
-              isNewR = false;
-              break;
             }
-          }
-          if (isNewR) {
-            var currentR = {
-              type: 'Routine',
-              title: obj[r].title,
-              under: '',
-              days: [],
-              tBox: {},
-              show: true,
-              photo: obj[r].photo,
-              startTime: obj[r].start_day_and_time,
-              is_available: obj[r].is_available,
-              endTime: obj[r].end_day_and_time,
-              is_sublist_available: obj[r].is_sublist_available,
-              number: obj[r].routine,
-            }; //if new, make object and put in bigList
-            currentR.days[d] = obj[r].status;
-            bigList.push(currentR);
-          }
+            if (isNewR) {
+              var currentR = {
+                type: 'Routine',
+                title: obj[r].title,
+                under: '',
+                days: [],
+                tBox: {},
+                show: true,
+                photo: obj[r].photo,
+                startTime: obj[r].start_day_and_time,
+                is_available: obj[r].is_available,
+                endTime: obj[r].end_day_and_time,
+                is_sublist_available: obj[r].is_sublist_available,
+                number: obj[r].routine,
+              }; //if new, make object and put in bigList
+              currentR.days[d] = obj[r].status;
+              bigList.push(currentR);
+            }
 
-          if (obj[r].actions != undefined) {
-            var actions = obj[r].actions;
-            console.log('ACTIONS:' + d);
-            // console.log(actions);
-            for (var a = 0; a < actions.length; a++) {
-              //FOR ACTIONS
-              if (actions[a].title) {
-                var isNewA = true;
-                for (var s = 0; s < bigList.length; s++) {
-                  if (
-                    bigList[s].type == 'Action' &&
-                    bigList[s].number == actions[a].action
-                  ) {
-                    bigList[s].days[d] = actions[a].status;
-                    isNewA = false;
-                    break;
+            if (obj[r].actions != undefined) {
+              var actions = obj[r].actions;
+              console.log('ACTIONS:' + d);
+              // console.log(actions);
+              for (var a = 0; a < actions.length; a++) {
+                //FOR ACTIONS
+                if (actions[a].title) {
+                  var isNewA = true;
+                  for (var s = 0; s < bigList.length; s++) {
+                    if (
+                      bigList[s].type == 'Action' &&
+                      bigList[s].number == actions[a].action
+                    ) {
+                      bigList[s].days[d] = actions[a].status;
+                      isNewA = false;
+                      break;
+                    }
                   }
-                }
-                if (isNewA) {
-                  var currentA = {
-                    type: 'Action',
-                    title: actions[a].title,
-                    under: obj[r].routine,
-                    days: [],
-                    tBox: {},
-                    show: false,
-                    photo: actions[a].photo,
-                    is_sublist_available: actions[a].is_sublist_available,
-                    is_available: actions[a].is_available,
-                    number: actions[a].action,
-                  };
-                  currentA.days[d] = actions[a].status;
-                  bigList.push(currentA);
-                }
-                if (actions[a].instructions != undefined) {
-                  var insts = actions[a].instructions;
-                  for (var i = 0; i < insts.length; i++) {
-                    //FOR INSTRUCTIONS
-                    if (insts[i].title) {
-                      var isNewI = true;
-                      for (var s = 0; s < bigList.length; s++) {
-                        if (
-                          bigList[s].type == 'Instruction' &&
-                          bigList[s].number == insts[i].instruction
-                        ) {
-                          bigList[s].days[d] = insts[i].status;
-                          isNewI = false;
-                          break;
+                  if (isNewA) {
+                    var currentA = {
+                      type: 'Action',
+                      title: actions[a].title,
+                      under: obj[r].routine,
+                      days: [],
+                      tBox: {},
+                      show: false,
+                      photo: actions[a].photo,
+                      is_sublist_available: actions[a].is_sublist_available,
+                      is_available: actions[a].is_available,
+                      number: actions[a].action,
+                    };
+                    currentA.days[d] = actions[a].status;
+                    bigList.push(currentA);
+                  }
+                  if (actions[a].instructions != undefined) {
+                    var insts = actions[a].instructions;
+                    for (var i = 0; i < insts.length; i++) {
+                      //FOR INSTRUCTIONS
+                      if (insts[i].title) {
+                        var isNewI = true;
+                        for (var s = 0; s < bigList.length; s++) {
+                          if (
+                            bigList[s].type == 'Instruction' &&
+                            bigList[s].number == insts[i].instruction
+                          ) {
+                            bigList[s].days[d] = insts[i].status;
+                            isNewI = false;
+                            break;
+                          }
                         }
-                      }
-                      if (isNewI) {
-                        var currentI = {
-                          type: 'Instruction',
-                          title: insts[i].title,
-                          under: actions[a].action,
-                          days: [],
-                          tBox: {},
-                          show: false,
-                          photo: insts[i].photo,
-                          is_available: insts[i].is_available,
-                          number: insts[i].instruction,
-                        };
-                        currentI.days[d] = insts[i].status;
-                        bigList.push(currentI);
+                        if (isNewI) {
+                          var currentI = {
+                            type: 'Instruction',
+                            title: insts[i].title,
+                            under: actions[a].action,
+                            days: [],
+                            tBox: {},
+                            show: false,
+                            photo: insts[i].photo,
+                            is_available: insts[i].is_available,
+                            number: insts[i].instruction,
+                          };
+                          currentI.days[d] = insts[i].status;
+                          bigList.push(currentI);
+                        }
                       }
                     }
                   }
@@ -589,35 +636,36 @@ export default function MainPage(props) {
     console.log('ROWS HERE: ', rows);
     console.log('ONLY ALLOWED HERE:');
     console.log(newRows);
-    // if (newRows.length === 0) return newRows;
-    // console.log('ROWS HERE: ', rows);
-    // console.log('ONLY ALLOWED HERE:');
-    // console.log(newRows);
-    // newRows.sort((a, b) => {
-    //   console.log('a = ', a, '\nb = ', b);
-    //   const [a_start, b_start] = [a.startTime, b.startTime];
-    //   const [a_end, b_end] = [a.endTime, b.endTime];
+    if (newRows.length === 0) return newRows;
+    console.log('ROWS HERE: ', rows);
+    console.log('ONLY ALLOWED HERE:');
+    console.log(newRows);
+    newRows.sort((a, b) => {
+      console.log('a = ', a, '\nb = ', b);
+      const [a_start, b_start] = [a.startTime, b.startTime];
+      const [a_end, b_end] = [a.endTime, b.endTime];
 
-    //   const [a_start_time, b_start_time] = getTimes(a.startTime, b.startTime);
-    //   const [a_end_time, b_end_time] = getTimes(a.endTime, b.endTime);
+      const [a_start_time, b_start_time] = getTimes(a.startTime, b.startTime);
+      const [a_end_time, b_end_time] = getTimes(a.endTime, b.endTime);
+      console.log('start=', a_start, b_start);
+      console.log('end=', a_end, b_end);
+      if (a_start_time < b_start_time) return -1;
+      else if (a_start_time > b_start_time) return 1;
+      else {
+        if (a_end_time < b_end_time) return -1;
+        else if (a_end_time > b_end_time) return 1;
+        else {
+          if (a_start < b_start) return -1;
+          else if (a_start > b_start) return 1;
+          else {
+            if (a_end < b_end) return -1;
+            else if (a_end > b_end) return 1;
+          }
+        }
+      }
 
-    //   if (a_start_time < b_start_time) return -1;
-    //   else if (a_start_time > b_start_time) return 1;
-    //   else {
-    //     if (a_end_time < b_end_time) return -1;
-    //     else if (a_end_time > b_end_time) return 1;
-    //     else {
-    //       if (a_start < b_start) return -1;
-    //       else if (a_start > b_start) return 1;
-    //       else {
-    //         if (a_end < b_end) return -1;
-    //         else if (a_end > b_end) return 1;
-    //       }
-    //     }
-    //   }
-
-    //   return 0;
-    // });
+      return 0;
+    });
     return newRows;
   }
   function getDayName(num) {
@@ -651,6 +699,68 @@ export default function MainPage(props) {
         return 'SAT';
     }
   }
+  function getThisWeek() {
+    var today = new Date(new Date() - 86400000);
+    var day = Moment().format();
+    var x = Moment().date(day);
+    // const temp = {
+    //   d: today.getDate(),
+    //   m: today.getMonth() + 1,
+    //   y: today.getFullYear(),
+    // };
+    const temp = {
+      d: Moment().subtract(1, 'days').format('DD'),
+      m: Moment().format('MM'),
+      y: Moment().format('YYYY'),
+    };
+
+    // const numDaysInMonth = new Date(temp.y, temp.m + 1, 0).getDate();
+    const numDaysInMonth = Moment().daysInMonth();
+    return Array.from({ length: 15 }, (_) => {
+      if (temp.d > numDaysInMonth) {
+        temp.m += 1;
+        temp.d = 1;
+      }
+
+      const newDate = Moment().set({
+        year: temp.y,
+        month: temp.m - 1,
+        date: temp.d--,
+      });
+      // const newDate = new Date(temp.y, temp.m, temp.d--); //.toUTCString()
+      let x = '';
+      // x =
+      //   newDate.getFullYear() +
+      //   '-' +
+      //   newDate.getMonth() +
+      //   '-' +
+      //   newDate.getDate();
+      x =
+        Moment(newDate).format('YYYY') +
+        '-' +
+        Moment(newDate).format('MM') +
+        '-' +
+        Moment(newDate).format('DD');
+      return x;
+      // newDate.getFullYear() +
+      //   '-' +
+      //   newDate.getMonth() +
+      //   '-' +
+      //   newDate.getDate();
+      //   day: newDate.toLocaleDateString('en-US', { weekday: 'short' }),
+      //   num: newDate.getDate(),
+      //   date:
+      //     newDate.getFullYear() +
+      //     '-' +
+      //     newDate.getMonth() +
+      //     '-' +
+      //     newDate.getDate(),
+
+      //   selected: false,
+      // };
+    });
+  }
+  console.log(getThisWeek());
   function prevWeek() {
     // TO DO! WEEKS
     // setRows([]);
@@ -677,48 +787,48 @@ export default function MainPage(props) {
     console.log(routine);
     //clickHandle(childIn);
   }
-  // const getTimes = (a_day_time, b_day_time) => {
-  //   const [a_start_time, b_start_time] = [
-  //     a_day_time.substring(10, a_day_time.length),
-  //     b_day_time.substring(10, b_day_time.length),
-  //   ];
-  //   const [a_HMS, b_HMS] = [
-  //     a_start_time
-  //       .substring(0, a_start_time.length - 3)
-  //       .replace(/\s{1,}/, '')
-  //       .split(':'),
-  //     b_start_time
-  //       .substring(0, b_start_time.length - 3)
-  //       .replace(/\s{1,}/, '')
-  //       .split(':'),
-  //   ];
-  //   const [a_parity, b_parity] = [
-  //     a_start_time
-  //       .substring(a_start_time.length - 3, a_start_time.length)
-  //       .replace(/\s{1,}/, ''),
-  //     b_start_time
-  //       .substring(b_start_time.length - 3, b_start_time.length)
-  //       .replace(/\s{1,}/, ''),
-  //   ];
+  const getTimes = (a_day_time, b_day_time) => {
+    const [a_start_time, b_start_time] = [
+      a_day_time.substring(10, a_day_time.length),
+      b_day_time.substring(10, b_day_time.length),
+    ];
+    const [a_HMS, b_HMS] = [
+      a_start_time
+        .substring(0, a_start_time.length - 3)
+        .replace(/\s{1,}/, '')
+        .split(':'),
+      b_start_time
+        .substring(0, b_start_time.length - 3)
+        .replace(/\s{1,}/, '')
+        .split(':'),
+    ];
+    const [a_parity, b_parity] = [
+      a_start_time
+        .substring(a_start_time.length - 3, a_start_time.length)
+        .replace(/\s{1,}/, ''),
+      b_start_time
+        .substring(b_start_time.length - 3, b_start_time.length)
+        .replace(/\s{1,}/, ''),
+    ];
 
-  //   let [a_time, b_time] = [0, 0];
-  //   if (a_parity === 'PM' && a_HMS[0] !== '12') {
-  //     const hoursInt = parseInt(a_HMS[0]) + 12;
-  //     a_HMS[0] = `${hoursInt}`;
-  //   } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+    let [a_time, b_time] = [0, 0];
+    if (a_parity === 'PM' && a_HMS[0] !== '12') {
+      const hoursInt = parseInt(a_HMS[0]) + 12;
+      a_HMS[0] = `${hoursInt}`;
+    } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
 
-  //   if (b_parity === 'PM' && b_HMS[0] !== '12') {
-  //     const hoursInt = parseInt(b_HMS[0]) + 12;
-  //     b_HMS[0] = `${hoursInt}`;
-  //   } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+    if (b_parity === 'PM' && b_HMS[0] !== '12') {
+      const hoursInt = parseInt(b_HMS[0]) + 12;
+      b_HMS[0] = `${hoursInt}`;
+    } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
 
-  //   for (let i = 0; i < a_HMS.length; i++) {
-  //     a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
-  //     b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
-  //   }
+    for (let i = 0; i < a_HMS.length; i++) {
+      a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+      b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+    }
 
-  //   return [a_time, b_time];
-  // };
+    return [a_time, b_time];
+  };
   //-----------------------
   if (isLoading) {
     return (
