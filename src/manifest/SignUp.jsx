@@ -536,7 +536,7 @@ export default function Login() {
           </Col>
           <Col>
             <Button
-              onClick={() => history.push('/')}
+              onClick={() => history.push('/aboutus')}
               style={{
                 width: '7.5rem',
                 height: '7.5rem',

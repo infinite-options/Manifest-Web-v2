@@ -15,7 +15,7 @@ const useStyles = makeStyles({
     fontSize: '42px',
   },
 
-  header: { fontWeight: 'bold' },
+  header: { fontWeight: 'bold', fontSize: '22px' },
   body: {},
 });
 
@@ -154,9 +154,6 @@ export default function Privacy() {
         <div style={{ textAlign: 'center' }}>
           <img src={PrivacyPic} style={{ width: '50%' }} />
         </div>
-        <div></div>
-        <div></div>
-        <div></div>
       </div>
     </div>
   );
