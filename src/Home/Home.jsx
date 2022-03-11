@@ -145,7 +145,7 @@ export default function Home(props) {
       )
       .then((response) => {
         console.log('list of users home', response.data.result);
-        if (response.data.result.length > 0) {
+        if (response.result !== false) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;
@@ -180,7 +180,7 @@ export default function Home(props) {
       .catch((error) => {
         console.log(error);
       });
-  }, [loginContext.loginState.reload, userID]);
+  }, [loginContext.loginState.reload]);
   // }
   console.log('list of users home', loginContext.loginState.reload);
   useEffect(() => {

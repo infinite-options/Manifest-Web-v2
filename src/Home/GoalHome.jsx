@@ -144,7 +144,7 @@ export default function GoalHome(props) {
       )
       .then((response) => {
         console.log(response);
-        if (response.data.result.length > 0) {
+        if (response.result !== false) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;

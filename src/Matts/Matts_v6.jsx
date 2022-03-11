@@ -241,7 +241,7 @@ export default function MainPage(props) {
       )
       .then((response) => {
         console.log(response);
-        if (response.data.result.length > 0) {
+        if (response.result !== false) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;
@@ -666,6 +666,18 @@ export default function MainPage(props) {
 
       return 0;
     });
+    console.log('newrows', newRows);
+    newRows.sort(function (a, b) {
+      // true values first
+      const [a_is_available, b_is_available] = getTimes(
+        a.is_available,
+        b.is_available
+      );
+      return a_is_available === b_is_available ? 0 : a_is_available ? -1 : 1;
+      // false values first
+      // return (x === y)? 0 : x? 1 : -1;
+    });
+    console.log('newrows', newRows);
     return newRows;
   }
   function getDayName(num) {

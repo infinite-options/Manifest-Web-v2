@@ -3,7 +3,9 @@ import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props
 import GoogleLogin from 'react-google-login';
 import Cookies from 'js-cookie';
 import axios from 'axios';
-import { Grid, Button } from '@material-ui/core';
+
+import { Box, TextField, Button } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
 //import { AuthContext } from '../auth/AuthContext';
@@ -456,92 +458,75 @@ function SocialLogin(props) {
     );
   };
   return (
-    <Grid
-      container
-      spacing={3}
-      // display="flex"
-      direction="row"
-      justifyContent="center"
-      align="center"
+    <Box
+      marginTop="15%"
+      display="flex"
+      flexDirection="column"
+      style={{ width: '15rem' }}
     >
-      <Grid
-        item
-        xs={4}
-        direction="column"
-        align="center"
+      <Box
+        display="flex"
         justifyContent="center"
+        flexDirection="column"
+        marginTop="1rem"
       >
-        <FacebookLogin
-          appId={process.env.REACT_APP_FACEBOOK_APP_ID}
-          autoLoad={false}
-          fields="name,email,picture"
-          onClick="return false"
-          callback={responseFacebook}
-          size="small"
-          // icon={<SiFacebook/>}
-          textButton="Continue with Facebook"
-          render={(renderProps) => (
-            <img
-              src={Facebook}
-              onClick={renderProps.onClick}
-              disabled={renderProps.disabled}
-              alt={''}
-            ></img>
-          )}
-        />
-      </Grid>
-      <Grid item xs={4}>
-        <Button style={{}}>
-          <GoogleLogin
-            //clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-            //clientId={CLIENT_ID}
-            clientId={
-              BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
-                ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
-                : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
-            }
-            accessType="offline"
-            prompt="consent"
-            responseType="code"
-            buttonText="Log In"
-            ux_mode="redirect"
-            isSignedIn={false}
-            disable={true}
-            cookiePolicy={'single_host_origin'}
-            redirectUri={
-              BASE_URL.substring(8, 18) == '3s3sftsr90'
-                ? 'https://manifestmy.space'
-                : 'https://manifestmy.life'
-            }
-            scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
-            // redirectUri="http://localhost:3000"
-            onSuccess={responseGoogle}
-            onFailure={responseGoogle}
-            render={(renderProps) => (
-              <img
-                src={Google}
-                onClick={renderProps.onClick}
-                disabled={renderProps.disabled}
-                alt={''}
-              ></img>
-            )}
-          />
-          {console.log(CLIENT_ID)}
-        </Button>
-      </Grid>
+        <div>
+          <Button style={{}}>
+            <GoogleLogin
+              //clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+              //clientId={CLIENT_ID}
+              clientId={
+                BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
+                  ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
+                  : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
+              }
+              accessType="offline"
+              prompt="consent"
+              responseType="code"
+              buttonText="Log In"
+              ux_mode="redirect"
+              isSignedIn={false}
+              disable={true}
+              cookiePolicy={'single_host_origin'}
+              redirectUri={
+                BASE_URL.substring(8, 18) == '3s3sftsr90'
+                  ? 'https://manifestmy.space'
+                  : 'https://manifestmy.life'
+              }
+              scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
+              // redirectUri="http://localhost:3000"
+              onSuccess={responseGoogle}
+              onFailure={responseGoogle}
+              render={(renderProps) => (
+                <img
+                  src={Google}
+                  onClick={renderProps.onClick}
+                  disabled={renderProps.disabled}
+                  alt={''}
+                  style={{ width: '100%' }}
+                ></img>
+              )}
+            />
+            {console.log(CLIENT_ID)}
+          </Button>
+        </div>
 
-      <Grid item xs={4}>
-        <img
-          src={Apple}
-          variant="contained"
-          alt={''}
-          onClick={() => {
-            window.AppleID.auth.signIn();
-          }}
-        ></img>
-      </Grid>
-      {socialSignUpModal()}
-    </Grid>
+        <div>
+          <Button>
+            <img
+              src={Apple}
+              variant="contained"
+              alt={''}
+              style={{ width: '100%' }}
+              onClick={() => {
+                window.AppleID.auth.signIn();
+              }}
+            ></img>
+          </Button>
+        </div>
+        {socialSignUpModal()}
+      </Box>
+    </Box>
   );
 }
 

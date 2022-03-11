@@ -465,8 +465,13 @@ export default function AboutUs() {
           Or Login With
         </Box>
 
-        <Box display="flex" justifyContent="center" marginTop="1rem">
-          <Box>
+        <Box
+          display="flex"
+          justifyContent="center"
+          flexDirection="column"
+          marginTop="1rem"
+        >
+          {/* <Box>
             <Button
               disableRipple={true}
               disableFocusRipple={true}
@@ -478,42 +483,42 @@ export default function AboutUs() {
                 backgroundImage: `url(${Facebook})`,
               }}
             ></Button>
-          </Box>
-          <Box>
-            <GoogleLogin
-              clientId={CLIENT_ID}
-              render={(renderProps) => (
-                <Button
-                  style={{
-                    borderRadius: '32px',
-                    height: '3rem',
-                    backgroundImage: `url(${Google})`,
-                  }}
-                  onClick={renderProps.onClick}
-                  disabled={renderProps.disabled}
-                ></Button>
-              )}
-              buttonText="Log In"
-              onSuccess={responseGoogle}
-              onFailure={responseGoogle}
-              isSignedIn={false}
-              disable={false}
-              cookiePolicy={'single_host_origin'}
-            />
-          </Box>
-          <Box>
-            <Button
-              disableRipple={true}
-              disableFocusRipple={true}
-              disableTouchRipple={true}
-              disableElevation={true}
-              style={{
-                borderRadius: '32px',
-                height: '3rem',
-                backgroundImage: `url(${Apple})`,
-              }}
-            ></Button>
-          </Box>
+          </Box> */}
+          <div>
+            <Button>
+              <GoogleLogin
+                clientId={CLIENT_ID}
+                render={(renderProps) => (
+                  <img
+                    src={Google}
+                    onClick={renderProps.onClick}
+                    disabled={renderProps.disabled}
+                    alt={''}
+                    style={{ width: '100%' }}
+                  ></img>
+                )}
+                buttonText="Log In"
+                onSuccess={responseGoogle}
+                onFailure={responseGoogle}
+                isSignedIn={false}
+                disable={false}
+                cookiePolicy={'single_host_origin'}
+              />
+            </Button>
+          </div>
+          <div>
+            <Button>
+              <img
+                src={Apple}
+                variant="contained"
+                alt={''}
+                style={{ width: '100%' }}
+                onClick={() => {
+                  window.AppleID.auth.signIn();
+                }}
+              ></img>
+            </Button>
+          </div>
         </Box>
 
         <Box
