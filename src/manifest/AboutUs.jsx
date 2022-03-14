@@ -12,6 +12,8 @@ import Facebook from '../manifest/LoginAssets/Facebook.svg';
 import Google from '../manifest/LoginAssets/Google.svg';
 import Apple from '../manifest/LoginAssets/Apple.svg';
 import SignUpImage from '../manifest/LoginAssets/SignUp.svg';
+
+import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
 import Cookies from 'js-cookie';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import { GoogleLogin } from 'react-google-login';
@@ -45,7 +47,8 @@ export default function AboutUs() {
   const [password, setPassword] = useState('');
   const [loggedIn, setLoggedIn] = useState();
   const [validation, setValidation] = useState('');
-  const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
+  const [doNotExistShow, setDoNotExistShow] = useState(false);
+  const [userExistShow, setUserExistShow] = useState(false);
   const [accessToken, setAccessToken] = useState('');
   const [idToken, setIdToken] = useState('');
   const [socialId, setSocialId] = useState('');
@@ -78,6 +81,7 @@ export default function AboutUs() {
     if (response.profileObj) {
       let email = response.profileObj.email;
       let ta_id = '';
+      setEmail(response.profileObj.email);
       setSocialId(response.googleId);
       axios.get(BASE_URL + `taTokenEmail/${email}`).then((response) => {
         console.log(
@@ -209,17 +213,6 @@ export default function AboutUs() {
   //   }
   // };
 
-  const responseFacebook = (response) => {
-    // console.log(response);
-    if (response.email) {
-      // console.log('Facebook login successful');
-      let email = response.email;
-      let accessToken = response.accessToken;
-      let socialId = response.id;
-      _socialLoginAttempt(email, accessToken, socialId, 'FACEBOOK');
-    }
-  };
-
   const _socialLoginAttempt = (email, at, socialId, platform) => {
     axios
       .get(BASE_URL + 'loginSocialTA/' + email)
@@ -252,8 +245,21 @@ export default function AboutUs() {
           });
           // Successful log in, Try to update tokens, then continue to next page based on role
         } else {
-          console.log('log in error');
-          history.push('/signup');
+          axios
+            .get(BASE_URL + 'GetUserEmailId/' + email)
+            .then((response) => {
+              if (response.data.message === 'User ID doesnt exist') {
+                console.log('log in error');
+                // history.push('/signup');
+                setDoNotExistShow(true);
+              } else {
+                setUserExistShow(true);
+              }
+            })
+            .catch((error) => {
+              console.log('its in landing page');
+              console.log(error);
+            });
         }
       })
       .catch((err) => {
@@ -306,60 +312,207 @@ export default function AboutUs() {
       });
   };
 
-  /*   const responseGoogle = (response) => {
-    console.log('response', response);
-    if (response.profileObj !== null || response.profileObj !== undefined) {
-      let e = response.profileObj.email;
-      let at = response.accessToken;
-      let rt = response.googleId;
-      let first_name = response.profileObj.givenName;
-      let last_name = response.profileObj.familyName;
-      console.log(e, at, rt, first_name, last_name);
-      axios
-        .get(BASE_URL + 'loginSocialTA/' + e)
-        .then((response) => {
-          console.log('social login');
-          console.log(response.data.result);
-          if (response.data !== false) {
-            document.cookie = 'ta_uid=' + response.data.result;
-            document.cookie = 'ta_email=' + e;
-            document.cookie = 'patient_name=Loading';
-            loginContext.setLoginState({
-              ...loginContext.loginState,
-              loggedIn: true,
-              ta: {
-                ...loginContext.loginState.ta,
-                id: response.data.result,
-                email: email.toString(),
-              },
-              usersOfTA: [],
-              curUser: '',
-              curUserTimeZone: '',
-            });
-            console.log('Login successful');
-            console.log(e);
-            history.push({
-              pathname: '/home',
-              state: e,
-            });
-          } else {
-            console.log('social sign up with', e);
-            this.setState({
-              socialSignUpModalShow: true,
-              newEmail: e,
-            });
-            history.push({
-              pathname: '/signup',
-              state: '',
-            });
-            console.log('social sign up modal displayed');
-          }
-        })
-        .catch((error) => {
-          console.log('error', error);
-        });
-    }
-  }; */
+  const taDoNotExist = () => {
+    const modalStyle = {
+      position: 'absolute',
+      top: '30%',
+      left: '2%',
+      width: '400px',
+    };
+    const headerStyle = {
+      border: 'none',
+      textAlign: 'center',
+      display: 'flex',
+      alignItems: 'center',
+      fontSize: '20px',
+      fontWeight: 'bold',
+      color: '#2C2C2E',
+      textTransform: 'uppercase',
+      backgroundColor: ' #FFFFFF',
+    };
+    const footerStyle = {
+      border: 'none',
+      backgroundColor: ' #FFFFFF',
+    };
+    const bodyStyle = {
+      backgroundColor: ' #FFFFFF',
+    };
+    return (
+      <Modal
+        show={doNotExistShow}
+        onHide={hideDoNotExist}
+        style={{ marginTop: '70px' }}
+      >
+        <Form as={Container}>
+          <Modal.Header style={headerStyle} closeButton>
+            <Modal.Title>TA Account Does Not Exist</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body style={bodyStyle}>
+            <div>
+              The TA with email: {email} does not exist! Please Sign Up!
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer style={footerStyle}>
+            <Row
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: '1rem',
+              }}
+            >
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Button
+                  type="submit"
+                  onClick={hideDoNotExist}
+                  style={{
+                    marginTop: '10px',
+                    background: '#FF6B4A 0% 0% no-repeat padding-box',
+                    borderRadius: '20px',
+                    opacity: 1,
+                    width: '300px',
+                  }}
+                >
+                  Cancel
+                </Button>
+              </Col>
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Button
+                  type="submit"
+                  onClick={() => history.push('/signup')}
+                  style={{
+                    background: '#F8BE28 0% 0% no-repeat padding-box',
+                    borderRadius: '20px',
+                    opacity: 1,
+                    width: '300px',
+                  }}
+                >
+                  Sign Up
+                </Button>
+              </Col>
+            </Row>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+    );
+  };
+  const hideDoNotExist = () => {
+    setDoNotExistShow(false);
+  };
+
+  const userExistModal = () => {
+    const modalStyle = {
+      position: 'absolute',
+      top: '30%',
+      left: '2%',
+      width: '400px',
+    };
+    const headerStyle = {
+      border: 'none',
+      textAlign: 'center',
+      display: 'flex',
+      alignItems: 'center',
+      fontSize: '20px',
+      fontWeight: 'bold',
+      color: '#2C2C2E',
+      textTransform: 'uppercase',
+      backgroundColor: ' #FFFFFF',
+    };
+    const footerStyle = {
+      border: 'none',
+      backgroundColor: ' #FFFFFF',
+    };
+    const bodyStyle = {
+      backgroundColor: ' #FFFFFF',
+    };
+    return (
+      <Modal
+        show={userExistShow}
+        onHide={hideUserExist}
+        style={{ marginTop: '70px' }}
+      >
+        <Form as={Container}>
+          <Modal.Header style={headerStyle} closeButton>
+            <Modal.Title>User Account Exists</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body style={bodyStyle}>
+            <div>
+              The User with email: {email} exists! Please contact your TA for
+              further details!
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer style={footerStyle}>
+            <Row
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: '1rem',
+              }}
+            >
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Button
+                  type="submit"
+                  onClick={hideUserExist}
+                  style={{
+                    marginTop: '10px',
+                    background: '#FF6B4A 0% 0% no-repeat padding-box',
+                    borderRadius: '20px',
+                    opacity: 1,
+                    width: '300px',
+                  }}
+                >
+                  Ok
+                </Button>
+              </Col>
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              ></Col>
+            </Row>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+    );
+  };
+  const hideUserExist = () => {
+    setUserExistShow(false);
+  };
 
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
@@ -580,7 +733,8 @@ export default function AboutUs() {
           </div>
         </div>
       </Box>
-
+      {taDoNotExist()}
+      {userExistModal()}
       {/* <Box hidden={loggedIn === true}>
                   <Loading/>
             </Box> */}

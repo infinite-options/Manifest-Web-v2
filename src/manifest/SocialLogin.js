@@ -24,6 +24,8 @@ function SocialLogin(props) {
   const loginContext = useContext(LoginContext);
   const history = useHistory();
   const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
+  const [loginSuccessful, setLoginSuccessful] = useState(false);
+
   const [loggedIn, setLoggedIn] = useState(false);
   const [newEmail, setNewEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -95,8 +97,8 @@ function SocialLogin(props) {
       code: auth_code,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
-      // redirect_uri: 'http://localhost:3000',
-      redirect_uri: redirecturi,
+      redirect_uri: 'http://localhost:3000',
+      // redirect_uri: redirecturi,
       grant_type: 'authorization_code',
     };
 
@@ -207,18 +209,6 @@ function SocialLogin(props) {
       });
   };
   console.log(newEmail);
-  const responseFacebook = (response) => {
-    console.log(response);
-    if (response.email) {
-      console.log('Facebook login successful');
-      let email = response.email;
-      let accessToken = response.accessToken;
-      let socialId = response.id;
-      _socialLoginAttempt(email, accessToken, socialId);
-    } else {
-      console.log('Facebook login unsuccessful');
-    }
-  };
 
   const _socialLoginAttempt = (email, accessToken, socialId) => {
     axios
@@ -267,7 +257,8 @@ function SocialLogin(props) {
   const hideSignUp = () => {
     //setSignUpModalShow(false);
     setSocialSignUpModalShow(false);
-    history.push('/');
+    setLoginSuccessful(true);
+    // history.push('/aboutus');
     setNewPhoneNumber('');
     setNewFName('');
     setNewLName('');
@@ -457,6 +448,115 @@ function SocialLogin(props) {
       </Modal>
     );
   };
+
+  const loginSuccessfulModal = () => {
+    const modalStyle = {
+      position: 'absolute',
+      top: '30%',
+      left: '2%',
+      width: '400px',
+    };
+    const headerStyle = {
+      border: 'none',
+      textAlign: 'center',
+      display: 'flex',
+      alignItems: 'center',
+      fontSize: '20px',
+      fontWeight: 'bold',
+      color: '#2C2C2E',
+      textTransform: 'uppercase',
+      backgroundColor: ' #FFFFFF',
+    };
+    const footerStyle = {
+      border: 'none',
+      backgroundColor: ' #FFFFFF',
+    };
+    const bodyStyle = {
+      backgroundColor: ' #FFFFFF',
+    };
+    return (
+      <Modal
+        show={loginSuccessful}
+        onHide={hideLoginSuccessful}
+        style={{ marginTop: '70px' }}
+      >
+        <Form as={Container}>
+          <Modal.Header style={headerStyle} closeButton>
+            <Modal.Title>Sign Up Successful</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body style={bodyStyle}>
+            <div>
+              You have successfully signed up as the TA! Please Login to
+              continue!
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer style={footerStyle}>
+            <Row
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: '1rem',
+              }}
+            >
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Button
+                  type="submit"
+                  onClick={hideLoginSuccessful}
+                  style={{
+                    marginTop: '10px',
+                    background: '#FF6B4A 0% 0% no-repeat padding-box',
+                    borderRadius: '20px',
+                    opacity: 1,
+                    width: '300px',
+                  }}
+                >
+                  Cancel
+                </Button>
+              </Col>
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Button
+                  type="submit"
+                  onClick={() => history.push('/aboutus')}
+                  style={{
+                    background: '#F8BE28 0% 0% no-repeat padding-box',
+                    borderRadius: '20px',
+                    opacity: 1,
+                    width: '300px',
+                  }}
+                >
+                  Log in
+                </Button>
+              </Col>
+            </Row>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+    );
+  };
+  const hideLoginSuccessful = () => {
+    setLoginSuccessful(false);
+  };
+
   return (
     <Box
       marginTop="15%"
@@ -488,13 +588,13 @@ function SocialLogin(props) {
               isSignedIn={false}
               disable={true}
               cookiePolicy={'single_host_origin'}
-              redirectUri={
-                BASE_URL.substring(8, 18) == '3s3sftsr90'
-                  ? 'https://manifestmy.space'
-                  : 'https://manifestmy.life'
-              }
+              // redirectUri={
+              //   BASE_URL.substring(8, 18) == '3s3sftsr90'
+              //     ? 'https://manifestmy.space'
+              //     : 'https://manifestmy.life'
+              // }
               scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
-              // redirectUri="http://localhost:3000"
+              redirectUri="http://localhost:3000"
               onSuccess={responseGoogle}
               onFailure={responseGoogle}
               render={(renderProps) => (
@@ -525,6 +625,7 @@ function SocialLogin(props) {
           </Button>
         </div>
         {socialSignUpModal()}
+        {loginSuccessfulModal()}
       </Box>
     </Box>
   );
