@@ -1,26 +1,19 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Toolbar from '@material-ui/core/Toolbar';
-import AppBar from '@material-ui/core/AppBar';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { Box, TextField, Button } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import Ellipse from '../manifest/LoginAssets/Ellipse.svg';
 import LoginImage from '../manifest/LoginAssets/Login.svg';
-import Facebook from '../manifest/LoginAssets/Facebook.svg';
 import Google from '../manifest/LoginAssets/Google.svg';
 import Apple from '../manifest/LoginAssets/Apple.svg';
 import SignUpImage from '../manifest/LoginAssets/SignUp.svg';
-
 import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
-import Cookies from 'js-cookie';
-import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import { GoogleLogin } from 'react-google-login';
 import axios from 'axios';
 import { useState, useContext } from 'react';
 import LoginContext from 'LoginContext';
-import { AlternateEmail } from '@material-ui/icons';
 import './login.css';
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 

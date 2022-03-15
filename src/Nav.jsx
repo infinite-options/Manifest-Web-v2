@@ -10,6 +10,7 @@ import Events from '../src/Home/Events';
 import Privacy from '../src/Home/Privacy';
 import GoogleEventComponent from './Home/GoogleEventComponent';
 import AboutUs from '../src/manifest/AboutUs';
+import UserSignUp from './manifest/UserSignUp';
 // Nav here will take all the adress from children page to this and give
 // it to the switch route
 
@@ -26,6 +27,7 @@ function Nav(authLevel, isAuth) {
       <Route exact path="/about" component={AboutModal} />
       <Route exact path="/aboutus" component={AboutUs} />
       <Route exact path="/privacy" component={Privacy} />
+      <Route exact path="/addUser" component={UserSignUp} />
     </Switch>
   );
 }

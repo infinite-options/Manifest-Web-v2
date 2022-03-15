@@ -1,23 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Toolbar from '@material-ui/core/Toolbar';
-import AppBar from '@material-ui/core/AppBar';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { Box, TextField, Button } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import Typography from '@material-ui/core/Typography';
 import Ellipse from '../manifest/LoginAssets/Ellipse.svg';
 import LoginImage from '../manifest/LoginAssets/Login.svg';
-import Facebook from '../manifest/LoginAssets/Facebook.svg';
-import Google from '../manifest/LoginAssets/Google.svg';
-import Apple from '../manifest/LoginAssets/Apple.svg';
-import SignUpImage from '../manifest/LoginAssets/SignUp.svg';
-import Cookies from 'js-cookie';
 
 import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
-import { GoogleLogin } from 'react-google-login';
 import axios from 'axios';
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import SocialLogin from './SocialLogin';
 
 import './login.css';
@@ -48,6 +39,7 @@ export default function Login() {
   const [validation, setValidation] = useState('');
   const [signUpModalShow, setSignUpModalShow] = useState(false);
   const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
+  const [loginSuccessful, setLoginSuccessful] = useState(false);
   const [newEmail, setNewEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [newPhoneNumber, setNewPhoneNumber] = useState('');
@@ -59,7 +51,8 @@ export default function Login() {
   const hideSignUp = () => {
     //setSignUpModalShow(false);
     setSocialSignUpModalShow(false);
-    history.push('/');
+
+    setLoginSuccessful(true);
     setEmail('');
     setPassword('');
     setNewPhoneNumber('');
@@ -112,109 +105,113 @@ export default function Login() {
         console.log(error);
       });
   };
-  // const handleSocialSignUpDone = () => {
-  //   axios
-  //     .post('/TASocialSignUp', {
-  //       email_id: newEmail,
-  //       first_name: newFName,
-  //       last_name: newLName,
-  //       phone_number: newPhoneNumber,
-  //       employer: newEmployer,
-  //     })
-  //     .then((response) => {
-  //       console.log(response.data);
-  //       hideSignUp();
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
+  const loginSuccessfulModal = () => {
+    const modalStyle = {
+      position: 'absolute',
+      top: '30%',
+      left: '2%',
+      width: '400px',
+    };
+    const headerStyle = {
+      border: 'none',
+      textAlign: 'center',
+      display: 'flex',
+      alignItems: 'center',
+      fontSize: '20px',
+      fontWeight: 'bold',
+      color: '#2C2C2E',
+      textTransform: 'uppercase',
+      backgroundColor: ' #FFFFFF',
+    };
+    const footerStyle = {
+      border: 'none',
+      backgroundColor: ' #FFFFFF',
+    };
+    const bodyStyle = {
+      backgroundColor: ' #FFFFFF',
+    };
+    return (
+      <Modal
+        show={loginSuccessful}
+        onHide={hideLoginSuccessful}
+        style={{ marginTop: '70px' }}
+      >
+        <Form as={Container}>
+          <Modal.Header style={headerStyle} closeButton>
+            <Modal.Title>Sign Up Successful</Modal.Title>
+          </Modal.Header>
 
-  // const socialSignUpModal = () => {
-  //   return (
-  //     <Modal show={socialSignUpModalShow} onHide={hideSignUp}>
-  //       <Form as={Container}>
-  //         <h3 className="bigfancytext formEltMargin">
-  //           Sign Up with Social Media
-  //         </h3>
-  //         <Form.Group as={Row} className="formEltMargin">
-  //           <Form.Label column sm="4">
-  //             Email
-  //           </Form.Label>
-  //           <Col sm="8">
-  //             <Form.Control plaintext readOnly value={newEmail} />
-  //           </Col>
-  //         </Form.Group>
-  //         <Form.Group as={Row} className="formEltMargin">
-  //           <Form.Label column sm="4">
-  //             Phone Number
-  //           </Form.Label>
-  //           <Col sm="8">
-  //             <Form.Control
-  //               type="tel"
-  //               pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-  //               placeholder="123-4567-8901"
-  //               value={newPhoneNumber}
-  //               onChange={handleNewPhoneNumberChange}
-  //             />
-  //           </Col>
-  //         </Form.Group>
-  //         <Form.Group as={Row} className="formEltMargin">
-  //           <Form.Label column sm="2">
-  //             First Name
-  //           </Form.Label>
-  //           <Col sm="4">
-  //             <Form.Control
-  //               type="text"
-  //               placeholder="John"
-  //               value={newFName}
-  //               onChange={handleNewFNameChange}
-  //             />
-  //           </Col>
-  //           <Form.Label column sm="2">
-  //             Last Name
-  //           </Form.Label>
-  //           <Col sm="4">
-  //             <Form.Control
-  //               type="text"
-  //               placeholder="Doe"
-  //               value={newLName}
-  //               onChange={handleNewLNameChange}
-  //             />
-  //           </Col>
-  //         </Form.Group>
-  //         <Form.Group as={Row} className="formEltMargin">
-  //           <Form.Label column sm="4">
-  //             Employer
-  //           </Form.Label>
-  //           <Col sm="8">
-  //             <Form.Control
-  //               type="text"
-  //               value={newEmployer}
-  //               onChange={handleNewEmployerChange}
-  //             />
-  //           </Col>
-  //         </Form.Group>
-  //         <Form.Group as={Row} className="formEltMargin">
-  //           <Col>
-  //             <Button
-  //               variant="primary"
-  //               type="submit"
-  //               onClick={handleSocialSignUpDone}
-  //             >
-  //               Sign Up
-  //             </Button>
-  //           </Col>
-  //           <Col>
-  //             <Button variant="primary" type="submit" onClick={hideSignUp}>
-  //               Cancel
-  //             </Button>
-  //           </Col>
-  //         </Form.Group>
-  //       </Form>
-  //     </Modal>
-  //   );
-  // };
+          <Modal.Body style={bodyStyle}>
+            <div>
+              You have successfully signed up as the TA! Please Login to
+              continue!
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer style={footerStyle}>
+            <Row
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: '1rem',
+              }}
+            >
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Button
+                  type="submit"
+                  onClick={hideLoginSuccessful}
+                  style={{
+                    marginTop: '10px',
+                    background: '#FF6B4A 0% 0% no-repeat padding-box',
+                    borderRadius: '20px',
+                    opacity: 1,
+                    width: '300px',
+                  }}
+                >
+                  Cancel
+                </Button>
+              </Col>
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Button
+                  type="submit"
+                  onClick={() => history.push('/aboutus')}
+                  style={{
+                    background: '#F8BE28 0% 0% no-repeat padding-box',
+                    borderRadius: '20px',
+                    opacity: 1,
+                    width: '300px',
+                  }}
+                >
+                  Log in
+                </Button>
+              </Col>
+            </Row>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+    );
+  };
+  const hideLoginSuccessful = () => {
+    setLoginSuccessful(false);
+  };
 
   return (
     <Box
@@ -255,16 +252,6 @@ export default function Login() {
           </div>
         </div>
       </Box>
-      {/* <Box display="flex" marginTop="35%" marginLeft="30%"> */}
-      {/* <Button
-          onClick={handleSignUp}
-          style={{
-            width: '7.5rem',
-            height: '7.5rem',
-            backgroundImage: `url(${SignUpImage})`,
-          }}
-        ></Button> */}
-      {/* </Box> */}
 
       <Box
         marginTop="30px"
@@ -599,6 +586,7 @@ export default function Login() {
       {/* <Box hidden={loggedIn === true}>
                   <Loading/>
             </Box> */}
+      {loginSuccessfulModal()}
     </Box>
   );
 }

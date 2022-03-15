@@ -1,16 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import GoogleLogin from 'react-google-login';
-import Cookies from 'js-cookie';
 import axios from 'axios';
-
-import { Box, TextField, Button } from '@material-ui/core';
-import { Grid } from '@material-ui/core';
+import { Box, Button } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
-//import { AuthContext } from '../auth/AuthContext';
 import { withRouter } from 'react-router';
-import Facebook from '../manifest/LoginAssets/Facebook.svg';
 import Google from '../manifest/LoginAssets/Google.svg';
 import Apple from '../manifest/LoginAssets/Apple.svg';
 import LoginContext from 'LoginContext';
@@ -25,10 +19,7 @@ function SocialLogin(props) {
   const history = useHistory();
   const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
   const [loginSuccessful, setLoginSuccessful] = useState(false);
-
-  const [loggedIn, setLoggedIn] = useState(false);
   const [newEmail, setNewEmail] = useState('');
-  const [newPassword, setNewPassword] = useState('');
   const [newPhoneNumber, setNewPhoneNumber] = useState('');
   const [newFName, setNewFName] = useState('');
   const [newLName, setNewLName] = useState('');
@@ -97,8 +88,8 @@ function SocialLogin(props) {
       code: auth_code,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
-      redirect_uri: 'http://localhost:3000',
-      // redirect_uri: redirecturi,
+      //redirect_uri: 'http://localhost:3000',
+      redirect_uri: redirecturi,
       grant_type: 'authorization_code',
     };
 
@@ -588,13 +579,13 @@ function SocialLogin(props) {
               isSignedIn={false}
               disable={true}
               cookiePolicy={'single_host_origin'}
-              // redirectUri={
-              //   BASE_URL.substring(8, 18) == '3s3sftsr90'
-              //     ? 'https://manifestmy.space'
-              //     : 'https://manifestmy.life'
-              // }
+              redirectUri={
+                BASE_URL.substring(8, 18) == '3s3sftsr90'
+                  ? 'https://manifestmy.space'
+                  : 'https://manifestmy.life'
+              }
               scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
-              redirectUri="http://localhost:3000"
+              // redirectUri="http://localhost:3000"
               onSuccess={responseGoogle}
               onFailure={responseGoogle}
               render={(renderProps) => (

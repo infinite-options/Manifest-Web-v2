@@ -135,7 +135,7 @@ export function Navigation() {
   const [taID, setTAID] = useState('');
   const [taList, setTAList] = useState([]);
   const [uaList, setUnassignedList] = useState([]);
-  const [userID, setUserID] = useState("");
+  const [userID, setUserID] = useState('');
   let redirecturi = 'https://manifestmy.space';
   console.log(redirecturi);
 
@@ -267,13 +267,10 @@ export function Navigation() {
 
             {elements}
           </select>
-
           {/* Sanmesh3 Assign User Dropdown */}
           <select
             className={classes.myButton}
-            style={{textAlign: 'center',
-                    display: 'inline'
-                  }}
+            style={{ textAlign: 'center', display: 'inline' }}
             onChange={(e) => {
               if (e.target.value != null) {
                 console.log('Assigning List', JSON.parse(e.target.value));
@@ -886,6 +883,7 @@ export function Navigation() {
   function onSubmitUser() {
     let body = {
       email_id: emailUser,
+      password: '',
       google_auth_token: accessToken,
       google_refresh_token: refreshToken,
       social_id: socialId,
