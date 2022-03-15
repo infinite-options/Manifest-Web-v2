@@ -33,78 +33,89 @@ export default function Login() {
   const history = useHistory();
 
   console.log('In Sign Up page');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loggedIn, setLoggedIn] = useState();
-  const [validation, setValidation] = useState('');
-  const [signUpModalShow, setSignUpModalShow] = useState(false);
-  const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
   const [loginSuccessful, setLoginSuccessful] = useState(false);
   const [newEmail, setNewEmail] = useState('');
+  const [confirmEmail, setConfirmEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [newPhoneNumber, setNewPhoneNumber] = useState('');
   const [newFName, setNewFName] = useState('');
   const [newLName, setNewLName] = useState('');
   const [newEmployer, setNewEmployer] = useState('');
-  const [newClients, setNewClients] = useState([]);
   const [showSignUp, setShowSignUp] = useState(false);
-  const hideSignUp = () => {
-    //setSignUpModalShow(false);
-    setSocialSignUpModalShow(false);
-
+  const signupSuccess = () => {
     setLoginSuccessful(true);
-    setEmail('');
-    setPassword('');
+    setNewEmail('');
+    setNewPassword('');
+    setNewFName('');
+    setNewLName('');
+  };
+  const hideSignUp = () => {
+    history.push('/');
     setNewPhoneNumber('');
     setNewFName('');
     setNewLName('');
     setNewEmployer('');
   };
 
-  const handleNewEmailChange = (event) => {
-    setNewEmail(event.target.value);
-  };
-
-  const handleNewPasswordChange = (event) => {
-    setNewPassword(event.target.value);
-  };
-
-  const handleNewPhoneNumberChange = (event) => {
-    setNewPhoneNumber(event.target.value);
-  };
-
-  const handleNewFNameChange = (event) => {
-    setNewFName(event.target.value);
-  };
-
-  const handleNewLNameChange = (event) => {
-    setNewLName(event.target.value);
-  };
-
-  const handleNewEmployerChange = (event) => {
-    setNewEmployer(event.target.value);
-  };
-
   const handleSignUpDone = () => {
+    if (
+      newEmail === '' ||
+      confirmEmail === '' ||
+      newPassword === '' ||
+      confirmPassword === ''
+    ) {
+      setErrorMessage('Please fill out all fields');
+      return;
+    }
+    if (newEmail !== confirmEmail) {
+      setErrorMessage('Emails must match');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setErrorMessage('Passwords must match');
+      return;
+    }
+    const ta = {
+      email_id: newEmail,
+      password: newPassword,
+      first_name: newFName,
+      last_name: newLName,
+      phone_number: newPhoneNumber,
+      employer: newEmployer,
+      ta_time_zone: moment.tz.guess(),
+    };
     axios
-      .post(BASE_URL + 'addNewTA', {
-        email_id: newEmail,
-        password: newPassword,
-        first_name: newFName,
-        last_name: newLName,
-        phone_number: newPhoneNumber,
-        employer: newEmployer,
-        ta_time_zone: moment.tz.guess(),
-      })
+      .post(BASE_URL + 'addNewTA', ta)
       .then((response) => {
         console.log(response.data);
-        hideSignUp();
+        if (response.code !== 200) {
+          setErrorMessage(response.message);
+          return;
+          // add validation
+        }
+        setErrorMessage('');
+        signupSuccess();
       })
       .catch((error) => {
-        console.log('its in landing page');
         console.log(error);
       });
   };
+  const required =
+    errorMessage === 'Please fill out all fields' ? (
+      <span
+        style={{
+          color: '#E3441F',
+          font: 'normal normal normal 11px/12px SFProDisplay-Regular',
+        }}
+        className="ms-1"
+      >
+        *
+      </span>
+    ) : (
+      ''
+    );
   const loginSuccessfulModal = () => {
     const modalStyle = {
       position: 'absolute',
@@ -254,7 +265,7 @@ export default function Login() {
       </Box>
 
       <Box
-        marginTop="30px"
+        marginTop="50px"
         display="flex"
         flexDirection="column"
         justifyContent="center"
@@ -283,6 +294,7 @@ export default function Login() {
           </h3>
         </Row>
         <Row
+          hidden={showSignUp}
           style={{
             display: 'flex',
             flexDirection: 'row',
@@ -295,6 +307,7 @@ export default function Login() {
           <SocialLogin />
         </Row>
         <Row
+          hidden={showSignUp}
           style={{
             display: 'flex',
             flexDirection: 'row',
@@ -371,7 +384,7 @@ export default function Login() {
                       type="text"
                       placeholder="First Name"
                       value={newFName}
-                      onChange={handleNewFNameChange}
+                      onChange={(e) => setNewFName(e.target.value)}
                       style={{
                         background: '#FFFFFF 0% 0% no-repeat padding-box',
                         borderRadius: '26px',
@@ -385,7 +398,7 @@ export default function Login() {
                       type="text"
                       placeholder="Last Name"
                       value={newLName}
-                      onChange={handleNewLNameChange}
+                      onChange={(e) => setNewLName(e.target.value)}
                       style={{
                         background: '#FFFFFF 0% 0% no-repeat padding-box',
                         borderRadius: '26px',
@@ -401,7 +414,7 @@ export default function Login() {
                       type="text"
                       placeholder="Employer"
                       value={newEmployer}
-                      onChange={handleNewEmployerChange}
+                      onChange={(e) => setNewEmployer(e.target.value)}
                       style={{
                         background: '#FFFFFF 0% 0% no-repeat padding-box',
                         borderRadius: '26px',
@@ -418,7 +431,7 @@ export default function Login() {
                       placeholder="Phone Number"
                       pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                       value={newPhoneNumber}
-                      onChange={handleNewPhoneNumberChange}
+                      onChange={(e) => setNewPhoneNumber(e.target.value)}
                       style={{
                         background: '#FFFFFF 0% 0% no-repeat padding-box',
                         borderRadius: '26px',
@@ -430,11 +443,12 @@ export default function Login() {
                 </Col>
                 <Col>
                   <Form.Group as={Row} className="formEltMargin">
+                    {newEmail === '' ? required : ''}
                     <Form.Control
                       type="text"
                       placeholder="Email address"
                       value={newEmail}
-                      onChange={handleNewEmailChange}
+                      onChange={(e) => setNewEmail(e.target.value)}
                       style={{
                         background: '#FFFFFF 0% 0% no-repeat padding-box',
                         borderRadius: '26px',
@@ -444,14 +458,32 @@ export default function Login() {
                     />
                   </Form.Group>
                 </Col>
+                <Col>
+                  <Form.Group as={Row} className="formEltMargin">
+                    {confirmEmail === '' ? required : ''}
+                    <Form.Control
+                      style={{
+                        background: '#FFFFFF 0% 0% no-repeat padding-box',
+                        borderRadius: '26px',
+                        opacity: 1,
+                        width: '500px',
+                      }}
+                      placeholder="Confirm Email Address"
+                      type="email"
+                      value={confirmEmail}
+                      onChange={(e) => setConfirmEmail(e.target.value)}
+                    />
+                  </Form.Group>
+                </Col>
               </Form.Group>
               <Col>
                 <Form.Group as={Row} className="formEltMargin">
+                  {newPassword === '' ? required : ''}
                   <Form.Control
                     type="password"
                     placeholder="Create Password"
                     value={newPassword}
-                    onChange={handleNewPasswordChange}
+                    onChange={(e) => setNewPassword(e.target.value)}
                     style={{
                       background: '#FFFFFF 0% 0% no-repeat padding-box',
                       borderRadius: '26px',
@@ -461,7 +493,37 @@ export default function Login() {
                   />
                 </Form.Group>
               </Col>
-
+              <Col>
+                <Form.Group as={Row} className="formEltMargin">
+                  {confirmPassword === '' ? required : ''}
+                  <Form.Control
+                    placeholder="Confirm Password"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    style={{
+                      background: '#FFFFFF 0% 0% no-repeat padding-box',
+                      borderRadius: '26px',
+                      opacity: 1,
+                      width: '500px',
+                    }}
+                  />
+                </Form.Group>
+              </Col>
+              <div
+                className="text-center"
+                style={errorMessage === '' ? { visibility: 'hidden' } : {}}
+              >
+                <p
+                  style={{
+                    color: '#E3441F',
+                    font: 'normal normal normal 11px/12px SFProDisplay-Regular',
+                    fontSize: 'small',
+                  }}
+                >
+                  {errorMessage || 'error'}
+                </p>
+              </div>
               <Form.Group className="formEltMargin">
                 <div
                   style={{

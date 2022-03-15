@@ -21,7 +21,10 @@ export default function UserSignUp() {
   const history = useHistory();
   const loginContext = useContext(LoginContext);
   const [newEmail, setNewEmail] = useState('');
+  const [confirmEmail, setConfirmEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [newFName, setNewFName] = useState('');
   const [newLName, setNewLName] = useState('');
   const [selectedTimezone, setSelectedTimezone] = useState({});
@@ -295,7 +298,17 @@ export default function UserSignUp() {
   const hideSignUp = () => {
     //setSignUpModalShow(false);
     setSocialSignUpModalShow(false);
-    // history.push('/');
+    history.push('/');
+    // setRegisterSuccess(true);
+    setNewEmail('');
+    setNewPassword('');
+    setNewFName('');
+    setNewLName('');
+  };
+
+  const signupSuccess = () => {
+    //setSignUpModalShow(false);
+    setSocialSignUpModalShow(false);
     setRegisterSuccess(true);
     setNewEmail('');
     setNewPassword('');
@@ -320,28 +333,66 @@ export default function UserSignUp() {
   };
 
   const handleSocialSignUpDone = () => {
+    if (
+      newEmail === '' ||
+      confirmEmail === '' ||
+      newPassword === '' ||
+      confirmPassword === ''
+    ) {
+      setErrorMessage('Please fill out all fields');
+      return;
+    }
+    if (newEmail !== confirmEmail) {
+      setErrorMessage('Emails must match');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setErrorMessage('Passwords must match');
+      return;
+    }
+    const user = {
+      email_id: newEmail,
+      password: newPassword,
+      first_name: newFName,
+      last_name: newLName,
+      time_zone: selectedTimezone.value,
+      google_auth_token: accessToken,
+      google_refresh_token: refreshToken,
+      social_id: socialId,
+      access_expires_in: accessExpiresIn.toString(),
+      ta_people_id: '200-000001',
+    };
     axios
-      .post(BASE_URL + 'addNewUser', {
-        email_id: newEmail,
-        password: newPassword,
-        first_name: newFName,
-        last_name: newLName,
-        time_zone: selectedTimezone.value,
-        google_auth_token: accessToken,
-        google_refresh_token: refreshToken,
-        social_id: socialId,
-        access_expires_in: accessExpiresIn.toString(),
-        ta_people_id: '200-000001',
-      })
+      .post(BASE_URL + 'addNewUser', user)
       .then((response) => {
         console.log(response.data);
-        hideSignUp();
+        if (response.code !== 200) {
+          setErrorMessage(response.message);
+          return;
+          // add validation
+        }
+        setErrorMessage('');
+        signupSuccess();
       })
       .catch((error) => {
         console.log('its in landing page');
         console.log(error);
       });
   };
+  const required =
+    errorMessage === 'Please fill out all fields' ? (
+      <span
+        style={{
+          color: '#E3441F',
+          font: 'normal normal normal 11px/12px SFProDisplay-Regular',
+        }}
+        className="ms-1"
+      >
+        *
+      </span>
+    ) : (
+      ''
+    );
 
   return (
     <Box
@@ -381,7 +432,6 @@ export default function UserSignUp() {
       </Box>
       {!registerSuccess ? (
         <Box
-          marginTop="-20%"
           display="flex"
           flexDirection="column"
           justifyContent="center"
@@ -418,6 +468,7 @@ export default function UserSignUp() {
               width: '500px',
               marginTop: '1rem',
             }}
+            hidden={showSignUp}
           >
             {' '}
             <Box
@@ -488,6 +539,7 @@ export default function UserSignUp() {
           </Row>
 
           <Row
+            hidden={showSignUp}
             style={{
               display: 'flex',
               flexDirection: 'row',
@@ -506,7 +558,6 @@ export default function UserSignUp() {
                 width: '500px',
               }}
             >
-              {' '}
               <h3
                 className="bigfancytext formEltMargin"
                 style={{
@@ -564,7 +615,7 @@ export default function UserSignUp() {
                         type="text"
                         placeholder="First Name"
                         value={newFName}
-                        onChange={handleNewFNameChange}
+                        onChange={(e) => setNewFName(e.target.value)}
                         style={{
                           background: '#FFFFFF 0% 0% no-repeat padding-box',
                           borderRadius: '26px',
@@ -578,7 +629,7 @@ export default function UserSignUp() {
                         type="text"
                         placeholder="Last Name"
                         value={newLName}
-                        onChange={handleNewLNameChange}
+                        onChange={(e) => setNewLName(e.target.value)}
                         style={{
                           background: '#FFFFFF 0% 0% no-repeat padding-box',
                           borderRadius: '26px',
@@ -608,11 +659,12 @@ export default function UserSignUp() {
                   </Col>
                   <Col>
                     <Form.Group as={Row} className="formEltMargin">
+                      {newEmail === '' ? required : ''}
                       <Form.Control
                         type="text"
                         placeholder="Email address"
                         value={newEmail}
-                        onChange={handleNewEmailChange}
+                        onChange={(e) => setNewEmail(e.target.value)}
                         style={{
                           background: '#FFFFFF 0% 0% no-repeat padding-box',
                           borderRadius: '26px',
@@ -622,9 +674,27 @@ export default function UserSignUp() {
                       />
                     </Form.Group>
                   </Col>
+                  <Col>
+                    <Form.Group as={Row} className="formEltMargin">
+                      {confirmEmail === '' ? required : ''}
+                      <Form.Control
+                        style={{
+                          background: '#FFFFFF 0% 0% no-repeat padding-box',
+                          borderRadius: '26px',
+                          opacity: 1,
+                          width: '500px',
+                        }}
+                        placeholder="Confirm Email Address"
+                        type="email"
+                        value={confirmEmail}
+                        onChange={(e) => setConfirmEmail(e.target.value)}
+                      />
+                    </Form.Group>
+                  </Col>
                 </Form.Group>
                 <Col>
                   <Form.Group as={Row} className="formEltMargin">
+                    {newPassword === '' ? required : ''}
                     <Form.Control
                       type="password"
                       placeholder="Create Password"
@@ -639,7 +709,37 @@ export default function UserSignUp() {
                     />
                   </Form.Group>
                 </Col>
-
+                <Col>
+                  <Form.Group as={Row} className="formEltMargin">
+                    {confirmPassword === '' ? required : ''}
+                    <Form.Control
+                      placeholder="Confirm Password"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      style={{
+                        background: '#FFFFFF 0% 0% no-repeat padding-box',
+                        borderRadius: '26px',
+                        opacity: 1,
+                        width: '500px',
+                      }}
+                    />
+                  </Form.Group>
+                </Col>
+                <div
+                  className="text-center"
+                  style={errorMessage === '' ? { visibility: 'hidden' } : {}}
+                >
+                  <p
+                    style={{
+                      color: '#E3441F',
+                      font: 'normal normal normal 11px/12px SFProDisplay-Regular',
+                      fontSize: 'small',
+                    }}
+                  >
+                    {errorMessage || 'error'}
+                  </p>
+                </div>
                 <Form.Group className="formEltMargin">
                   <div
                     style={{
