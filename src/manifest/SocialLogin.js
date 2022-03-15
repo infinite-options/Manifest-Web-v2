@@ -549,12 +549,7 @@ function SocialLogin(props) {
   };
 
   return (
-    <Box
-      marginTop="15%"
-      display="flex"
-      flexDirection="column"
-      style={{ width: '15rem' }}
-    >
+    <Box display="flex" flexDirection="column" style={{ width: '15rem' }}>
       <Box
         display="flex"
         justifyContent="center"

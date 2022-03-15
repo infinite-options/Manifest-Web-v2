@@ -550,24 +550,104 @@ export default function AboutUs() {
           </div>
         </div>
       </Box>
-      <Box display="flex" marginTop="35%" marginLeft="30%">
-        <Button
+      <Box
+        display="flex"
+        marginTop="35%"
+        marginLeft="20%"
+        justifyContent="space-around"
+      >
+        {/* <Button
           onClick={() => history.push('/signup')}
           style={{
             width: '7.5rem',
             height: '7.5rem',
             backgroundImage: `url(${SignUpImage})`,
           }}
-        ></Button>
+        ></Button> */}
+        <div
+          style={{
+            position: 'relative',
+            color: 'white',
+            cursor: 'pointer',
+            marginRight: '-5rem',
+          }}
+          onClick={() => history.push('/signup')}
+        >
+          <img src={Ellipse} style={{ width: '40%' }} alt="Ellipse" />
+          <div
+            style={{
+              position: 'absolute',
+              top: '75%',
+              left: '10%',
+              transform: 'translate(-50%, -40%)',
+              textAlign: 'center',
+            }}
+            className="text"
+          >
+            <div
+              style={{
+                font: 'normal normal bold 21px SF Pro',
+                textAlign: 'center',
+              }}
+            >
+              Sign Up as <br />
+              TA
+            </div>
+          </div>
+        </div>
+        <div
+          style={{
+            position: 'relative',
+            color: 'white',
+            cursor: 'pointer',
+            marginRight: '-5rem',
+          }}
+          onClick={() => history.push('/adduser')}
+        >
+          <img src={Ellipse} style={{ width: '40%' }} alt="Ellipse" />
+          <div
+            style={{
+              position: 'absolute',
+              top: '75%',
+              left: '10%',
+              transform: 'translate(-50%, -40%)',
+              textAlign: 'center',
+            }}
+            className="text"
+          >
+            <div
+              style={{
+                font: 'normal normal bold 21px SF Pro',
+              }}
+            >
+              Sign Up as <br />
+              User
+            </div>
+          </div>
+        </div>
       </Box>
-      <Box></Box>
 
       <Box
-        marginTop="15%"
+        marginTop="5%"
+        marginLeft="-15%"
         display="flex"
         flexDirection="column"
         style={{ width: '15rem' }}
       >
+        <Box>
+          <h3
+            className="bigfancytext formEltMargin"
+            style={{
+              textAlign: 'center',
+              letterSpacing: '0.49px',
+              color: '#000000',
+              opacity: 1,
+            }}
+          >
+            TA Login
+          </h3>
+        </Box>
+
         <Box marginBottom="1rem" width="100%">
           <TextField
             className={classes.textFieldBackgorund}
@@ -670,7 +750,7 @@ export default function AboutUs() {
         <Box
           display="flex"
           justifyContent="center"
-          marginTop="5rem"
+          marginTop="2rem"
           marginBottom="7.5rem"
           style={{ fontWeight: 'bold' }}
         >
