@@ -44,6 +44,7 @@ export default function Login() {
   const [newLName, setNewLName] = useState('');
   const [newEmployer, setNewEmployer] = useState('');
   const [showSignUp, setShowSignUp] = useState(false);
+  const [alreadyExists, setAlreadyExists] = useState(false);
   const signupSuccess = () => {
     setLoginSuccessful(true);
     setNewEmail('');
@@ -86,21 +87,28 @@ export default function Login() {
       employer: newEmployer,
       ta_time_zone: moment.tz.guess(),
     };
-    axios
-      .post(BASE_URL + 'addNewTA', ta)
-      .then((response) => {
-        console.log(response.data);
-        if (response.code !== 200) {
-          setErrorMessage(response.message);
-          return;
-          // add validation
-        }
-        setErrorMessage('');
-        signupSuccess();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    axios.get(BASE_URL + 'GetTAEmailId/' + newEmail).then((response) => {
+      console.log(response.data);
+      if (response.data.message != 'User ID doesnt exist') {
+        setAlreadyExists(!alreadyExists);
+      } else {
+        axios
+          .post(BASE_URL + 'addNewTA', ta)
+          .then((response) => {
+            console.log(response.data);
+            if (response.code !== 200) {
+              setErrorMessage(response.message);
+              return;
+              // add validation
+            }
+            setErrorMessage('');
+            signupSuccess();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    });
   };
   const required =
     errorMessage === 'Please fill out all fields' ? (
@@ -116,6 +124,115 @@ export default function Login() {
     ) : (
       ''
     );
+
+  const alreadyExistsModal = () => {
+    const modalStyle = {
+      position: 'absolute',
+      top: '30%',
+      left: '2%',
+      width: '400px',
+    };
+    const headerStyle = {
+      border: 'none',
+      textAlign: 'center',
+      display: 'flex',
+      alignItems: 'center',
+      fontSize: '20px',
+      fontWeight: 'bold',
+      color: '#2C2C2E',
+      textTransform: 'uppercase',
+      backgroundColor: ' #FFFFFF',
+    };
+    const footerStyle = {
+      border: 'none',
+      backgroundColor: ' #FFFFFF',
+    };
+    const bodyStyle = {
+      backgroundColor: ' #FFFFFF',
+    };
+    return (
+      <Modal
+        show={alreadyExists}
+        onHide={hideAlreadyExists}
+        style={{ marginTop: '70px' }}
+      >
+        <Form as={Container}>
+          <Modal.Header style={headerStyle} closeButton>
+            <Modal.Title>TA Account Exists</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body style={bodyStyle}>
+            <div>
+              The TA with email: {newEmail} exists! Please log in to continue
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer style={footerStyle}>
+            <Row
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: '1rem',
+              }}
+            >
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Button
+                  type="submit"
+                  onClick={hideLoginSuccessful}
+                  style={{
+                    marginTop: '10px',
+                    background: '#FF6B4A 0% 0% no-repeat padding-box',
+                    borderRadius: '20px',
+                    opacity: 1,
+                    width: '300px',
+                  }}
+                >
+                  Cancel
+                </Button>
+              </Col>
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Button
+                  type="submit"
+                  onClick={() => history.push('/aboutus')}
+                  style={{
+                    background: '#F8BE28 0% 0% no-repeat padding-box',
+                    borderRadius: '20px',
+                    opacity: 1,
+                    width: '300px',
+                  }}
+                >
+                  Log in
+                </Button>
+              </Col>
+            </Row>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+    );
+  };
+  const hideAlreadyExists = () => {
+    //setSignUpModalShow(false);
+    setAlreadyExists(!alreadyExists);
+    history.push('/aboutus');
+  };
   const loginSuccessfulModal = () => {
     const modalStyle = {
       position: 'absolute',
@@ -521,7 +638,7 @@ export default function Login() {
                     fontSize: 'small',
                   }}
                 >
-                  {errorMessage || 'error'}
+                  {errorMessage}
                 </p>
               </div>
               <Form.Group className="formEltMargin">
@@ -649,6 +766,8 @@ export default function Login() {
                   <Loading/>
             </Box> */}
       {loginSuccessfulModal()}
+
+      {alreadyExistsModal()}
     </Box>
   );
 }
