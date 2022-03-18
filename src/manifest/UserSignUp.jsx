@@ -35,6 +35,7 @@ export default function UserSignUp() {
   const [showSignUp, setShowSignUp] = useState(false);
   const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
   const [registerSuccess, setRegisterSuccess] = useState(false);
+  const [alreadyExists, setAlreadyExists] = useState(false);
   let redirecturi = 'https://manifestmy.space';
   useEffect(() => {
     if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
@@ -82,7 +83,7 @@ export default function UserSignUp() {
       code: auth_code,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
-      //redirect_uri: 'http://localhost:3000',
+      // redirect_uri: 'http://localhost:3000',
       redirect_uri: redirecturi,
       grant_type: 'authorization_code',
     };
@@ -143,6 +144,7 @@ export default function UserSignUp() {
               if (response.data.message === 'User ID doesnt exist') {
                 setSocialSignUpModalShow(!socialSignUpModalShow);
               } else {
+                setAlreadyExists(!alreadyExists);
               }
             });
           })
@@ -166,6 +168,96 @@ export default function UserSignUp() {
       .catch((err) => {
         console.log(err);
       });
+  };
+  const alreadyExistsModal = () => {
+    const modalStyle = {
+      position: 'absolute',
+      top: '30%',
+      left: '2%',
+      width: '400px',
+    };
+    const headerStyle = {
+      border: 'none',
+      textAlign: 'center',
+      display: 'flex',
+      alignItems: 'center',
+      fontSize: '20px',
+      fontWeight: 'bold',
+      color: '#2C2C2E',
+      textTransform: 'uppercase',
+      backgroundColor: ' #FFFFFF',
+    };
+    const footerStyle = {
+      border: 'none',
+      backgroundColor: ' #FFFFFF',
+    };
+    const bodyStyle = {
+      backgroundColor: ' #FFFFFF',
+    };
+    return (
+      <Modal
+        show={alreadyExists}
+        onHide={hideAlreadyExists}
+        style={{ marginTop: '70px' }}
+      >
+        <Form as={Container}>
+          <Modal.Header style={headerStyle} closeButton>
+            <Modal.Title>User Account Exists</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body style={bodyStyle}>
+            <div>
+              The User with email: {newEmail} exists! Please contact your TA for
+              further details!
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer style={footerStyle}>
+            <Row
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: '1rem',
+              }}
+            >
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              ></Col>
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Button
+                  type="submit"
+                  onClick={hideAlreadyExists}
+                  style={{
+                    background: '#F8BE28 0% 0% no-repeat padding-box',
+                    borderRadius: '20px',
+                    opacity: 1,
+                    width: '300px',
+                  }}
+                >
+                  Okay
+                </Button>
+              </Col>
+            </Row>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+    );
   };
   const socialSignUpModal = () => {
     return (
@@ -193,7 +285,7 @@ export default function UserSignUp() {
                   type="text"
                   placeholder="First Name"
                   value={newFName}
-                  onChange={handleNewFNameChange}
+                  onChange={(e) => setNewFName(e.target.value)}
                   style={{
                     background: '#FFFFFF 0% 0% no-repeat padding-box',
                     borderRadius: '26px',
@@ -207,7 +299,7 @@ export default function UserSignUp() {
                   type="text"
                   placeholder="Last Name"
                   value={newLName}
-                  onChange={handleNewLNameChange}
+                  onChange={(e) => setNewLName(e.target.value)}
                   style={{
                     background: '#FFFFFF 0% 0% no-repeat padding-box',
                     borderRadius: '26px',
@@ -306,47 +398,43 @@ export default function UserSignUp() {
     setNewLName('');
   };
 
+  const hideAlreadyExists = () => {
+    //setSignUpModalShow(false);
+    setAlreadyExists(!alreadyExists);
+    history.push('/');
+  };
+
   const signupSuccess = () => {
     //setSignUpModalShow(false);
     setSocialSignUpModalShow(false);
+    setShowSignUp(false);
     setRegisterSuccess(true);
     setNewEmail('');
     setNewPassword('');
     setNewFName('');
     setNewLName('');
+    setErrorMessage('');
   };
-
-  const handleNewEmailChange = (event) => {
-    setNewEmail(event.target.value);
-  };
-
-  const handleNewPasswordChange = (event) => {
-    setNewPassword(event.target.value);
-  };
-
-  const handleNewFNameChange = (event) => {
-    setNewFName(event.target.value);
-  };
-
-  const handleNewLNameChange = (event) => {
-    setNewLName(event.target.value);
-  };
-
+  console.log('socialSignUpModalShow', socialSignUpModalShow);
+  console.log('showSignUp', showSignUp);
+  console.log('registerSuccess', registerSuccess);
   const handleSocialSignUpDone = () => {
     if (
-      newEmail === '' ||
-      confirmEmail === '' ||
-      newPassword === '' ||
-      confirmPassword === ''
+      (newEmail === '' ||
+        confirmEmail === '' ||
+        newPassword === '' ||
+        confirmPassword === '') &&
+      showSignUp == true
     ) {
+      console.log('in if');
       setErrorMessage('Please fill out all fields');
       return;
     }
-    if (newEmail !== confirmEmail) {
+    if (newEmail !== confirmEmail && showSignUp == true) {
       setErrorMessage('Emails must match');
       return;
     }
-    if (newPassword !== confirmPassword) {
+    if (newPassword !== confirmPassword && showSignUp == true) {
       setErrorMessage('Passwords must match');
       return;
     }
@@ -362,22 +450,55 @@ export default function UserSignUp() {
       access_expires_in: accessExpiresIn.toString(),
       ta_people_id: '200-000001',
     };
-    axios
-      .post(BASE_URL + 'addNewUser', user)
-      .then((response) => {
+    console.log('user', user);
+    if (accessToken.length > 0) {
+      console.log('in if google');
+      axios
+        .post(BASE_URL + 'addNewUser', user)
+        .then((response) => {
+          console.log(response);
+          if (response.status != 200) {
+            setErrorMessage(response.message);
+            return;
+            // add validation
+          } else {
+            console.log('in else');
+            signupSuccess();
+          }
+          // setErrorMessage('');
+        })
+        .catch((error) => {
+          console.log('its in landing page');
+          console.log(error);
+        });
+    } else {
+      console.log('in else');
+      axios.get(BASE_URL + 'GetUserEmailId/' + newEmail).then((response) => {
         console.log(response.data);
-        if (response.code !== 200) {
-          setErrorMessage(response.message);
-          return;
-          // add validation
+        if (response.data.message != 'User ID doesnt exist') {
+          setAlreadyExists(!alreadyExists);
+        } else {
+          axios
+            .post(BASE_URL + 'addNewUser', user)
+            .then((response) => {
+              console.log(response);
+              if (response.status != 200) {
+                setErrorMessage(response.message);
+                return;
+                // add validation
+              } else {
+                console.log('in else');
+                signupSuccess();
+              }
+              // setErrorMessage('');
+            })
+            .catch((error) => {
+              console.log('its in landing page');
+              console.log(error);
+            });
         }
-        setErrorMessage('');
-        signupSuccess();
-      })
-      .catch((error) => {
-        console.log('its in landing page');
-        console.log(error);
       });
+    }
   };
   const required =
     errorMessage === 'Please fill out all fields' ? (
@@ -506,7 +627,7 @@ export default function UserSignUp() {
                           : 'https://manifestmy.life'
                       }
                       scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
-                      //   redirectUri="http://localhost:3000"
+                      // redirectUri="http://localhost:3000"
                       onSuccess={responseGoogle}
                       onFailure={responseGoogle}
                       render={(renderProps) => (
@@ -699,7 +820,7 @@ export default function UserSignUp() {
                       type="password"
                       placeholder="Create Password"
                       value={newPassword}
-                      onChange={handleNewPasswordChange}
+                      onChange={(e) => setNewPassword(e.target.value)}
                       style={{
                         background: '#FFFFFF 0% 0% no-repeat padding-box',
                         borderRadius: '26px',
@@ -737,7 +858,7 @@ export default function UserSignUp() {
                       fontSize: 'small',
                     }}
                   >
-                    {errorMessage || 'error'}
+                    {errorMessage}
                   </p>
                 </div>
                 <Form.Group className="formEltMargin">
@@ -897,6 +1018,7 @@ export default function UserSignUp() {
         </div>
       </Box>
       {socialSignUpModal()}
+      {alreadyExistsModal()}
 
       {/* <Box hidden={loggedIn === true}>
                   <Loading/>
