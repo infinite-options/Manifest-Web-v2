@@ -145,7 +145,7 @@ export default function Home(props) {
       )
       .then((response) => {
         console.log('list of users home', response.data.result);
-        if (response.result !== false) {
+        if (response.data.result.length > 0) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;

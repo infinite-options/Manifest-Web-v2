@@ -241,7 +241,7 @@ export default function MainPage(props) {
       )
       .then((response) => {
         console.log(response);
-        if (response.result !== false) {
+        if (response.data.result.length > 0) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;

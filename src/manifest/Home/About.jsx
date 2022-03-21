@@ -89,6 +89,7 @@ export default function AboutModal(props) {
   const [imageChanged, setImageChanged] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
   const [showTimeModal, setShowTimeModal] = useState(false);
   const [addPerson, setAddPerson] = useState(false);
   const [addPersonName, setAddPersonName] = useState('');
@@ -413,7 +414,7 @@ export default function AboutModal(props) {
       )
       .then((response) => {
         console.log(response);
-        if (response.result !== false) {
+        if (response.data.result.length > 0) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;
@@ -505,6 +506,7 @@ export default function AboutModal(props) {
           setFirstName(details.user_first_name);
           setLastName(details.user_last_name);
           setUserPhoto(details.user_picture);
+          setEmail(details.user_email_id);
         } else {
           console.log('No user details');
         }
@@ -1686,6 +1688,31 @@ export default function AboutModal(props) {
                     setLastName(e.target.value);
                   }}
                 />
+              </Col>
+            </Row>
+            <br />
+            <Row>
+              <Col style={{ paddingRight: '10px' }}>
+                <label
+                  style={{
+                    marginTop: '10px',
+                    marginLeft: '10px',
+                    fontWeight: 'bolder',
+                    color: 'white',
+                  }}
+                >
+                  Email:
+                </label>
+
+                <div
+                  style={{
+                    marginTop: '10px',
+                    marginLeft: '10px',
+                    color: 'white',
+                  }}
+                >
+                  {email}
+                </div>
               </Col>
             </Row>
             <br />

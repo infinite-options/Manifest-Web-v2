@@ -151,6 +151,7 @@ export function Navigation() {
 
   console.log('User list', listOfUsers);
   console.log('Cur ta', selectedUser);
+
   const userListRendered = () => {
     if (
       document.cookie
@@ -166,62 +167,54 @@ export function Navigation() {
 
       console.log('list of users', listOfUsers);
       let elements = [];
-      if (listOfUsers.length > 0) {
-        elements = listOfUsers.map((user) => (
-          <option
-            key={user.user_unique_id}
-            // value={user.user_unique_id}
-            value={JSON.stringify({
-              user_unique_id: user.user_unique_id,
-              user_name: user.user_name,
-              time_zone: user.time_zone,
-              user_email_id: user.user_email_id,
-            })}
-          >
-            {user.user_name}
-          </option>
-        ));
-      } else {
-        elements = 'Loading';
-      }
+
+      elements = listOfUsers.map((user) => (
+        <option
+          key={user.user_unique_id}
+          // value={user.user_unique_id}
+          value={JSON.stringify({
+            user_unique_id: user.user_unique_id,
+            user_name: user.user_name,
+            time_zone: user.time_zone,
+            user_email_id: user.user_email_id,
+          })}
+        >
+          {user.user_name}
+        </option>
+      ));
 
       console.log('document cookie', document.cookie);
-      if (listOfUsers.length > 0) {
+      if (
+        document.cookie
+          .split(';')
+          .some((item) => item.trim().startsWith('patient_name='))
+      ) {
         if (
           document.cookie
-            .split(';')
-            .some((item) => item.trim().startsWith('patient_name='))
+            .split('; ')
+            .find((row) => row.startsWith('patient_name='))
+            .split('=')[1] == 'Loading'
         ) {
-          if (
-            document.cookie
-              .split('; ')
-              .find((row) => row.startsWith('patient_name='))
-              .split('=')[1] == 'Loading'
-          ) {
-            console.log('do something here', listOfUsers);
-            if (listOfUsers[0]) {
-              console.log('document cookie set to first user');
-              document.cookie = 'patient_name=' + listOfUsers[0].user_name;
-              document.cookie = 'patient_timeZone=' + listOfUsers[0].time_zone;
-              document.cookie = 'patient_uid=' + listOfUsers[0].user_unique_id;
-              document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
-            }
-          }
-        } else {
+          console.log('do something here', listOfUsers);
           if (listOfUsers[0]) {
             console.log('document cookie set to first user');
-            document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
             document.cookie = 'patient_name=' + listOfUsers[0].user_name;
-            document.cookie = 'patient_timeZone=' + listOfUsers[0].time_zone;
-            document.cookie = 'patient_uid=' + listOfUsers[0].user_unique_id;
-          } else {
-            console.log('document cookie set to loading');
-            document.cookie = 'patient_name=Loading';
+            document.cookie = 'patient_timeZone' + listOfUsers[0].time_zone;
+            document.cookie = 'patient_uid' + listOfUsers[0].user_unique_id;
+            document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
           }
         }
       } else {
-        console.log('document cookie set to loading');
-        document.cookie = 'patient_name=Loading';
+        if (listOfUsers[0]) {
+          console.log('document cookie set to first user');
+          document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
+          document.cookie = 'patient_name=' + listOfUsers[0].user_name;
+          document.cookie = 'patient_timeZone' + listOfUsers[0].time_zone;
+          document.cookie = 'patient_uid' + listOfUsers[0].user_unique_id;
+        } else {
+          console.log('document cookie set to loading');
+          document.cookie = 'patient_name=Loading';
+        }
       }
 
       return (
@@ -268,7 +261,7 @@ export function Navigation() {
             {elements}
           </select>
           {/* Sanmesh3 Assign User Dropdown */}
-          <select
+          {/* <select
             className={classes.myButton}
             style={{ textAlign: 'center', display: 'inline' }}
             onChange={(e) => {
@@ -286,11 +279,11 @@ export function Navigation() {
             }}
           >
             {/* Assign User Dropdown */}
-            <option value="null" selected>
+          {/* <option value="null" selected>
               Assign User
             </option>
             {uaListRendered()}
-          </select>
+          </select> */}
         </div>
       );
     }
@@ -1034,8 +1027,37 @@ export function Navigation() {
       <AppBar className={classes.navigationBar} style={{ position: 'static' }}>
         <Toolbar>
           <div className={classes.displayNav}>
-            <div style={{ width: '40%' }}>{userListRendered()}</div>
+            <div style={{ width: '30%' }}>{userListRendered()} </div>
+            {document.cookie
+              .split(';')
+              .some((item) => item.trim().startsWith('ta_uid=')) ? (
+              <div
+                style={{
+                  width: '30%',
+                  marginLeft: '-10rem',
+                  marginRight: '-10rem',
+                }}
+              >
+                <select
+                  className={classes.myButton}
+                  style={{ textAlign: 'center', display: 'inline' }}
+                  onChange={(e) => {
+                    if (e.target.value != null) {
+                      console.log('Assigning List', JSON.parse(e.target.value));
 
+                      setUserID(JSON.parse(e.target.value).user_unique_id);
+                      toggleAssignUser(true);
+                    }
+                  }}
+                >
+                  {/* Assign User Dropdown */}
+                  <option value="null" selected>
+                    Assign User
+                  </option>
+                  {uaListRendered()}
+                </select>
+              </div>
+            ) : null}
             {/* {userListRendered()} */}
 
             <div style={{ width: '20%', textAlign: 'center' }}>
