@@ -1,28 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import {
-  faUser,
-  faUserAltSlash,
-  faTrophy,
-  faRunning,
-  faBookmark,
-  faEdit,
-  faList,
-  faCopy,
-  faAlignCenter,
-} from '@fortawesome/free-solid-svg-icons';
-import { useHistory, Redirect } from 'react-router-dom';
-import {
-  ListGroup,
-  Row,
-  Col,
-  Modal,
-  InputGroup,
-  FormControl,
-  Table,
-} from 'react-bootstrap';
+import React, { useState } from 'react';
+import { faList } from '@fortawesome/free-solid-svg-icons';
+import { useHistory } from 'react-router-dom';
+import { Row, Col } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 import MiniNavigation from '../manifest/miniNavigation';
@@ -113,7 +93,7 @@ const VerticalRoutine = ({
           marginBottom: '0px',
           marginTop: '2px',
         }}
-      > 
+      >
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <div
             flex="1"

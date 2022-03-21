@@ -641,41 +641,39 @@ export default function MainPage(props) {
     console.log('ONLY ALLOWED HERE:');
     console.log(newRows);
     newRows.sort((a, b) => {
-      console.log('a = ', a, '\nb = ', b);
-      const [a_start, b_start] = [a.startTime, b.startTime];
-      const [a_end, b_end] = [a.endTime, b.endTime];
+      if (
+        a.startTime != undefined &&
+        b.startTime != undefined &&
+        a.endTime != undefined &&
+        b.endTime != undefined
+      ) {
+        console.log('a = ', a, '\nb = ', b);
+        const [a_start, b_start] = [a.startTime, b.startTime];
+        const [a_end, b_end] = [a.endTime, b.endTime];
 
-      const [a_start_time, b_start_time] = getTimes(a.startTime, b.startTime);
-      const [a_end_time, b_end_time] = getTimes(a.endTime, b.endTime);
-      console.log('start=', a_start, b_start);
-      console.log('end=', a_end, b_end);
-      if (a_start_time < b_start_time) return -1;
-      else if (a_start_time > b_start_time) return 1;
-      else {
-        if (a_end_time < b_end_time) return -1;
-        else if (a_end_time > b_end_time) return 1;
+        const [a_start_time, b_start_time] = getTimes(a.startTime, b.startTime);
+        const [a_end_time, b_end_time] = getTimes(a.endTime, b.endTime);
+        console.log('start=', a_start, b_start);
+        console.log('end=', a_end, b_end);
+        if (a_start_time < b_start_time) return -1;
+        else if (a_start_time > b_start_time) return 1;
         else {
-          if (a_start < b_start) return -1;
-          else if (a_start > b_start) return 1;
+          if (a_end_time < b_end_time) return -1;
+          else if (a_end_time > b_end_time) return 1;
           else {
-            if (a_end < b_end) return -1;
-            else if (a_end > b_end) return 1;
+            if (a_start < b_start) return -1;
+            else if (a_start > b_start) return 1;
+            else {
+              if (a_end < b_end) return -1;
+              else if (a_end > b_end) return 1;
+            }
           }
         }
-      }
 
-      return 0;
-    });
-    console.log('newrows', newRows);
-    newRows.sort(function (a, b) {
-      // true values first
-      const [a_is_available, b_is_available] = getTimes(
-        a.is_available,
-        b.is_available
-      );
-      return a_is_available === b_is_available ? 0 : a_is_available ? -1 : 1;
-      // false values first
-      // return (x === y)? 0 : x? 1 : -1;
+        return 0;
+      } else {
+        return 0;
+      }
     });
     console.log('newrows', newRows);
     return newRows;
