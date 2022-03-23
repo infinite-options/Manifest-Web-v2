@@ -19,12 +19,13 @@ import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import MiniNavigation from '../miniNavigation';
 import LoginContext from '../../LoginContext';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import AddIconModal from '../../Home/AddIconModal';
 import UploadImage from '../../Home/UploadImage';
 import TAUploadImage from '../../Home/TAUploadImage';
 import momentTZ from 'moment-timezone';
 import GooglePhotos from '../../Home/GooglePhotos';
+import TAGooglePhotos from '../../Home/TAGooglePhotos';
 
 const moment = require('moment');
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
@@ -1069,6 +1070,18 @@ export default function AboutModal(props) {
                       }}
                     >
                       <TAUploadImage
+                        photoUrl={taPhoto}
+                        setPhotoUrl={setTaPhoto}
+                        currentUserId={taObject.ta_people_id}
+                      />
+                    </div>
+                    <div
+                      style={{
+                        marginLeft: '1.2rem',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <TAGooglePhotos
                         photoUrl={taPhoto}
                         setPhotoUrl={setTaPhoto}
                         currentUserId={taObject.ta_people_id}

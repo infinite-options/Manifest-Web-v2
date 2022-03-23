@@ -1017,17 +1017,18 @@ export default function GoogleEventComponent(props) {
         )
         .then((response) => {
           console.log(response);
+          const timer = setTimeout(() => {
+            fetchEvent();
+          }, 2000);
 
-          // editingEventContext.setEditingEvent({
-          //   ...editingEventContext.editingEvent,
-          //   editing: false,
-          // });
-          // props.setEvents(event);
+          return () => clearTimeout(timer);
         })
         .catch((error) => {
           console.log('error', error);
         });
-
+    };
+    createEvent();
+    const fetchEvent = async () => {
       let start =
         props.stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
       let endofWeek = moment(props.stateValue.dateContext).add(6, 'days');
@@ -1091,7 +1092,6 @@ export default function GoogleEventComponent(props) {
         })
         .catch((error) => console.log(error));
     };
-    createEvent();
     editingEventContext.setEditingEvent({
       ...editingEventContext.editingEvent,
       editing: false,
@@ -1491,7 +1491,9 @@ export default function GoogleEventComponent(props) {
                 color: '#ffffff',
                 textAlign: 'center',
               }}
-              onClick={(e) => submit(e)}
+              onClick={(e) => {
+                submit(e);
+              }}
             >
               Save Changes
             </button>

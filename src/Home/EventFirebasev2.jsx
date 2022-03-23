@@ -114,7 +114,6 @@ export default function EventFirebasev2(props) {
     props.events,
     props.theCurrentUserID,
     recList,
-    props.editEvent,
     // editingEvent.editing,
     props.stateValue.dateContext,
   ]);

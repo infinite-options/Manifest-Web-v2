@@ -1,15 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import { useHistory } from 'react-router-dom';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import LoginContext from '../LoginContext';
 import axios from 'axios';
 import { Button, Container, Row, Col, Modal } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 /* Navigation Bar component function */
-export default function GooglePhotos(props) {
+export default function TAGooglePhotos(props) {
+  console.log('tagooglephotos', props);
   const loginContext = useContext(LoginContext);
   var selectedUser = loginContext.loginState.curUser;
   if (
@@ -114,17 +114,17 @@ export default function GooglePhotos(props) {
     setShowViewPhotosModal(false);
   };
 
-  function GetUserAccessToken() {
-    let url = BASE_URL + 'usersToken/';
-    let user_id = userID;
+  function GetTAAccessToken() {
+    let url = BASE_URL + 'taToken/';
+    let user_id = props.currentUserId;
 
     axios
       .get(url + user_id)
       .then((response) => {
         console.log('in events', response);
 
-        var old_at = response['data']['google_auth_token'];
-        var refreshToken = response['data']['google_refresh_token'];
+        var old_at = response['data']['ta_google_auth_token'];
+        var refreshToken = response['data']['ta_google_refresh_token'];
         console.log('in events', old_at);
         const headers = {
           Accept: 'application/json',
@@ -243,10 +243,10 @@ export default function GooglePhotos(props) {
                     .catch((error) => console.log(error));
 
                   console.log('in events', at);
-                  let updateURL = BASE_URL + 'UpdateUserAccessToken/';
+                  let updateURL = BASE_URL + 'UpdateAccessToken/';
                   axios
                     .post(updateURL + user_id, {
-                      google_auth_token: at,
+                      ta_google_auth_token: at,
                     })
                     .then((response) => {})
                     .catch((err) => {
@@ -321,7 +321,7 @@ export default function GooglePhotos(props) {
                         borderRadius: '12px',
                         margin: '5px',
                       }}
-                      onClick={(e) => onPhotoClick(id.baseUrl)}
+                      onClick={(e) => onPhotoClick(id.id)}
                     >
                       <img
                         style={{
@@ -387,20 +387,20 @@ export default function GooglePhotos(props) {
   };
   console.log('google photos', id);
   return (
-    <div>
+    <>
       <Button
         variant="text"
         style={{
           textDecoration: 'underline',
           color: '#ffffff',
           fontSize: '14px',
-          textAlign: 'left',
+          cursor: 'pointer',
         }}
-        onClick={() => GetUserAccessToken()}
+        onClick={() => GetTAAccessToken()}
       >
         Upload from Google Photos
       </Button>
-      <div>{showViewPhotosModal && viewPhotosModal(id)}</div>
-    </div>
+      {showViewPhotosModal && viewPhotosModal(id)}
+    </>
   );
 }

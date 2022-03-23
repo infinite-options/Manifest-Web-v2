@@ -2212,11 +2212,6 @@ export default function Events(props) {
     };
     useEffect(() => {
       if (userID == '') return;
-      console.log(
-        'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-        [userID, editingEvent.editing]
-      );
-
       axios
         .get(url + user_id)
         .then((response) => {
@@ -2771,7 +2766,6 @@ export default function Events(props) {
               </div> */}
                   </div>
                   <div style={{ width: '70%', float: 'left' }}>
-                    {console.log(editingEvent.editing)}
                     {editingEvent.editing ? null : (
                       <Box
                         bgcolor="#889AB5"

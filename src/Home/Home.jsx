@@ -3042,6 +3042,8 @@ export default function Home(props) {
                           setStateValue={setStateValue}
                           userAccessToken={userAccessToken}
                           taAccessToken={taAccessToken}
+                          events={events}
+                          setEvents={setEvents}
                         />
                       ) : (
                         showCalendarView()
