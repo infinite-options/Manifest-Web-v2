@@ -122,7 +122,7 @@ export function Navigation() {
   );
   const [tokenInfo, setTokenInfo] = useState({});
   const [userInfo, setUserInfo] = useState({});
-  const [patientName, setPatiantName] = useState('');
+  const [patientName, setPatientName] = useState('');
   const [emailUser, setEmailUser] = useState('');
   const [socialId, setSocialId] = useState('');
   const [refreshToken, setrefreshToken] = useState('');
@@ -224,10 +224,6 @@ export function Navigation() {
             className={classes.myButton}
             value={selectedUser.user_unique_id} // this is probably wrong
             onChange={(e) => {
-              console.log('patient_uid=', JSON.parse(e.target.value));
-              console.log(
-                'patient_uid=' + JSON.parse(e.target.value).user_unique_id
-              );
               document.cookie =
                 'patient_uid=' + JSON.parse(e.target.value).user_unique_id;
               document.cookie =
@@ -244,9 +240,9 @@ export function Navigation() {
                 curUserEmail: JSON.parse(e.target.value).user_email_id,
               });
               toggleGetTAList(false);
-              toggleGetUnassignedList(false);
+              // toggleGetUnassignedList(false);
 
-              setPatiantName(JSON.parse(e.target.value).user_name);
+              setPatientName(JSON.parse(e.target.value).user_name);
             }}
           >
             <option selected disabled hidden>

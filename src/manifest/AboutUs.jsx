@@ -68,7 +68,7 @@ export default function AboutUs() {
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
-
+  console.log('list of users home', loginContext.loginState.reload);
   const responseGoogle = (response) => {
     console.log(response);
     if (response.profileObj) {
@@ -91,6 +91,7 @@ export default function AboutUs() {
         document.cookie = 'patient_name=Loading';
         loginContext.setLoginState({
           ...loginContext.loginState,
+          reload: true,
           loggedIn: true,
           ta: {
             ...loginContext.loginState.ta,
@@ -219,6 +220,7 @@ export default function AboutUs() {
           setLoggedIn(true);
           loginContext.setLoginState({
             ...loginContext.loginState,
+            reload: true,
             loggedIn: true,
             ta: {
               ...loginContext.loginState.ta,
@@ -279,6 +281,7 @@ export default function AboutUs() {
           console.log('response id', response.data.result, loggedIn);
           loginContext.setLoginState({
             ...loginContext.loginState,
+            reload: true,
             loggedIn: true,
             ta: {
               ...loginContext.loginState.ta,
