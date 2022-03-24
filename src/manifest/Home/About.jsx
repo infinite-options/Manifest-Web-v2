@@ -1730,6 +1730,31 @@ export default function AboutModal(props) {
             </Row>
             <br />
             <Row>
+              <Col style={{ paddingRight: '10px' }}>
+                <label
+                  style={{
+                    marginTop: '10px',
+                    marginLeft: '10px',
+                    fontWeight: 'bolder',
+                    color: 'white',
+                  }}
+                >
+                  User id:
+                </label>
+
+                <div
+                  style={{
+                    marginTop: '10px',
+                    marginLeft: '10px',
+                    color: 'white',
+                  }}
+                >
+                  {userID}
+                </div>
+              </Col>
+            </Row>
+            <br />
+            <Row>
               <Col
                 xs={8}
                 style={{
