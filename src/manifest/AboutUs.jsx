@@ -211,8 +211,9 @@ export default function AboutUs() {
     axios
       .get(BASE_URL + 'loginSocialTA/' + email)
       .then((res) => {
-        console.log('loginSocialTA', res.data.result);
+        console.log('loginSocialTA in events', res.data.result);
         if (res.data.result !== false) {
+          // setTaID(res.data.result[0]);
           document.cookie = 'ta_uid=' + res.data.result[0];
           document.cookie = 'ta_email=' + email;
           document.cookie = 'patient_name=Loading';
@@ -518,6 +519,7 @@ export default function AboutUs() {
     //console.log(ta_uid);
     history.push('/home');
   } else {
+    //document.cookie = 'ta_uid=' + taID;
   }
 
   return (

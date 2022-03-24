@@ -196,7 +196,7 @@ export default function Events(props) {
       .catch((error) => {
         console.log(error);
       });
-  }, [loginContext.loginState.reload]);
+  }, [loginContext.loginState.reload, userID]);
 
   useEffect(() => {
     if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {

@@ -178,7 +178,7 @@ export default function GoalHome(props) {
       .catch((error) => {
         console.log(error);
       });
-  }, [loginContext.loginState.reload]);
+  }, [loginContext.loginState.reload, userID]);
   // }
   console.log(loginContext.loginState.curUserTimeZone);
 

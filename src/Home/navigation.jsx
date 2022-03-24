@@ -139,7 +139,7 @@ export function Navigation() {
   let redirecturi = 'https://manifestmy.space';
   console.log(redirecturi);
 
-  console.log(redirecturi);
+  console.log('document cookie', document.cookie);
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
   ) {
@@ -153,136 +153,118 @@ export function Navigation() {
   console.log('Cur ta', selectedUser);
 
   const userListRendered = () => {
+    // if (
+    //   document.cookie
+    //     .split(';')
+    //     .some((item) => item.trim().startsWith('ta_uid='))
+    // ) {
+    //   // var temp = document.cookie
+    //   //   .split('; ')
+    //   //   .find((row) => row.startsWith('ta_uid='))
+    //   //   .split('=')[1];
+    //   // console.log(temp)
+    //   selectedUser = document.cookie
+    //     .split('; ')
+    //     .find((row) => row.startsWith('ta_uid='))
+    //     .split('=')[1];
+
+    console.log('document cookie list of users', listOfUsers);
+    let elements = [];
+
+    elements = listOfUsers.map((user) => (
+      <option
+        key={user.user_unique_id}
+        // value={user.user_unique_id}
+        value={JSON.stringify({
+          user_unique_id: user.user_unique_id,
+          user_name: user.user_name,
+          time_zone: user.time_zone,
+          user_email_id: user.user_email_id,
+        })}
+      >
+        {user.user_name}
+      </option>
+    ));
+
+    console.log('document cookie', document.cookie);
     if (
       document.cookie
         .split(';')
-        .some((item) => item.trim().startsWith('ta_uid='))
+        .some((item) => item.trim().startsWith('patient_name='))
     ) {
-      // var temp = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
-      // console.log(temp)
-      selectedUser = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('ta_uid='))
-        .split('=')[1];
-
-      console.log('list of users', listOfUsers);
-      let elements = [];
-
-      elements = listOfUsers.map((user) => (
-        <option
-          key={user.user_unique_id}
-          // value={user.user_unique_id}
-          value={JSON.stringify({
-            user_unique_id: user.user_unique_id,
-            user_name: user.user_name,
-            time_zone: user.time_zone,
-            user_email_id: user.user_email_id,
-          })}
-        >
-          {user.user_name}
-        </option>
-      ));
-
-      console.log('document cookie', document.cookie);
       if (
         document.cookie
-          .split(';')
-          .some((item) => item.trim().startsWith('patient_name='))
+          .split('; ')
+          .find((row) => row.startsWith('patient_name='))
+          .split('=')[1] == 'Loading'
       ) {
-        if (
-          document.cookie
-            .split('; ')
-            .find((row) => row.startsWith('patient_name='))
-            .split('=')[1] == 'Loading'
-        ) {
-          console.log('do something here', listOfUsers);
-          if (listOfUsers[0]) {
-            console.log('document cookie set to first user');
-            document.cookie = 'patient_name=' + listOfUsers[0].user_name;
-            document.cookie = 'patient_timeZone' + listOfUsers[0].time_zone;
-            document.cookie = 'patient_uid' + listOfUsers[0].user_unique_id;
-            document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
-          }
-        }
-      } else {
+        console.log('do something here', listOfUsers);
         if (listOfUsers[0]) {
           console.log('document cookie set to first user');
-          document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
           document.cookie = 'patient_name=' + listOfUsers[0].user_name;
-          document.cookie = 'patient_timeZone' + listOfUsers[0].time_zone;
-          document.cookie = 'patient_uid' + listOfUsers[0].user_unique_id;
-        } else {
-          console.log('document cookie set to loading');
-          document.cookie = 'patient_name=Loading';
+          document.cookie = 'patient_timeZone=' + listOfUsers[0].time_zone;
+          document.cookie = 'patient_uid=' + listOfUsers[0].user_unique_id;
+          document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
         }
       }
-
-      return (
-        <div>
-          Patient:&nbsp;
-          <select
-            className={classes.myButton}
-            value={selectedUser.user_unique_id} // this is probably wrong
-            onChange={(e) => {
-              document.cookie =
-                'patient_uid=' + JSON.parse(e.target.value).user_unique_id;
-              document.cookie =
-                'patient_name=' + JSON.parse(e.target.value).user_name;
-              document.cookie =
-                'patient_timeZone=' + JSON.parse(e.target.value).time_zone;
-              document.cookie =
-                'patient_email=' + JSON.parse(e.target.value).user_email_id;
-              console.log(document.cookie);
-              loginContext.setLoginState({
-                ...loginContext.loginState,
-                curUser: JSON.parse(e.target.value).user_unique_id,
-                curUserTimeZone: JSON.parse(e.target.value).time_zone,
-                curUserEmail: JSON.parse(e.target.value).user_email_id,
-              });
-              toggleGetTAList(false);
-              // toggleGetUnassignedList(false);
-
-              setPatientName(JSON.parse(e.target.value).user_name);
-            }}
-          >
-            <option selected disabled hidden>
-              {
-                document.cookie
-                  .split('; ')
-                  .find((row) => row.startsWith('patient_name='))
-                  .split('=')[1]
-              }
-            </option>
-
-            {elements}
-          </select>
-          {/* Sanmesh3 Assign User Dropdown */}
-          {/* <select
-            className={classes.myButton}
-            style={{ textAlign: 'center', display: 'inline' }}
-            onChange={(e) => {
-              if (e.target.value != null) {
-                console.log('Assigning List', JSON.parse(e.target.value));
-                setTAName(
-                  JSON.parse(e.target.value).ua_first_name +
-                    ' ' +
-                    JSON.parse(e.target.value).ua_last_name
-                );
-                // setTAID(JSON.parse(e.target.value).ua_unique_id);
-                setUserID(JSON.parse(e.target.value).user_unique_id);
-                toggleAssignUser(true);
-              }
-            }}
-          >
-            {/* Assign User Dropdown */}
-          {/* <option value="null" selected>
-              Assign User
-            </option>
-            {uaListRendered()}
-          </select> */}
-        </div>
-      );
+    } else {
+      if (listOfUsers[0]) {
+        console.log('document cookie set to first user');
+        document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
+        document.cookie = 'patient_name=' + listOfUsers[0].user_name;
+        document.cookie = 'patient_timeZone=' + listOfUsers[0].time_zone;
+        document.cookie = 'patient_uid=' + listOfUsers[0].user_unique_id;
+      } else {
+        console.log('document cookie set to loading');
+        document.cookie = 'patient_name=Loading';
+      }
     }
+    return elements;
+
+    // return (
+    //   <div>
+    //     Patient:&nbsp;
+    //     <select
+    //       className={classes.myButton}
+    //       value={selectedUser.user_unique_id} // this is probably wrong
+    //       onChange={(e) => {
+    //         document.cookie =
+    //           'patient_uid=' + JSON.parse(e.target.value).user_unique_id;
+    //         document.cookie =
+    //           'patient_name=' + JSON.parse(e.target.value).user_name;
+    //         document.cookie =
+    //           'patient_timeZone=' + JSON.parse(e.target.value).time_zone;
+    //         document.cookie =
+    //           'patient_email=' + JSON.parse(e.target.value).user_email_id;
+    //         console.log(document.cookie);
+    //         loginContext.setLoginState({
+    //           ...loginContext.loginState,
+    //           curUser: JSON.parse(e.target.value).user_unique_id,
+    //           curUserTimeZone: JSON.parse(e.target.value).time_zone,
+    //           curUserEmail: JSON.parse(e.target.value).user_email_id,
+    //         });
+    //         toggleGetTAList(false);
+    //         // toggleGetUnassignedList(false);
+
+    //         setPatientName(JSON.parse(e.target.value).user_name);
+    //       }}
+    //     >
+    //       <option selected disabled hidden>
+    //         {
+    //           document.cookie
+    //             .split('; ')
+    //             .find((row) => row.startsWith('patient_name='))
+    //             .split('=')[1]
+    //         }
+
+    //       </option>
+
+    //       {elements}
+    //     </select>
+
+    //   </div>
+    // );
+    // }
   };
 
   const taListRendered = () => {
@@ -1023,40 +1005,107 @@ export function Navigation() {
       <AppBar className={classes.navigationBar} style={{ position: 'static' }}>
         <Toolbar>
           <div className={classes.displayNav}>
-            <div style={{ width: '30%' }}>{userListRendered()} </div>
-            {document.cookie
-              .split(';')
-              .some((item) => item.trim().startsWith('ta_uid=')) ? (
-              <div
-                style={{
-                  width: '30%',
-                  marginLeft: '-10rem',
-                  marginRight: '-10rem',
-                }}
-              >
-                <select
-                  className={classes.myButton}
-                  style={{ textAlign: 'center', display: 'inline' }}
-                  onChange={(e) => {
-                    if (e.target.value != null) {
-                      console.log('Assigning List', JSON.parse(e.target.value));
-
-                      setUserID(JSON.parse(e.target.value).user_unique_id);
-                      toggleAssignUser(true);
-                    }
+            {/* <div style={{ width: '30%' }}>{userListRendered()} </div> */}
+            <div
+              style={{
+                width: '40%',
+              }}
+            >
+              {document.cookie
+                .split(';')
+                .some((item) => item.trim().startsWith('ta_uid=')) ? (
+                <div
+                  style={{
+                    width: '100%',
                   }}
                 >
-                  {/* Assign User Dropdown */}
-                  <option value="null" selected>
-                    Assign User
-                  </option>
-                  {uaListRendered()}
-                </select>
-              </div>
-            ) : null}
+                  Patient:&nbsp;
+                  <select
+                    className={classes.myButton}
+                    value={selectedUser.user_unique_id} // this is probably wrong
+                    onChange={(e) => {
+                      document.cookie =
+                        'patient_uid=' +
+                        JSON.parse(e.target.value).user_unique_id;
+                      document.cookie =
+                        'patient_name=' + JSON.parse(e.target.value).user_name;
+                      document.cookie =
+                        'patient_timeZone=' +
+                        JSON.parse(e.target.value).time_zone;
+                      document.cookie =
+                        'patient_email=' +
+                        JSON.parse(e.target.value).user_email_id;
+                      console.log(document.cookie);
+                      loginContext.setLoginState({
+                        ...loginContext.loginState,
+                        curUser: JSON.parse(e.target.value).user_unique_id,
+                        curUserTimeZone: JSON.parse(e.target.value).time_zone,
+                        curUserEmail: JSON.parse(e.target.value).user_email_id,
+                      });
+                      toggleGetTAList(false);
+                      // toggleGetUnassignedList(false);
+
+                      setPatientName(JSON.parse(e.target.value).user_name);
+                    }}
+                  >
+                    <option selected disabled hidden>
+                      {
+                        document.cookie
+                          .split('; ')
+                          .find((row) => row.startsWith('patient_name='))
+                          .split('=')[1]
+                      }
+                    </option>
+
+                    {userListRendered()}
+                  </select>
+                </div>
+              ) : null}
+            </div>
+
+            <div
+              style={{
+                width: '20%',
+                marginLeft: '-17rem',
+                // marginRight: '-10rem',
+              }}
+            >
+              {document.cookie
+                .split(';')
+                .some((item) => item.trim().startsWith('ta_uid=')) ? (
+                <div
+                  style={{
+                    width: '200%',
+                  }}
+                >
+                  <select
+                    className={classes.myButton}
+                    style={{ textAlign: 'center', display: 'inline' }}
+                    onChange={(e) => {
+                      if (e.target.value != null) {
+                        console.log(
+                          'Assigning List',
+                          JSON.parse(e.target.value)
+                        );
+
+                        setUserID(JSON.parse(e.target.value).user_unique_id);
+                        toggleAssignUser(true);
+                      }
+                    }}
+                  >
+                    {/* Assign User Dropdown */}
+                    <option value="null" selected>
+                      Assign User
+                    </option>
+                    {uaListRendered()}
+                  </select>
+                </div>
+              ) : null}
+            </div>
+
             {/* {userListRendered()} */}
 
-            <div style={{ width: '20%', textAlign: 'center' }}>
+            <div style={{ width: '10%', textAlign: 'center' }}>
               <Box
                 className={classes.titleElement}
                 style={{ textAlign: 'center' }}
@@ -1200,7 +1249,7 @@ export function Navigation() {
                   >
                     Create New User
                   </Button> */}
-                  <GoogleLogin
+                  {/* <GoogleLogin
                     //clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
                     clientId={
                       BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
@@ -1240,7 +1289,7 @@ export function Navigation() {
                     isSignedIn={false}
                     disable={true}
                     cookiePolicy={'single_host_origin'}
-                  />
+                  /> */}
                 </div>
               ) : null}
             </div>
