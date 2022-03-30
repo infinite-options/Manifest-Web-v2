@@ -541,6 +541,10 @@ export function Navigation() {
                     })
                     .then((response) => {
                       console.log(response);
+                      loginContext.setLoginState({
+                        ...loginContext.loginState,
+                        reload: !loginContext.loginState.reload,
+                      });
                     });
 
                   toggleAssignConfirmed(true);

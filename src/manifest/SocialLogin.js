@@ -308,7 +308,7 @@ function SocialLogin(props) {
               >
                 <Button
                   type="submit"
-                  onClick={() => history.push('/aboutus')}
+                  onClick={() => history.push('/')}
                   style={{
                     background: '#F8BE28 0% 0% no-repeat padding-box',
                     borderRadius: '20px',
@@ -328,7 +328,7 @@ function SocialLogin(props) {
   const hideAlreadyExists = () => {
     //setSignUpModalShow(false);
     setAlreadyExists(!alreadyExists);
-    history.push('/aboutus');
+    history.push('/');
   };
   const hideSignUp = () => {
     //setSignUpModalShow(false);
@@ -612,7 +612,7 @@ function SocialLogin(props) {
               >
                 <Button
                   type="submit"
-                  onClick={() => history.push('/aboutus')}
+                  onClick={() => history.push('/')}
                   style={{
                     background: '#F8BE28 0% 0% no-repeat padding-box',
                     borderRadius: '20px',

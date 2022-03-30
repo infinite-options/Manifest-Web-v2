@@ -211,7 +211,7 @@ export default function Login() {
               >
                 <Button
                   type="submit"
-                  onClick={() => history.push('/aboutus')}
+                  onClick={() => history.push('/')}
                   style={{
                     background: '#F8BE28 0% 0% no-repeat padding-box',
                     borderRadius: '20px',
@@ -231,7 +231,7 @@ export default function Login() {
   const hideAlreadyExists = () => {
     //setSignUpModalShow(false);
     setAlreadyExists(!alreadyExists);
-    history.push('/aboutus');
+    history.push('/');
   };
   const loginSuccessfulModal = () => {
     const modalStyle = {
@@ -320,7 +320,7 @@ export default function Login() {
               >
                 <Button
                   type="submit"
-                  onClick={() => history.push('/aboutus')}
+                  onClick={() => history.push('/')}
                   style={{
                     background: '#F8BE28 0% 0% no-repeat padding-box',
                     borderRadius: '20px',
@@ -702,7 +702,7 @@ export default function Login() {
           </Col>
           <Col>
             <Button
-              onClick={() => history.push('/aboutus')}
+              onClick={() => history.push('/')}
               style={{
                 width: '7.5rem',
                 height: '7.5rem',
