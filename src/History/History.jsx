@@ -18,7 +18,7 @@ import {
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
 import Moment from 'moment';
-import VerticalRoutine from './verticalRoutine_v2';
+import VerticalRoutine from './VerticalRoutine';
 import LoginContext from '../LoginContext';
 import {
   Form,

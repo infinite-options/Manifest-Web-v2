@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Box, FormControl, Select, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import SettingPage from '../Home/SettingPage';
+import SettingPage from '../About/SettingPage';
 import {
   Form,
   Row,

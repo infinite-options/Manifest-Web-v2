@@ -23,11 +23,8 @@ const SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
 const useStyles = makeStyles({
   /* navigationContainer */
   navigationBar: {
-    background: '#F2F7FC',
+    background: '#889AB5',
     width: '100%',
-  },
-  customizeToolbar: {
-    minHeight: 36,
   },
 
   /* displaying the navigationBar as flex Containers */
@@ -41,8 +38,8 @@ const useStyles = makeStyles({
   titleElement: {
     flex: 1.5,
     fontSize: '150%',
-    font: 'normal normal bold 32px/40px Quicksand-Bold',
-    color: '#000000',
+
+    color: '#FFFFFF',
     fontWeight: 'bold',
   },
 
@@ -80,7 +77,7 @@ const useStyles = makeStyles({
 });
 
 /* Navigation Bar component function */
-export function Navigation() {
+export function Navigation_old() {
   const history = useHistory();
 
   const classes = useStyles();
@@ -223,6 +220,51 @@ export function Navigation() {
       }
     }
     return elements;
+
+    // return (
+    //   <div>
+    //     Patient:&nbsp;
+    //     <select
+    //       className={classes.myButton}
+    //       value={selectedUser.user_unique_id} // this is probably wrong
+    //       onChange={(e) => {
+    //         document.cookie =
+    //           'patient_uid=' + JSON.parse(e.target.value).user_unique_id;
+    //         document.cookie =
+    //           'patient_name=' + JSON.parse(e.target.value).user_name;
+    //         document.cookie =
+    //           'patient_timeZone=' + JSON.parse(e.target.value).time_zone;
+    //         document.cookie =
+    //           'patient_email=' + JSON.parse(e.target.value).user_email_id;
+    //         console.log(document.cookie);
+    //         loginContext.setLoginState({
+    //           ...loginContext.loginState,
+    //           curUser: JSON.parse(e.target.value).user_unique_id,
+    //           curUserTimeZone: JSON.parse(e.target.value).time_zone,
+    //           curUserEmail: JSON.parse(e.target.value).user_email_id,
+    //         });
+    //         toggleGetTAList(false);
+    //         // toggleGetUnassignedList(false);
+
+    //         setPatientName(JSON.parse(e.target.value).user_name);
+    //       }}
+    //     >
+    //       <option selected disabled hidden>
+    //         {
+    //           document.cookie
+    //             .split('; ')
+    //             .find((row) => row.startsWith('patient_name='))
+    //             .split('=')[1]
+    //         }
+
+    //       </option>
+
+    //       {elements}
+    //     </select>
+
+    //   </div>
+    // );
+    // }
   };
 
   const taListRendered = () => {
@@ -652,6 +694,166 @@ export function Navigation() {
   getUnassignedList();
   console.log(taList);
   console.log(uaList);
+  // const info = (accessToken) =>{
+  //   fetch(
+  //     `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${accessToken}`,
+  //     {
+  //       method: 'GET',
+  //     }
+  //   )
+  //     .then(async (response) => {
+  //       // get json response here
+  //       let data = await response.json();
+
+  //       if (response.status === 200) {
+  //         // Process data here
+  //         setUserInfo(data);
+  //         console.log('res', userInfo);
+  //       } else {
+  //         // Rest of status codes (400,500,303), can be handled here appropriately
+  //         console.log('err');
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+
+  //   let e = userInfo['email'];
+  //   let fn = userInfo['given_name'];
+  //   let ln = userInfo['family_name'];
+  //   let si = userInfo['id'];
+
+  //   setEmailUser(e);
+  //   setFirstName(fn);
+  //   setLastName(ln);
+  //   setSocialId(si);
+
+  //   document.cookie = 'patient_name=' + firstName + ' ' + lastName;
+  //   document.cookie = 'patient_email=' + emailUser;
+  //   //document.cookie = 'patient_name=Loading';
+  // }
+
+  const responseGoogle = (response) => {
+    console.log('response', response);
+
+    let auth_code = response.code;
+    let authorization_url = 'https://oauth2.googleapis.com/token';
+
+    console.log('auth_code', auth_code);
+
+    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    }
+    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      redirecturi = 'https://manifestmy.space';
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      redirecturi = 'https://manifestmy.life';
+    }
+
+    var details = {
+      code: auth_code,
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      redirect_uri: redirecturi,
+      //redirect_uri: 'http://localhost:3000',
+      grant_type: 'authorization_code',
+    };
+
+    var formBody = [];
+    for (var property in details) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(details[property]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    formBody = formBody.join('&');
+
+    fetch(authorization_url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+      body: formBody,
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        console.log(responseData);
+        return responseData;
+      })
+      .then((data) => {
+        console.log(data);
+        let at = data['access_token'];
+        let rt = data['refresh_token'];
+        let ax = data['expires_in'].toString();
+        setAccessToken(at);
+        setrefreshToken(rt);
+        setaccessExpiresIn(ax);
+        console.log('res', at, rt);
+
+        axios
+          .get(
+            'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' +
+              at
+          )
+          .then((response) => {
+            console.log(response.data);
+
+            let data = response.data;
+            //setUserInfo(data);
+            let e = data['email'];
+            let fn = data['given_name'];
+            let ln = data['family_name'];
+            let si = data['id'];
+
+            setEmailUser(e);
+            setFirstName(fn);
+            setLastName(ln);
+            setSocialId(si);
+          })
+          .catch((error) => {
+            console.log('its in landing page');
+            console.log(error);
+          });
+
+        //console.log('res', userInfo);
+        //  let e = userInfo['email'];
+        //  let fn = userInfo['given_name'];
+        //  let ln = userInfo['family_name'];
+        //  let si = userInfo['id'];
+
+        //  setEmailUser(e);
+        //  setFirstName(fn);
+        //  setLastName(ln);
+        //  setSocialId(si);
+        toggleNewUser(!showNewUser);
+
+        return (
+          accessToken,
+          refreshToken,
+          accessExpiresIn,
+          emailUser,
+          firstName,
+          lastName,
+          socialId
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   function onSubmitUser() {
     let body = {
@@ -805,20 +1007,8 @@ export function Navigation() {
       {confirmedModal()}
       {assignConfirmedModal()}
       <AppBar className={classes.navigationBar} style={{ position: 'static' }}>
-        <Toolbar className={classes.customizeToolbar}>
+        <Toolbar>
           <div className={classes.displayNav}>
-            <div style={{ width: '30%', textAlign: 'left' }}>
-              <Box style={{ textAlign: 'left' }}>
-                <Typography
-                  className={classes.titleElement}
-                  onClick={() => {
-                    history.push('/home');
-                  }}
-                >
-                  Manifest My Life
-                </Typography>
-              </Box>
-            </div>
             {/* <div style={{ width: '30%' }}>{userListRendered()} </div> */}
             <div
               style={{
@@ -918,6 +1108,22 @@ export function Navigation() {
             </div>
 
             {/* {userListRendered()} */}
+
+            <div style={{ width: '10%', textAlign: 'center' }}>
+              <Box
+                className={classes.titleElement}
+                style={{ textAlign: 'center' }}
+              >
+                <Typography
+                  style={{ fontSize: '30px', fontWeight: 'bold' }}
+                  onClick={() => {
+                    history.push('/home');
+                  }}
+                >
+                  MANIFEST
+                </Typography>
+              </Box>
+            </div>
 
             <div
               className={classes.buttonContainer}
