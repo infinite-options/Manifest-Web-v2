@@ -807,6 +807,13 @@ export default function AboutUs() {
               >
                 View our Privacy Policy
               </Link>
+              <br />
+              <Link
+                style={{ color: 'white', textDecoration: 'underline' }}
+                to="/aboutus"
+              >
+                How we use your data
+              </Link>
             </p>
           </div>
         </div>
