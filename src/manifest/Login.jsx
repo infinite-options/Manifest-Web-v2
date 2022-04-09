@@ -90,7 +90,7 @@ const useStyles = makeStyles({
 });
 
 /* Navigation Bar component function */
-export default function Login() {
+export default function Privacy() {
   const loginContext = useContext(LoginContext);
   console.log('in login page');
   const classes = useStyles();
