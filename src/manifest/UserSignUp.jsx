@@ -13,9 +13,10 @@ import Routines from '../images/Routines.png';
 import Goals from '../images/Goals.png';
 import Email from '../manifest/LoginAssets/Email.svg';
 import Google from '../manifest/LoginAssets/Google.svg';
-import Apple from '../manifest/LoginAssets/Apple.svg';
+import Apple from '../manifest/LoginAssets/AppleSignUp.svg';
 import GooglePlayStore from '../manifest/LoginAssets/GooglePlayStore.png';
 import AppleAppStore from '../manifest/LoginAssets/AppleAppStore.png';
+import BackArrow from '../manifest/LoginAssets/Back_arrow.svg';
 import LoginContext from 'LoginContext';
 import Footer from './Footer';
 
@@ -38,8 +39,19 @@ const useStyles = makeStyles({
   heading: {
     font: 'normal normal 600 50px Quicksand-Book',
     color: '#000000',
-    textAlign: 'center',
+    textAlign: 'left',
     marginTop: '1rem',
+    paddingLeft: '7rem',
+  },
+  backArrowImage: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: '1rem',
+    width: '50px',
+    height: '50px',
+    cursor: 'pointer',
   },
   subHeading: {
     font: 'normal normal 600 22px Quicksand-Book',
@@ -470,7 +482,6 @@ export default function UserSignUp() {
                 }}
               >
                 <Button
-                  type="submit"
                   onClick={handleSocialSignUpDone}
                   className={classes.signupbuttons}
                 >
@@ -486,11 +497,7 @@ export default function UserSignUp() {
                   justifyContent: 'center',
                 }}
               >
-                <Button
-                  type="submit"
-                  onClick={hideSignUp}
-                  className={classes.loginbutton}
-                >
+                <Button onClick={hideSignUp} className={classes.loginbutton}>
                   Cancel
                 </Button>
               </Col>
@@ -504,11 +511,16 @@ export default function UserSignUp() {
     //setSignUpModalShow(false);
     setSocialSignUpModalShow(false);
     // history.push('/');
+    setEmailSignup(false);
     // setRegisterSuccess(true);
     setNewEmail('');
     setNewPassword('');
     setNewFName('');
     setNewLName('');
+    setConfirmEmail('');
+    setConfirmPassword('');
+    setNewPassword('');
+    setSelectedTimezone('');
   };
 
   const hideAlreadyExists = () => {
@@ -569,14 +581,15 @@ export default function UserSignUp() {
         .post(BASE_URL + 'addNewUser', user)
         .then((response) => {
           console.log(response);
+          setSignupSuccessful(true);
           if (response.status != 200) {
             setErrorMessage(response.message);
             return;
             // add validation
-          } else {
-            console.log('in else');
-            signupSuccess();
           }
+          console.log('in else');
+          signupSuccess();
+
           // setErrorMessage('');
         })
         .catch((error) => {
@@ -657,14 +670,25 @@ export default function UserSignUp() {
             padding: 0,
           }}
         >
-          <Row className={classes.heading}>Welcome to Manifest My Life</Row>
+          <Row style={{ width: '100%' }}>
+            <Col className={classes.backArrowImage}>
+              <img src={BackArrow} onClick={() => history.push('/')} />
+            </Col>
+            <Col xs={10} className={classes.heading}>
+              Welcome to Manifest My Life
+            </Col>
+          </Row>
           <br />
           <Row className={classes.subHeading}>
             A little help to manage your everyday
           </Row>
-          <Row className={classes.boxLayout}>
-            {emailSignup === false && signupSuccessful === false ? (
-              <Row xs={12} className={classes.buttonLayout}>
+          {signupSuccessful === false ? (
+            <Row className={classes.boxLayout}>
+              <Row
+                xs={12}
+                className={classes.buttonLayout}
+                hidden={emailSignup}
+              >
                 <Row xs={12} className={classes.buttonLayout}>
                   <Col></Col>
                   <Col xs={8} className={classes.loginbuttons}>
@@ -725,7 +749,7 @@ export default function UserSignUp() {
                         src={Apple}
                         variant="contained"
                         alt={''}
-                        style={{ width: '100%' }}
+                        style={{ width: '60%', padding: '0', margin: '0' }}
                         onClick={() => {
                           window.AppleID.auth.signIn();
                         }}
@@ -743,7 +767,7 @@ export default function UserSignUp() {
                         alt={''}
                         style={{ width: '60%', padding: '0', margin: '0' }}
                         onClick={() => {
-                          setEmailSignup(true);
+                          setEmailSignup(!emailSignup);
                         }}
                       ></img>
                     </Button>
@@ -759,8 +783,7 @@ export default function UserSignUp() {
                   <Col></Col>
                 </Row>
               </Row>
-            ) : emailSignup === true && signupSuccessful === false ? (
-              <Row className={classes.buttonLayout}>
+              <Row className={classes.buttonLayout} hidden={!emailSignup}>
                 <Row className={classes.buttonLayout}>
                   <Col></Col>
                   <Col xs={8} className={classes.headers}>
@@ -1006,7 +1029,9 @@ export default function UserSignUp() {
                   <Col></Col>
                 </Row>
               </Row>
-            ) : signupSuccessful === true ? (
+            </Row>
+          ) : (
+            <Row className={classes.boxLayout}>
               <Row className={classes.buttonLayout}>
                 <Row className={classes.buttonLayout}>
                   <Col></Col>
@@ -1068,10 +1093,8 @@ export default function UserSignUp() {
                   <Col></Col>
                 </Row>
               </Row>
-            ) : (
-              <Row></Row>
-            )}
-          </Row>
+            </Row>
+          )}
           <Row style={{ justifyContent: 'center' }}>
             <Col xs={8} className={classes.bodyCenter}>
               With the use of Manifest's web application, the Trusted Advisor
@@ -1086,7 +1109,6 @@ export default function UserSignUp() {
           display: 'flex',
           justifyContent: 'space-evenly',
           marginTop: '1rem',
-          paddingBottom: '3rem',
         }}
       >
         <Col xs={4} className={classes.infoLayout}>

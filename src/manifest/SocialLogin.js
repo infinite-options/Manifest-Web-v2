@@ -7,7 +7,7 @@ import { useHistory } from 'react-router-dom';
 import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
 import { withRouter } from 'react-router';
 import Google from '../manifest/LoginAssets/Google.svg';
-import Apple from '../manifest/LoginAssets/Apple.svg';
+import Apple from '../manifest/LoginAssets/AppleSignUp.svg';
 import LoginContext from 'LoginContext';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
@@ -514,6 +514,7 @@ function SocialLogin(props) {
             <img
               src={Apple}
               alt={''}
+              style={{ width: '60%', padding: '0', margin: 0 }}
               className={classes.buttonLayout}
               onClick={() => {
                 window.AppleID.auth.signIn();

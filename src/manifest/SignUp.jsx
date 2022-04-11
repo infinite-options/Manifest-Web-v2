@@ -12,6 +12,7 @@ import Goals from '../images/Goals.png';
 import Email from '../manifest/LoginAssets/Email.svg';
 import GooglePlayStore from '../manifest/LoginAssets/GooglePlayStore.png';
 import AppleAppStore from '../manifest/LoginAssets/AppleAppStore.png';
+import BackArrow from '../manifest/LoginAssets/Back_arrow.svg';
 import Footer from './Footer';
 import SocialLogin from './SocialLogin';
 const moment = require('moment');
@@ -32,8 +33,19 @@ const useStyles = makeStyles({
   heading: {
     font: 'normal normal 600 50px Quicksand-Book',
     color: '#000000',
-    textAlign: 'center',
+    textAlign: 'left',
     marginTop: '1rem',
+    paddingLeft: '7rem',
+  },
+  backArrowImage: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: '1rem',
+    width: '50px',
+    height: '50px',
+    cursor: 'pointer',
   },
   subHeading: {
     font: 'normal normal 600 22px Quicksand-Book',
@@ -352,7 +364,14 @@ export default function Signup() {
             padding: 0,
           }}
         >
-          <Row className={classes.heading}>Welcome to Manifest My Life</Row>
+          <Row style={{ width: '100%' }}>
+            <Col className={classes.backArrowImage}>
+              <img src={BackArrow} onClick={() => history.push('/')} />
+            </Col>
+            <Col xs={10} className={classes.heading}>
+              Welcome to Manifest My Life
+            </Col>
+          </Row>
           <br />
           <Row className={classes.subHeading}>
             A little help to manage your everyday
@@ -742,7 +761,6 @@ export default function Signup() {
           display: 'flex',
           justifyContent: 'space-evenly',
           marginTop: '1rem',
-          paddingBottom: '3rem',
         }}
       >
         <Col xs={4} className={classes.infoLayout}>

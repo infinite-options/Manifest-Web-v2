@@ -211,7 +211,6 @@ export default function Privacy() {
           display: 'flex',
           justifyContent: 'space-evenly',
           marginTop: '1rem',
-          paddingBottom: '3rem',
         }}
       >
         <Col xs={4} className={classes.infoLayout}>
