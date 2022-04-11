@@ -83,7 +83,7 @@ export default function UserSignUp() {
       code: auth_code,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
-      // redirect_uri: 'http://localhost:3000',
+      //  redirect_uri: 'http://localhost:3000',
       redirect_uri: redirecturi,
       grant_type: 'authorization_code',
     };
