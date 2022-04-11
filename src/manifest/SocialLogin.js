@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import GoogleLogin from 'react-google-login';
 import axios from 'axios';
 import { Box, Button } from '@material-ui/core';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import { useHistory } from 'react-router-dom';
 import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
 import { withRouter } from 'react-router';
@@ -12,10 +13,42 @@ import LoginContext from 'LoginContext';
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
 let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+const useStyles = makeStyles({
+  loginbuttons: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  signupbuttons: {
+    background: '#000000 0% 0% no-repeat padding-box',
+    borderRadius: '10px',
+    font: 'normal normal bold 16px Quicksand-Bold',
+    color: '#ffffff',
+    margin: '1rem',
+    textTransform: 'none',
+  },
+  loginbutton: {
+    background: '#ffffff 0% 0% no-repeat padding-box',
+    borderRadius: '10px',
+    font: 'normal normal bold 16px Quicksand-Bold',
+    color: '#000000',
+    margin: '1rem',
+    textTransform: 'none',
+  },
+  buttonLayout: { width: '100%', padding: '0', margin: '0' },
+
+  textfield: {
+    background: '#FFFFFF',
+    borderRadius: '10px',
+    marginBottom: '0.2rem',
+  },
+});
 
 function SocialLogin(props) {
   // const Auth = useContext(AuthContext);
   const loginContext = useContext(LoginContext);
+  const classes = useStyles();
   const history = useHistory();
   const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
   const [loginSuccessful, setLoginSuccessful] = useState(false);
@@ -46,18 +79,6 @@ function SocialLogin(props) {
     }
   }, [loginContext.loginState.reload]);
 
-  // const responseGoogle = (response) => {
-  //   console.log('response', response);
-  //   if (response.profileObj) {
-  //     console.log('Google login successful');
-  //     let email = response.profileObj.email;
-  //     let accessToken = response.accessToken;
-  //     let socialId = response.googleId;
-  //     _socialLoginAttempt(email, accessToken, socialId);
-  //   } else {
-  //     console.log('Google login unsuccessful');
-  //   }
-  // };
   const responseGoogle = (response) => {
     console.log('response', response);
 
@@ -90,8 +111,8 @@ function SocialLogin(props) {
       code: auth_code,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
-      // redirect_uri: 'http://localhost:3000',
-      redirect_uri: redirecturi,
+      redirect_uri: 'http://localhost:3000',
+      //redirect_uri: redirecturi,
       grant_type: 'authorization_code',
     };
 
@@ -178,82 +199,32 @@ function SocialLogin(props) {
   };
   console.log(newEmail);
 
-  const _socialLoginAttempt = (email, accessToken, socialId) => {
-    axios
-      .get(BASE_URL + 'loginSocialTA/' + email)
-      .then((res) => {
-        console.log('loginSocialTA', res);
-        if (res.data.result !== false) {
-          document.cookie = 'ta_uid=' + res.data.result[0];
-          document.cookie = 'ta_email=' + email;
-          document.cookie = 'patient_name=Loading';
-          loginContext.setLoginState({
-            ...loginContext.loginState,
-            reload: true,
-            loggedIn: true,
-            ta: {
-              ...loginContext.loginState.ta,
-              id: res.data.result,
-              email: email.toString(),
-            },
-            usersOfTA: [],
-            curUser: '',
-            curUserTimeZone: '',
-            curUserEmail: '',
-          });
-          console.log('Login successful');
-          console.log(email);
-          history.push({
-            pathname: '/home',
-            state: email,
-          });
-          // Successful log in, Try to update tokens, then continue to next page based on role
-        } else {
-          console.log('log in error');
-          setNewEmail(email);
-          //props.history.push('/socialsignup');
-          setSocialSignUpModalShow(true);
-        }
-      })
-      .catch((err) => {
-        if (err.response) {
-          console.log(err.response);
-        }
-        console.log(err);
-      });
-  };
   const alreadyExistsModal = () => {
-    const modalStyle = {
-      position: 'absolute',
-      top: '30%',
-      left: '2%',
-      width: '400px',
-    };
     const headerStyle = {
       border: 'none',
       textAlign: 'center',
       display: 'flex',
       alignItems: 'center',
-      fontSize: '20px',
-      fontWeight: 'bold',
-      color: '#2C2C2E',
+      font: 'normal normal 600 20px Quicksand-Book',
       textTransform: 'uppercase',
-      backgroundColor: ' #FFFFFF',
+      backgroundColor: ' #F2F7FC',
+      padding: '1rem',
     };
     const footerStyle = {
       border: 'none',
-      backgroundColor: ' #FFFFFF',
+      backgroundColor: ' #F2F7FC',
     };
     const bodyStyle = {
-      backgroundColor: ' #FFFFFF',
+      backgroundColor: ' #F2F7FC',
+      font: 'normal normal 600 16px Quicksand-Regular',
     };
     return (
       <Modal
         show={alreadyExists}
         onHide={hideAlreadyExists}
-        style={{ marginTop: '70px' }}
+        style={{ marginTop: '70px', padding: 0 }}
       >
-        <Form as={Container}>
+        <Form>
           <Modal.Header style={headerStyle} closeButton>
             <Modal.Title>TA Account Exists</Modal.Title>
           </Modal.Header>
@@ -286,13 +257,7 @@ function SocialLogin(props) {
                 <Button
                   type="submit"
                   onClick={hideLoginSuccessful}
-                  style={{
-                    marginTop: '10px',
-                    background: '#FF6B4A 0% 0% no-repeat padding-box',
-                    borderRadius: '20px',
-                    opacity: 1,
-                    width: '300px',
-                  }}
+                  className={classes.signupbuttons}
                 >
                   Cancel
                 </Button>
@@ -308,13 +273,8 @@ function SocialLogin(props) {
               >
                 <Button
                   type="submit"
-                  onClick={() => history.push('/')}
-                  style={{
-                    background: '#F8BE28 0% 0% no-repeat padding-box',
-                    borderRadius: '20px',
-                    opacity: 1,
-                    width: '300px',
-                  }}
+                  onClick={() => history.push('/login')}
+                  className={classes.loginbutton}
                 >
                   Log in
                 </Button>
@@ -333,15 +293,13 @@ function SocialLogin(props) {
   const hideSignUp = () => {
     //setSignUpModalShow(false);
     setSocialSignUpModalShow(false);
-    setLoginSuccessful(true);
+    props.setSignupSuccessful(true);
+    // setLoginSuccessful(true);
     // history.push('/aboutus');
     setNewPhoneNumber('');
     setNewFName('');
     setNewLName('');
     setNewEmployer('');
-  };
-  const handleNewEmailChange = (event) => {
-    setNewEmail(event.target.value);
   };
 
   const handleNewPhoneNumberChange = (event) => {
@@ -382,204 +340,94 @@ function SocialLogin(props) {
       });
   };
   const socialSignUpModal = () => {
-    return (
-      <Modal
-        show={socialSignUpModalShow}
-        onHide={hideSignUp}
-        style={{ marginTop: '70px' }}
-      >
-        <Form as={Container}>
-          <h3
-            className="bigfancytext formEltMargin"
-            style={{
-              textAlign: 'center',
-              letterSpacing: '0.49px',
-              color: '#000000',
-              opacity: 1,
-            }}
-          >
-            Sign Up with Social Media
-          </h3>
-          <Form.Group className="formEltMargin">
-            <Form.Group as={Row} className="formEltMargin">
-              <Col>
-                <Form.Control
-                  type="text"
-                  placeholder="First Name"
-                  value={newFName}
-                  onChange={handleNewFNameChange}
-                  style={{
-                    background: '#FFFFFF 0% 0% no-repeat padding-box',
-                    borderRadius: '26px',
-                    opacity: 1,
-                    width: '230px',
-                  }}
-                />
-              </Col>
-              <Col>
-                <Form.Control
-                  type="text"
-                  placeholder="Last Name"
-                  value={newLName}
-                  onChange={handleNewLNameChange}
-                  style={{
-                    background: '#FFFFFF 0% 0% no-repeat padding-box',
-                    borderRadius: '26px',
-                    opacity: 1,
-                    width: '230px',
-                  }}
-                />
-              </Col>
-            </Form.Group>
-            <Col>
-              <Form.Group as={Row} className="formEltMargin">
-                <Form.Control
-                  type="text"
-                  placeholder="Employer"
-                  value={newEmployer}
-                  onChange={handleNewEmployerChange}
-                  style={{
-                    background: '#FFFFFF 0% 0% no-repeat padding-box',
-                    borderRadius: '26px',
-                    opacity: 1,
-                    width: '500px',
-                  }}
-                />
-              </Form.Group>
-            </Col>
-            <Col>
-              <Form.Group as={Row} className="formEltMargin">
-                <Form.Control
-                  type="tel"
-                  placeholder="Phone Number"
-                  pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                  value={newPhoneNumber}
-                  onChange={handleNewPhoneNumberChange}
-                  style={{
-                    background: '#FFFFFF 0% 0% no-repeat padding-box',
-                    borderRadius: '26px',
-                    opacity: 1,
-                    width: '500px',
-                  }}
-                />
-              </Form.Group>
-            </Col>
-            <Col>
-              <Form.Group as={Row} className="formEltMargin">
-                <Form.Control
-                  plaintext
-                  readOnly
-                  value={newEmail}
-                  style={{
-                    background: '#FFFFFF 0% 0% no-repeat padding-box',
-                    borderRadius: '26px',
-                    opacity: 1,
-                    width: '500px',
-                  }}
-                />
-              </Form.Group>
-            </Col>
-          </Form.Group>
-
-          <Form.Group className="formEltMargin">
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Button
-                variant="primary"
-                type="submit"
-                onClick={handleSocialSignUpDone}
-                style={{
-                  background: '#F8BE28 0% 0% no-repeat padding-box',
-                  borderRadius: '20px',
-                  opacity: 1,
-                  width: '300px',
-                }}
-              >
-                Sign Up
-              </Button>
-
-              <Button
-                variant="primary"
-                type="submit"
-                onClick={hideSignUp}
-                style={{
-                  marginTop: '10px',
-                  background: '#FF6B4A 0% 0% no-repeat padding-box',
-                  borderRadius: '20px',
-                  opacity: 1,
-                  width: '300px',
-                }}
-              >
-                Cancel
-              </Button>
-            </div>
-          </Form.Group>
-        </Form>
-      </Modal>
-    );
-  };
-
-  const loginSuccessfulModal = () => {
-    const modalStyle = {
-      position: 'absolute',
-      top: '30%',
-      left: '2%',
-      width: '400px',
-    };
     const headerStyle = {
       border: 'none',
       textAlign: 'center',
       display: 'flex',
-      alignItems: 'center',
-      fontSize: '20px',
-      fontWeight: 'bold',
-      color: '#2C2C2E',
+      justifyContent: 'center',
+      font: 'normal normal 600 20px Quicksand-Book',
       textTransform: 'uppercase',
-      backgroundColor: ' #FFFFFF',
+      backgroundColor: ' #F2F7FC',
+      padding: '1rem',
     };
     const footerStyle = {
       border: 'none',
-      backgroundColor: ' #FFFFFF',
+      backgroundColor: ' #F2F7FC',
     };
     const bodyStyle = {
-      backgroundColor: ' #FFFFFF',
+      backgroundColor: ' #F2F7FC',
+      font: 'normal normal 600 16px Quicksand-Regular',
     };
     return (
       <Modal
-        show={loginSuccessful}
-        onHide={hideLoginSuccessful}
-        style={{ marginTop: '70px' }}
+        show={socialSignUpModalShow}
+        onHide={hideSignUp}
+        style={{ marginTop: '70px', padding: 0 }}
       >
-        <Form as={Container}>
+        <Form>
           <Modal.Header style={headerStyle} closeButton>
-            <Modal.Title>Sign Up Successful</Modal.Title>
+            <Modal.Title>Sign Up with social media</Modal.Title>
           </Modal.Header>
-
           <Modal.Body style={bodyStyle}>
-            <div>
-              You have successfully signed up as the TA! Please Login to
-              continue!
-            </div>
+            <Form.Group className="formEltMargin">
+              <Form.Group as={Row} className="formEltMargin">
+                <Col>
+                  <Form.Control
+                    type="text"
+                    placeholder="First Name"
+                    value={newFName}
+                    onChange={handleNewFNameChange}
+                    className={classes.textfield}
+                  />
+                </Col>
+                <Col>
+                  <Form.Control
+                    type="text"
+                    placeholder="Last Name"
+                    value={newLName}
+                    onChange={handleNewLNameChange}
+                    className={classes.textfield}
+                  />
+                </Col>
+              </Form.Group>
+              <Col>
+                <Form.Group as={Row} className="formEltMargin">
+                  <Form.Control
+                    type="text"
+                    placeholder="Employer"
+                    value={newEmployer}
+                    onChange={handleNewEmployerChange}
+                    className={classes.textfield}
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group as={Row} className="formEltMargin">
+                  <Form.Control
+                    type="tel"
+                    placeholder="Phone Number"
+                    pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                    value={newPhoneNumber}
+                    onChange={handleNewPhoneNumberChange}
+                    className={classes.textfield}
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group as={Row} className="formEltMargin">
+                  <Form.Control
+                    plaintext
+                    readOnly
+                    value={newEmail}
+                    className={classes.textfield}
+                  />
+                </Form.Group>
+              </Col>
+            </Form.Group>
           </Modal.Body>
-
           <Modal.Footer style={footerStyle}>
-            <Row
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginTop: '1rem',
-              }}
-            >
-              <Col
-                xs={6}
+            <Form.Group className="formEltMargin">
+              <div
                 style={{
                   display: 'flex',
                   flexDirection: 'row',
@@ -588,64 +436,41 @@ function SocialLogin(props) {
                 }}
               >
                 <Button
+                  variant="primary"
                   type="submit"
-                  onClick={hideLoginSuccessful}
-                  style={{
-                    marginTop: '10px',
-                    background: '#FF6B4A 0% 0% no-repeat padding-box',
-                    borderRadius: '20px',
-                    opacity: 1,
-                    width: '300px',
-                  }}
+                  onClick={handleSocialSignUpDone}
+                  className={classes.signupbuttons}
+                >
+                  Sign Up
+                </Button>
+
+                <Button
+                  variant="primary"
+                  type="submit"
+                  onClick={hideSignUp}
+                  className={classes.loginbutton}
                 >
                   Cancel
                 </Button>
-              </Col>
-              <Col
-                xs={6}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Button
-                  type="submit"
-                  onClick={() => history.push('/')}
-                  style={{
-                    background: '#F8BE28 0% 0% no-repeat padding-box',
-                    borderRadius: '20px',
-                    opacity: 1,
-                    width: '300px',
-                  }}
-                >
-                  Log in
-                </Button>
-              </Col>
-            </Row>
+              </div>
+            </Form.Group>
           </Modal.Footer>
         </Form>
       </Modal>
     );
   };
+
   const hideLoginSuccessful = () => {
     setLoginSuccessful(false);
   };
 
   return (
-    <Box display="flex" flexDirection="column" style={{ width: '15rem' }}>
-      <Box
-        display="flex"
-        justifyContent="center"
-        flexDirection="column"
-        marginTop="1rem"
-      >
-        <div>
-          <Button style={{}}>
+    <Row xs={12} className={classes.buttonLayout}>
+      <Row xs={12} className={classes.buttonLayout}>
+        <Col></Col>
+        <Col xs={8} className={classes.loginbuttons}>
+          <Button>
             <GoogleLogin
-              //clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-              //clientId={CLIENT_ID}
               clientId={
                 BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
                   ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
@@ -659,13 +484,13 @@ function SocialLogin(props) {
               isSignedIn={false}
               disable={true}
               cookiePolicy={'single_host_origin'}
-              redirectUri={
-                BASE_URL.substring(8, 18) == '3s3sftsr90'
-                  ? 'https://manifestmy.space'
-                  : 'https://manifestmy.life'
-              }
+              // redirectUri={
+              //   BASE_URL.substring(8, 18) == '3s3sftsr90'
+              //     ? 'https://manifestmy.space'
+              //     : 'https://manifestmy.life'
+              // }
               scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
-              // redirectUri="http://localhost:3000"
+              redirectUri="http://localhost:3000"
               onSuccess={responseGoogle}
               onFailure={responseGoogle}
               render={(renderProps) => (
@@ -674,32 +499,33 @@ function SocialLogin(props) {
                   onClick={renderProps.onClick}
                   disabled={renderProps.disabled}
                   alt={''}
-                  style={{ width: '100%' }}
+                  style={{ width: '60%', padding: '0', margin: 0 }}
                 ></img>
               )}
             />
-            {console.log(CLIENT_ID)}
           </Button>
-        </div>
-
-        <div>
+        </Col>
+        <Col></Col>
+      </Row>
+      <Row xs={12} className={classes.buttonLayout}>
+        <Col></Col>
+        <Col xs={8} className={classes.loginbuttons}>
           <Button>
             <img
               src={Apple}
-              variant="contained"
               alt={''}
-              style={{ width: '100%' }}
+              className={classes.buttonLayout}
               onClick={() => {
                 window.AppleID.auth.signIn();
               }}
             ></img>
           </Button>
-        </div>
-        {socialSignUpModal()}
-        {loginSuccessfulModal()}
-        {alreadyExistsModal()}
-      </Box>
-    </Box>
+        </Col>
+        <Col></Col>
+      </Row>{' '}
+      {socialSignUpModal()}
+      {alreadyExistsModal()}
+    </Row>
   );
 }
 

@@ -1,25 +1,147 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
-import { GoogleLogin } from 'react-google-login';
 import axios from 'axios';
+import { GoogleLogin } from 'react-google-login';
+import { useHistory, Link } from 'react-router-dom';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import TimezoneSelect from 'react-timezone-select';
-import { Box, Button } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
-import Ellipse from '../manifest/LoginAssets/Ellipse.svg';
+import { Button, TextField, InputAdornment } from '@material-ui/core';
+import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import Events from '../images/Events.png';
+import Routines from '../images/Routines.png';
+import Goals from '../images/Goals.png';
+import Email from '../manifest/LoginAssets/Email.svg';
 import Google from '../manifest/LoginAssets/Google.svg';
 import Apple from '../manifest/LoginAssets/Apple.svg';
 import GooglePlayStore from '../manifest/LoginAssets/GooglePlayStore.png';
 import AppleAppStore from '../manifest/LoginAssets/AppleAppStore.png';
 import LoginContext from 'LoginContext';
-import './login.css';
+import Footer from './Footer';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
 let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+
+/* Custom Hook to make styles */
+const useStyles = makeStyles({
+  boxLayout: {
+    border: '1px solid #707070',
+    borderRadius: '10px',
+    backgroundColor: 'rgba(0,0,0,.2)',
+    maxWidth: '90%',
+    width: '50%',
+    padding: '1rem',
+    marginTop: '1rem',
+    marginBottom: '1rem',
+  },
+  heading: {
+    font: 'normal normal 600 50px Quicksand-Book',
+    color: '#000000',
+    textAlign: 'center',
+    marginTop: '1rem',
+  },
+  subHeading: {
+    font: 'normal normal 600 22px Quicksand-Book',
+    color: '#000000',
+    textAlign: 'center',
+  },
+  headers: {
+    textAlign: 'center',
+    font: 'normal normal 22px Quicksand-Bold',
+    color: '#FFFFFF',
+    marginBottom: '1rem',
+  },
+  body: {
+    textAlign: 'center',
+    font: 'normal normal 600 16px Quicksand-Regular',
+    color: '#FFFFFF',
+  },
+  bodyCenter: {
+    textAlign: 'center',
+    font: 'normal normal 600 16px Quicksand-Regular',
+    color: '#FFFFFF',
+    margin: '0.5rem 0rem',
+  },
+  bodylogin: {
+    textAlign: 'center',
+    font: 'normal normal 600 13px Quicksand-Regular',
+    color: '#FFFFFF',
+    marginTop: '0.3rem',
+  },
+  bodyLink: {
+    textAlign: 'center',
+    font: 'normal normal 600 13px Quicksand-Regular',
+    color: '#FFFFFF',
+    textDecoration: 'underline',
+    cursor: 'pointer',
+  },
+  loginbuttons: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loginbutton: {
+    background: '#000000 0% 0% no-repeat padding-box',
+    borderRadius: '10px',
+    font: 'normal normal  16px Quicksand-Regular',
+    color: '#ffffff',
+    textTransform: 'none',
+    width: '100%',
+    marginTop: '0.3rem',
+  },
+  buttonLayout: { width: '100%', padding: '0', margin: '0' },
+  infoLayout: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRight: '2px solid black',
+  },
+  infoText: {
+    marginTop: '0.5rem',
+    textAlign: 'center',
+    font: 'normal normal 600 16px Quicksand-Regular',
+    color: '#000000',
+    width: '80%',
+  },
+  infoImage: {
+    width: '80px',
+    height: '80px',
+  },
+  textfield: {
+    background: '#FFFFFF',
+    borderRadius: '10px',
+    marginBottom: '0.2rem',
+  },
+  signupbuttons: {
+    background: '#ffffff 0% 0% no-repeat padding-box',
+    borderRadius: '10px',
+    font: 'normal normal bold 16px Quicksand-Bold',
+    color: '#000000',
+    textTransform: 'none',
+    width: '100%',
+    marginTop: '0.3rem',
+  },
+});
+
+/* Navigation Bar component function */
 export default function UserSignUp() {
+  console.log('in user signup page');
+  const classes = useStyles();
   const history = useHistory();
   const loginContext = useContext(LoginContext);
+  const [emailSignup, setEmailSignup] = useState(false);
+  const [signupSuccessful, setSignupSuccessful] = useState(false);
+  const [passVisible, setPassvisble] = React.useState({
+    password: '',
+    showPassword: false,
+  });
+  const handleClickShowPassword = () => {
+    setPassvisble({ ...passVisible, showPassword: !passVisible.showPassword });
+  };
+
   const [newEmail, setNewEmail] = useState('');
   const [confirmEmail, setConfirmEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -32,9 +154,7 @@ export default function UserSignUp() {
   const [refreshToken, setrefreshToken] = useState('');
   const [accessToken, setAccessToken] = useState('');
   const [accessExpiresIn, setaccessExpiresIn] = useState('');
-  const [showSignUp, setShowSignUp] = useState(false);
   const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
-  const [registerSuccess, setRegisterSuccess] = useState(false);
   const [alreadyExists, setAlreadyExists] = useState(false);
   let redirecturi = 'https://manifestmy.space';
   useEffect(() => {
@@ -83,8 +203,8 @@ export default function UserSignUp() {
       code: auth_code,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
-      // redirect_uri: 'http://localhost:3000',
-      redirect_uri: redirecturi,
+      redirect_uri: 'http://localhost:3000',
+      //redirect_uri: redirecturi,
       grant_type: 'authorization_code',
     };
 
@@ -181,26 +301,25 @@ export default function UserSignUp() {
       textAlign: 'center',
       display: 'flex',
       alignItems: 'center',
-      fontSize: '20px',
-      fontWeight: 'bold',
-      color: '#2C2C2E',
+      font: 'normal normal 600 20px Quicksand-Book',
       textTransform: 'uppercase',
-      backgroundColor: ' #FFFFFF',
+      backgroundColor: ' #F2F7FC',
+      padding: '1rem',
     };
     const footerStyle = {
       border: 'none',
-      backgroundColor: ' #FFFFFF',
+      backgroundColor: ' #F2F7FC',
     };
     const bodyStyle = {
-      backgroundColor: ' #FFFFFF',
+      backgroundColor: ' #F2F7FC',
     };
     return (
       <Modal
         show={alreadyExists}
         onHide={hideAlreadyExists}
-        style={{ marginTop: '70px' }}
+        style={{ marginTop: '70px', padding: 0 }}
       >
-        <Form as={Container}>
+        <Form>
           <Modal.Header style={headerStyle} closeButton>
             <Modal.Title>User Account Exists</Modal.Title>
           </Modal.Header>
@@ -243,12 +362,7 @@ export default function UserSignUp() {
                 <Button
                   type="submit"
                   onClick={hideAlreadyExists}
-                  style={{
-                    background: '#F8BE28 0% 0% no-repeat padding-box',
-                    borderRadius: '20px',
-                    opacity: 1,
-                    width: '300px',
-                  }}
+                  className={classes.signupbuttons}
                 >
                   Okay
                 </Button>
@@ -260,129 +374,128 @@ export default function UserSignUp() {
     );
   };
   const socialSignUpModal = () => {
+    const modalStyle = {
+      position: 'absolute',
+      top: '30%',
+      left: '2%',
+      width: '400px',
+    };
+    const headerStyle = {
+      border: 'none',
+      textAlign: 'center',
+      display: 'flex',
+      alignItems: 'center',
+      font: 'normal normal 600 20px Quicksand-Book',
+      textTransform: 'uppercase',
+      backgroundColor: ' #F2F7FC',
+      padding: '1rem',
+    };
+    const footerStyle = {
+      border: 'none',
+      backgroundColor: ' #F2F7FC',
+    };
+    const bodyStyle = {
+      backgroundColor: ' #F2F7FC',
+      font: 'normal normal 600 16px Quicksand-Regular',
+    };
     return (
       <Modal
         show={socialSignUpModalShow}
         onHide={hideSignUp}
-        style={{ marginTop: '70px' }}
+        style={{ marginTop: '70px', padding: 0 }}
       >
-        <Form as={Container}>
-          <h3
-            className="bigfancytext formEltMargin"
-            style={{
-              textAlign: 'center',
-              letterSpacing: '0.49px',
-              color: '#000000',
-              opacity: 1,
-            }}
-          >
-            Sign Up with Social Media
-          </h3>
-          <Form.Group className="formEltMargin">
-            <Form.Group as={Row} className="formEltMargin">
-              <Col>
-                <Form.Control
-                  type="text"
-                  placeholder="First Name"
-                  value={newFName}
-                  onChange={(e) => setNewFName(e.target.value)}
-                  style={{
-                    background: '#FFFFFF 0% 0% no-repeat padding-box',
-                    borderRadius: '26px',
-                    opacity: 1,
-                    width: '230px',
-                  }}
-                />
-              </Col>
-              <Col>
-                <Form.Control
-                  type="text"
-                  placeholder="Last Name"
-                  value={newLName}
-                  onChange={(e) => setNewLName(e.target.value)}
-                  style={{
-                    background: '#FFFFFF 0% 0% no-repeat padding-box',
-                    borderRadius: '26px',
-                    opacity: 1,
-                    width: '230px',
-                  }}
-                />
-              </Col>
-            </Form.Group>
-
-            <Col>
-              <Form.Group as={Row} className="formEltMargin">
-                <Form.Control
-                  plaintext
-                  readOnly
-                  value={newEmail}
-                  style={{
-                    background: '#FFFFFF 0% 0% no-repeat padding-box',
-                    borderRadius: '26px',
-                    opacity: 1,
-                    width: '500px',
-                  }}
-                />
+        <Form>
+          <Modal.Header style={headerStyle} closeButton>
+            <Modal.Title>Sign Up with social media</Modal.Title>
+          </Modal.Header>
+          <Modal.Body style={bodyStyle}>
+            <Form.Group>
+              <Form.Group>
+                <Col>
+                  <Form.Control
+                    type="text"
+                    placeholder="First Name"
+                    value={newFName}
+                    onChange={(e) => setNewFName(e.target.value)}
+                    className={classes.textfield}
+                  />
+                </Col>
+                <Col>
+                  <Form.Control
+                    type="text"
+                    placeholder="Last Name"
+                    value={newLName}
+                    onChange={(e) => setNewLName(e.target.value)}
+                    className={classes.textfield}
+                  />
+                </Col>
               </Form.Group>
-            </Col>
-          </Form.Group>
-          <Col>
-            <Form.Group as={Row} className="formEltMargin">
-              <div
-                className="select-wrapper"
-                style={{
-                  background: '#FFFFFF 0% 0% no-repeat padding-box',
-                  borderRadius: '26px',
-                  opacity: 1,
-                  width: '500px',
-                }}
-              >
-                <TimezoneSelect
-                  value={selectedTimezone}
-                  onChange={setSelectedTimezone}
-                />
-              </div>
+
+              <Col>
+                <Form.Group>
+                  <Form.Control
+                    plaintext
+                    readOnly
+                    value={newEmail}
+                    className={classes.textfield}
+                  />
+                </Form.Group>
+              </Col>
             </Form.Group>
-          </Col>
-          <Form.Group className="formEltMargin">
-            <div
+            <Col>
+              <TimezoneSelect
+                value={selectedTimezone}
+                onChange={setSelectedTimezone}
+              />
+            </Col>
+          </Modal.Body>
+          <Modal.Footer style={footerStyle}>
+            <Row
               style={{
                 display: 'flex',
-                flexDirection: 'column',
+                flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'center',
+                marginTop: '1rem',
+                width: '100%',
               }}
             >
-              <Button
-                variant="primary"
-                type="submit"
-                onClick={handleSocialSignUpDone}
+              <Col
+                xs={6}
                 style={{
-                  background: '#F8BE28 0% 0% no-repeat padding-box',
-                  borderRadius: '20px',
-                  opacity: 1,
-                  width: '300px',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                Sign Up
-              </Button>
-
-              <Button
-                variant="primary"
-                type="submit"
-                onClick={hideSignUp}
+                <Button
+                  type="submit"
+                  onClick={handleSocialSignUpDone}
+                  className={classes.signupbuttons}
+                >
+                  Sign Up
+                </Button>
+              </Col>
+              <Col
+                xs={6}
                 style={{
-                  marginTop: '10px',
-                  background: '#FF6B4A 0% 0% no-repeat padding-box',
-                  borderRadius: '20px',
-                  opacity: 1,
-                  width: '300px',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                Cancel
-              </Button>
-            </div>
-          </Form.Group>
+                <Button
+                  type="submit"
+                  onClick={hideSignUp}
+                  className={classes.loginbutton}
+                >
+                  Cancel
+                </Button>
+              </Col>
+            </Row>
+          </Modal.Footer>
         </Form>
       </Modal>
     );
@@ -390,7 +503,7 @@ export default function UserSignUp() {
   const hideSignUp = () => {
     //setSignUpModalShow(false);
     setSocialSignUpModalShow(false);
-    history.push('/');
+    // history.push('/');
     // setRegisterSuccess(true);
     setNewEmail('');
     setNewPassword('');
@@ -407,34 +520,33 @@ export default function UserSignUp() {
   const signupSuccess = () => {
     //setSignUpModalShow(false);
     setSocialSignUpModalShow(false);
-    setShowSignUp(false);
-    setRegisterSuccess(true);
+    setEmailSignup(false);
+    setSignupSuccessful(true);
+    // setRegisterSuccess(true);
     setNewEmail('');
     setNewPassword('');
     setNewFName('');
     setNewLName('');
     setErrorMessage('');
   };
-  console.log('socialSignUpModalShow', socialSignUpModalShow);
-  console.log('showSignUp', showSignUp);
-  console.log('registerSuccess', registerSuccess);
+  console.log('emailsignup', emailSignup, signupSuccessful);
   const handleSocialSignUpDone = () => {
     if (
       (newEmail === '' ||
         confirmEmail === '' ||
         newPassword === '' ||
         confirmPassword === '') &&
-      showSignUp == true
+      emailSignup == true
     ) {
       console.log('in if');
       setErrorMessage('Please fill out all fields');
       return;
     }
-    if (newEmail !== confirmEmail && showSignUp == true) {
+    if (newEmail !== confirmEmail && emailSignup == true) {
       setErrorMessage('Emails must match');
       return;
     }
-    if (newPassword !== confirmPassword && showSignUp == true) {
+    if (newPassword !== confirmPassword && emailSignup == true) {
       setErrorMessage('Passwords must match');
       return;
     }
@@ -514,261 +626,214 @@ export default function UserSignUp() {
     ) : (
       ''
     );
-
   return (
-    <Box
-      display="flex"
-      //flexDirection="column"
-      justifyContent="center"
-      alignIems="center"
-      style={{ width: '100%', height: '100vh', backgroundColor: '#F2F7FC' }}
+    <div
+      style={{
+        flex: 1,
+        background: '#F2F7FC',
+        minHeight: '100vh',
+        position: 'relative',
+      }}
     >
-      <Box style={{ position: 'fixed', top: '100px', left: '-100px' }}>
-        <div style={{ position: 'relative', color: 'white' }}>
-          <img
-            src={Ellipse}
-            style={{ width: '120%', height: '100%' }}
-            alt="Ellipse"
-          />
-          <div
-            style={{
-              position: 'absolute',
-              top: '65%',
-              left: '40%',
-              transform: 'translate(-45%, -50%)',
-            }}
-            className="main"
-          >
-            <div style={{ font: 'normal normal bold 20px SF Pro' }}>
-              What is Manifest My Life
-            </div>
-            <p style={{ font: 'normal normal normal 18px SF Pro' }}>
-              Sometimes life is better with a Coach or Advisor. Manifest is an
-              web app designed for Coaches and Advisors to create customized
-              daily routines for their clients thus enabling clients to achieve
-              their goals and live their best life.
-            </p>
-          </div>
-        </div>
-      </Box>
-      {!registerSuccess ? (
-        <Box
-          display="flex"
-          flexDirection="column"
-          justifyContent="center"
-          alignIems="center"
+      <div
+        fluid
+        style={{
+          backgroundImage: `url(${'login_background.jpg'})`,
+          width: '100%',
+          backgroundSize: 'cover',
+          minHeight: '60vh',
+          backgroundPosition: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Row
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            margin: 0,
+            padding: 0,
+          }}
         >
-          <Row
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '500px',
-            }}
-          >
-            {' '}
-            <h3
-              className="bigfancytext formEltMargin"
-              style={{
-                textAlign: 'center',
-                letterSpacing: '0.49px',
-                color: '#000000',
-                opacity: 1,
-              }}
-            >
-              User Sign Up
-            </h3>
+          <Row className={classes.heading}>Welcome to Manifest My Life</Row>
+          <br />
+          <Row className={classes.subHeading}>
+            A little help to manage your everyday
           </Row>
-          <Row
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '500px',
-              marginTop: '1rem',
-            }}
-            hidden={showSignUp}
-          >
-            {' '}
-            <Box
-              display="flex"
-              flexDirection="column"
-              style={{ width: '15rem' }}
-            >
-              <Box
-                display="flex"
-                justifyContent="center"
-                flexDirection="column"
-                marginTop="1rem"
-              >
-                <div>
-                  <Button>
-                    <GoogleLogin
-                      //clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-                      //clientId={CLIENT_ID}
-                      clientId={
-                        BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
-                          ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
-                          : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
-                      }
-                      accessType="offline"
-                      prompt="consent"
-                      responseType="code"
-                      buttonText="Log In"
-                      ux_mode="redirect"
-                      isSignedIn={false}
-                      disable={true}
-                      cookiePolicy={'single_host_origin'}
-                      redirectUri={
-                        BASE_URL.substring(8, 18) == '3s3sftsr90'
-                          ? 'https://manifestmy.space'
-                          : 'https://manifestmy.life'
-                      }
-                      scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
-                      // redirectUri="http://localhost:3000"
-                      onSuccess={responseGoogle}
-                      onFailure={responseGoogle}
-                      render={(renderProps) => (
-                        <img
-                          src={Google}
-                          onClick={renderProps.onClick}
-                          disabled={renderProps.disabled}
-                          alt={''}
-                          style={{ width: '100%' }}
-                        ></img>
-                      )}
-                    />
-                  </Button>
-                </div>
-                <div>
-                  <Button>
-                    <img
-                      src={Apple}
-                      variant="contained"
-                      alt={''}
-                      style={{ width: '100%' }}
-                      onClick={() => {
-                        window.AppleID.auth.signIn();
+          <Row className={classes.boxLayout}>
+            {emailSignup === false && signupSuccessful === false ? (
+              <Row xs={12} className={classes.buttonLayout}>
+                <Row xs={12} className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8} className={classes.loginbuttons}>
+                    <div className={classes.body}>
+                      Users please sign up using one of the following methods:
+                    </div>
+                  </Col>
+                  <Col></Col>
+                </Row>
+                <Row xs={12} className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8} className={classes.loginbuttons}>
+                    <Button>
+                      <GoogleLogin
+                        //clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+                        //clientId={CLIENT_ID}
+                        clientId={
+                          BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
+                            ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
+                            : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
+                        }
+                        accessType="offline"
+                        prompt="consent"
+                        responseType="code"
+                        buttonText="Log In"
+                        ux_mode="redirect"
+                        isSignedIn={false}
+                        disable={true}
+                        cookiePolicy={'single_host_origin'}
+                        // redirectUri={
+                        //   BASE_URL.substring(8, 18) == '3s3sftsr90'
+                        //     ? 'https://manifestmy.space'
+                        //     : 'https://manifestmy.life'
+                        // }
+                        scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
+                        redirectUri="http://localhost:3000"
+                        onSuccess={responseGoogle}
+                        onFailure={responseGoogle}
+                        render={(renderProps) => (
+                          <img
+                            src={Google}
+                            onClick={renderProps.onClick}
+                            disabled={renderProps.disabled}
+                            alt={''}
+                            style={{ width: '60%', padding: '0', margin: '0' }}
+                          ></img>
+                        )}
+                      />
+                    </Button>
+                  </Col>
+                  <Col></Col>
+                </Row>
+                <Row xs={12} className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8} className={classes.loginbuttons}>
+                    <Button>
+                      <img
+                        src={Apple}
+                        variant="contained"
+                        alt={''}
+                        style={{ width: '100%' }}
+                        onClick={() => {
+                          window.AppleID.auth.signIn();
+                        }}
+                      ></img>
+                    </Button>
+                  </Col>
+                  <Col></Col>
+                </Row>
+                <Row xs={12} className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8} className={classes.loginbuttons}>
+                    <Button>
+                      <img
+                        src={Email}
+                        alt={''}
+                        style={{ width: '60%', padding: '0', margin: '0' }}
+                        onClick={() => {
+                          setEmailSignup(true);
+                        }}
+                      ></img>
+                    </Button>
+                  </Col>
+                  <Col></Col>
+                </Row>
+                <Row xs={12} className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8} className={classes.bodylogin}>
+                    Already have an account? Please contact your Trusted
+                    Advisor.
+                  </Col>
+                  <Col></Col>
+                </Row>
+              </Row>
+            ) : emailSignup === true && signupSuccessful === false ? (
+              <Row className={classes.buttonLayout}>
+                <Row className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8} className={classes.headers}>
+                    Sign Up
+                  </Col>
+                  <Col></Col>
+                </Row>
+                <Row className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col
+                    xs={8}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <Col
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        width: '100%',
+                        margin: 0,
+                        marginRight: '5px',
+                        padding: 0,
                       }}
-                    ></img>
-                  </Button>
-                </div>
-              </Box>
-            </Box>
-          </Row>
-
-          <Row
-            hidden={showSignUp}
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '500px',
-              marginTop: '1rem',
-            }}
-          >
-            <Row
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '500px',
-              }}
-            >
-              <h3
-                className="bigfancytext formEltMargin"
-                style={{
-                  //textAlign: 'center',
-                  letterSpacing: '0.49px',
-                  color: '#000000',
-                  opacity: 1,
-                }}
-              >
-                Or
-              </h3>
-            </Row>
-            <Row
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '500px',
-              }}
-            >
-              <Button
-                variant="primary"
-                type="submit"
-                onClick={() => setShowSignUp(!showSignUp)}
-                style={{
-                  background: '#F8BE28 0% 0% no-repeat padding-box',
-                  borderRadius: '20px',
-                  opacity: 1,
-                  width: '300px',
-                  font: 'normal normal bold 16px/19px SF Pro',
-                  color: '#FFFFFF',
-                  textTransform: 'none',
-                }}
-              >
-                Continue with Email
-              </Button>
-            </Row>
-          </Row>
-          <Row
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: '1rem',
-            }}
-          >
-            <Box hidden={!showSignUp}>
-              <Form as={Container}>
-                <Form.Group className="formEltMargin">
-                  <Form.Group as={Row} className="formEltMargin">
-                    <Col>
-                      <Form.Control
+                    >
+                      <TextField
+                        className={classes.textfield}
+                        variant="outlined"
                         type="text"
                         placeholder="First Name"
                         value={newFName}
                         onChange={(e) => setNewFName(e.target.value)}
-                        style={{
-                          background: '#FFFFFF 0% 0% no-repeat padding-box',
-                          borderRadius: '26px',
-                          opacity: 1,
-                          width: '230px',
-                        }}
+                        size="small"
+                        fullWidth={true}
                       />
                     </Col>
-                    <Col>
-                      <Form.Control
+                    <Col
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        width: '100%',
+                        margin: 0,
+                        marginLeft: '5px',
+                        padding: 0,
+                      }}
+                    >
+                      <TextField
+                        className={classes.textfield}
+                        variant="outlined"
                         type="text"
                         placeholder="Last Name"
                         value={newLName}
                         onChange={(e) => setNewLName(e.target.value)}
-                        style={{
-                          background: '#FFFFFF 0% 0% no-repeat padding-box',
-                          borderRadius: '26px',
-                          opacity: 1,
-                          width: '230px',
-                        }}
+                        size="small"
+                        fullWidth={true}
                       />
                     </Col>
-                  </Form.Group>
-                  <Col>
-                    <Form.Group as={Row} className="formEltMargin">
+                  </Col>
+
+                  <Col></Col>
+                </Row>
+                <Row className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8}>
+                    <Form.Group>
                       <div
-                        className="select-wrapper"
                         style={{
-                          background: '#FFFFFF 0% 0% no-repeat padding-box',
-                          borderRadius: '26px',
                           opacity: 1,
-                          width: '500px',
+                          background: '#FFFFFF',
+                          borderRadius: '10px',
+                          alignItems: 'center',
                         }}
                       >
                         <TimezoneSelect
@@ -778,77 +843,119 @@ export default function UserSignUp() {
                       </div>
                     </Form.Group>
                   </Col>
-                  <Col>
-                    <Form.Group as={Row} className="formEltMargin">
-                      {newEmail === '' ? required : ''}
-                      <Form.Control
-                        type="text"
-                        placeholder="Email address"
-                        value={newEmail}
-                        onChange={(e) => setNewEmail(e.target.value)}
-                        style={{
-                          background: '#FFFFFF 0% 0% no-repeat padding-box',
-                          borderRadius: '26px',
-                          opacity: 1,
-                          width: '500px',
-                        }}
-                      />
-                    </Form.Group>
+                  <Col></Col>
+                </Row>
+                <Row className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8}>
+                    {newEmail === '' ? required : ''}
+                    <TextField
+                      className={classes.textfield}
+                      variant="outlined"
+                      type="email"
+                      label="Email address"
+                      size="small"
+                      fullWidth={true}
+                      value={newEmail}
+                      onChange={(e) => setNewEmail(e.target.value)}
+                    />
                   </Col>
-                  <Col>
-                    <Form.Group as={Row} className="formEltMargin">
-                      {confirmEmail === '' ? required : ''}
-                      <Form.Control
-                        style={{
-                          background: '#FFFFFF 0% 0% no-repeat padding-box',
-                          borderRadius: '26px',
-                          opacity: 1,
-                          width: '500px',
-                        }}
-                        placeholder="Confirm Email Address"
-                        type="email"
-                        value={confirmEmail}
-                        onChange={(e) => setConfirmEmail(e.target.value)}
-                      />
-                    </Form.Group>
+                  <Col></Col>
+                </Row>
+                <Row className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8}>
+                    {confirmEmail === '' ? required : ''}
+                    <TextField
+                      className={classes.textfield}
+                      variant="outlined"
+                      type="email"
+                      label="Confirm email address"
+                      size="small"
+                      fullWidth={true}
+                      value={confirmEmail}
+                      onChange={(e) => setConfirmEmail(e.target.value)}
+                    />
                   </Col>
-                </Form.Group>
-                <Col>
-                  <Form.Group as={Row} className="formEltMargin">
+                  <Col></Col>
+                </Row>
+
+                <Row className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8}>
                     {newPassword === '' ? required : ''}
-                    <Form.Control
-                      type="password"
-                      placeholder="Create Password"
+                    <TextField
+                      className={classes.textfield}
+                      variant="outlined"
+                      label="Password"
+                      size="small"
+                      type={passVisible.showPassword ? 'text' : 'password'}
+                      fullWidth={true}
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      style={{
-                        background: '#FFFFFF 0% 0% no-repeat padding-box',
-                        borderRadius: '26px',
-                        opacity: 1,
-                        width: '500px',
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            {passVisible.showPassword ? (
+                              <VisibilityIcon
+                                onClick={handleClickShowPassword}
+                                style={{ color: '#797D83' }}
+                                aria-hidden="false"
+                              />
+                            ) : (
+                              <VisibilityOff
+                                onClick={handleClickShowPassword}
+                                style={{ color: '#797D83' }}
+                                aria-hidden="false"
+                              ></VisibilityOff>
+                            )}
+                          </InputAdornment>
+                        ),
                       }}
                     />
-                  </Form.Group>
-                </Col>
-                <Col>
-                  <Form.Group as={Row} className="formEltMargin">
+                  </Col>
+                  <Col></Col>
+                </Row>
+                <Row className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8}>
                     {confirmPassword === '' ? required : ''}
-                    <Form.Control
-                      placeholder="Confirm Password"
-                      type="password"
+                    <TextField
+                      className={classes.textfield}
+                      variant="outlined"
+                      label="Confirm Password"
+                      size="small"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      style={{
-                        background: '#FFFFFF 0% 0% no-repeat padding-box',
-                        borderRadius: '26px',
-                        opacity: 1,
-                        width: '500px',
+                      type={passVisible.showPassword ? 'text' : 'password'}
+                      fullWidth={true}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            {passVisible.showPassword ? (
+                              <VisibilityIcon
+                                onClick={handleClickShowPassword}
+                                style={{ color: '#797D83' }}
+                                aria-hidden="false"
+                              />
+                            ) : (
+                              <VisibilityOff
+                                onClick={handleClickShowPassword}
+                                style={{ color: '#797D83' }}
+                                aria-hidden="false"
+                              ></VisibilityOff>
+                            )}
+                          </InputAdornment>
+                        ),
                       }}
                     />
-                  </Form.Group>
-                </Col>
-                <div
-                  className="text-center"
+                  </Col>
+                  <Col></Col>
+                </Row>
+
+                <Row
+                  className={classes.buttonLayout}
+                  color="red"
                   style={errorMessage === '' ? { visibility: 'hidden' } : {}}
                 >
                   <p
@@ -860,169 +967,156 @@ export default function UserSignUp() {
                   >
                     {errorMessage}
                   </p>
-                </div>
-                <Form.Group className="formEltMargin">
-                  <div
+                </Row>
+                <Row className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col
+                    xs={8}
                     style={{
                       display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
                     }}
                   >
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      onClick={handleSocialSignUpDone}
-                      style={{
-                        background: '#F8BE28 0% 0% no-repeat padding-box',
-                        borderRadius: '20px',
-                        opacity: 1,
-                        width: '300px',
-                        font: 'normal normal bold 16px/19px SF Pro',
-                        color: '#FFFFFF',
-                        textTransform: 'none',
-                      }}
-                    >
-                      Sign Up
-                    </Button>
-
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      onClick={hideSignUp}
-                      style={{
-                        marginTop: '10px',
-                        background: '#FF6B4A 0% 0% no-repeat padding-box',
-                        borderRadius: '20px',
-                        opacity: 1,
-                        width: '300px',
-                        font: 'normal normal bold 16px/19px SF Pro',
-                        color: '#FFFFFF',
-                        textTransform: 'none',
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </Form.Group>
-              </Form>
-            </Box>
+                    <Col>
+                      <Button
+                        className={classes.loginbutton}
+                        onClick={handleSocialSignUpDone}
+                      >
+                        Sign Up
+                      </Button>
+                    </Col>
+                    <Col>
+                      <Button
+                        onClick={hideSignUp}
+                        className={classes.signupbuttons}
+                      >
+                        Cancel
+                      </Button>
+                    </Col>
+                  </Col>
+                  <Col></Col>
+                </Row>
+                <Row xs={12} className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col className={classes.bodylogin} xs={10}>
+                    Already have an account? Please contact your Trusted
+                    Advisor.
+                  </Col>
+                  <Col></Col>
+                </Row>
+              </Row>
+            ) : signupSuccessful === true ? (
+              <Row className={classes.buttonLayout}>
+                <Row className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col className={classes.headers} xs={10}>
+                    User Sign Up Successful
+                  </Col>
+                  <Col></Col>
+                </Row>
+                <Row className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col className={classes.body} xs={10}>
+                    Your next step is to download our Mobile App. You can begin
+                    using Manifest once your Trusted Advisor adds Goals,
+                    Routines and Event to your schedule. <br /> Thanks for
+                    Signing Up!
+                  </Col>
+                  <Col></Col>
+                </Row>
+                <Row className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <Col>
+                      <a
+                        href="https://apps.apple.com/us/app/manifest-mylife/id1523013751"
+                        target="_blank"
+                      >
+                        <img
+                          className="img"
+                          src={AppleAppStore}
+                          style={{
+                            width: '177px',
+                            height: '70px',
+                          }}
+                        />
+                      </a>
+                    </Col>
+                    <Col>
+                      <a
+                        href="https://play.google.com/store/apps/details?id=com.infiniteoptions_manifestmy.life"
+                        target="_blank"
+                      >
+                        <img
+                          className="img"
+                          src={GooglePlayStore}
+                          style={{
+                            width: '177px',
+                            height: '70px',
+                          }}
+                        />
+                      </a>
+                    </Col>
+                  </Col>
+                  <Col></Col>
+                </Row>
+              </Row>
+            ) : (
+              <Row></Row>
+            )}
           </Row>
-        </Box>
-      ) : (
-        <Box
-          marginTop="-20%"
-          display="flex"
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Row
-            style={{ fontSize: '40px', fontWeight: 'bold', marginTop: '1rem' }}
-          >
-            Registration Successful!
-          </Row>
-          <Row
-            style={{ fontSize: '40px', fontWeight: 'bold', marginTop: '1rem' }}
-          >
-            Welcome to Manifest
-          </Row>
-          <Row style={{ fontSize: '20px', marginTop: '1rem' }}>
-            Please download the Mobile App
-          </Row>
-          <Row style={{ marginTop: '1rem' }}>
-            <Col>
-              <a
-                href="https://apps.apple.com/us/app/manifest-mylife/id1523013751"
-                target="_blank"
-              >
-                <img
-                  className="img"
-                  src={AppleAppStore}
-                  style={{
-                    width: '177px',
-                    height: '70px',
-                  }}
-                />
-              </a>
+          <Row style={{ justifyContent: 'center' }}>
+            <Col xs={8} className={classes.bodyCenter}>
+              With the use of Manifest's web application, the Trusted Advisor
+              can assign events, routines, and goals to the patients schedule
+              which they can then access on the mobile application.
             </Col>
-            <Col>
-              <a
-                href="https://play.google.com/store/apps/details?id=com.infiniteoptions_manifestmy.life"
-                target="_blank"
-              >
-                <img
-                  className="img"
-                  src={GooglePlayStore}
-                  style={{
-                    width: '177px',
-                    height: '70px',
-                  }}
-                />
-              </a>
-            </Col>
           </Row>
-          <Row style={{ fontSize: '20px', marginTop: '1rem' }}>
-            Wait for your Trusted Advisor to add Goals, Routines and Events to
-            your schedule.
-          </Row>
-        </Box>
-      )}
-
-      {/* <Box
+        </Row>
+      </div>
+      <Row
         style={{
-          position: 'fixed',
-          right: '-100px',
-          bottom: '-100px',
-          backgroundColor: '#F2F7FC',
+          display: 'flex',
+          justifyContent: 'space-evenly',
+          marginTop: '1rem',
+          paddingBottom: '3rem',
         }}
       >
-        <img src={Ellipse} alt="Ellipse" />
-      </Box> */}
-      <Box style={{ position: 'fixed', right: '-30px', bottom: '-50px' }}>
-        <div style={{ position: 'relative', color: 'white' }}>
-          <img src={Ellipse} style={{ width: '120%' }} alt="Ellipse" />
-          <div
-            style={{
-              position: 'absolute',
-              top: '60%',
-              left: '40%',
-              transform: 'translate(-45%, -50%)',
-            }}
-            className="text"
-          >
-            <p style={{ font: 'normal normal normal 18px SF Pro' }}>
-              <div
-                style={{
-                  font: 'normal normal bold 21px SF Pro',
-                }}
-              >
-                How we use your data
-              </div>
-              Manifest My Life uses social media data to obtain your name,
-              modify your calendar, and access your photos. This information
-              allows the Coach or Advisor to login, confirm they are modifying
-              the correct client’s data, create custom events for the client to
-              attend, and enhance the client’s user experience by incorporating
-              relevant photos.
-              <br />
-              <Link
-                style={{ color: 'white', textDecoration: 'underline' }}
-                to="/privacy"
-              >
-                View our Privacy Policy
-              </Link>
-            </p>
+        <Col xs={4} className={classes.infoLayout}>
+          <img className={classes.infoImage} src={Events} />
+          <div className={classes.infoText}>Events</div>
+          <div className={classes.infoText}>
+            Schedule events and never forget another appointment or meeting
+            again.
           </div>
-        </div>
-      </Box>
+        </Col>
+        <Col xs={4} className={classes.infoLayout}>
+          <img className={classes.infoImage} src={Routines} />
+          <div className={classes.infoText}>Routines</div>
+          <div className={classes.infoText}>
+            Manage your day by creating routines with actionable steps and
+            scheduling.
+          </div>
+        </Col>
+        <Col xs={4} className={classes.infoLayout}>
+          <img className={classes.infoImage} src={Goals} />
+          <div className={classes.infoText}>Goals</div>
+          <div className={classes.infoText}>
+            Create goals to help motivate yourself to get what you need to get
+            done.
+          </div>
+        </Col>
+      </Row>
+      <Footer />
       {socialSignUpModal()}
       {alreadyExistsModal()}
-
-      {/* <Box hidden={loggedIn === true}>
-                  <Loading/>
-            </Box> */}
-    </Box>
+    </div>
   );
 }

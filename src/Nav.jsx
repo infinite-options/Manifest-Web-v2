@@ -1,6 +1,7 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import Login from '../src/manifest/Login';
+import Landing from '../src/manifest/Landing';
 import Home from '../src/Home/Home';
 import History from './History/History';
 import SignUp from '../src/manifest/SignUp';
@@ -17,7 +18,8 @@ import UserSignUp from './manifest/UserSignUp';
 function Nav(authLevel, isAuth) {
   return (
     <Switch>
-      <Route exact path="/" component={Login} />
+      <Route exact path="/" component={Landing} />
+      <Route exact path="/login" component={Login} />
       <Route exact path="/home" component={Home} />
       <Route exact path="/events" component={Events} />
       <Route exact path="/eventcomponent" component={GoogleEventComponent} />
