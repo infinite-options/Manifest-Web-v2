@@ -90,7 +90,7 @@ const useStyles = makeStyles({
 });
 
 /* Navigation Bar component function */
-export default function Privacy() {
+export default function Landing() {
   const loginContext = useContext(LoginContext);
   console.log('in login page');
   const classes = useStyles();
@@ -100,7 +100,7 @@ export default function Privacy() {
     <div
       style={{
         background: '#F2F7FC',
-        minHeight: '100vh',
+        height: '100vh',
         position: 'relative',
       }}
     >
@@ -211,6 +211,7 @@ export default function Privacy() {
           display: 'flex',
           justifyContent: 'space-evenly',
           marginTop: '1rem',
+          paddingBottom: '3rem',
         }}
       >
         <Col xs={4} className={classes.infoLayout}>

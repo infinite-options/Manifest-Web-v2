@@ -29,7 +29,7 @@ export default function Footer() {
     <Row
       style={{
         background: '#F2F7FC',
-        position: 'absolute',
+        position: 'fixed',
         bottom: 0,
         width: ' 100%',
         height: '2.5rem',

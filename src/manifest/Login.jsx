@@ -40,7 +40,7 @@ const useStyles = makeStyles({
   heading: {
     font: 'normal normal 600 50px Quicksand-Book',
     color: '#000000',
-    textAlign: 'left',
+    textAlign: 'center',
     marginTop: '1rem',
     paddingLeft: '7rem',
   },
@@ -146,7 +146,7 @@ const useStyles = makeStyles({
 });
 
 /* Navigation Bar component function */
-export default function Privacy() {
+export default function Login() {
   const loginContext = useContext(LoginContext);
   console.log('in login page');
   const classes = useStyles();
@@ -652,6 +652,7 @@ export default function Privacy() {
             <Col xs={10} className={classes.heading}>
               Welcome to Manifest My Life
             </Col>
+            <Col></Col>
           </Row>
           <br />
           <Row className={classes.subHeading}>
@@ -682,7 +683,12 @@ export default function Privacy() {
                             onClick={renderProps.onClick}
                             disabled={renderProps.disabled}
                             alt={''}
-                            style={{ width: '60%', padding: '0', margin: 0 }}
+                            style={{
+                              minWidth: '60%',
+                              maxWidth: '70%',
+                              padding: '0',
+                              margin: 0,
+                            }}
                           ></img>
                         )}
                         buttonText="Log In"
@@ -704,6 +710,12 @@ export default function Privacy() {
                         src={Apple}
                         alt={''}
                         className={classes.buttonLayout}
+                        style={{
+                          minWidth: '60%',
+                          maxWidth: '70%',
+                          padding: '0',
+                          margin: 0,
+                        }}
                         onClick={() => {
                           window.AppleID.auth.signIn();
                         }}
@@ -719,7 +731,12 @@ export default function Privacy() {
                       <img
                         src={Email}
                         alt={''}
-                        style={{ width: '60%', padding: '0', margin: '0' }}
+                        style={{
+                          minWidth: '60%',
+                          maxWidth: '70%',
+                          padding: '0',
+                          margin: '0',
+                        }}
                         onClick={() => {
                           setEmailLogin(true);
                         }}
@@ -845,6 +862,7 @@ export default function Privacy() {
           display: 'flex',
           justifyContent: 'space-evenly',
           marginTop: '1rem',
+          paddingBottom: '3rem',
         }}
       >
         <Col xs={4} className={classes.infoLayout}>

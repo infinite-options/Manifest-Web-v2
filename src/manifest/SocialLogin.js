@@ -499,7 +499,12 @@ function SocialLogin(props) {
                   onClick={renderProps.onClick}
                   disabled={renderProps.disabled}
                   alt={''}
-                  style={{ width: '60%', padding: '0', margin: 0 }}
+                  style={{
+                    minWidth: '60%',
+                    maxWidth: '70%',
+                    padding: '0',
+                    margin: 0,
+                  }}
                 ></img>
               )}
             />
@@ -514,7 +519,12 @@ function SocialLogin(props) {
             <img
               src={Apple}
               alt={''}
-              style={{ width: '60%', padding: '0', margin: 0 }}
+              style={{
+                minWidth: '60%',
+                maxWidth: '70%',
+                padding: '0',
+                margin: 0,
+              }}
               className={classes.buttonLayout}
               onClick={() => {
                 window.AppleID.auth.signIn();

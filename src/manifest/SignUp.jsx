@@ -33,7 +33,7 @@ const useStyles = makeStyles({
   heading: {
     font: 'normal normal 600 50px Quicksand-Book',
     color: '#000000',
-    textAlign: 'left',
+    textAlign: 'center',
     marginTop: '1rem',
     paddingLeft: '7rem',
   },
@@ -371,6 +371,7 @@ export default function Signup() {
             <Col xs={10} className={classes.heading}>
               Welcome to Manifest My Life
             </Col>
+            <Col></Col>
           </Row>
           <br />
           <Row className={classes.subHeading}>
@@ -401,7 +402,12 @@ export default function Signup() {
                       <img
                         src={Email}
                         alt={''}
-                        style={{ width: '60%', padding: '0', margin: '0' }}
+                        style={{
+                          minWidth: '60%',
+                          maxWidth: '70%',
+                          padding: '0',
+                          margin: '0',
+                        }}
                         onClick={() => {
                           setEmailSignup(true);
                         }}
@@ -761,6 +767,7 @@ export default function Signup() {
           display: 'flex',
           justifyContent: 'space-evenly',
           marginTop: '1rem',
+          paddingBottom: '3rem',
         }}
       >
         <Col xs={4} className={classes.infoLayout}>

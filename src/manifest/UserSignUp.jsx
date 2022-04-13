@@ -39,7 +39,7 @@ const useStyles = makeStyles({
   heading: {
     font: 'normal normal 600 50px Quicksand-Book',
     color: '#000000',
-    textAlign: 'left',
+    textAlign: 'center',
     marginTop: '1rem',
     paddingLeft: '7rem',
   },
@@ -677,6 +677,7 @@ export default function UserSignUp() {
             <Col xs={10} className={classes.heading}>
               Welcome to Manifest My Life
             </Col>
+            <Col></Col>
           </Row>
           <br />
           <Row className={classes.subHeading}>
@@ -733,7 +734,12 @@ export default function UserSignUp() {
                             onClick={renderProps.onClick}
                             disabled={renderProps.disabled}
                             alt={''}
-                            style={{ width: '60%', padding: '0', margin: '0' }}
+                            style={{
+                              minWidth: '60%',
+                              maxWidth: '70%',
+                              padding: '0',
+                              margin: '0',
+                            }}
                           ></img>
                         )}
                       />
@@ -749,7 +755,12 @@ export default function UserSignUp() {
                         src={Apple}
                         variant="contained"
                         alt={''}
-                        style={{ width: '60%', padding: '0', margin: '0' }}
+                        style={{
+                          minWidth: '60%',
+                          maxWidth: '70%',
+                          padding: '0',
+                          margin: '0',
+                        }}
                         onClick={() => {
                           window.AppleID.auth.signIn();
                         }}
@@ -765,7 +776,12 @@ export default function UserSignUp() {
                       <img
                         src={Email}
                         alt={''}
-                        style={{ width: '60%', padding: '0', margin: '0' }}
+                        style={{
+                          minWidth: '60%',
+                          maxWidth: '70%',
+                          padding: '0',
+                          margin: '0',
+                        }}
                         onClick={() => {
                           setEmailSignup(!emailSignup);
                         }}
@@ -1109,6 +1125,7 @@ export default function UserSignUp() {
           display: 'flex',
           justifyContent: 'space-evenly',
           marginTop: '1rem',
+          paddingBottom: '3rem',
         }}
       >
         <Col xs={4} className={classes.infoLayout}>
