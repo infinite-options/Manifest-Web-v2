@@ -1,16 +1,16 @@
-import React, { Component } from "react";
-import moment from "moment";
-import { Container, Row, Col } from "react-bootstrap";
+import React, { Component } from 'react';
+import moment from 'moment';
+import { Container, Row, Col } from 'react-bootstrap';
 
 export default class DayRoutines extends Component {
   constructor(props) {
     super(props);
     this.state = {
       routines: [], // array to hold all routines
-      pxPerHour: "30px", //preset size for all columns
+      pxPerHour: '30px', //preset size for all columns
       pxPerHourForConversion: 55, // if pxPerHour is change, this should change to reflect it
       zIndex: 1, //thought i needed to increment zIndex for div overlaps but seems to be fine being at 1 for all divs
-      eventBoxSize: "200", //width size for event box
+      eventBoxSize: '200', //width size for event box
     };
   }
 
@@ -61,7 +61,7 @@ export default class DayRoutines extends Component {
     let itemWidth = this.state.eventBoxSize;
     var addmarginLeft = 0;
     var fontSize = 10;
-    console.log(this.props.dateContext.toString())
+    console.log(this.props.dateContext.toString());
     for (let i = 0; i < arr.length; i++) {
       tempStart = arr[i].start_day_and_time;
       tempEnd = arr[i].end_day_and_time;
@@ -69,12 +69,12 @@ export default class DayRoutines extends Component {
       let tempStartTime = new Date(tempStart.replace(/-/g, '/'));
       let tempEndTime = new Date(tempEnd.replace(/-/g, '/'));
 
-      let curDate = this.props.dateContext.get("date");
-      let curMonth = this.props.dateContext.get("month");
-      let curYear = this.props.dateContext.get("year");
+      let curDate = this.props.dateContext.get('date');
+      let curMonth = this.props.dateContext.get('month');
+      let curYear = this.props.dateContext.get('year');
 
       let CurrentDate = new Date(
-        new Date(curYear, curMonth, curDate).toLocaleString("en-US", {
+        new Date(curYear, curMonth, curDate).toLocaleString('en-US', {
           timeZone: this.props.TimeZone,
         })
       );
@@ -98,7 +98,7 @@ export default class DayRoutines extends Component {
       let repeatEnds = arr[i].repeat_type;
 
       let repeatEndsOn = new Date(
-        new Date(arr[i].repeat_ends_on).toLocaleString("en-US", {
+        new Date(arr[i].repeat_ends_on).toLocaleString('en-US', {
           timeZone: this.props.TimeZone,
         })
       );
@@ -109,7 +109,7 @@ export default class DayRoutines extends Component {
       let repeatWeekDays = [];
       if (arr[i].repeat_week_days != null) {
         Object.keys(arr[i].repeat_week_days).forEach((k) => {
-          if (arr[i].repeat_week_days[k] != "") {
+          if (arr[i].repeat_week_days[k] != '') {
             repeatWeekDays.push(parseInt(k));
           }
         });
@@ -120,19 +120,18 @@ export default class DayRoutines extends Component {
           CurrentDate.getTime() - startDate.getTime() == 0;
       } else {
         if (CurrentDate >= startDate) {
-          if (repeatEnds == "On") {
-          } else if (repeatEnds == "After") {
-            if (repeatFrequency == "Day") {
+          if (repeatEnds == 'On') {
+          } else if (repeatEnds == 'After') {
+            if (repeatFrequency == 'Day') {
               repeatEndsOn = new Date(startDate);
               repeatEndsOn.setDate(
                 startDate.getDate() + (repeatOccurences - 1) * repeatEvery
               );
-            } else if (repeatFrequency == "Week") {
+            } else if (repeatFrequency == 'Week') {
               let occurence_dates = [];
 
-              const start_day_and_time = arr[i].start_day_and_time.split(
-                " "
-              )[0];
+              const start_day_and_time =
+                arr[i].start_day_and_time.split(' ')[0];
               // const initDate = start_day_and_time[1];
               //const initMonth = getMonthNumber(start_day_and_time[2]);
               //const initYear = start_day_and_time[3];
@@ -148,7 +147,7 @@ export default class DayRoutines extends Component {
                 repeatWeekDays.push(7);
               }
 
-              const d = moment(initFullDate, "MM/DD/YYYY");
+              const d = moment(initFullDate, 'MM/DD/YYYY');
               const today_day = d.isoWeekday();
               const result = repeatWeekDays.filter((day) => day < today_day);
               if (result.length > 0) {
@@ -167,14 +166,14 @@ export default class DayRoutines extends Component {
                   numberOfWeek = Math.floor(i / repeatWeekDays.length);
                   dow = repeatWeekDays[i % repeatWeekDays.length];
                 }
-                const new_date = moment(initFullDate, "MM/DD/YYYY");
+                const new_date = moment(initFullDate, 'MM/DD/YYYY');
                 const nextDayOfTheWeek = getNextDayOfTheWeek(dow, new_date);
                 //console.log("NextDayOfWeek: ", nextDayOfTheWeek.format("L"));
                 //console.log("numberOfWeeks: ", numberOfWeek);
                 const date = nextDayOfTheWeek
                   .clone()
-                  .add(numberOfWeek * repeatEvery, "weeks")
-                  .format("L");
+                  .add(numberOfWeek * repeatEvery, 'weeks')
+                  .format('L');
                 occurence_dates.push(date);
               }
 
@@ -186,23 +185,23 @@ export default class DayRoutines extends Component {
               if (occurence_dates.includes(today)) {
                 isDisplayedTodayCalculated = true;
               }
-            } else if (repeatFrequency == "Month") {
+            } else if (repeatFrequency == 'Month') {
               repeatEndsOn = new Date(startDate);
               repeatEndsOn.setMonth(
                 startDate.getMonth() + (repeatOccurences - 1) * repeatEvery
               );
-            } else if (repeatFrequency == "YEAR") {
+            } else if (repeatFrequency == 'YEAR') {
               repeatEndsOn = new Date(startDate);
               repeatEndsOn.setFullYear(
                 startDate.getFullYear() + (repeatOccurences - 1) * repeatEvery
               );
             }
-          } else if (repeatEnds == "Never") {
+          } else if (repeatEnds == 'Never') {
             repeatEndsOn = CurrentDate;
           }
 
           if (CurrentDate <= repeatEndsOn) {
-            if (repeatFrequency == "Day") {
+            if (repeatFrequency == 'Day') {
               isDisplayedTodayCalculated =
                 Math.floor(
                   (CurrentDate.getTime() - startDate.getTime()) /
@@ -210,7 +209,7 @@ export default class DayRoutines extends Component {
                 ) %
                   repeatEvery ==
                 0;
-            } else if (repeatFrequency == "Week") {
+            } else if (repeatFrequency == 'Week') {
               isDisplayedTodayCalculated =
                 repeatWeekDays.includes(CurrentDate.getDay()) &&
                 Math.floor(
@@ -219,7 +218,7 @@ export default class DayRoutines extends Component {
                 ) %
                   repeatEvery ==
                   0;
-            } else if (repeatFrequency == "Month") {
+            } else if (repeatFrequency == 'Month') {
               isDisplayedTodayCalculated =
                 CurrentDate.getDate() == startDate.getDate() &&
                 ((CurrentDate.getFullYear() - startDate.getFullYear()) * 12 +
@@ -227,7 +226,7 @@ export default class DayRoutines extends Component {
                   startDate.getMonth()) %
                   repeatEvery ==
                   0;
-            } else if (repeatFrequency == "YEAR") {
+            } else if (repeatFrequency == 'YEAR') {
               isDisplayedTodayCalculated =
                 startDate.getDate() == CurrentDate.getDate() &&
                 CurrentDate.getMonth() == startDate.getMonth() &&
@@ -267,7 +266,7 @@ export default class DayRoutines extends Component {
               this.state.pxPerHourForConversion;
             let hourDiff = 24 - tempStartTime.getHours();
             let minDiff = 0;
-            let color = "lavender";
+            let color = 'lavender';
             let height =
               (hourDiff + minDiff) * this.state.pxPerHourForConversion;
             sameTimeEventCount++;
@@ -323,10 +322,11 @@ export default class DayRoutines extends Component {
               (tempStartTime.getMinutes() / 60) *
               this.state.pxPerHourForConversion;
             let hourDiff = tempEndTime.getHours() - tempStartTime.getHours();
-            let minDiff = (tempEndTime.getMinutes()-tempStartTime.getMinutes()) / 60;
+            let minDiff =
+              (tempEndTime.getMinutes() - tempStartTime.getMinutes()) / 60;
             let height =
               (hourDiff + minDiff) * this.state.pxPerHourForConversion;
-            let color = '#ff6b4a';
+            let color = '#FFB84D';
             sameTimeEventCount++;
             for (let i = 0; i < arr.length; i++) {
               tempStart = arr[i].start_day_and_time;
@@ -354,11 +354,11 @@ export default class DayRoutines extends Component {
             }
             // change color if more than one event in same time.
             if (sameTimeEventCount <= 1) {
-              color = hour % 2 === 0 ? "#ff6b4a" : "#ff957d";
+              color = hour % 2 === 0 ? '#FFB84D' : '#ff957d';
             } else if (sameTimeEventCount === 2) {
-              color = "#ff957d";
+              color = '#ff957d';
             } else {
-              color = '#ff6b4a';
+              color = '#FFB84D';
             }
             if (isDisplayedTodayCalculated) {
               let newElement = (
@@ -419,7 +419,7 @@ export default class DayRoutines extends Component {
         let hourDiff = tempEndTime.getHours();
         let minDiff = tempEndTime.getMinutes() / 60;
         let height = (hourDiff + minDiff) * this.state.pxPerHourForConversion;
-        let color = "lavender";
+        let color = 'lavender';
         sameTimeEventCount++;
         if (isDisplayedTodayCalculated) {
           let newElement = (
@@ -480,7 +480,7 @@ export default class DayRoutines extends Component {
         let minsToMarginTop = 0;
         //let hourDiff = 24;
         let height = 24 * this.state.pxPerHourForConversion;
-        let color = "lavender";
+        let color = 'lavender';
         sameTimeEventCount++;
         if (isDisplayedTodayCalculated) {
           let newElement = (
@@ -570,12 +570,11 @@ export default class DayRoutines extends Component {
         }}
       >
         Today's Routines:
-        <Container >
+        <Container>
           <Row
             ref={this.hourDisplay}
             noGutters={true}
             className="d-flex justify-content-end"
-            
           >
             <Col>
               <Container style={{ margin: '0', padding: '0' }}>
@@ -591,10 +590,10 @@ export default class DayRoutines extends Component {
 
 function getFormattedDate(date) {
   let year = date.getFullYear();
-  let month = (1 + date.getMonth()).toString().padStart(2, "0");
-  let day = date.getDate().toString().padStart(2, "0");
+  let month = (1 + date.getMonth()).toString().padStart(2, '0');
+  let day = date.getDate().toString().padStart(2, '0');
 
-  return month + "/" + day + "/" + year;
+  return month + '/' + day + '/' + year;
 }
 
 function getNextDayOfTheWeek(day, date) {
@@ -609,39 +608,39 @@ function getNextDayOfTheWeek(day, date) {
     return nextDayOfTheWeek;
   } else {
     // otherwise, give me *next week's* instance of that same day
-    var nextDayOfTheWeek = date.add(1, "weeks").day(dayINeed);
+    var nextDayOfTheWeek = date.add(1, 'weeks').day(dayINeed);
     // console.log("from getNextday", nextDayOfTheWeek.format("L"));
     return nextDayOfTheWeek;
   }
 }
 function getMonthNumber(str) {
   switch (str) {
-    case "Jan":
-      return "01";
-    case "Feb":
-      return "02";
-    case "Mar":
-      return "03";
-    case "April":
-      return "04";
-    case "May":
-      return "05";
-    case "Jun":
-      return "06";
-    case "Jul":
-      return "07";
-    case "Aug":
-      return "08";
-    case "Sep":
-      return "09";
-    case "Oct":
-      return "10";
-    case "Nov":
-      return "11";
-    case "Dec":
-      return "12";
+    case 'Jan':
+      return '01';
+    case 'Feb':
+      return '02';
+    case 'Mar':
+      return '03';
+    case 'April':
+      return '04';
+    case 'May':
+      return '05';
+    case 'Jun':
+      return '06';
+    case 'Jul':
+      return '07';
+    case 'Aug':
+      return '08';
+    case 'Sep':
+      return '09';
+    case 'Oct':
+      return '10';
+    case 'Nov':
+      return '11';
+    case 'Dec':
+      return '12';
     default:
       console.log("can't change the month");
-      return "";
+      return '';
   }
 }

@@ -30,7 +30,7 @@ export default class DayEvents extends Component {
               // height: this.state.pxPerHour,
               height: '55px',
               // fluid: true,
-              margin:0
+              margin: 0,
             }}
           >
             {i == 0
@@ -56,7 +56,7 @@ export default class DayEvents extends Component {
 
   sortEvents = () => {
     var arr = this.props.dayEvents;
-    console.log('day events goals',arr);
+    console.log('day events goals', arr);
     var dic = {};
     let id = 0;
     let nextnexttempStart;
@@ -196,7 +196,7 @@ export default class DayEvents extends Component {
                     }
                     onMouseOver={(e) => {
                       e.target.style.color = '#FFFFFF';
-                      e.target.style.background = '#67ABFC';
+                      e.target.style.background = '#D6B7FF';
                       e.target.style.zIndex = '2';
                     }}
                     onMouseOut={(e) => {
@@ -300,7 +300,7 @@ export default class DayEvents extends Component {
                     }
                     onMouseOver={(e) => {
                       e.target.style.color = '#FFFFFF';
-                      e.target.style.background = '#67ABFC';
+                      e.target.style.background = '#D6B7FF';
                       e.target.style.zIndex = '2';
                     }}
                     onMouseOut={(e) => {
@@ -360,7 +360,7 @@ export default class DayEvents extends Component {
                 }
                 onMouseOver={(e) => {
                   e.target.style.color = '#FFFFFF';
-                  e.target.style.background = '#67ABFC';
+                  e.target.style.background = '#D6B7FF';
                   e.target.style.zIndex = '2';
                 }}
                 onMouseOut={(e) => {
@@ -421,7 +421,7 @@ export default class DayEvents extends Component {
                 }
                 onMouseOver={(e) => {
                   e.target.style.color = '#FFFFFF';
-                  e.target.style.background = '#67ABFC';
+                  e.target.style.background = '#D6B7FF';
                   e.target.style.zIndex = '2';
                 }}
                 onMouseOut={(e) => {
@@ -493,7 +493,7 @@ export default class DayEvents extends Component {
               width: '250px', //lyman change width to adjust
               //background: 'aliceblue',
               //height: this.state.pxPerHour,
-              marginLeft:'0',
+              marginLeft: '0',
               height: '55px',
             }}
             onClick={(e) => this.onDayClick(e, i)}
@@ -516,11 +516,11 @@ export default class DayEvents extends Component {
             ref={this.hourDisplay}
             noGutters={true}
             className="d-flex justify-content-end"
-            style={{marginLeft:'-10px'}}
+            style={{ marginLeft: '-10px' }}
           >
             <Col>
               {/* this is Just for the time */}
-              <Container style={{  padding: '0' }}>
+              <Container style={{ padding: '0' }}>
                 {this.timeDisplay()}
               </Container>
             </Col>
@@ -535,5 +535,4 @@ export default class DayEvents extends Component {
       </div>
     );
   }
-  
 }

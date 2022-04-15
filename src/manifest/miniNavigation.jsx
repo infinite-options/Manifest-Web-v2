@@ -1,34 +1,33 @@
 import React from 'react';
-import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
-import AppBar from '@material-ui/core/AppBar';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { useHistory } from 'react-router-dom';
-import Typography from '@material-ui/core/Typography';
 
 /* Custom Hook to make styles */
 const useStyles = makeStyles({
   buttonSelection: {
-    width: '14%',
-    height: '70px',
-    // borderBottomLeftRadius: '25%',
-    // borderBottomRightRadius: '25%',
-    borderRadius: '0%',
+    width: '7%',
+    height: '33px',
     textTransform: 'capitalize',
-    color: '#FFFFFF',
-    backgroundColor: '#bbc8d7',
+    borderRadius: '0%',
+    color: '#000000',
     marginLeft: '.5%',
     marginRight: '.5%',
+    background: '#FFFFFF 0% 0% no-repeat padding-box',
+    border: '1px solid #000000',
+    borderRadius: '10px',
   },
   buttonContainer: {
     flex: 1,
     display: 'flex',
     justifyContent: 'flex-start',
     textTransform: 'none',
+    background: '#F2F7FC 0% 0% no-repeat padding-box',
+    paddingBottom: '0.5rem',
   },
 
   dateContainer: {
-    height: '70px',
+    height: '33px',
     width: '100%',
     // borderBottomLeftRadius: "10%",
     // borderBottomRightRadius: "10%",
@@ -72,7 +71,14 @@ export default function MiniNavigation() {
   }
 
   return (
-    <div className={classes.buttonContainer} style={{ width: '35%' }}>
+    <div className={classes.buttonContainer} style={{ width: '100%' }}>
+      <Button
+        className={classes.buttonSelection}
+        onClick={homeNavigation}
+        id="one"
+      >
+        Calendar
+      </Button>
       <Button
         className={classes.buttonSelection}
         id="one"
@@ -86,27 +92,6 @@ export default function MiniNavigation() {
         onClick={aboutNavigation}
       >
         About
-      </Button>
-      <Button
-        className={classes.buttonSelection}
-        onClick={eventNavigation}
-        id="one"
-      >
-        Events
-      </Button>
-      <Button
-        className={classes.buttonSelection}
-        onClick={goalHomeNavigation}
-        id="one"
-      >
-        Goals
-      </Button>
-      <Button
-        className={classes.buttonSelection}
-        onClick={homeNavigation}
-        id="one"
-      >
-        Routines
       </Button>
 
       <div style={{ width: '25%' }}></div>

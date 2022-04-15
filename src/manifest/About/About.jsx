@@ -1263,7 +1263,7 @@ export default function AboutModal(props) {
             <div>
               <button
                 style={{
-                  backgroundColor: '#FF6B4A',
+                  backgroundColor: '#FFB84D',
                   color: 'white',
                   border: 'solid',
                   borderWidth: '2px',
@@ -1635,9 +1635,9 @@ export default function AboutModal(props) {
       {deleteModal()}
       {removeRoleModal()}
       <div style={{ height: '3px' }}></div>
-      <div backgroundColor="#bbc8d7">
+      {/* <div backgroundColor="#bbc8d7">
         <MiniNavigation />
-      </div>
+      </div> */}
       <ModalBody
         style={{
           backgroundColor: '#889AB5',

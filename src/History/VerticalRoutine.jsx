@@ -105,7 +105,7 @@ const VerticalRoutine = ({
               width: '100%',
               display: 'flex',
               justifyContent: 'space-between',
-              backgroundColor: '#FF6B4A',
+              backgroundColor: '#FFB84D',
               boxShadow:
                 '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)',
               zIndex: '50%',
@@ -224,7 +224,7 @@ const VerticalRoutine = ({
                   title="Percentage of routine completed in last 7 days"
                   style={{
                     justifyContent: 'center',
-                    color: '#FF6B4A',
+                    color: '#FFB84D',
                     fontWeight: 'bold',
                     fontSize: 15,
                   }}
@@ -235,7 +235,7 @@ const VerticalRoutine = ({
                   title="Percentage of actions completed in last 7 days"
                   style={{
                     justifyContent: 'center',
-                    color: '#F8BE28',
+                    color: '#4D94FF',
                     fontWeight: 'bold',
                     fontSize: 15,
                   }}
@@ -246,7 +246,7 @@ const VerticalRoutine = ({
                   title="Percentage of instructions completed in last 7 days"
                   style={{
                     justifyContent: 'center',
-                    color: '#67ABFC',
+                    color: '#70D6FF',
                     fontWeight: 'bold',
                     fontSize: 15,
                   }}
@@ -267,7 +267,7 @@ const VerticalRoutine = ({
         style={{
           height: '98px',
           width: '100%',
-          backgroundColor: '#d1dceb',
+          backgroundColor: '#EBEBEB',
           marginBottom: '0px',
         }}
       >
@@ -282,7 +282,7 @@ const VerticalRoutine = ({
               width: '83%',
               display: 'flex',
               justifyContent: 'space-between',
-              backgroundColor: '#F8BE28',
+              backgroundColor: '#4D94FF',
               boxShadow:
                 '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)',
               zIndex: '50%',
@@ -309,7 +309,7 @@ const VerticalRoutine = ({
                   <div
                     style={{
                       fontSize: '8px',
-                      color: '#F8BE28',
+                      color: '#4D94FF',
                     }}
                   >
                     {formatDateTime('6/23/2021, 7:31:19 AM')}-
@@ -401,7 +401,7 @@ const VerticalRoutine = ({
                   style={{
                     marginTop: '12px',
                     justifyContent: 'center',
-                    color: '#F8BE28',
+                    color: '#4D94FF',
                     fontWeight: 'bold',
                     fontSize: 15,
                   }}
@@ -412,7 +412,7 @@ const VerticalRoutine = ({
                   title="Percentage of instructions completed in last 7 days"
                   style={{
                     justifyContent: 'center',
-                    color: '#67ABFC',
+                    color: '#70D6FF',
                     fontWeight: 'bold',
                     fontSize: 15,
                   }}
@@ -434,7 +434,7 @@ const VerticalRoutine = ({
         style={{
           height: '98px',
           width: '100%',
-          backgroundColor: '#dae5f5',
+          backgroundColor: '#EBEBEB',
           marginBottom: '0px',
         }}
       >
@@ -449,7 +449,7 @@ const VerticalRoutine = ({
               width: '80%',
               display: 'flex',
               justifyContent: 'space-between',
-              backgroundColor: '#67ABFC',
+              backgroundColor: '#70D6FF',
               boxShadow:
                 '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)',
               zIndex: '50%',
@@ -469,7 +469,7 @@ const VerticalRoutine = ({
                   <div
                     style={{
                       fontSize: '8px',
-                      color: '#67ABFC',
+                      color: '#70D6FF',
                     }}
                   >
                     {formatDateTime('6/23/2021, 8:31:56 AM')}-
@@ -542,7 +542,7 @@ const VerticalRoutine = ({
                   style={{
                     marginTop: '24px',
                     justifyContent: 'center',
-                    color: '#67ABFC',
+                    color: '#70D6FF',
                     fontWeight: 'bold',
                     fontSize: 15,
                   }}
@@ -681,7 +681,7 @@ const VerticalRoutine = ({
 
   return (
     <Box width="350px">
-      <MiniNavigation />
+      {/* <MiniNavigation /> */}
       <div style={{ height: '54.5px', margin: '0px' }}>
         <Row>
           <Col>

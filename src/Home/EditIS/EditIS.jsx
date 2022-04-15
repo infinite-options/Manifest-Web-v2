@@ -293,8 +293,8 @@ const EditIS = (props) => {
         marginLeft: '5rem',
         marginRight: '3rem',
         width: '50%',
-        backgroundColor: '#67ABFC',
-        color: '#ffffff',
+        backgroundColor: '#70D6FF',
+        color: '#000000',
       }}
     >
       {uploadImageModal()}
@@ -478,13 +478,35 @@ const EditIS = (props) => {
             >
               <button
                 style={{
-                  width: '100px',
+                  width: '127px',
+                  height: '37px',
                   padding: '0',
                   margin: '0 20px',
-                  backgroundColor: 'inherit',
-                  border: '3px white solid',
-                  color: '#ffffff',
+                  background: '#09B4FF 0% 0% no-repeat padding-box',
+                  boxShadow: '0px 3px 6px #00000029',
+                  borderRadius: '5px',
                   textAlign: 'center',
+                  border: '1px solid #09B4FF',
+                  color: '#FFFFFF',
+                  font: 'normal normal 600 16px Quicksand-Book',
+                }}
+                onClick={updateIS}
+              >
+                Save
+              </button>
+              <button
+                style={{
+                  width: '127px',
+                  height: '37px',
+                  padding: '0',
+                  margin: '0 20px',
+                  background: ' #FFFFFF 0% 0% no-repeat padding-box',
+                  boxShadow: '0px 3px 6px #00000029',
+                  border: '1px solid #A7A7A7',
+                  borderRadius: '5px',
+                  textAlign: 'center',
+                  color: '#7D7D7D',
+                  font: 'normal normal 600 16px Quicksand-Book',
                 }}
                 onClick={() => {
                   editingISContext.setEditingIS({
@@ -494,20 +516,6 @@ const EditIS = (props) => {
                 }}
               >
                 Cancel
-              </button>
-              <button
-                style={{
-                  width: '100px',
-                  padding: '0',
-                  margin: '0 20px',
-                  backgroundColor: 'inherit',
-                  border: '3px white solid',
-                  color: '#ffffff',
-                  textAlign: 'center',
-                }}
-                onClick={updateIS}
-              >
-                Save
               </button>
             </div>
           </Col>

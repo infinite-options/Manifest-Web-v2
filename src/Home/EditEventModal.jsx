@@ -702,7 +702,7 @@ export default function EditEventModal(props) {
       top: '50%',
       transform: 'translate(-50%, 0%)',
       width: '400px',
-      color: '#67ABFC',
+      color: '#D6B7FF',
     };
 
     const inputStyle = {
@@ -713,12 +713,12 @@ export default function EditEventModal(props) {
       width: '70px',
       borderRadius: '4px',
       marginRight: '8px',
-      color: '#67ABFC',
+      color: '#D6B7FF',
     };
 
     const selectStyle = {
       display: 'inline-block',
-      color: '#67ABFC',
+      color: '#D6B7FF',
     };
 
     const weekStyle = {
@@ -726,10 +726,10 @@ export default function EditEventModal(props) {
       alignItems: 'center',
       textAlign: 'center',
       marginTop: '10px',
-      color: '#67ABFC',
+      color: '#D6B7FF',
     };
     const dotSelected = {
-      backgroundColor: '#67ABFC',
+      backgroundColor: '#D6B7FF',
       color: '#ffffff',
     };
 
@@ -770,7 +770,7 @@ export default function EditEventModal(props) {
                   style={{
                     cursor: 'pointer',
                     padding: '1rem',
-                    backgroundColor: '#67ABFC',
+                    backgroundColor: '#D6B7FF',
                     color: '#ffffff',
                   }}
                   onClick={(e) => selectedDot(e, i)}
@@ -787,7 +787,7 @@ export default function EditEventModal(props) {
                     cursor: 'pointer',
                     padding: '1rem',
                     backgroundColor: '#ffffff',
-                    color: '#67ABFC',
+                    color: '#D6B7FF',
                   }}
                   onClick={(e) => selectedDot(e, i)}
                 >
@@ -837,7 +837,7 @@ export default function EditEventModal(props) {
                 display: 'flex',
                 alignItems: 'center',
                 marginLeft: '5px',
-                color: '#67ABFC',
+                color: '#D6B7FF',
               }}
             >
               Repeat every
@@ -856,14 +856,14 @@ export default function EditEventModal(props) {
               >
                 <Dropdown.Item
                   eventKey="Day"
-                  style={{ color: '#67ABFC' }}
+                  style={{ color: '#D6B7FF' }}
                   onSelect={(eventKey) => handleRepeatDropDown(eventKey)}
                 >
                   day
                 </Dropdown.Item>
                 <Dropdown.Item
                   eventKey="WEEK"
-                  style={{ color: '#67ABFC' }}
+                  style={{ color: '#D6B7FF' }}
                   onSelect={(eventKey) =>
                     handleRepeatDropDown(eventKey, week_days)
                   }
@@ -872,14 +872,14 @@ export default function EditEventModal(props) {
                 </Dropdown.Item>
                 <Dropdown.Item
                   eventKey="MONTH"
-                  style={{ color: '#67ABFC' }}
+                  style={{ color: '#D6B7FF' }}
                   onSelect={(eventKey) => handleRepeatDropDown(eventKey)}
                 >
                   month
                 </Dropdown.Item>
                 <Dropdown.Item
                   eventKey="YEAR"
-                  style={{ color: '#67ABFC' }}
+                  style={{ color: '#D6B7FF' }}
                   onSelect={(eventKey) => handleRepeatDropDown(eventKey)}
                 >
                   year
@@ -973,9 +973,9 @@ export default function EditEventModal(props) {
                     padding: '0',
                     margin: '0 20px',
                     backgroundColor: 'inherit',
-                    border: '1px #67ABFC solid',
+                    border: '1px #D6B7FF solid',
                     borderRadius: '30px',
-                    color: '#67ABFC',
+                    color: '#D6B7FF',
                     textAlign: 'center',
                   }}
                   onClick={closeRepeatModal}
@@ -990,9 +990,9 @@ export default function EditEventModal(props) {
                     padding: '0',
                     margin: '0 20px',
                     backgroundColor: 'inherit',
-                    border: '1px #67ABFC solid',
+                    border: '1px #D6B7FF solid',
                     borderRadius: '30px',
-                    color: '#67ABFC',
+                    color: '#D6B7FF',
                     textAlign: 'center',
                   }}
                   onClick={saveRepeatChanges}
@@ -1014,8 +1014,8 @@ export default function EditEventModal(props) {
       top: '50%',
       transform: 'translate(0%, -50%)',
       width: '400px',
-      color: '#67ABFC',
-      border: '1px solid #67ABFC',
+      color: '#D6B7FF',
+      border: '1px solid #D6B7FF',
     };
     return (
       <Modal.Dialog style={modalStyle}>
@@ -1114,9 +1114,9 @@ export default function EditEventModal(props) {
                     padding: '0',
                     margin: '0 20px',
                     backgroundColor: 'inherit',
-                    border: '1px #67ABFC solid',
+                    border: '1px #D6B7FF solid',
                     borderRadius: '30px',
-                    color: '#67ABFC',
+                    color: '#D6B7FF',
                     textAlign: 'center',
                   }}
                   onClick={closeEditRecurringModal}
@@ -1131,9 +1131,9 @@ export default function EditEventModal(props) {
                     padding: '0',
                     margin: '0 20px',
                     backgroundColor: 'inherit',
-                    border: '1px #67ABFC solid',
+                    border: '1px #D6B7FF solid',
                     borderRadius: '30px',
-                    color: '#67ABFC',
+                    color: '#D6B7FF',
                     textAlign: 'center',
                   }}
                   onClick={(e) => {
@@ -2326,7 +2326,7 @@ export default function EditEventModal(props) {
             marginLeft: '2rem',
             //marginRight: '3rem',
             width: '90%',
-            backgroundColor: '#67ABFC',
+            backgroundColor: '#D6B7FF',
             color: '#ffffff',
           }}
         >

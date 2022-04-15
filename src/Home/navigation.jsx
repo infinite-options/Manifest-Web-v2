@@ -63,14 +63,13 @@ const useStyles = makeStyles({
   },
 
   myButton: {
-    backgroundColor: '#889AB5',
-    color: 'white',
-    border: 'solid',
-    borderWidth: '2px',
-    borderRadius: '20px',
+    backgroundColor: '#F2F7FC',
+    color: '#000000',
+    border: '2px solid #000000',
+    borderRadius: '15px',
     '&:hover, &:focus': {
-      backgroundColor: 'white',
-      color: '#889AB5',
+      backgroundColor: '#000000',
+      color: '#F2F7FC',
     },
     height: '40px',
     width: '30%',
@@ -345,11 +344,12 @@ export function Navigation() {
               justifySelf: 'center',
               alignSelf: 'center',
               display: 'block',
-              backgroundColor: '#889AB5',
+              backgroundColor: '#E6E6E6',
               width: '400px',
               // height: "100px",
-              color: 'white',
+              color: '#000000',
               padding: '40px',
+              font: ' normal normal bold 20px Quicksand-Bold',
             }}
           >
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
@@ -362,11 +362,10 @@ export function Navigation() {
             <div>
               <button
                 style={{
-                  backgroundColor: 'red',
-                  color: 'white',
-                  border: 'solid',
-                  borderWidth: '2px',
-                  borderRadius: '25px',
+                  backgroundColor: '#FFFFFF',
+                  color: '#7D7D7D',
+                  border: '1px solid #7D7D7D',
+                  borderRadius: '5px',
                   width: '30%',
                   marginLeft: '10%',
                   marginRight: '10%',
@@ -379,11 +378,10 @@ export function Navigation() {
               </button>
               <button
                 style={{
-                  backgroundColor: 'green',
+                  backgroundColor: '#09B4FF',
                   color: 'white',
-                  border: 'solid',
-                  borderWidth: '2px',
-                  borderRadius: '25px',
+                  border: '1px solid #FFFFFF',
+                  borderRadius: '5px',
                   width: '30%',
                   marginLeft: '10%',
                   marginRight: '10%',
@@ -443,11 +441,12 @@ export function Navigation() {
               justifySelf: 'center',
               alignSelf: 'center',
               display: 'block',
-              backgroundColor: '#889AB5',
+              backgroundColor: '#F2F7FC',
               width: '400px',
               // height: "100px",
-              color: 'white',
+              color: '#000000',
               padding: '40px',
+              font: 'normal normal bold 20px Quicksand-Bold',
             }}
           >
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
@@ -459,11 +458,10 @@ export function Navigation() {
             <div>
               <button
                 style={{
-                  backgroundColor: 'red',
-                  color: 'white',
-                  border: 'solid',
-                  borderWidth: '2px',
-                  borderRadius: '25px',
+                  backgroundColor: '#FFFFFF',
+                  color: '#7D7D7D',
+                  border: '1px solid #7D7D7D',
+                  borderRadius: '5px',
                   width: '30%',
                   marginLeft: '10%',
                   marginRight: '10%',
@@ -476,11 +474,10 @@ export function Navigation() {
               </button>
               <button
                 style={{
-                  backgroundColor: 'green',
+                  backgroundColor: '#09B4FF',
                   color: 'white',
-                  border: 'solid',
-                  borderWidth: '2px',
-                  borderRadius: '25px',
+                  border: '1px solid #FFFFFF',
+                  borderRadius: '5px',
                   width: '30%',
                   marginLeft: '10%',
                   marginRight: '10%',
@@ -543,10 +540,11 @@ export function Navigation() {
               justifySelf: 'center',
               alignSelf: 'center',
               display: 'block',
-              backgroundColor: '#889AB5',
+              backgroundColor: '#E6E6E6',
               width: '400px',
               // height: "100px",
-              color: 'white',
+              color: '#000000',
+              font: 'normal normal bold 20px Quicksand-Bold',
               padding: '40px',
             }}
           >
@@ -559,11 +557,11 @@ export function Navigation() {
             <div style={{ textAlign: 'center' }}>
               <button
                 style={{
-                  backgroundColor: '#889AB5',
+                  backgroundColor: '#09B4FF',
                   color: 'white',
                   border: 'solid',
                   borderWidth: '2px',
-                  borderRadius: '25px',
+                  borderRadius: '5px',
                   width: '30%',
                   marginLeft: '10%',
                   marginRight: '10%',
@@ -606,10 +604,11 @@ export function Navigation() {
               justifySelf: 'center',
               alignSelf: 'center',
               display: 'block',
-              backgroundColor: '#889AB5',
+              backgroundColor: '#E6E6E6',
               width: '400px',
               // height: "100px",
-              color: 'white',
+              color: '#000000',
+              font: 'normal normal bold 20px Quicksand-Bold',
               padding: '40px',
             }}
           >
@@ -622,11 +621,11 @@ export function Navigation() {
             <div style={{ textAlign: 'center' }}>
               <button
                 style={{
-                  backgroundColor: '#889AB5',
+                  backgroundColor: '#09B4FF',
                   color: 'white',
                   border: 'solid',
                   borderWidth: '2px',
-                  borderRadius: '25px',
+                  borderRadius: '5px',
                   width: '30%',
                   marginLeft: '10%',
                   marginRight: '10%',
@@ -685,121 +684,7 @@ export function Navigation() {
   return (
     <>
       {/* {newUserModal()} */}
-      <Box hidden={!showNewUser}>
-        <div
-          style={{
-            height: '100%',
-            width: '100%',
-            zIndex: '101',
-            left: '0',
-            top: '0',
-            overflow: 'auto',
-            position: 'fixed',
-            display: 'grid',
-            backgroundColor: 'rgba(255, 255, 255, 0.5)',
-          }}
-        >
-          <div
-            style={{
-              position: 'relative',
-              justifySelf: 'center',
-              alignSelf: 'center',
-              display: 'block',
-              backgroundColor: '#889AB5',
-              width: '400px',
-              // height: "100px",
-              color: 'white',
-              padding: '40px',
-            }}
-          >
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              New User
-            </div>
-            <div>Email:</div>
-            <div style={{ marginBottom: '20px' }}>{emailUser}</div>
-            <div>First Name:</div>
-            <input
-              placeholder={firstName}
-              style={{
-                marginBottom: '20px',
-                height: '40px',
-                width: '100%',
-                borderRadius: '15px',
-                border: 'none',
-              }}
-              onChange={(e) => {
-                setFirstName(e.target.value);
-                //console.log("change", e.target.value)
-              }}
-            ></input>
-            <div>Last Name:</div>
-            <input
-              placeholder={lastName}
-              style={{
-                marginBottom: '20px',
-                height: '40px',
-                width: '100%',
-                borderRadius: '15px',
-                border: 'none',
-              }}
-              onChange={(e) => {
-                setLastName(e.target.value);
-                //console.log("change", e.target.value)
-              }}
-            ></input>
-            {/* <input placeholder="timezone" style={{marginBottom: '20px', height: '40px', width: "100%", borderRadius: '15px', border: 'none'}}></input>
-             */}
-            <div className="App">
-              <h2>Select Timezone</h2>
-              <blockquote>Please make a selection</blockquote>
-              <div className="select-wrapper" style={{ color: '#000000' }}>
-                <TimezoneSelect
-                  value={selectedTimezone}
-                  onChange={setSelectedTimezone}
-                />
-              </div>
-            </div>
-            <div>
-              <button
-                style={{
-                  backgroundColor: '#889AB5',
-                  color: 'white',
-                  border: 'solid',
-                  borderWidth: '2px',
-                  borderRadius: '25px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                  marginTop: '1rem',
-                }}
-                onClick={() => {
-                  toggleNewUser(false);
-                }}
-              >
-                Close
-              </button>
-              <button
-                style={{
-                  backgroundColor: '#889AB5',
-                  color: 'white',
-                  border: 'solid',
-                  borderWidth: '2px',
-                  borderRadius: '25px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
-                onClick={() => {
-                  toggleNewUser(false);
-                  onSubmitUser();
-                }}
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
-      </Box>
+
       {giveAccessModal()}
       {assignUserModal()}
       {confirmedModal()}
@@ -997,35 +882,46 @@ export function Navigation() {
                   >
                     Logout
                   </Button>
-
-                  <select
-                    //className={classes.buttonColor}
-                    //variant="text"
-                    //onClick={homeNavigation}
-                    className={classes.myButton}
-                    style={{ float: 'right' }}
-                    onChange={(e) => {
-                      if (e.target.value != null) {
-                        console.log('Another', JSON.parse(e.target.value));
-                        setTAName(
-                          JSON.parse(e.target.value).ta_first_name +
-                            ' ' +
-                            JSON.parse(e.target.value).ta_last_name
-                        );
-                        setTAID(JSON.parse(e.target.value).ta_unique_id);
-                        toggleGiveAccess(true);
-                      }
+                  <div
+                    style={{
+                      float: 'left',
+                      width: '60%',
+                      borderRadius: '15px',
                     }}
                   >
-                    {/* Give another Advisor Access */}
-                    <option value="null" selected>
-                      Give Another Advisor Access
-                    </option>
-                    {/* <option>
+                    <select
+                      //className={classes.buttonColor}
+                      //variant="text"
+                      //onClick={homeNavigation}
+                      className={classes.myButton}
+                      style={{
+                        float: 'left',
+                        width: '100%',
+                        backgroundColor: '#F2F7FC',
+                      }}
+                      onChange={(e) => {
+                        if (e.target.value != null) {
+                          console.log('Another', JSON.parse(e.target.value));
+                          setTAName(
+                            JSON.parse(e.target.value).ta_first_name +
+                              ' ' +
+                              JSON.parse(e.target.value).ta_last_name
+                          );
+                          setTAID(JSON.parse(e.target.value).ta_unique_id);
+                          toggleGiveAccess(true);
+                        }
+                      }}
+                    >
+                      {/* Give another Advisor Access */}
+                      <option value="null" selected>
+                        Give Another Advisor Access
+                      </option>
+                      {/* <option>
                       test name
                     </option> */}
-                    {taListRendered()}
-                  </select>
+                      {taListRendered()}
+                    </select>
+                  </div>
 
                   {/* <Button
                   //className={classes.buttonColor}

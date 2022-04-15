@@ -183,6 +183,16 @@ export default function UserSignUp() {
     }
   }, [loginContext.loginState.reload]);
 
+  useEffect(() => {
+    window.AppleID.auth.init({
+      clientId: process.env.REACT_APP_APPLE_CLIENT_ID, // This is the service ID we created.
+      scope: 'name email', // To tell apple we want the user name and emails fields in the response it sends us.
+      redirectURI: process.env.REACT_APP_USER_APPLE_REDIRECT_URI, // As registered along with our service ID
+      // state: 'origin:web', // Any string of your choice that you may use for some logic. It's optional and you may omit it.
+      usePopup: true, // Important if we want to capture the data apple sends on the client side.
+    });
+  }, [loginContext.loginState.reload]);
+
   const responseGoogle = (response) => {
     console.log('response', response);
 

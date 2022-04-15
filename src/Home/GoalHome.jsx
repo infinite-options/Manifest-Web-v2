@@ -17,7 +17,7 @@ import {
   faCalendarWeek,
 } from '@fortawesome/free-solid-svg-icons';
 import 'react-datepicker/dist/react-datepicker.css';
-import GoalFirebaseV2 from './GoalFirebasev2';
+import GoalLHS from './GoalLHS';
 import DayEvents from './DayEvents';
 import DayRoutines from './DayRoutines.jsx';
 import DayGoals from './DayGoals.jsx';
@@ -119,6 +119,7 @@ export default function GoalHome(props) {
   }
 
   const history = useHistory();
+  let pageURL = window.location.href.split('/');
   //console.log('curUser timezone', userTime_zone);
   /* useEffect() is used to render API calls as minimumly 
   as possible based on past experience, if not included 
@@ -797,14 +798,56 @@ export default function GoalHome(props) {
   /*----------------------------Custom Hook to make styles----------------------------*/
   const useStyles = makeStyles({
     buttonSelection: {
-      width: '14%',
-      height: '70px',
+      width: '21%',
+      height: '51px',
       borderRadius: '0%',
-      textTransform: 'capitalize',
-      color: '#FFFFFF',
-      backgroundColor: '#bbc8d7',
+      color: '#000000',
       marginLeft: '.5%',
       marginRight: '.5%',
+      textTransform: 'capitalize',
+      font: 'normal normal 600 14px Quicksand-Book',
+      background: '#FFFFFF 0% 0% no-repeat padding-box',
+      border: '1px solid #000000',
+      borderRadius: '5px 5px 0px 0px',
+    },
+    buttonSelected: {
+      width: '21%',
+      height: '51px',
+      borderRadius: '0%',
+      color: '#000000',
+      marginLeft: '.5%',
+      marginRight: '.5%',
+      textTransform: 'capitalize',
+      font: 'normal normal 600 14px Quicksand-Book',
+      background: '#EBEBEB 0% 0% no-repeat padding-box',
+      boxShadow: 'inset 0px 3px 6px #00000029',
+      borderRadius: '5px 5px 0px 0px',
+    },
+    addButton: {
+      width: '33%',
+      height: '51px',
+      borderRadius: '0%',
+      color: '#FFFFFF',
+      marginLeft: '.5%',
+      marginRight: '.5%',
+      textTransform: 'capitalize',
+      font: 'normal normal 600 14px Quicksand-Book',
+      background: '#000000 0% 0% no-repeat padding-box',
+      border: '1px solid #000000',
+      borderRadius: '5px 5px 0px 0px',
+    },
+    addActiveButton: {
+      width: '33%',
+      height: '51px',
+      borderRadius: '0%',
+      color: '#FFFFFF',
+      marginLeft: '.5%',
+      marginRight: '.5%',
+      textTransform: 'capitalize',
+      font: 'normal normal 600 14px Quicksand-Book',
+      background: '#888888 0% 0% no-repeat padding-box',
+      border: '1px solid #000000',
+      borderRadius: '5px 5px 0px 0px',
     },
     buttonContainer: {
       flex: 1,
@@ -814,8 +857,8 @@ export default function GoalHome(props) {
     },
 
     dateContainer: {
-      height: '70px',
-      color: '#FFFFFF',
+      height: '61px',
+      color: '#000000',
     },
   });
 
@@ -1187,9 +1230,10 @@ export default function GoalHome(props) {
       <div
         style={{
           width: '100%',
+          padding: '0rem',
         }}
       >
-        <Row style={{ float: 'right', width: '100%' }}>
+        <Row style={{ float: 'right', width: '100%', padding: '0rem' }}>
           {/* <WeekRoutines
             timeZone={userTime_zone}
             routines={stateValue.goals}
@@ -2616,8 +2660,8 @@ export default function GoalHome(props) {
     // console.log('home routines', stateValue.routines),
     /*----------------------------button
         selection----------------------------*/
-    <div>
-      <div style={{ height: '3px' }}></div>
+    <div style={{ height: '100%' }}>
+      {/* <div style={{ height: '3px' }}></div> */}
       <EditRTSContext.Provider
         value={{
           editingRTS: editingRTS,
@@ -2667,22 +2711,22 @@ export default function GoalHome(props) {
                   stateValue.BASE_URL)
                 }
               >
-                <Box backgroundColor="#bbc8d7">
-                  <div style={{ width: '30%', float: 'left' }}>
-                    <Button
-                      className={classes.buttonSelection}
-                      id="one"
-                      onClick={() => history.push('/history')}
-                    >
-                      History
-                    </Button>
-                    <Button
-                      className={classes.buttonSelection}
-                      id="one"
-                      onClick={ToggleShowAbout}
-                    >
-                      About
-                    </Button>
+                <Box
+                  style={{
+                    backgroundColor: '#F2F7FC',
+                    height: 'auto',
+                    minHeight: '100%',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '30%',
+                      float: 'left',
+                      backgroundColor: '#EBEBEB',
+                      height: 'auto',
+                      minHeight: '1440px',
+                    }}
+                  >
                     <Button
                       className={classes.buttonSelection}
                       onClick={() => {
@@ -2695,12 +2739,17 @@ export default function GoalHome(props) {
                       Events
                     </Button>
                     <Button
-                      className={classes.buttonSelection}
+                      className={
+                        pageURL[3] === 'goalhome'
+                          ? classes.buttonSelected
+                          : classes.buttonSelection
+                      }
                       onClick={toggleShowGoal}
                       id="one"
                     >
                       Goals
                     </Button>
+                    {console.log(pageURL[3])}
                     <Button
                       className={classes.buttonSelection}
                       onClick={toggleShowRoutine}
@@ -2709,10 +2758,11 @@ export default function GoalHome(props) {
                       Routines
                     </Button>
                     <Button
-                      className={classes.buttonSelection}
-                      style={{
-                        width: '19%',
-                      }}
+                      className={
+                        editingRTS.editing === true
+                          ? classes.addActiveButton
+                          : classes.addButton
+                      }
                       id="one"
                       onClick={() => {
                         // e.stopPropagation()
@@ -2725,9 +2775,13 @@ export default function GoalHome(props) {
                       Add Goal +
                     </Button>
 
-                    <div style={{ flex: '1' }}>
+                    <div
+                      style={{
+                        flex: '1',
+                      }}
+                    >
                       {userID != '' && (
-                        <GoalFirebaseV2
+                        <GoalLHS
                           theCurrentUserID={userID}
                           sethighLight={setHightlight}
                           highLight={hightlight}
@@ -2757,7 +2811,7 @@ export default function GoalHome(props) {
                   <div style={{ width: '70%', float: 'left' }}>
                     {editingRTS.editing ? null : (
                       <Box
-                        bgcolor="#889AB5"
+                        bgcolor="#F2F7FC"
                         className={classes.dateContainer}
                         style={{ width: '100%' }}
                         // flex
@@ -2839,7 +2893,7 @@ export default function GoalHome(props) {
                                     Week of {startWeek.format('D MMMM YYYY')}{' '}
                                   </p>
                                 )}
-                                <p
+                                {/* <p
                                   style={{
                                     font: 'normal normal bold 20px SF Pro',
                                     paddingBottom: '0px',
@@ -2847,7 +2901,7 @@ export default function GoalHome(props) {
                                   className="normalfancytext"
                                 >
                                   {userTime_zone}
-                                </p>
+                                </p> */}
                               </Col>
                               <Col
                                 style={{

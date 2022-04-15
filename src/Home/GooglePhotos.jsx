@@ -296,7 +296,7 @@ export default function GooglePhotos(props) {
       top: '30%',
       transform: 'translate(50%, -50%)',
       width: '700px',
-      color: '#67ABFC',
+      color: '#D6B7FF',
     };
     const bodyStyle = {
       height: '300px',
@@ -352,9 +352,9 @@ export default function GooglePhotos(props) {
                     padding: '0',
                     margin: '0 20px',
                     backgroundColor: 'inherit',
-                    border: '1px #67ABFC solid',
+                    border: '1px #D6B7FF solid',
                     borderRadius: '30px',
-                    color: '#67ABFC',
+                    color: '#D6B7FF',
                     textAlign: 'center',
                   }}
                   onClick={closeViewPhotosModal}
@@ -369,9 +369,9 @@ export default function GooglePhotos(props) {
                     padding: '0',
                     margin: '0 20px',
                     backgroundColor: 'inherit',
-                    border: '1px #67ABFC solid',
+                    border: '1px #D6B7FF solid',
                     borderRadius: '30px',
-                    color: '#67ABFC',
+                    color: '#D6B7FF',
                     textAlign: 'center',
                   }}
                   onClick={onSubmitImage}

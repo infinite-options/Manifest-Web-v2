@@ -442,8 +442,8 @@ export default function DeleteEventModal(props) {
     top: '50%',
     transform: 'translate(0%, -50%)',
     width: '400px',
-    color: '#67ABFC',
-    border: '1px solid #67ABFC',
+    color: '#D6B7FF',
+    border: '1px solid #D6B7FF',
   };
   return (
     <div>
@@ -544,9 +544,9 @@ export default function DeleteEventModal(props) {
                     padding: '0',
                     margin: '0 20px',
                     backgroundColor: 'inherit',
-                    border: '1px #67ABFC solid',
+                    border: '1px #D6B7FF solid',
                     borderRadius: '30px',
-                    color: '#67ABFC',
+                    color: '#D6B7FF',
                     textAlign: 'center',
                   }}
                   onClick={closeDeleteRecurringModal}
@@ -561,9 +561,9 @@ export default function DeleteEventModal(props) {
                     padding: '0',
                     margin: '0 20px',
                     backgroundColor: 'inherit',
-                    border: '1px #67ABFC solid',
+                    border: '1px #D6B7FF solid',
                     borderRadius: '30px',
-                    color: '#67ABFC',
+                    color: '#D6B7FF',
                     textAlign: 'center',
                   }}
                   onClick={(e) => {

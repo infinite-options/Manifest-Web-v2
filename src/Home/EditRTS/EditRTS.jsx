@@ -508,18 +508,18 @@ const EditRTS = (props) => {
             editingRTSContext.editingRTS.newItem.is_persistent === 'true' ||
             editingRTSContext.editingRTS.newItem.is_persistent === 'True'
           ) {
-            return '#F57045';
+            return '#FFB84D';
           } else if (
             editingRTSContext.editingRTS.newItem.is_persistent === false ||
             editingRTSContext.editingRTS.newItem.is_persistent === 'false' ||
             editingRTSContext.editingRTS.newItem.is_persistent === 'False'
           ) {
-            return '#376DAC';
+            return '#00E535';
           } else {
-            return '#F57045';
+            return '#FFB84D';
           }
         })(),
-        color: '#ffffff',
+        color: '#000000',
       }}
     >
       {uploadImageModal()}
@@ -793,7 +793,7 @@ const EditRTS = (props) => {
         <div
           style={{
             float: 'left',
-            backgroundColor: 'white',
+            backgroundColor: '#000000',
             width: '2px',
             height: '500px',
             marginLeft: '2.4%',
@@ -1258,7 +1258,7 @@ const EditRTS = (props) => {
         <div
           style={{
             float: 'left',
-            backgroundColor: 'white',
+            backgroundColor: '#000000',
             width: '2px',
             height: '500px',
             marginLeft: '2.4%',
@@ -1838,13 +1838,30 @@ const EditRTS = (props) => {
       >
         <button
           style={{
-            width: '150px',
-            padding: '0',
+            width: '127px',
+            height: '37px',
             margin: '0 20px',
-            backgroundColor: 'inherit',
-            border: '3px white solid',
-            borderRadius: '30px',
-            color: '#ffffff',
+            background: '#FFFFFF 0% 0% no-repeat padding-box',
+            borderRadius: '10px',
+            color: '#000000',
+            font: 'normal normal 16px Quicksand-Bold',
+            border: '2px solid #FFFFFF',
+            textAlign: 'center',
+          }}
+          onClick={updateRTS}
+        >
+          Save
+        </button>
+        <button
+          style={{
+            width: '127px',
+            height: '37px',
+            margin: '0 20px',
+            background: '#FFFFFF 0% 0% no-repeat padding-box',
+            borderRadius: '10px',
+            color: '#000000',
+            font: 'normal normal 16px Quicksand-Bold',
+            border: '2px solid #FFFFFF',
             textAlign: 'center',
           }}
           onClick={() => {
@@ -1855,21 +1872,6 @@ const EditRTS = (props) => {
           }}
         >
           Cancel
-        </button>
-        <button
-          style={{
-            width: '150px',
-            padding: '0',
-            margin: '0 20px',
-            backgroundColor: 'inherit',
-            border: '3px white solid',
-            borderRadius: '30px',
-            color: '#ffffff',
-            textAlign: 'center',
-          }}
-          onClick={updateRTS}
-        >
-          Save Changes
         </button>
       </div>
     </div>

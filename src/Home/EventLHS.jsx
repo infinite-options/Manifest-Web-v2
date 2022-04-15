@@ -1,11 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import moment from 'moment';
-import {
-  faPeopleArrows,
-  faUser,
-  faUserAltSlash,
-} from '@fortawesome/free-solid-svg-icons';
+import { faUser, faUserAltSlash } from '@fortawesome/free-solid-svg-icons';
 import { useHistory } from 'react-router-dom';
 import { ListGroup, Col } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,12 +9,7 @@ import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { faEdit, faList } from '@fortawesome/free-solid-svg-icons';
 import { faCalendarDay } from '@fortawesome/free-solid-svg-icons';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  updateTheCalenderEvent,
-  deleteTheCalenderEvent,
-} from './GoogleApiService';
 import LoginContext from '../LoginContext';
-import DeleteEventModal from './DeleteEventModal';
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
@@ -31,8 +22,8 @@ const useStyles = makeStyles({
     height: '70px',
     borderBottomLeftRadius: '25%',
     borderBottomRightRadius: '25%',
-    color: '#FFFFFF',
-    backgroundColor: '#bbc8d7',
+    color: '#000000',
+    backgroundColor: '#EBEBEB',
     textTransform: 'capitalize',
   },
   buttonContainer: {
@@ -45,13 +36,13 @@ const useStyles = makeStyles({
   dateContainer: {
     height: '70px',
     width: 'relative',
-    color: '#FFFFFF',
+    color: '#000000',
     // flex: 1,
     // display: 'flex',
   },
 });
 
-export default function EventFirebasev2(props) {
+export default function EventLHS(props) {
   console.log('curdate today firebase props ', props.editEvent);
   console.log('curdate today firebase props ', document.cookie);
 
@@ -462,7 +453,11 @@ export default function EventFirebasev2(props) {
       <div>
         <ListGroup.Item
           key={r.id}
-          style={{ backgroundColor: '#d1dceb', marginTop: '1px' }}
+          style={{
+            backgroundColor: '#EBEBEB',
+            marginTop: '1px',
+            border: '1px solid #EBEBEB',
+          }}
           onClick={() => {
             //  props.sethighLight(r["summary"])
             console.log('ListGroup', r['summary']);
@@ -480,10 +475,10 @@ export default function EventFirebasev2(props) {
                 display: 'flex',
                 justifyContent: 'space-between',
 
-                boxShadow:
-                  '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)',
+                // boxShadow:
+                //   '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)',
 
-                backgroundColor: '#67ABFC',
+                backgroundColor: '#D6B7FF',
                 zIndex: '50%',
               }}
             >
@@ -496,12 +491,23 @@ export default function EventFirebasev2(props) {
                   justifyContent: 'flex-start',
                 }}
               >
+                <div
+                  style={{
+                    color: '#000000',
+                    font: 'normal normal bold 18px Quicksand-Bold',
+                    marginLeft: '10px',
+                  }}
+                >
+                  {r['summary']}
+                  {console.log(r.summary)}
+                </div>
                 <div style={{ marginLeft: '1rem' }}>
                   {r.start.dateTime && r.end.dateTime ? (
                     <div
                       style={{
-                        fontSize: '8px',
-                        color: '#ffffff',
+                        font: 'normal normal 600 8px Quicksand-Book',
+                        color: '#000000',
+                        marginTop: '0.5rem',
                       }}
                     >
                       {moment(r.start.dateTime).format('MMM DD, hh:mm')}-
@@ -510,18 +516,6 @@ export default function EventFirebasev2(props) {
                   ) : (
                     <Col> </Col>
                   )}
-                </div>
-                <div
-                  style={{
-                    color: '#ffffff',
-                    size: '24px',
-                    textDecoration: 'underline',
-                    fontWeight: 'bold',
-                    marginLeft: '10px',
-                  }}
-                >
-                  {r['summary']}
-                  {console.log(r.summary)}
                 </div>
 
                 {/* ({date}) */}
@@ -540,7 +534,7 @@ export default function EventFirebasev2(props) {
                     style={{ paddingRight: '1rem', marginTop: '0.5rem' }}
                   >
                     <FontAwesomeIcon
-                      style={{ cursor: 'pointer', color: 'white' }}
+                      style={{ cursor: 'pointer', color: '#000000' }}
                       icon={faCalendarDay}
                       size="2x"
                     />
@@ -575,9 +569,9 @@ export default function EventFirebasev2(props) {
                       event.target.style.color = '#48D6D2';
                     }}
                     onMouseOut={(event) => {
-                      event.target.style.color = '#FFFFFF';
+                      event.target.style.color = '#000000';
                     }}
-                    style={{ color: '#ffffff', cursor: 'pointer' }}
+                    style={{ color: '#000000', cursor: 'pointer' }}
                     icon={faEdit}
                     onClick={(e) => {
                       openEditModal(r);
@@ -594,9 +588,9 @@ export default function EventFirebasev2(props) {
                       event.target.style.color = '#48D6D2';
                     }}
                     onMouseOut={(event) => {
-                      event.target.style.color = '#FFFFFF';
+                      event.target.style.color = '#000000';
                     }}
-                    style={{ color: '#FFFFFF', cursor: 'pointer' }}
+                    style={{ color: '#000000', cursor: 'pointer' }}
                     icon={faTrashAlt}
                     onClick={(e) => {
                       openDeleteRecurringModal(r);
@@ -643,7 +637,7 @@ export default function EventFirebasev2(props) {
         <div>
           <FontAwesomeIcon
             title="Available to the user"
-            style={{ color: '#ffffff', cursor: 'pointer' }}
+            style={{ color: '#000000', cursor: 'pointer' }}
             onClick={(e) => {
               e.stopPropagation();
               alert('Item Is Availble to the user');
@@ -814,7 +808,11 @@ export default function EventFirebasev2(props) {
       <div>
         <ListGroup.Item
           key={r.id}
-          style={{ backgroundColor: '#BBC7D7', marginTop: '1px' }}
+          style={{
+            backgroundColor: '#EBEBEB',
+            marginTop: '1px',
+            border: '1px solid #EBEBEB',
+          }}
           onClick={() => {
             //  props.sethighLight(r["summary"])
             console.log('ListGroup', r['summary']);
@@ -835,19 +833,19 @@ export default function EventFirebasev2(props) {
                     r.is_persistent == 'True' &&
                     JSON.stringify(start_time) !== JSON.stringify(end_time)
                   ) {
-                    return '#FF6B4A';
+                    return '#FFB84D';
                   } else if (r.is_persistent == 'False') {
-                    return '#376DAC';
+                    return '#00E535';
                   } else {
-                    return '#3a92fb';
+                    return '#D6B7FF';
                   }
                 })(),
                 // backgroundColor:
                 //       JSON.stringify(start_time) !== JSON.stringify(end_time)
-                //     ? '#FF6B4A'
+                //     ? '#FFB84D'
                 //     : '#9b4aff',
-                boxShadow:
-                  '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.09)',
+                // boxShadow:
+                //   '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.09)',
                 zIndex: '50%',
               }}
             >
@@ -860,12 +858,22 @@ export default function EventFirebasev2(props) {
                   justifyContent: 'flex-start',
                 }}
               >
+                <div
+                  style={{
+                    color: '#000000',
+                    font: 'normal normal bold 18px Quicksand-Bold',
+                    marginLeft: '10px',
+                  }}
+                >
+                  {r['summary']}
+                </div>
                 <div style={{ marginLeft: '1rem' }}>
                   {r.start.dateTime && r.end.dateTime ? (
                     <div
                       style={{
-                        fontSize: '8px',
-                        color: '#ffffff',
+                        font: 'normal normal 600 8px Quicksand-Book',
+                        color: '#000000',
+                        marginTop: '0.5rem',
                       }}
                     >
                       {/* {formatDateTime(r.start.dateTime)}-
@@ -877,19 +885,6 @@ export default function EventFirebasev2(props) {
                     <Col> </Col>
                   )}
                 </div>
-
-                <div
-                  style={{
-                    color: '#ffffff',
-                    size: '24px',
-                    textDecoration: 'underline',
-                    fontWeight: 'bold',
-                    marginLeft: '10px',
-                  }}
-                >
-                  {r['summary']}
-                </div>
-
                 {/* ({date}) */}
               </div>
 
@@ -913,7 +908,7 @@ export default function EventFirebasev2(props) {
                     width="28px"
                   /> */}
                     <FontAwesomeIcon
-                      style={{ cursor: 'pointer', color: 'white' }}
+                      style={{ cursor: 'pointer', color: '#000000' }}
                       icon={faCalendarDay}
                       size="2x"
                     />
@@ -951,9 +946,9 @@ export default function EventFirebasev2(props) {
                       event.target.style.color = '#48D6D2';
                     }}
                     onMouseOut={(event) => {
-                      event.target.style.color = '#FFFFFF';
+                      event.target.style.color = '#000000';
                     }}
-                    style={{ color: '#ffffff', cursor: 'pointer' }}
+                    style={{ color: '#000000', cursor: 'pointer' }}
                     icon={faEdit}
                     onClick={(e) => {
                       openEditModal(r);
@@ -969,9 +964,9 @@ export default function EventFirebasev2(props) {
                       event.target.style.color = '#48D6D2';
                     }}
                     onMouseOut={(event) => {
-                      event.target.style.color = '#FFFFFF';
+                      event.target.style.color = '#000000';
                     }}
-                    style={{ color: '#FFFFFF', cursor: 'pointer' }}
+                    style={{ color: '#000000', cursor: 'pointer' }}
                     icon={faTrashAlt}
                     onClick={(e) => {
                       openDeleteRecurringModal(r);
@@ -989,9 +984,9 @@ export default function EventFirebasev2(props) {
                           event.target.style.color = '#48D6D2';
                         }}
                         onMouseOut={(event) => {
-                          event.target.style.color = '#FFFFFF';
+                          event.target.style.color = '#000000';
                         }}
-                        style={{ color: '#FFFFFF', cursor: 'pointer' }}
+                        style={{ color: '#000000', cursor: 'pointer' }}
                         icon={faList}
                         onClick={(e) => {
                           console.log(

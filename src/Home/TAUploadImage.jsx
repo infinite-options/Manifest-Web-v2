@@ -49,13 +49,11 @@ export default class TAUploadImage extends Component {
   };
 
   onClickConfirm = () => {
-    
     let toggle = this.state.modal;
     //let hide = this.state.show;
     this.setState({ modal: !toggle });
     this.setState({ show: !toggle });
     this.props.setPhotoUrl(this.state.photo_url);
- 
   };
 
   onHandleShowClick = () => {
@@ -99,8 +97,8 @@ export default class TAUploadImage extends Component {
               margin: '5px',
               border:
                 this.state.imageList[i].url === this.state.photo_url
-                  ? '3px solid #FF6B4A'
-                  : '1px solid #FF6B4A',
+                  ? '3px solid #FFB84D'
+                  : '1px solid #FFB84D',
             }}
             onClick={(e) => this.onPhotoClick(this.state.imageList[i].url)}
           >
@@ -124,7 +122,7 @@ export default class TAUploadImage extends Component {
             textDecoration: 'underline',
             color: '#ffffff',
             fontSize: '14px',
-            cursor: 'pointer'
+            cursor: 'pointer',
           }}
           onClick={this.onHandleShowClick}
         >
@@ -191,7 +189,6 @@ export default class TAUploadImage extends Component {
           </Modal.Footer>
         </Modal>
       </>
-
     );
   }
 }

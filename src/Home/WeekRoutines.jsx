@@ -4,7 +4,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import './Home.css';
 import greenTick from '../manifest/LoginAssets/GreenTick.svg';
 import yelloTick from '../manifest/LoginAssets/YellowTick.svg';
-import EditIcon from './EditRTS/EditIcon'
+import EditIcon from './EditRTS/EditIcon';
 export default class WeekRoutines extends Component {
   constructor(props) {
     super(props);
@@ -229,18 +229,15 @@ export default class WeekRoutines extends Component {
 
   chooseColor = () => {
     var arr = this.props.routines;
-    let color ='';
+    let color = '';
     for (let i = 0; i < arr.length; i++) {
-      if(arr[i].is_persistent === true)
-      {
-        color = '#ff6b4a'
-      }
-      else{
-        color = '#376DAC';
+      if (arr[i].is_persistent === true) {
+        color = '#FFB84D';
+      } else {
+        color = '#00E535';
       }
     }
     return color;
-
   };
   getRoutineItemFromDic = (day, hour, dic) => {
     let startObject = this.props.dateContext.clone();
@@ -598,7 +595,7 @@ export default class WeekRoutines extends Component {
                         // border: '1px lightgray solid ',
                         border:
                           this.props.highLight === arr[i].title
-                            ? '2px solid #FF6B4A '
+                            ? '2px solid #FFB84D '
                             : '',
                         float: 'left',
                         borderRadius: '10px',
@@ -609,13 +606,13 @@ export default class WeekRoutines extends Component {
                         //     curDate2.format('D') === today.format('D') &&
                         //     curDate2.format('M') === today.format('M')
                         //   ) {
-                        //     return '#FF6B4A';
+                        //     return '#FFB84D';
                         //   } else if (
                         //     arr[i].is_persistent === 'false' &&
                         //     curDate2.format('D') === today.format('D') &&
                         //     curDate2.format('M') === today.format('M')
                         //   ) {
-                        //     return '#376DAC';
+                        //     return '#00E535';
                         //   } else if (
                         //     JSON.stringify(start_time) ===
                         //     JSON.stringify(end_time)
@@ -645,11 +642,11 @@ export default class WeekRoutines extends Component {
                             : curDate2.format('D') === today.format('D') &&
                               curDate2.format('M') === today.format('M') &&
                               arr[i].is_persistent == true
-                            ? '#FF6B4A'
+                            ? '#FFB84D'
                             : curDate2.format('D') === today.format('D') &&
                               curDate2.format('M') === today.format('M') &&
                               arr[i].is_persistent == false
-                            ? '#376DAC'
+                            ? '#00E535'
                             : arr[i].is_complete
                             ? '#BBC7D7'
                             : 'lightslategray',
@@ -893,7 +890,7 @@ export default class WeekRoutines extends Component {
                     {arr[i].title}
                   </div>
                   <div>
-                    {console.log('arr[i]',arr[i])}
+                    {console.log('arr[i]', arr[i])}
                     <EditIcon
                       routine={arr[i]}
                       task={null}
@@ -920,7 +917,7 @@ export default class WeekRoutines extends Component {
     for (let i = 0; i < 24; ++i) {
       // if (i < 12) {
       arr.push(
-        <Row key={'weekEvent' + i} style={{ marginLeft: '3rem' }}>
+        <Row key={'weekEvent' + i}>
           <Col
             style={{
               // borderTop: '1px solid lavender',
@@ -1042,7 +1039,7 @@ export default class WeekRoutines extends Component {
             style={{
               textAlign: 'center',
               fontWeight: 'bold',
-              padding:'0',
+              padding: '0',
               color:
                 (curDate.format('D') === dateNew.format('D')) &
                 (curDate.format('dddd') === dateNew.format('dddd')) &
@@ -1094,7 +1091,7 @@ export default class WeekRoutines extends Component {
             key={'routine' + day}
             // className="fancytext"
             style={{
-              color: day === today.toString() ? '#FF6B4A' : '',
+              color: day === today.toString() ? '#FFB84D' : '',
               textAlign: 'center',
               fontWeight: 'bold',
               //  paddingBottom: '2%',
@@ -1107,11 +1104,12 @@ export default class WeekRoutines extends Component {
     }); */
 
     return (
-      <Container style={{ margin: '0rem' }}>
-        <Row style={{ marginLeft: '3rem'}}>
+      <Container
+        style={{ margin: '-1rem', backgroundColor: '#F2F7FC', padding: '0rem' }}
+      >
+        <Row style={{ marginLeft: '3rem' }}>
           <Row
             style={{
-              
               overflowX: 'hidden',
               overflowY: 'visible',
               width: '100%',
@@ -1128,11 +1126,11 @@ export default class WeekRoutines extends Component {
           ref={this.hourDisplay}
           noGutters={true}
           // style={{ overflowY: 'scroll', maxHeight: '1350px' }}
-          className="d-flex justify-content-end"
-          style={{ marginLeft: '-5rem', marginRight: '0rem' }}
+          className="d-flex justify-content-start"
+          style={{ marginLeft: '0rem', marginRight: '0rem', padding: '0rem' }}
         >
-          <Col>
-            <Container style={{ margin: '0', padding: '0', width: '6px' }}>
+          <Col xs={1}>
+            <Container style={{ padding: '0', width: '4px' }}>
               {this.timeDisplay()}
             </Container>
           </Col>

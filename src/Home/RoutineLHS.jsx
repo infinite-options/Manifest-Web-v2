@@ -43,7 +43,7 @@ const useStyles = makeStyles({
     height: '70px',
     borderBottomLeftRadius: '25%',
     borderBottomRightRadius: '25%',
-    color: '#FFFFFF',
+    color: '#000000',
     backgroundColor: '#bbc8d7',
     textTransform: 'capitalize',
   },
@@ -57,13 +57,13 @@ const useStyles = makeStyles({
   dateContainer: {
     height: '70px',
     width: 'relative',
-    color: '#FFFFFF',
+    color: '#000000',
     // flex: 1,
     // display: 'flex',
   },
 });
 
-export default function Firebasev2(props) {
+export default function RoutineLHS(props) {
   console.log('curdate today firebase props ', props);
   const history = useHistory();
   const inRange = [];
@@ -269,7 +269,7 @@ export default function Firebasev2(props) {
               backgroundColor: '#889AB5',
               width: '400px',
               // height: "100px",
-              color: 'white',
+              color: '#000000',
               padding: '40px',
               textAlign: 'center',
             }}
@@ -283,7 +283,7 @@ export default function Firebasev2(props) {
               <button
                 style={{
                   backgroundColor: 'red',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -301,7 +301,7 @@ export default function Firebasev2(props) {
               <button
                 style={{
                   backgroundColor: 'green',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -358,7 +358,7 @@ export default function Firebasev2(props) {
               backgroundColor: '#889AB5',
               width: '400px',
               // height: "100px",
-              color: 'white',
+              color: '#000000',
               padding: '40px',
               textAlign: 'center',
               fontWeight: 'bold',
@@ -405,7 +405,7 @@ export default function Firebasev2(props) {
               <button
                 style={{
                   backgroundColor: 'red',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -422,7 +422,7 @@ export default function Firebasev2(props) {
               <button
                 style={{
                   backgroundColor: 'green',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -454,7 +454,7 @@ export default function Firebasev2(props) {
                       .then((response) => {
                         toggleCopyModalConfirm(false);
                         axios
-                          .get(BASE_URL + 'getgoals/' + currentUser)
+                          .get(BASE_URL + 'getroutines/' + currentUser)
                           .then((response) => {
                             const temp = [];
                             for (
@@ -554,7 +554,7 @@ export default function Firebasev2(props) {
                               gr.is_in_progress =
                                 x[i].is_in_progress.toLowerCase() === 'true';
                               gr.is_persistent =
-                                x[i].is_persistent.toLowerCase() === 'false';
+                                x[i].is_persistent.toLowerCase() === 'true';
                               gr.is_sublist_available =
                                 x[i].is_sublist_available.toLowerCase() ===
                                 'true';
@@ -790,7 +790,7 @@ export default function Firebasev2(props) {
                                 gr_array.push(gr);
                               }
                               if (
-                                x[i]['is_persistent'].toLowerCase() === 'false'
+                                x[i]['is_persistent'].toLowerCase() === 'true'
                               ) {
                                 if (
                                   props.stateValue.calendarView === 'Day' &&
@@ -983,7 +983,7 @@ export default function Firebasev2(props) {
               backgroundColor: '#889AB5',
               width: '400px',
               // height: "100px",
-              color: 'white',
+              color: '#000000',
               padding: '40px',
               textAlign: 'center',
               fontWeight: 'bold',
@@ -1026,7 +1026,7 @@ export default function Firebasev2(props) {
               <button
                 style={{
                   backgroundColor: 'red',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1043,7 +1043,7 @@ export default function Firebasev2(props) {
               <button
                 style={{
                   backgroundColor: 'green',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1105,7 +1105,7 @@ export default function Firebasev2(props) {
               backgroundColor: '#889AB5',
               width: '400px',
               // height: "100px",
-              color: 'white',
+              color: '#000000',
               padding: '40px',
             }}
           >
@@ -1143,7 +1143,7 @@ export default function Firebasev2(props) {
               <button
                 style={{
                   backgroundColor: 'red',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1160,7 +1160,7 @@ export default function Firebasev2(props) {
               <button
                 style={{
                   backgroundColor: 'green',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1219,7 +1219,7 @@ export default function Firebasev2(props) {
               backgroundColor: '#889AB5',
               width: '400px',
               // height: "100px",
-              color: 'white',
+              color: '#000000',
               padding: '40px',
             }}
           >
@@ -1258,7 +1258,7 @@ export default function Firebasev2(props) {
               <button
                 style={{
                   backgroundColor: 'red',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1275,7 +1275,7 @@ export default function Firebasev2(props) {
               <button
                 style={{
                   backgroundColor: 'green',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1334,7 +1334,7 @@ export default function Firebasev2(props) {
               backgroundColor: '#889AB5',
               width: '400px',
               // height: "100px",
-              color: 'white',
+              color: '#000000',
               padding: '40px',
             }}
           >
@@ -1362,7 +1362,7 @@ export default function Firebasev2(props) {
               <button
                 style={{
                   backgroundColor: 'red',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1379,7 +1379,7 @@ export default function Firebasev2(props) {
               <button
                 style={{
                   backgroundColor: 'green',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1512,6 +1512,11 @@ export default function Firebasev2(props) {
     for (var i = 0; i < uniqueObjects.length; i++) {
       tempRows.push(displayRoutines(props.getGoalsEndPoint[i]));
       console.log('p.ggep[i] = ', props.getGoalsEndPoint[i].gr_unique_id);
+      console.log(
+        'p.ggep[i] = ',
+        props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id]
+      );
+      console.log('p.ggep[i] = ', props.getActionsEndPoint);
       if (props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id]) {
         for (
           var j = 0;
@@ -1532,6 +1537,14 @@ export default function Firebasev2(props) {
                 ][j].at_unique_id
               ) === false
             ) {
+              console.log(
+                'in if3 ggep',
+                j,
+                tempID,
+                props.getActionsEndPoint[
+                  props.getGoalsEndPoint[i].gr_unique_id
+                ][j].at_unique_id
+              );
               tempRows.push(
                 displayActions(
                   props.getActionsEndPoint[
@@ -1545,7 +1558,7 @@ export default function Firebasev2(props) {
                   props.getGoalsEndPoint[i].gr_unique_id
                 ][j].at_unique_id
               );
-              console.log('only', tempID);
+              console.log('only ggep', tempID);
 
               const currStepArr =
                 props.getStepsEndPoint[
@@ -1655,7 +1668,7 @@ export default function Firebasev2(props) {
     console.log('titles', temp);
     console.log('titles2', temp2);
 
-    console.log('current name', r.name, temp.indexOf(r.name));
+    console.log('current name', r.gr_title, temp.indexOf(r.name));
     console.log(
       'current gr_unique_id',
       r.gr_unique_id,
@@ -1672,7 +1685,7 @@ export default function Firebasev2(props) {
         <div>
           <FontAwesomeIcon
             title="Available to the user"
-            style={{ color: '#ffffff', cursor: 'pointer' }}
+            style={{ color: '#000000', cursor: 'pointer' }}
             onClick={(e) => {
               e.stopPropagation();
               alert('Item Is Availble to the user');
@@ -1727,7 +1740,11 @@ export default function Firebasev2(props) {
     return (
       <ListGroup.Item
         key={r.gr_unique_id}
-        style={{ backgroundColor: '#BBC7D7', marginTop: '1px' }}
+        style={{
+          backgroundColor: '#EBEBEB',
+          marginTop: '1px',
+          border: '1px solid #EBEBEB',
+        }}
         onClick={() => {
           //  props.sethighLight(r["gr_title"])
           console.log('ListGroup', r['gr_title']);
@@ -1748,17 +1765,19 @@ export default function Firebasev2(props) {
                   r.is_persistent == 'True' &&
                   JSON.stringify(start_time) !== JSON.stringify(end_time)
                 ) {
-                  console.log('this has to be block');
-                  return '#FF6B4A';
+                  return '#FFB84D';
                 } else if (r.is_persistent == 'False') {
-                  console.log('this has to be none');
-                  return '#376DAC';
+                  return '#00E535';
                 } else {
                   return '#9b4aff';
                 }
               })(),
-              boxShadow:
-                '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.09)',
+              // backgroundColor:
+              //       JSON.stringify(start_time) !== JSON.stringify(end_time)
+              //     ? '#FFB84D'
+              //     : '#9b4aff',
+              // boxShadow:
+              //   '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.09)',
               zIndex: '50%',
             }}
           >
@@ -1771,12 +1790,22 @@ export default function Firebasev2(props) {
                 justifyContent: 'flex-start',
               }}
             >
+              <div
+                style={{
+                  color: '#000000',
+                  font: 'normal normal bold 18px Quicksand-Bold',
+                  marginLeft: '10px',
+                }}
+              >
+                {r['gr_title']}
+              </div>
               <div style={{ marginLeft: '1rem' }}>
                 {r.gr_start_day_and_time && r.gr_end_day_and_time ? (
                   <div
                     style={{
-                      fontSize: '8px',
-                      color: '#ffffff',
+                      font: 'normal normal 600 8px Quicksand-Book',
+                      color: '#000000',
+                      marginTop: '0.5rem',
                     }}
                   >
                     {formatDateTime(r.gr_start_day_and_time)}-
@@ -1786,19 +1815,6 @@ export default function Firebasev2(props) {
                   <Col> </Col>
                 )}
               </div>
-
-              <div
-                style={{
-                  color: '#ffffff',
-                  size: '24px',
-                  textDecoration: 'underline',
-                  fontWeight: 'bold',
-                  marginLeft: '10px',
-                }}
-              >
-                {r['gr_title']}
-              </div>
-
               {/* ({date}) */}
             </div>
 
@@ -1833,10 +1849,10 @@ export default function Firebasev2(props) {
                           event.target.style.color = '#48D6D2';
                         }}
                         onMouseOut={(event) => {
-                          event.target.style.color = '#FFFFFF';
+                          event.target.style.color = '#000000';
                         }}
                         title="SubList Available"
-                        style={{ color: '#ffffff', cursor: 'pointer' }}
+                        style={{ color: '#000000', cursor: 'pointer' }}
                         size="sm"
                         onClick={() => {}}
                       />
@@ -1878,9 +1894,9 @@ export default function Firebasev2(props) {
                     e.target.style.color = '#48D6D2';
                   }}
                   onMouseOut={(e) => {
-                    e.target.style.color = '#FFFFFF';
+                    e.target.style.color = '#000000';
                   }}
-                  style={{ color: '#FFFFFF', cursor: 'pointer' }}
+                  style={{ color: '#000000', cursor: 'pointer' }}
                   onClick={(e) => {
                     // console.log("On click");
                     e.stopPropagation();
@@ -1909,7 +1925,7 @@ export default function Firebasev2(props) {
                         <FontAwesomeIcon
                           title="Available to the user"
                           style={{
-                            color: '#ffffff',
+                            color: '#000000',
                             cursor: 'pointer',
                           }}
                           onClick={(e) => {
@@ -1958,9 +1974,9 @@ export default function Firebasev2(props) {
                     event.target.style.color = '#48D6D2';
                   }}
                   onMouseOut={(event) => {
-                    event.target.style.color = '#FFFFFF';
+                    event.target.style.color = '#000000';
                   }}
-                  style={{ color: '#FFFFFF', cursor: 'pointer' }}
+                  style={{ color: '#000000', cursor: 'pointer' }}
                   // style ={{ color:  "#000000" }}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -1972,7 +1988,7 @@ export default function Firebasev2(props) {
                       await axios.post(BASE_URL + 'deleteGR', body);
 
                       await axios
-                        .get(BASE_URL + 'getgoals/' + currentUser)
+                        .get(BASE_URL + 'getroutines/' + currentUser)
                         .then((response) => {
                           const temp = [];
                           for (
@@ -2070,7 +2086,7 @@ export default function Firebasev2(props) {
                             gr.is_in_progress =
                               x[i].is_in_progress.toLowerCase() === 'true';
                             gr.is_persistent =
-                              x[i].is_persistent.toLowerCase() === 'false';
+                              x[i].is_persistent.toLowerCase() === 'true';
                             gr.is_sublist_available =
                               x[i].is_sublist_available.toLowerCase() ===
                               'true';
@@ -2302,7 +2318,7 @@ export default function Firebasev2(props) {
                               gr_array.push(gr);
                             }
                             if (
-                              x[i]['is_persistent'].toLowerCase() === 'false'
+                              x[i]['is_persistent'].toLowerCase() === 'true'
                             ) {
                               if (
                                 props.stateValue.calendarView === 'Day' &&
@@ -2370,10 +2386,10 @@ export default function Firebasev2(props) {
                         event.target.style.color = '#48D6D2';
                       }}
                       onMouseOut={(event) => {
-                        event.target.style.color = '#FFFFFF';
+                        event.target.style.color = '#000000';
                       }}
                       title="SubList Available"
-                      style={{ color: '#ffffff', cursor: 'pointer' }}
+                      style={{ color: '#000000', cursor: 'pointer' }}
                       size="sm"
                       onClick={(e) => {
                         console.log('log(-2): r.gr_uid = ', r.gr_unique_id);
@@ -2445,9 +2461,9 @@ export default function Firebasev2(props) {
                     event.target.style.color = '#48D6D2';
                   }}
                   onMouseOut={(event) => {
-                    event.target.style.color = '#FFFFFF';
+                    event.target.style.color = '#000000';
                   }}
-                  style={{ color: '#ffffff', cursor: 'pointer' }}
+                  style={{ color: '#000000', cursor: 'pointer' }}
                   onClick={(e) => {
                     e.preventDefault();
                     e.target.style.color = '#000000';
@@ -2478,7 +2494,7 @@ export default function Firebasev2(props) {
     return (
       <div
         key={a.at_unique_id}
-        style={{ backgroundColor: '#d1dceb', marginBottom: '0px' }}
+        style={{ backgroundColor: '#EBEBEB', marginBottom: '0px' }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
           <div
@@ -2491,9 +2507,9 @@ export default function Firebasev2(props) {
               width: '60%',
               display: 'flex',
               justifyContent: 'space-between',
-              backgroundColor: '#F8BE28',
-              boxShadow:
-                '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)',
+              backgroundColor: '#4D94FF',
+              // boxShadow:
+              //   '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)',
               zIndex: '50%',
             }}
           >
@@ -2510,7 +2526,7 @@ export default function Firebasev2(props) {
                   <div
                     style={{
                       fontSize: '8px',
-                      color: '#F8BE28',
+                      color: '#4D94FF',
                     }}
                   >
                     {formatDateTime('2021-06-23, 7:31:19 AM')}-
@@ -2523,7 +2539,7 @@ export default function Firebasev2(props) {
 
               <div
                 style={{
-                  color: '#ffffff',
+                  color: '#000000',
                   size: '24px',
                   textDecoration: 'underline',
                   fontWeight: 'bold',
@@ -2566,10 +2582,10 @@ export default function Firebasev2(props) {
                         event.target.style.color = '#48D6D2';
                       }}
                       onMouseOut={(event) => {
-                        event.target.style.color = '#FFFFFF';
+                        event.target.style.color = '#000000';
                       }}
                       title="SubList Available"
-                      style={{ color: '#ffffff', cursor: 'pointer' }}
+                      style={{ color: '#000000', cursor: 'pointer' }}
                       size="sm"
                       onClick={() => {
                         // sendRoutineToParent(a.number);
@@ -2604,7 +2620,7 @@ export default function Firebasev2(props) {
                     <div>
                       <FontAwesomeIcon
                         title="Available to the user"
-                        style={{ color: '#ffffff', cursor: 'pointer' }}
+                        style={{ color: '#000000', cursor: 'pointer' }}
                         onClick={(e) => {
                           e.stopPropagation();
                           alert('Item Is Availble to the user');
@@ -2637,9 +2653,9 @@ export default function Firebasev2(props) {
                     event.target.style.color = '#48D6D2';
                   }}
                   onMouseOut={(event) => {
-                    event.target.style.color = '#FFFFFF';
+                    event.target.style.color = '#000000';
                   }}
-                  style={{ color: '#FFFFFF', cursor: 'pointer' }}
+                  style={{ color: '#000000', cursor: 'pointer' }}
                   // style ={{ color:  "#000000" }}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -2766,10 +2782,10 @@ export default function Firebasev2(props) {
                           event.target.style.color = '#48D6D2';
                         }}
                         onMouseOut={(event) => {
-                          event.target.style.color = '#FFFFFF';
+                          event.target.style.color = '#000000';
                         }}
                         title="SubList Available"
-                        style={{ color: '#ffffff', cursor: 'pointer' }}
+                        style={{ color: '#000000', cursor: 'pointer' }}
                         size="sm"
                         onClick={() => {
                           if (
@@ -2829,9 +2845,9 @@ export default function Firebasev2(props) {
                     event.target.style.color = '#48D6D2';
                   }}
                   onMouseOut={(event) => {
-                    event.target.style.color = '#FFFFFF';
+                    event.target.style.color = '#000000';
                   }}
-                  style={{ color: '#ffffff', cursor: 'pointer' }}
+                  style={{ color: '#000000', cursor: 'pointer' }}
                   onClick={(e) => {
                     e.target.style.color = '#000000';
                     props.setIS(props.newIS);
@@ -2852,7 +2868,7 @@ export default function Firebasev2(props) {
     return (
       <div
         key={i.is_unique_id}
-        style={{ backgroundColor: '#dae5f5', marginBottom: '0px' }}
+        style={{ backgroundColor: '#EBEBEB', marginBottom: '0px' }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
           <div
@@ -2865,9 +2881,9 @@ export default function Firebasev2(props) {
               width: '60%',
               display: 'flex',
               justifyContent: 'space-between',
-              backgroundColor: '#67ABFC',
-              boxShadow:
-                '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)',
+              backgroundColor: '#70D6FF',
+              // boxShadow:
+              //   '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19)',
               zIndex: '50%',
             }}
           >
@@ -2885,7 +2901,7 @@ export default function Firebasev2(props) {
                   fontSize: '18px',
                   height: '2rem',
                   width: '2rem',
-                  backgroundColor: '#ffffff',
+                  backgroundColor: '#000000',
                   color: '#000000',
                   fontWeight: 'bold',
                   paddingLeft: '0.5rem',
@@ -2897,7 +2913,7 @@ export default function Firebasev2(props) {
               </div>
               <div
                 style={{
-                  color: '#ffffff',
+                  color: '#000000',
                   size: '24px',
                   textDecoration: 'underline',
                   fontWeight: 'bold',
@@ -2949,7 +2965,7 @@ export default function Firebasev2(props) {
                     <div>
                       <FontAwesomeIcon
                         title="Available to the user"
-                        style={{ color: '#ffffff', cursor: 'pointer' }}
+                        style={{ color: '#000000', cursor: 'pointer' }}
                         onClick={(e) => {
                           e.stopPropagation();
                           alert('Item Is Availble to the user');
@@ -2982,9 +2998,9 @@ export default function Firebasev2(props) {
                     event.target.style.color = '#48D6D2';
                   }}
                   onMouseOut={(event) => {
-                    event.target.style.color = '#FFFFFF';
+                    event.target.style.color = '#000000';
                   }}
-                  style={{ color: '#FFFFFF', cursor: 'pointer' }}
+                  style={{ color: '#000000', cursor: 'pointer' }}
                   // style ={{ color:  "#000000" }}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -3086,11 +3102,11 @@ export default function Firebasev2(props) {
                     event.target.style.color = '#48D6D2';
                   }}
                   onMouseOut={(event) => {
-                    event.target.style.color = '#FFFFFF';
+                    event.target.style.color = '#000000';
                   }}
                   icon={faBookmark}
                   title="Must Do"
-                  style={{ color: '#ffffff', cursor: 'pointer' }}
+                  style={{ color: '#000000', cursor: 'pointer' }}
                   size="sm"
                 />
               </div>

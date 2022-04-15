@@ -244,7 +244,7 @@ export default function UserSignUp() {
                   type="submit"
                   onClick={hideAlreadyExists}
                   style={{
-                    background: '#F8BE28 0% 0% no-repeat padding-box',
+                    background: '#4D94FF 0% 0% no-repeat padding-box',
                     borderRadius: '20px',
                     opacity: 1,
                     width: '300px',
@@ -358,7 +358,7 @@ export default function UserSignUp() {
                 type="submit"
                 onClick={handleSocialSignUpDone}
                 style={{
-                  background: '#F8BE28 0% 0% no-repeat padding-box',
+                  background: '#4D94FF 0% 0% no-repeat padding-box',
                   borderRadius: '20px',
                   opacity: 1,
                   width: '300px',
@@ -373,7 +373,7 @@ export default function UserSignUp() {
                 onClick={hideSignUp}
                 style={{
                   marginTop: '10px',
-                  background: '#FF6B4A 0% 0% no-repeat padding-box',
+                  background: '#FFB84D 0% 0% no-repeat padding-box',
                   borderRadius: '20px',
                   opacity: 1,
                   width: '300px',
@@ -705,7 +705,7 @@ export default function UserSignUp() {
                 type="submit"
                 onClick={() => setShowSignUp(!showSignUp)}
                 style={{
-                  background: '#F8BE28 0% 0% no-repeat padding-box',
+                  background: '#4D94FF 0% 0% no-repeat padding-box',
                   borderRadius: '20px',
                   opacity: 1,
                   width: '300px',
@@ -875,7 +875,7 @@ export default function UserSignUp() {
                       type="submit"
                       onClick={handleSocialSignUpDone}
                       style={{
-                        background: '#F8BE28 0% 0% no-repeat padding-box',
+                        background: '#4D94FF 0% 0% no-repeat padding-box',
                         borderRadius: '20px',
                         opacity: 1,
                         width: '300px',
@@ -893,7 +893,7 @@ export default function UserSignUp() {
                       onClick={hideSignUp}
                       style={{
                         marginTop: '10px',
-                        background: '#FF6B4A 0% 0% no-repeat padding-box',
+                        background: '#FFB84D 0% 0% no-repeat padding-box',
                         borderRadius: '20px',
                         opacity: 1,
                         width: '300px',

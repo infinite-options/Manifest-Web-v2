@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import { Navigation } from './Home/navigation';
 import Nav from '../src/Nav';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import MiniNavigation from './manifest/miniNavigation';
 
 /* Main function for all the pages and elements */
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
@@ -18,7 +19,7 @@ function getFaviconEl() {
 export default function App() {
   const [loginState, setLoginState] = useState(LoginInitState);
   console.log('login State');
-  console.log(loginState);
+  console.log(loginState.loggedIn);
   useEffect(
     () => console.log('curUser = ', loginState.curUser),
     [loginState.curUser]
@@ -59,6 +60,8 @@ export default function App() {
           {/* <Link to="/">Home</Link> */}
 
           <Navigation />
+          {loginState.loggedIn ? <MiniNavigation /> : ''}
+
           {/* <Switch>
           <Route path="/"> */}
           <Nav />

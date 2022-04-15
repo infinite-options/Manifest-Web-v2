@@ -375,7 +375,7 @@ export default function Login_old() {
                   onClick={hideDoNotExist}
                   style={{
                     marginTop: '10px',
-                    background: '#FF6B4A 0% 0% no-repeat padding-box',
+                    background: '#FFB84D 0% 0% no-repeat padding-box',
                     borderRadius: '20px',
                     opacity: 1,
                     width: '300px',
@@ -397,7 +397,7 @@ export default function Login_old() {
                   type="submit"
                   onClick={() => history.push('/signup')}
                   style={{
-                    background: '#F8BE28 0% 0% no-repeat padding-box',
+                    background: '#4D94FF 0% 0% no-repeat padding-box',
                     borderRadius: '20px',
                     opacity: 1,
                     width: '300px',
@@ -483,7 +483,7 @@ export default function Login_old() {
                   onClick={hideUserExist}
                   style={{
                     marginTop: '10px',
-                    background: '#FF6B4A 0% 0% no-repeat padding-box',
+                    background: '#FFB84D 0% 0% no-repeat padding-box',
                     borderRadius: '20px',
                     opacity: 1,
                     width: '300px',

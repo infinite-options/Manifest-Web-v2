@@ -23,7 +23,7 @@ import {
   faCalendarWeek,
 } from '@fortawesome/free-solid-svg-icons';
 import 'react-datepicker/dist/react-datepicker.css';
-import EventFirebaseV2 from './EventFirebasev2';
+import EventLHS from './EventLHS';
 import DayEvents from './DayEvents';
 import DayRoutines from './DayRoutines.jsx';
 import DayGoals from './DayGoals.jsx';
@@ -138,6 +138,7 @@ export default function Events(props) {
   }
   console.log('curUser', loginContext.loginState);
   const history = useHistory();
+  let pageURL = window.location.href.split('/');
   //console.log('curUser timezone', userTime_zone);
   /* useEffect() is used to render API calls as minimumly 
   as possible based on past experience, if not included 
@@ -822,16 +823,56 @@ export default function Events(props) {
   /*----------------------------Custom Hook to make styles----------------------------*/
   const useStyles = makeStyles({
     buttonSelection: {
-      width: '14%',
-      height: '70px',
-      // borderBottomLeftRadius: '25%',
-      // borderBottomRightRadius: '25%',
+      width: '21%',
+      height: '51px',
       borderRadius: '0%',
-      textTransform: 'capitalize',
-      color: '#FFFFFF',
-      backgroundColor: '#bbc8d7',
+      color: '#000000',
       marginLeft: '.5%',
       marginRight: '.5%',
+      textTransform: 'capitalize',
+      font: 'normal normal 600 14px Quicksand-Book',
+      background: '#FFFFFF 0% 0% no-repeat padding-box',
+      border: '1px solid #000000',
+      borderRadius: '5px 5px 0px 0px',
+    },
+    buttonSelected: {
+      width: '21%',
+      height: '51px',
+      borderRadius: '0%',
+      color: '#000000',
+      marginLeft: '.5%',
+      marginRight: '.5%',
+      textTransform: 'capitalize',
+      font: 'normal normal 600 14px Quicksand-Book',
+      background: '#EBEBEB 0% 0% no-repeat padding-box',
+      boxShadow: 'inset 0px 3px 6px #00000029',
+      borderRadius: '5px 5px 0px 0px',
+    },
+    addButton: {
+      width: '33%',
+      height: '51px',
+      borderRadius: '0%',
+      color: '#FFFFFF',
+      marginLeft: '.5%',
+      marginRight: '.5%',
+      textTransform: 'capitalize',
+      font: 'normal normal 600 14px Quicksand-Book',
+      background: '#000000 0% 0% no-repeat padding-box',
+      border: '1px solid #000000',
+      borderRadius: '5px 5px 0px 0px',
+    },
+    addActiveButton: {
+      width: '33%',
+      height: '51px',
+      borderRadius: '0%',
+      color: '#FFFFFF',
+      marginLeft: '.5%',
+      marginRight: '.5%',
+      textTransform: 'capitalize',
+      font: 'normal normal 600 14px Quicksand-Book',
+      background: '#888888 0% 0% no-repeat padding-box',
+      border: '1px solid #000000',
+      borderRadius: '5px 5px 0px 0px',
     },
     buttonContainer: {
       flex: 1,
@@ -841,11 +882,8 @@ export default function Events(props) {
     },
 
     dateContainer: {
-      height: '70px',
-      //width: 'relative',
-      color: '#FFFFFF',
-      // flex: 1,
-      // display: 'flex',
+      height: '61px',
+      color: '#000000',
     },
   });
 
@@ -2583,7 +2621,6 @@ export default function Events(props) {
         selection----------------------------*/
     <div>
       {/* <Navigation userID= {stateValue.currentUserId}/> */}
-      <div style={{ height: '3px' }}></div>
       <EditRTSContext.Provider
         value={{
           editingRTS: editingRTS,
@@ -2634,24 +2671,28 @@ export default function Events(props) {
                   stateValue.BASE_URL)
                 }
               >
-                <Box backgroundColor="#bbc8d7">
-                  <div style={{ width: '30%', float: 'left' }}>
+                <Box
+                  style={{
+                    backgroundColor: '#F2F7FC',
+                    height: 'auto',
+                    minHeight: '100%',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '30%',
+                      float: 'left',
+                      backgroundColor: '#EBEBEB',
+                      height: 'auto',
+                      minHeight: '1440px',
+                    }}
+                  >
                     <Button
-                      className={classes.buttonSelection}
-                      id="one"
-                      onClick={() => history.push('/history')}
-                    >
-                      History
-                    </Button>
-                    <Button
-                      className={classes.buttonSelection}
-                      id="one"
-                      onClick={ToggleShowAbout}
-                    >
-                      About
-                    </Button>
-                    <Button
-                      className={classes.buttonSelection}
+                      className={
+                        pageURL[3] === 'events'
+                          ? classes.buttonSelected
+                          : classes.buttonSelection
+                      }
                       onClick={() => {
                         toggleShowEvents();
                         getAccessToken();
@@ -2677,10 +2718,11 @@ export default function Events(props) {
                       Routines
                     </Button>
                     <Button
-                      className={classes.buttonSelection}
-                      style={{
-                        width: '19%',
-                      }}
+                      className={
+                        editingEvent.editing === true
+                          ? classes.addActiveButton
+                          : classes.addButton
+                      }
                       id="one"
                       onClick={() => {
                         getAccessToken();
@@ -2721,7 +2763,7 @@ export default function Events(props) {
                     {console.log(userAccessToken)}
                     <div style={{ flex: '1' }}>
                       {userID != '' && (
-                        <EventFirebaseV2
+                        <EventLHS
                           theCurrentUserID={userID}
                           sethighLight={setHightlight}
                           highLight={hightlight}
@@ -2768,7 +2810,7 @@ export default function Events(props) {
                   <div style={{ width: '70%', float: 'left' }}>
                     {editingEvent.editing ? null : (
                       <Box
-                        bgcolor="#889AB5"
+                        bgcolor="#F2F7FC"
                         className={classes.dateContainer}
                         style={{ width: '100%' }}
                         // flex
@@ -2885,7 +2927,7 @@ export default function Events(props) {
                                     Week of {startWeek.format('D MMMM YYYY')}{' '}
                                   </p>
                                 )}
-                                <p
+                                {/* <p
                                   style={{
                                     font: 'normal normal bold 20px SF Pro',
                                     paddingBottom: '0px',
@@ -2893,7 +2935,7 @@ export default function Events(props) {
                                   className="normalfancytext"
                                 >
                                   {userTime_zone}
-                                </p>
+                                </p> */}
                               </Col>
                               <Col
                                 style={{
@@ -3020,7 +3062,7 @@ export default function Events(props) {
                                   {getYear()}{' '}
                                 </p>
 
-                                <p
+                                {/* <p
                                   style={{
                                     font: 'normal normal bold 20px SF Pro',
                                     paddingBottom: '0px',
@@ -3028,7 +3070,7 @@ export default function Events(props) {
                                   className="normalfancytext"
                                 >
                                   {userTime_zone}
-                                </p>
+                                </p> */}
                               </Col>
                               <Col
                                 style={{

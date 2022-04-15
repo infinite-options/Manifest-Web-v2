@@ -81,7 +81,7 @@ export default class WeekEvents extends Component {
               color:
                 (curDate.format('D') === dateNew.format('D')) &
                 (curDate.format('M') === dateNew.format('M'))
-                  ? '#67ABFC'
+                  ? '#D6B7FF'
                   : '',
             }}
           >
@@ -228,7 +228,7 @@ export default class WeekEvents extends Component {
                 this.state.pxPerHourForConversion;
               let hourDiff = tempEndTime.getHours() - tempStartTime.getHours();
               let minDiff = tempEndTime.getMinutes() / 60;
-              let color = '#67ABFC';
+              let color = '#D6B7FF';
               let height =
                 (hourDiff + minDiff) * this.state.pxPerHourForConversion;
               sameTimeEventCount++;
@@ -270,11 +270,11 @@ export default class WeekEvents extends Component {
 
               // change color if more than one event in same time.
               if (sameTimeEventCount <= 1) {
-                color = hour % 2 === 0 ? '#67ABFC' : '#3a92fb';
+                color = hour % 2 === 0 ? '#D6B7FF' : '#D6B7FF';
               } else if (sameTimeEventCount === 2) {
-                color = '#3a92fb';
+                color = '#D6B7FF';
               } else {
-                color = '#3a92fb';
+                color = '#D6B7FF';
               }
 
               let newElement = (
@@ -533,7 +533,7 @@ export default class WeekEvents extends Component {
                 (curDate.format('D') === dateNew.format('D')) &
                 (curDate.format('dddd') === dateNew.format('dddd')) &
                 (curDate.format('M') === dateNew.format('M'))
-                  ? '#67ABFC'
+                  ? '#D6B7FF'
                   : '',
               padding: '0',
             }}
@@ -555,7 +555,7 @@ export default class WeekEvents extends Component {
       );
     });
     return (
-      <Container style={{ margin: '0rem' }}>
+      <Container style={{ margin: '-1rem', backgroundColor: '#F2F7FC' }}>
         <Row style={{ marginLeft: '3rem' }}>
           <Row
             style={{
