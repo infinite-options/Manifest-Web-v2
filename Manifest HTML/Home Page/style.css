@@ -1,0 +1,177 @@
+.topleft{
+    /* UI Properties */
+    font-family:"Quicksand";
+    font-size:1.5em;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 1;
+    font-weight: bold;
+    padding-left: 20px;
+    padding-bottom: 15px;
+    padding-top:10px;
+}
+.mountain {
+    background-image:url(manifest_background1.jpg);
+    background-position: 0 -170px;
+    max-width:1960px; 
+    height:725px;
+    align-content: center;
+    background-size:cover;
+}
+.middle{
+    text-align:center;
+    font-family:"Quicksand";
+    letter-spacing: 0px;
+    opacity: 1;
+    max-width: 800px;
+    margin:auto;
+    padding-top:80px;
+    font-weight: bold;
+}
+.pagetitle{
+    font-size:3.5em; 
+    color: #000000;
+    font-family: "Quicksand";
+    font-weight: bold;
+}   
+
+.subtitle{
+    font-size:1.5em;
+    color: #000000;
+    padding-top: 16px;
+    padding-bottom: 30px;
+}
+.bodytxt{
+    font-size:1.3em;
+    color: #FFFFFF;
+}
+.graybox{
+    background-color: rgba(0, 0, 0, 0.21);
+    border-radius:10px;
+    max-width: 700px;
+    margin:auto;
+    padding-top: 15px;
+
+}
+
+.login-options {
+    opacity: 1;
+}
+
+.gray_t1{
+    padding-top:22px;
+    padding-bottom:5px;
+    font-size:1.25em;
+    color:#FFFFFF;
+    font-weight: bold;
+    max-width:600px;
+    margin:auto;
+}
+
+img {
+    max-width: 100%;
+    max-height: 100%;
+
+}
+.google{
+    height: 60px;
+    padding-top:8px;
+    padding-bottom:8px;
+}
+.apple{
+    height:44px;
+    padding-top:8px;
+    padding-bottom:8px;
+}
+.email{
+    height:38px;
+    padding-top:8px;
+    padding-bottom:8px;
+}
+.gray_foot{
+    font-size: 1.0em;
+    color:#FFFFFF;
+    padding-top:5px;
+    padding-bottom:20px;
+}
+.bodytxt{
+    padding-top:40px;
+    padding-bottom:5px;
+    font-size:1.25em;
+    color:#FFFFFF;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    text-align:center;
+    position: relative;
+  }
+  
+.pane {
+    width: 33.33333%;
+    height: 400px;
+    float: left;
+    background-color: #F2F7FC;
+}
+.event_icon{
+    height:140px;
+    padding-top: 20px;
+}
+.E{
+    font-family:"Quicksand";
+    font-size:1.2em;
+    margin-top: -10px;
+}
+.EE{
+    font-family:"Quicksand";
+    font-size:1.1em;
+    margin-top:20px;
+    margin-left: 135px;
+    margin-right: 135px;}
+
+.routine_icon{
+    height:95px;
+    padding-top: 45px;
+}
+.R{
+    font-family:"Quicksand";
+    font-size:1.2em;
+    padding-top:11px;
+}
+  
+.goal_icon{
+    height:100px;
+    padding-top: 41px;
+}
+.G{
+    font-family:"Quicksand";
+    font-size:1.2em;
+    padding-top:10px;
+}
+.footer{
+    font-family:"Quicksand";
+    font-size:0.9em;
+    font-weight: bold;
+    text-align: left;
+    padding-top:80px;
+    padding-left:60px;
+}
+.v1{
+    border-left: 3px solid black;
+    height: 220px;
+    position:absolute;
+    left:33.3333%;
+    top:60px;
+}
+
+.v2{
+    border-left: 3px solid black;
+    height: 220px;
+    position:absolute;
+    left:66.66666%;
+    top:60px;
+
+}
+  
+

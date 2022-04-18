@@ -1,0 +1,144 @@
+.topleft{
+    font-family:"Quicksand";
+    font-size:1.8em;
+    letter-spacing: 0px;
+    color: #000000;
+    font-weight: bold;
+    padding-left: .5em;
+    padding-bottom: 1em;
+    padding-top:1em;
+}
+.button{
+    margin-top:-2em;
+    background-color: white;
+    border-color: #000000;
+    border-radius: 5px;
+    border-width: 1px;
+    text-align:center;
+    font-family: "Quicksand";
+    font-size:0.80em;
+    padding:0.2em 2em;
+}
+
+
+.single_row { 
+    display: grid;
+    grid-template-columns: 1.5fr .5fr .5fr 10fr 2fr .5fr;
+    grid-template-rows: 2.5rem;
+    grid-template-areas:
+    "s1 s2 s3 s4 s5 s6";
+}
+
+.s1{
+    grid-area:s1;
+    font-family:"Quicksand";
+    font-size:1.2em;
+    color: #000000;
+    text-align: left;
+    font-weight: bold;
+    vertical-align: middle;
+    line-height: 2.5rem;
+}
+img {
+    max-width: 100%;
+    max-height: 100%;
+    margin:auto;
+    display:block;
+
+}
+.s2{
+    padding-top: 0.5rem;
+    grid-area:s2;
+    height: 1.5rem;
+
+}
+.s3{
+    grid-area:s3;
+    padding-bottom: 0.5rem;
+    height:1.5rem;
+    transform: rotate(180deg)
+}
+.s4{
+    grid-area:s4;
+    font-family:"Quicksand";
+    font-size:1.8em;
+    letter-spacing: 0.72px;
+    color: #000000;
+    text-align: center;
+    font-weight: bold;
+    vertical-align: middle;
+    line-height: 2.5rem;
+}
+.s5{
+    grid-area:s5;
+    font-family:"Quicksand";
+    font-size:1.0em;
+    color: #000000;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 2.5rem;
+
+}
+.s6{
+    grid-area:s6;
+    font-family:"Quicksand";
+    font-size:1.0em;
+    color: #000000;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 2.5rem;
+}
+.big_table{
+    font-family:"Quicksand";
+    font-size:0.9em;
+    color: #000000;
+    text-align: center;
+    vertical-align: middle;
+    font-weight: bold;
+    display: grid;
+    height:100%;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr .9fr .9fr .9fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-areas:
+    "r0c0 r0c1 r0c2 r0c3 r0c4 r0c5 r0c6 r0c7" 
+    "r1c0 r1c1 r1c2 r1c3 r1c4 r1c5 r1c6 r1c7" 
+    "r2c0 r2c1 r2c2 r2c3 r2c4 r2c5 r2c6 r2c7" 
+    "r3c0 r3c1 r3c2 r3c3 r3c4 r3c5 r3c6 r3c7" 
+    "r4c0 r4c1 r4c2 r4c3 r4c4 r4c5 r4c6 r4c7" 
+    "r5c0 r5c1 r5c2 r5c3 r5c4 r5c5 r5c6 r5c7" 
+    "r6c0 r6c1 r6c2 r6c3 r6c4 r6c5 r6c6 r6c7" 
+    "r7c0 r7c1 r7c2 r7c3 r7c4 r7c5 r7c6 r7c7" 
+    "r8c0 r8c1 r8c2 r8c3 r8c4 r8c5 r8c6 r8c7" 
+    "r9c0 r9c1 r9c2 r9c3 r9c4 r9c5 r9c6 r9c7"; 
+    
+}
+.r0c1{
+    grid-area:r0c1;
+}
+.r0c2{
+    grid-area:r0c2;
+}
+.r0c3{
+    grid-area:r0c3;
+}
+.r0c4{
+    grid-area:r0c4;
+}
+.r0c5{
+    grid-area:r0c5;
+}
+.r0c6{
+    grid-area:r0c6;
+}
+.r0c7{
+    grid-area:r0c7;
+}
+.r1c0{
+    grid-area:r1c0;
+}
+.bluecheck{
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+}
+.bluehalf{
+    background: #4D94FF 0% 0% no-repeat padding-box;
+}
