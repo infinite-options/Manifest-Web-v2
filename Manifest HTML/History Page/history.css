@@ -27,6 +27,46 @@
     grid-template-rows: 2.5rem;
     grid-template-areas:
     "s1 s2 s3 s4 s5 s6";
+    margin-bottom:1rem;
+    overflow:auto;
+}
+.yellowbox{
+    display:grid;
+    grid-template-columns:.5fr 2fr 4fr;
+    grid-template-rows:40px 25px;
+    grid-template-areas:
+    "s00 s11 s22"
+    "s00 s11 s33";
+    font-weight:bold;
+    border-radius: 10px;
+    background-color:#FFB84D;
+    margin-left:0.5rem;   
+    margin-top:5px;
+    margin-bottom: 5px; 
+    overflow:auto;
+    justify-content: center;
+    align-items: center;
+
+}
+.s11{
+    grid-area:s11;
+    width:3rem;
+    display:flex;
+    justify-content: center;
+
+}
+.s22{
+    grid-area:s22;
+    font-size:1rem;
+    font-weight:bold;
+    text-align: left;
+}
+.s33{
+    grid-area:s33;
+    font-size:0.8rem;
+    font-weight:bold;
+    text-align: left;
+
 }
 
 .s1{
@@ -36,8 +76,8 @@
     color: #000000;
     text-align: left;
     font-weight: bold;
-    vertical-align: middle;
-    line-height: 2.5rem;
+    line-height: 3rem;
+
 }
 img {
     max-width: 100%;
@@ -88,57 +128,115 @@ img {
     vertical-align: middle;
     line-height: 2.5rem;
 }
-.big_table{
+table,th,td{
+    border: 1px solid black;
     font-family:"Quicksand";
-    font-size:0.9em;
+    font-size:1.0em;
     color: #000000;
     text-align: center;
     vertical-align: middle;
-    font-weight: bold;
-    display: grid;
-    height:100%;
-    grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr .9fr .9fr .9fr 1fr 1fr 1fr 1fr 1fr;
+    border-collapse: collapse;
+}
+
+/*  height of a row */
+table th{
+    height:2rem;
+    padding:0.8rem 3rem;
+}
+table td{
+    height:3rem;
+}
+
+.bluebox{
+    background-color: #4D94FF;
+    border-radius: 10px;
+    height:3rem;
+    text-align: center;
+    margin-left:1.3rem;
+    margin-top:5px;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.cyanbox{
+    display:grid;
+    grid-template-columns:1fr 5fr;
     grid-template-areas:
-    "r0c0 r0c1 r0c2 r0c3 r0c4 r0c5 r0c6 r0c7" 
-    "r1c0 r1c1 r1c2 r1c3 r1c4 r1c5 r1c6 r1c7" 
-    "r2c0 r2c1 r2c2 r2c3 r2c4 r2c5 r2c6 r2c7" 
-    "r3c0 r3c1 r3c2 r3c3 r3c4 r3c5 r3c6 r3c7" 
-    "r4c0 r4c1 r4c2 r4c3 r4c4 r4c5 r4c6 r4c7" 
-    "r5c0 r5c1 r5c2 r5c3 r5c4 r5c5 r5c6 r5c7" 
-    "r6c0 r6c1 r6c2 r6c3 r6c4 r6c5 r6c6 r6c7" 
-    "r7c0 r7c1 r7c2 r7c3 r7c4 r7c5 r7c6 r7c7" 
-    "r8c0 r8c1 r8c2 r8c3 r8c4 r8c5 r8c6 r8c7" 
-    "r9c0 r9c1 r9c2 r9c3 r9c4 r9c5 r9c6 r9c7"; 
+    "cyan1 cyan2";
+    background-color:#AEEEFF;
+    text-align: center;
+    margin-left: 2rem;;
+    margin-top:3px;
+    margin-bottom: 3px;
+    border-radius: 10px;
+    height:3rem;
+    overflow:auto;
+
+}
+.cyan1{
+    grid-area: cyan1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cyancircle{
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    padding: 8px;
+    background: #AEEEFF;
+    border: 1px solid #000;
+    color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left:5px;
+    margin-right:5px;
+}
+.cyan2{
+    grid-area: cyan2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    float:left;
     
 }
-.r0c1{
-    grid-area:r0c1;
+.marks{
+    height:2rem;
 }
-.r0c2{
-    grid-area:r0c2;
+.imageicon{
+    display:flex;
+    justify-content: center;
 }
-.r0c3{
-    grid-area:r0c3;
+
+.greenbox{
+    display:grid;
+    grid-template-columns:.5fr 2fr 4fr;
+    font-weight:bold;
+    border-radius: 10px;
+    background-color:#00bc00;
+    margin-left:0.5rem;    
+    display:grid;
+    grid-template-areas:
+    "hi green11 green22";
+    font-weight:bold;
+    border-radius: 10px;
+    overflow:auto;
+    justify-content: center;
+    align-items: center;
+    margin-top:5px;
+    margin-bottom: 5px;
 }
-.r0c4{
-    grid-area:r0c4;
+.green11{
+    grid-area: green11;
+    width:3rem;
+
 }
-.r0c5{
-    grid-area:r0c5;
-}
-.r0c6{
-    grid-area:r0c6;
-}
-.r0c7{
-    grid-area:r0c7;
-}
-.r1c0{
-    grid-area:r1c0;
-}
-.bluecheck{
-    background: #FFFFFF 0% 0% no-repeat padding-box;
-}
-.bluehalf{
-    background: #4D94FF 0% 0% no-repeat padding-box;
+.green22{
+    grid-area: green22;
+    text-align: left;
+
 }

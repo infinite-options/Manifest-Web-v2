@@ -121,7 +121,7 @@ img {
 .YourUsers{
     opacity: 1;
     font-family: "Quicksand";
-    font-size:1.8em;
+    font-size:1.5em;
     padding-top:1.5em;
     font-weight: bold;
 }
@@ -139,19 +139,18 @@ img {
     padding:0.8em 5.5em;
 }
 
-.dupuser{
-    background-color: white;
-    border-color: #000000;
-    border-radius: 5px;
-    border-width: 1px;
-    text-align:center;
-    font-family: "Quicksand";
-    font-size:1.0em;
-    font-weight: bold;
-    padding:0.5em 1.8em;
-    margin-bottom: 1.2rem;
-    margin-top:1.2rem;
+.con{
+    max-width:300px;
+    display:block;
 }
+
+.right {
+    display:table;
+    margin-left:7rem;
+
+}
+
+
 
 .duperr{
     background-color: white;
@@ -164,9 +163,11 @@ img {
     font-weight: bold;
     padding:0.5em 1.8em;
     margin-bottom:1.2rem;
-
-
+    width: 100%;
+    display: block;
 }
+
+
 
 .button2{
     background-color: #09B4FF;
@@ -189,3 +190,35 @@ img {
     font-size:0.80em;
     padding:0.5em 1.8em;
 }
+
+.biggird{
+    display:grid;
+    grid-template-columns:50% 50%;
+    grid-template-rows:600px 30px;
+    grid-template-areas:
+    "comp1 comp2"
+    "comp3 comp3";
+    font-weight:bold;
+    border-radius: 10px;
+    margin-left:0.5rem;   
+    margin-top:5px;
+    margin-bottom: 5px; 
+    overflow:auto;
+    justify-content: center;
+    align-items: center;
+}
+
+.comp1{
+    grid-area: comp1;
+}
+.comp2{
+    grid-area:comp2;
+}
+.comp3{
+    margin-top:2rem;
+    grid-area:comp3;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
