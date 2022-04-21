@@ -1762,7 +1762,7 @@ export default function GoalLHS(props) {
                   return '#FFB84D';
                 } else if (r.is_persistent == 'False') {
                   console.log('this has to be none');
-                  return '#00E535';
+                  return '#00BC00';
                 } else {
                   return '#9b4aff';
                 }

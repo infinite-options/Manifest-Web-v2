@@ -9,10 +9,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import './history.css';
-import { useHistory, Redirect } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Button from '@material-ui/core/Button';
 import {
   faChevronLeft,
   faChevronRight,
@@ -20,17 +19,8 @@ import {
 import Moment from 'moment';
 import VerticalRoutine from './VerticalRoutine';
 import LoginContext from '../LoginContext';
-import {
-  Form,
-  Container,
-  Row,
-  Col,
-  Modal,
-  Dropdown,
-  DropdownButton,
-  Spinner,
-} from 'react-bootstrap';
-import { wait } from '@testing-library/dom';
+import { Container, Row, Col } from 'react-bootstrap';
+import MiniNavigation from '../manifest/miniNavigation';
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 const useStyles = makeStyles({
   table: {
@@ -77,6 +67,7 @@ export default function MainPage(props) {
   var userID = '';
   var userTime_zone = '';
   var userEmail = '';
+  var userPic = '';
   if (
     document.cookie
       .split(';')
@@ -94,10 +85,15 @@ export default function MainPage(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_email='))
       .split('=')[1];
+    userPic = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_pic='))
+      .split('=')[1];
   } else {
     userID = loginContext.loginState.curUser;
     userTime_zone = loginContext.loginState.curUserTimeZone;
     userEmail = loginContext.loginState.curUserEmail;
+    userPic = loginContext.loginState.curUserPic;
   }
   if (userID != currentUser) {
     setHG([]);
@@ -853,9 +849,11 @@ export default function MainPage(props) {
     clickHandle(childIn);
   }
   return (
-    <Container fluid padding="0px">
-      {/* <Navigation userID={currentUser} /> */}
-      <Row fluid padding={0}>
+    <Container fluid padding="0px" backgroundColor="#F2F7FC">
+      <Row style={{ width: '30%' }}>
+        <MiniNavigation />
+      </Row>
+      <Row fluid padding={0} backgroundColor="#F2F7FC">
         <Col width="10rem" style={{ padding: '0px', overflow: 'hidden' }}>
           <div display="flex" flex-direction="row">
             <div>

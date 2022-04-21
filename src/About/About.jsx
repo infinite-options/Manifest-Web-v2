@@ -17,16 +17,15 @@ import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import MiniNavigation from '../miniNavigation';
-import LoginContext from '../../LoginContext';
+import LoginContext from '../LoginContext';
 import { Link, useHistory } from 'react-router-dom';
-import AddIconModal from '../../Home/AddIconModal';
-import UploadImage from '../../Home/UploadImage';
-import TAUploadImage from '../../Home/TAUploadImage';
+import AddIconModal from '../Home/AddIconModal';
+import UploadImage from '../Home/UploadImage';
+import TAUploadImage from '../Home/TAUploadImage';
 import momentTZ from 'moment-timezone';
-import GooglePhotos from '../../Home/GooglePhotos';
-import TAGooglePhotos from '../../Home/TAGooglePhotos';
-
+import GooglePhotos from '../Home/GooglePhotos';
+import TAGooglePhotos from '../Home/TAGooglePhotos';
+import MiniNavigation from '../manifest/miniNavigation';
 const moment = require('moment');
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
@@ -36,7 +35,7 @@ const useStyles = makeStyles({
   },
   formGroupTitle: {
     marginLeft: '3rem',
-    color: 'white',
+    color: '#000000',
   },
   formGroupItem: {
     borderRadius: '10px',
@@ -991,7 +990,7 @@ export default function AboutModal(props) {
               backgroundColor: '#889AB5',
               width: '400px',
               // height: "100px",
-              color: 'white',
+              color: '#000000',
               padding: '40px',
             }}
           >
@@ -1006,7 +1005,7 @@ export default function AboutModal(props) {
                       marginTop: '10px',
                       marginLeft: '10px',
                       fontWeight: 'bolder',
-                      color: 'white',
+                      color: '#000000',
                     }}
                   >
                     Name
@@ -1120,7 +1119,10 @@ export default function AboutModal(props) {
                   <FormControl fullWidth>
                     <Select
                       value={taObject.relationship}
-                      style={{ backgroundColor: 'white', paddingLeft: '15px' }}
+                      style={{
+                        backgroundColor: '#000000',
+                        paddingLeft: '15px',
+                      }}
                       renderValue={() => {
                         if (taObject.relationship === '') {
                           return <div>Enter a relationship</div>;
@@ -1153,7 +1155,10 @@ export default function AboutModal(props) {
                   <FormControl fullWidth>
                     <Select
                       value={taObject.time_zone || ''}
-                      style={{ backgroundColor: 'white', paddingLeft: '15px' }}
+                      style={{
+                        backgroundColor: '#000000',
+                        paddingLeft: '15px',
+                      }}
                       onChange={(e) => {
                         setTaObject({
                           ...taObject,
@@ -1185,7 +1190,7 @@ export default function AboutModal(props) {
                     style={{
                       marginTop: '10px',
                       fontWeight: 'bolder',
-                      color: 'white',
+                      color: '#000000',
                     }}
                   >
                     Phone Number
@@ -1214,7 +1219,7 @@ export default function AboutModal(props) {
                     style={{
                       marginTop: '10px',
                       fontWeight: 'bolder',
-                      color: 'white',
+                      color: '#000000',
                     }}
                   >
                     Email Address
@@ -1240,7 +1245,7 @@ export default function AboutModal(props) {
                     style={{
                       marginTop: '10px',
                       fontWeight: 'bolder',
-                      color: 'white',
+                      color: '#000000',
                     }}
                   >
                     Employer
@@ -1264,7 +1269,7 @@ export default function AboutModal(props) {
               <button
                 style={{
                   backgroundColor: '#FFB84D',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1282,7 +1287,7 @@ export default function AboutModal(props) {
               <button
                 style={{
                   backgroundColor: '#51CC4E',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1333,7 +1338,7 @@ export default function AboutModal(props) {
               backgroundColor: '#889AB5',
               width: '400px',
               // height: "100px",
-              color: 'white',
+              color: '#000000',
               padding: '40px',
             }}
           >
@@ -1347,7 +1352,7 @@ export default function AboutModal(props) {
               <button
                 style={{
                   backgroundColor: '#889AB5',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1381,7 +1386,7 @@ export default function AboutModal(props) {
               <button
                 style={{
                   backgroundColor: '#889AB5',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1429,7 +1434,7 @@ export default function AboutModal(props) {
               backgroundColor: '#889AB5',
               width: '400px',
               // height: "100px",
-              color: 'white',
+              color: '#000000',
               padding: '40px',
             }}
           >
@@ -1443,7 +1448,7 @@ export default function AboutModal(props) {
               <button
                 style={{
                   backgroundColor: '#889AB5',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1480,7 +1485,7 @@ export default function AboutModal(props) {
               <button
                 style={{
                   backgroundColor: '#889AB5',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1527,7 +1532,7 @@ export default function AboutModal(props) {
               backgroundColor: '#889AB5',
               width: '400px',
               // height: "100px",
-              color: 'white',
+              color: '#000000',
               padding: '40px',
             }}
           >
@@ -1541,7 +1546,7 @@ export default function AboutModal(props) {
               <button
                 style={{
                   backgroundColor: '#889AB5',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1588,7 +1593,7 @@ export default function AboutModal(props) {
               backgroundColor: '#889AB5',
               width: '400px',
               // height: "100px",
-              color: 'white',
+              color: '#000000',
               padding: '40px',
             }}
           >
@@ -1602,7 +1607,7 @@ export default function AboutModal(props) {
               <button
                 style={{
                   backgroundColor: '#889AB5',
-                  color: 'white',
+                  color: '#000000',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1626,7 +1631,11 @@ export default function AboutModal(props) {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        backgroundColor: '#F2F7FC',
+      }}
+    >
       {uploadImageModal()}
       {uploadUserImageModal()}
       {editPersonModal(taObject)}
@@ -1635,16 +1644,15 @@ export default function AboutModal(props) {
       {deleteModal()}
       {removeRoleModal()}
       <div style={{ height: '3px' }}></div>
-      {/* <div backgroundColor="#bbc8d7">
+      <div style={{ width: '30%' }}>
         <MiniNavigation />
-      </div> */}
+      </div>
       <ModalBody
         style={{
-          backgroundColor: '#889AB5',
+          backgroundColor: '#F2F7FC',
           width: '100%',
           float: 'left',
           marginRight: '20px',
-          marginTop: '10px',
         }}
       >
         <div
@@ -1663,7 +1671,7 @@ export default function AboutModal(props) {
                     marginTop: '10px',
                     marginLeft: '10px',
                     fontWeight: 'bolder',
-                    color: 'white',
+                    color: '#000000',
                   }}
                 >
                   First Name:
@@ -1686,7 +1694,7 @@ export default function AboutModal(props) {
                     marginTop: '10px',
                     marginLeft: '10px',
                     fontWeight: 'bolder',
-                    color: 'white',
+                    color: '#000000',
                   }}
                 >
                   Last Name:
@@ -1711,7 +1719,7 @@ export default function AboutModal(props) {
                     marginTop: '10px',
                     marginLeft: '10px',
                     fontWeight: 'bolder',
-                    color: 'white',
+                    color: '#000000',
                   }}
                 >
                   Email:
@@ -1721,7 +1729,7 @@ export default function AboutModal(props) {
                   style={{
                     marginTop: '10px',
                     marginLeft: '10px',
-                    color: 'white',
+                    color: '#000000',
                   }}
                 >
                   {email}
@@ -1736,7 +1744,7 @@ export default function AboutModal(props) {
                     marginTop: '10px',
                     marginLeft: '10px',
                     fontWeight: 'bolder',
-                    color: 'white',
+                    color: '#000000',
                   }}
                 >
                   User id:
@@ -1746,7 +1754,7 @@ export default function AboutModal(props) {
                   style={{
                     marginTop: '10px',
                     marginLeft: '10px',
-                    color: 'white',
+                    color: '#000000',
                   }}
                 >
                   {userID}
@@ -1803,7 +1811,7 @@ export default function AboutModal(props) {
                       objectFit: 'fill',
                       border: 'none',
                       borderRadius: '10px',
-                      backgroundColor: 'white',
+                      backgroundColor: '#000000',
                       marginBottom: '15px',
                     }}
                   ></div>
@@ -1826,7 +1834,7 @@ export default function AboutModal(props) {
               {/* <Col style={{ float: 'right' }} xs={4}>
                 <img alt="icon" src={photo} style={{ width: '100%' }} />
               </Col> */}
-              {/*  <Col style={{ color: 'white' }}>
+              {/*  <Col style={{ color: '#000000' }}>
                 <h1
                   style={{
                     fontSize: '24px',
@@ -1872,7 +1880,7 @@ export default function AboutModal(props) {
                       // height: '100px',
                       border: 'none',
                       borderRadius: '10px',
-                      backgroundColor: 'white',
+                      backgroundColor: '#000000',
                       marginBottom: '15px',
                     }}
                   ></div>
@@ -1897,7 +1905,7 @@ export default function AboutModal(props) {
                 <label
                   style={{
                     marginBottom: '15px',
-                    color: 'white',
+                    color: '#000000',
                     fontWeight: 'bold',
                   }}
                 >
@@ -1920,7 +1928,7 @@ export default function AboutModal(props) {
                     marginTop: '10px',
                     marginRight: '20px',
                     fontWeight: 'bolder',
-                    color: 'white',
+                    color: '#000000',
                   }}
                 >
                   Birth Date:
@@ -1964,7 +1972,7 @@ export default function AboutModal(props) {
                   style={{
                     marginTop: '10px',
                     fontWeight: 'bolder',
-                    color: 'white',
+                    color: '#000000',
                   }}
                 >
                   Phone Number:
@@ -2006,7 +2014,7 @@ export default function AboutModal(props) {
             style={{
               marginTop: '10px',
               fontWeight: 'bolder',
-              color: 'white',
+              color: '#000000',
             }}
           >
             <div
@@ -2024,7 +2032,7 @@ export default function AboutModal(props) {
                 value={
                   aboutMeObject.timeSettings.timeZone.split('_').join(' ') || ''
                 }
-                style={{ backgroundColor: 'white', paddingLeft: '15px' }}
+                style={{ backgroundColor: '#000000', paddingLeft: '15px' }}
                 onChange={(e) => {
                   e.stopPropagation();
                   setAboutMeObject((prevState) => ({
@@ -2064,7 +2072,7 @@ export default function AboutModal(props) {
                   style={{
                     marginRight: '20px',
                     marginTop: '10px',
-                    color: 'white',
+                    color: '#000000',
                     fontWeight: 'bold',
                   }}
                 >
@@ -2097,7 +2105,7 @@ export default function AboutModal(props) {
                     marginRight: '20px',
                     marginLeft: '20px',
                     marginTop: '10px',
-                    color: 'white',
+                    color: '#000000',
                     fontWeight: 'bold',
                   }}
                 >
@@ -2131,7 +2139,7 @@ export default function AboutModal(props) {
                   style={{
                     marginRight: '20px',
                     marginTop: '10px',
-                    color: 'white',
+                    color: '#000000',
                     fontWeight: 'bold',
                   }}
                 >
@@ -2164,7 +2172,7 @@ export default function AboutModal(props) {
                     marginRight: '20px',
                     marginLeft: '20px',
                     marginTop: '10px',
-                    color: 'white',
+                    color: '#000000',
                     fontWeight: 'bold',
                   }}
                 >
@@ -2198,7 +2206,7 @@ export default function AboutModal(props) {
                   style={{
                     marginRight: '20px',
                     // marginTop: '10px',
-                    color: 'white',
+                    color: '#000000',
                     fontWeight: 'bold',
                   }}
                 >
@@ -2231,7 +2239,7 @@ export default function AboutModal(props) {
                     marginRight: '20px',
                     marginLeft: '20px',
                     // marginTop: '10px',
-                    color: 'white',
+                    color: '#000000',
                     fontWeight: 'bold',
                   }}
                 >
@@ -2444,7 +2452,7 @@ export default function AboutModal(props) {
             style={{
               marginTop: '10px',
               fontWeight: 'bolder',
-              color: 'white',
+              color: '#000000',
             }}
           >
             <Form.Label>Message Day</Form.Label>
@@ -2469,7 +2477,7 @@ export default function AboutModal(props) {
               style={{
                 marginTop: '10px',
                 fontWeight: 'bolder',
-                color: 'white',
+                color: '#000000',
               }}
             >
               Message Card
@@ -2495,7 +2503,7 @@ export default function AboutModal(props) {
               style={{
                 marginTop: '10px',
                 fontWeight: 'bolder',
-                color: 'white',
+                color: '#000000',
               }}
             >
               Major Events
@@ -2530,7 +2538,7 @@ export default function AboutModal(props) {
             style={{
               marginTop: '10px',
               fontWeight: 'bolder',
-              color: 'white',
+              color: '#000000',
             }}
           >
             <Form.Label style={{ width: '100%' }}>
@@ -2573,7 +2581,7 @@ export default function AboutModal(props) {
                         marginTop: '1rem',
                       }}
                     >
-                      <p style={{ color: 'white', paddingTop: '10px' }}>
+                      <p style={{ color: '#000000', paddingTop: '10px' }}>
                         {lp.name}
                       </p>
                     </div>
@@ -2700,9 +2708,9 @@ export default function AboutModal(props) {
                 <Row>
                   <Button
                     style={{
-                      color: 'white',
+                      color: '#000000',
                       backgroundColor: '#889AB5',
-                      border: '2px solid white',
+                      border: '2px solid #000000',
                       borderRadius: '20px',
                       margin: '25px',
                       padding: '10px 20px ',
@@ -2721,9 +2729,9 @@ export default function AboutModal(props) {
                   <Button
                     variant="secondary"
                     style={{
-                      color: 'white',
+                      color: '#000000',
                       backgroundColor: '#889AB5',
-                      border: '2px solid white',
+                      border: '2px solid #000000',
                       margin: '25px',
                       borderRadius: '20px',
                       padding: '10px 20px ',
@@ -2741,7 +2749,7 @@ export default function AboutModal(props) {
                   style={{
                     width: '380px',
                     marginTop: '20px',
-                    border: '2px solid white',
+                    border: '2px solid #000000',
                     borderRadius: '10px',
                     float: 'left',
                     marginLeft: '20px',
@@ -2750,7 +2758,7 @@ export default function AboutModal(props) {
                 >
                   <Button
                     style={{
-                      color: 'white',
+                      color: '#000000',
                       paddingTop: '10px',
                       backgroundColor: '#889AB5',
                       borderColor: '#889AB5',
@@ -2767,7 +2775,7 @@ export default function AboutModal(props) {
             </div>
           </Form.Group>
         </div>
-        {/* <hr style={{ border: '1px solid white' }} /> */}
+        {/* <hr style={{ border: '1px solid #000000' }} /> */}
 
         <div style={{ width: '100%', float: 'left' }}>
           <div
@@ -2781,9 +2789,9 @@ export default function AboutModal(props) {
             <Row>
               <Button
                 style={{
-                  color: 'white',
+                  color: '#000000',
                   backgroundColor: '#889AB5',
-                  border: '2px solid white',
+                  border: '2px solid #000000',
                   borderRadius: '20px',
                   margin: '25px',
                   padding: '10px 20px ',
@@ -2802,9 +2810,9 @@ export default function AboutModal(props) {
                 variant="secondary"
                 onClick={hideAboutForm}
                 style={{
-                  color: 'white',
+                  color: '#000000',
                   backgroundColor: '#889AB5',
-                  border: '2px solid white',
+                  border: '2px solid #000000',
                   margin: '25px',
                   borderRadius: '20px',
                   padding: '10px 20px ',
@@ -2817,9 +2825,9 @@ export default function AboutModal(props) {
                   variant="secondary"
                   onClick={() => setDeleteUser(!deleteUser)}
                   style={{
-                    color: 'white',
+                    color: '#000000',
                     backgroundColor: '#889AB5',
-                    border: '2px solid white',
+                    border: '2px solid #000000',
                     margin: '25px',
                     borderRadius: '20px',
                     padding: '10px 20px ',
@@ -2839,9 +2847,9 @@ export default function AboutModal(props) {
                   variant="secondary"
                   onClick={() => setRelinquishRole(!relinquishRole)}
                   style={{
-                    color: 'white',
+                    color: '#000000',
                     backgroundColor: '#889AB5',
-                    border: '2px solid white',
+                    border: '2px solid #000000',
                     margin: '25px',
                     borderRadius: '20px',
                     padding: '10px 20px ',

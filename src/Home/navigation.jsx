@@ -8,12 +8,18 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import { useHistory } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
-import { GoogleLogin } from 'react-google-login';
-import TimezoneSelect from 'react-timezone-select';
 import LoginContext from '../LoginContext';
 import axios from 'axios';
-import { CompareSharp } from '@material-ui/icons';
-import { faYenSign } from '@fortawesome/free-solid-svg-icons';
+import {
+  Form,
+  Container,
+  Row,
+  Col,
+  Modal,
+  Dropdown,
+  DropdownButton,
+  Spinner,
+} from 'react-bootstrap';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 const ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
@@ -89,12 +95,15 @@ export function Navigation() {
   const listOfUsers = loginContext.loginState.usersOfTA;
   var selectedUser = loginContext.loginState.curUser;
   const currentUser = loginContext.loginState.curUser;
+  const curUserPic = loginContext.loginState.curUserPic;
   var curUserID = '';
   var curUserTZ = '';
 
   let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
   let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-
+  const [taImage, setTaImage] = useState('');
+  const [userImage, setUserImage] = useState(curUserPic);
+  console.log(currentUser, curUserPic);
   useEffect(() => {
     if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
       console.log('base_url', BASE_URL.substring(8, 18));
@@ -107,11 +116,13 @@ export function Navigation() {
       CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
       console.log(CLIENT_ID, CLIENT_SECRET);
     }
+    axios.get(BASE_URL + 'getPeopleImages/' + selectedUser).then((response) => {
+      console.log(response);
+      setTaImage(response.data.result[0].url);
+    });
+    // setUserImage(curUserPic);
   });
   console.log(CLIENT_ID, CLIENT_SECRET);
-  // const selectedUser = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
-  // const [selectedUser, setSelectedUser] = useState('')
-  const [showNewUser, toggleNewUser] = useState(false);
   const [showGiveAccess, toggleGiveAccess] = useState(false);
   const [showAssignUser, toggleAssignUser] = useState(false);
   const [showConfirmed, toggleConfirmed] = useState(false);
@@ -122,8 +133,6 @@ export function Navigation() {
   const [timezone, setTimezone] = useState(
     Intl.DateTimeFormat().resolvedOptions().timeZone
   );
-  const [tokenInfo, setTokenInfo] = useState({});
-  const [userInfo, setUserInfo] = useState({});
   const [patientName, setPatientName] = useState('');
   const [emailUser, setEmailUser] = useState('');
   const [socialId, setSocialId] = useState('');
@@ -182,6 +191,7 @@ export function Navigation() {
           user_name: user.user_name,
           time_zone: user.time_zone,
           user_email_id: user.user_email_id,
+          user_picture: user.user_picture,
         })}
       >
         {user.user_name}
@@ -207,6 +217,7 @@ export function Navigation() {
           document.cookie = 'patient_timeZone=' + listOfUsers[0].time_zone;
           document.cookie = 'patient_uid=' + listOfUsers[0].user_unique_id;
           document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
+          document.cookie = 'patient_pic=' + listOfUsers[0].user_picture;
         }
       }
     } else {
@@ -216,6 +227,7 @@ export function Navigation() {
         document.cookie = 'patient_name=' + listOfUsers[0].user_name;
         document.cookie = 'patient_timeZone=' + listOfUsers[0].time_zone;
         document.cookie = 'patient_uid=' + listOfUsers[0].user_unique_id;
+        document.cookie = 'patient_pic=' + listOfUsers[0].user_picture;
       } else {
         console.log('document cookie set to loading');
         document.cookie = 'patient_name=Loading';
@@ -304,23 +316,6 @@ export function Navigation() {
         });
     }
   };
-
-  /* History of the HomePage URL which is shown url tab */
-  function homeNavigation() {
-    history.push('/home');
-  }
-
-  /* History of the ContactPage URL which is shown url tab */
-  function loginNavigation() {
-    history.push('/login');
-  }
-
-  function newUserModal() {
-    // if (showNewUser) {
-    // } else {
-    //   return null
-    // }
-  }
 
   const giveAccessModal = () => {
     if (showGiveAccess) {
@@ -645,124 +640,31 @@ export function Navigation() {
     }
   };
 
-  console.log('from nav');
-  console.log(loginContext);
-  getTAList();
-  getUnassignedList();
-  console.log(taList);
-  console.log(uaList);
-
-  function onSubmitUser() {
-    let body = {
-      email_id: emailUser,
-      password: '',
-      google_auth_token: accessToken,
-      google_refresh_token: refreshToken,
-      social_id: socialId,
-      access_expires_in: accessExpiresIn,
-      first_name: firstName,
-      last_name: lastName,
-      time_zone: selectedTimezone.value,
-      ta_people_id: selectedUser,
-    };
-    console.log('body', body);
-    axios
-      .post(BASE_URL + 'addNewUser', body)
-      .then((response) => {
-        console.log(response.data);
-        loginContext.setLoginState({
-          ...loginContext.loginState,
-          reload: !loginContext.loginState.reload,
-        });
-      })
-      .catch((error) => {
-        console.log('its in landing page');
-        console.log(error);
-      });
-  }
-
   return (
     <>
-      {/* {newUserModal()} */}
-
       {giveAccessModal()}
       {assignUserModal()}
       {confirmedModal()}
       {assignConfirmedModal()}
-      <AppBar className={classes.navigationBar} style={{ position: 'static' }}>
+      <AppBar
+        className={classes.navigationBar}
+        style={{
+          position: 'static',
+          paddingTop: '0.3rem',
+          paddingLeft: '0',
+          paddingRight: '0',
+        }}
+      >
         <Toolbar className={classes.customizeToolbar}>
           <div className={classes.displayNav}>
-            <div style={{ width: '30%', textAlign: 'left' }}>
-              <Box style={{ textAlign: 'left' }}>
-                <Typography
-                  className={classes.titleElement}
-                  onClick={() => {
-                    history.push('/home');
-                  }}
-                >
-                  Manifest My Life
-                </Typography>
-              </Box>
-            </div>
-            {/* <div style={{ width: '30%' }}>{userListRendered()} </div> */}
-            <div
-              style={{
-                width: '40%',
-              }}
-            >
-              {document.cookie
-                .split(';')
-                .some((item) => item.trim().startsWith('ta_uid=')) ? (
-                <div
-                  style={{
-                    width: '100%',
-                  }}
-                >
-                  Patient:&nbsp;
-                  <select
-                    className={classes.myButton}
-                    value={selectedUser.user_unique_id} // this is probably wrong
-                    onChange={(e) => {
-                      document.cookie =
-                        'patient_uid=' +
-                        JSON.parse(e.target.value).user_unique_id;
-                      document.cookie =
-                        'patient_name=' + JSON.parse(e.target.value).user_name;
-                      document.cookie =
-                        'patient_timeZone=' +
-                        JSON.parse(e.target.value).time_zone;
-                      document.cookie =
-                        'patient_email=' +
-                        JSON.parse(e.target.value).user_email_id;
-                      console.log(document.cookie);
-                      loginContext.setLoginState({
-                        ...loginContext.loginState,
-                        curUser: JSON.parse(e.target.value).user_unique_id,
-                        curUserTimeZone: JSON.parse(e.target.value).time_zone,
-                        curUserEmail: JSON.parse(e.target.value).user_email_id,
-                      });
-                      toggleGetTAList(false);
-                      // toggleGetUnassignedList(false);
+            <Col xs={4}>
+              <img
+                src="/Logo.png"
+                style={{ maxWidth: '70%', minWidth: '70%' }}
+              />
+            </Col>
 
-                      setPatientName(JSON.parse(e.target.value).user_name);
-                    }}
-                  >
-                    <option selected disabled hidden>
-                      {
-                        document.cookie
-                          .split('; ')
-                          .find((row) => row.startsWith('patient_name='))
-                          .split('=')[1]
-                      }
-                    </option>
-
-                    {userListRendered()}
-                  </select>
-                </div>
-              ) : null}
-            </div>
-
-            <div
+            {/* <div
               style={{
                 width: '20%',
                 marginLeft: '-17rem',
@@ -792,7 +694,7 @@ export function Navigation() {
                       }
                     }}
                   >
-                    {/* Assign User Dropdown */}
+                   
                     <option value="null" selected>
                       Assign User
                     </option>
@@ -800,89 +702,202 @@ export function Navigation() {
                   </select>
                 </div>
               ) : null}
-            </div>
-
-            {/* {userListRendered()} */}
-
-            <div
-              className={classes.buttonContainer}
-              style={{ width: '40%', textAlign: 'justify' }}
-            >
-              {/* <Button
-                className={classes.buttonColor}
-                variant="text"
-                onClick={homeNavigation}
+            </div> */}
+            {document.cookie
+              .split(';')
+              .some((item) => item.trim().startsWith('ta_uid=')) ? (
+              <Col
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'right',
+                  padding: 0,
+                }}
               >
-                Home
-              </Button>
-
-              <Button
-                className={classes.buttonColor}
-                variant={'text'}
-                onClick={loginNavigation}
-              >
-                Not Impossible
-              </Button>
-
-              <Button
-                className={classes.buttonColor}
-                variant={'text'}
-                //  onClick={contactNavigation}
-              >
-                Infinite Options
-              </Button>
-
-              <Button
-                className={classes.buttonColor}
-                variant={'text'}
-                // onClick={contactNavigation}
-              >
-                Sign In
-              </Button> */}
-              {document.cookie
-                .split(';')
-                .some((item) => item.trim().startsWith('ta_uid=')) ? (
-                <div style={{ width: '100%', textAlign: 'justify' }}>
-                  <Button
-                    //className={classes.buttonColor}
-                    //variant="text"
-                    //onClick={homeNavigation}
-                    // style={{
-                    //   color: 'white',
-                    //   border:'solid',
-                    //   borderwidth: '1px',
-                    //   borderRadius: '22px',
-                    // }}
-                    className={classes.myButton}
-                    style={{ float: 'right' }}
-                    onClick={(e) => {
-                      document.cookie = 'ta_uid=1;max-age=0';
-                      document.cookie = 'ta_email=1;max-age=0';
-                      document.cookie = 'patient_uid=1;max-age=0';
-                      document.cookie = 'patient_name=1;max-age=0';
-                      document.cookie = 'patient_email=1;max-age=0';
-                      document.cookie = 'patient_timeZone=1;max-age=0';
-
-                      loginContext.setLoginState({
-                        ...loginContext.loginState,
-                        loggedIn: false,
-                        reload: false,
-                        ta: {
-                          ...loginContext.loginState.ta,
-                          id: '',
-                          email: '',
-                        },
-                        usersOfTA: [],
-                        curUser: '',
-                        curUserTimeZone: '',
-                        curUserEmail: '',
-                      });
-                      history.push('/');
+                <Row
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'row',
+                  }}
+                >
+                  <Col
+                    xs={12}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'right',
+                      padding: 0,
                     }}
                   >
-                    Logout
-                  </Button>
+                    <Col
+                      xs={8}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'right',
+                        padding: 0,
+                        paddingRight: '1rem',
+                      }}
+                    >
+                      <img
+                        src={userImage}
+                        style={{
+                          width: '45px',
+                          height: '45px',
+                          borderRadius: '100%',
+                        }}
+                      />
+                    </Col>
+
+                    <Col
+                      style={{
+                        // display: 'flex',
+                        // justifyContent: 'left',
+                        padding: 0,
+                      }}
+                    >
+                      <Row
+                        style={{
+                          height: '0.3rem',
+                          alignItems: 'left',
+                        }}
+                      >
+                        <p
+                          style={{
+                            color: '#000000',
+                            font: 'normal normal bold 12px Quicksand-Bold',
+                            marginBottom: '0',
+                            marginTop: '-0.2rem',
+                            // paddingLeft: '1rem',
+                            padding: 0,
+                            textAlign: 'right',
+                          }}
+                        >
+                          Patient:
+                        </p>
+                      </Row>
+                      <Row style={{ alignItems: 'left' }}>
+                        <select
+                          className={classes.myButton}
+                          value={selectedUser.user_unique_id}
+                          onChange={(e) => {
+                            console.log('e.target.value', e.target.value);
+                            setUserImage(
+                              JSON.parse(e.target.value).user_picture
+                            );
+                            document.cookie =
+                              'patient_uid=' +
+                              JSON.parse(e.target.value).user_unique_id;
+                            document.cookie =
+                              'patient_name=' +
+                              JSON.parse(e.target.value).user_name;
+                            document.cookie =
+                              'patient_timeZone=' +
+                              JSON.parse(e.target.value).time_zone;
+                            document.cookie =
+                              'patient_email=' +
+                              JSON.parse(e.target.value).user_email_id;
+                            document.cookie =
+                              'patient_pic=' +
+                              JSON.parse(e.target.value).user_picture;
+                            console.log(document.cookie);
+                            loginContext.setLoginState({
+                              ...loginContext.loginState,
+                              curUser: JSON.parse(e.target.value)
+                                .user_unique_id,
+                              curUserTimeZone: JSON.parse(e.target.value)
+                                .time_zone,
+                              curUserEmail: JSON.parse(e.target.value)
+                                .user_email_id,
+                              curUserPic: JSON.parse(e.target.value)
+                                .user_picture,
+                            });
+                            // setUserImage(
+                            //   JSON.parse(e.target.value).user_picture
+                            // );
+
+                            toggleGetTAList(false);
+                            // toggleGetUnassignedList(false);
+
+                            setPatientName(
+                              JSON.parse(e.target.value).user_name
+                            );
+                          }}
+                          style={{
+                            font: 'normal normal bold 16px Quicksand-Bold',
+                            background: '#FFFFFF 0% 0% no-repeat padding-box',
+                            border: '1px solid #707070',
+                            borderRadius: '10px',
+                            width: '80%',
+                          }}
+                        >
+                          <option selected disabled hidden>
+                            {
+                              document.cookie
+                                .split('; ')
+                                .find((row) => row.startsWith('patient_name='))
+                                .split('=')[1]
+                            }
+                          </option>
+
+                          {userListRendered()}
+                        </select>
+                      </Row>
+                    </Col>
+                  </Col>
+                </Row>
+                <Col
+                  xs={1}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'right',
+                    padding: 0,
+                  }}
+                >
                   <div
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      justifyContent: 'right',
+                    }}
+                  >
+                    <img
+                      src="/Search.png"
+                      style={{
+                        width: '45px',
+                        height: '45px',
+                        borderRadius: '100%',
+                      }}
+                      onClick={() => history.push('/admin')}
+                    />
+                  </div>
+                </Col>
+                <Col
+                  xs={1}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'right',
+                    padding: 0,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      justifyContent: 'right',
+                    }}
+                  >
+                    <img
+                      src={taImage}
+                      style={{
+                        width: '45px',
+                        height: '45px',
+                        borderRadius: '100%',
+                      }}
+                      onClick={() => history.push('/admin')}
+                    />
+
+                    {/* <div
                     style={{
                       float: 'left',
                       width: '60%',
@@ -912,81 +927,16 @@ export function Navigation() {
                         }
                       }}
                     >
-                      {/* Give another Advisor Access */}
                       <option value="null" selected>
                         Give Another Advisor Access
                       </option>
-                      {/* <option>
-                      test name
-                    </option> */}
                       {taListRendered()}
                     </select>
+                  </div> */}
                   </div>
-
-                  {/* <Button
-                  //className={classes.buttonColor}
-                  //variant="text"
-                  //onClick={homeNavigation}
-                  // style={{
-                  //   color: 'white',
-                  //   border:'solid',
-                  //   borderwidth: '1px',
-                  //   borderRadius: '22px',
-                  // }}
-                  className = {classes.myButton}
-                  style={{float: 'right'}}
-                  onClick={(e) => {
-                     googleLogIn();
-                   // toggleNewUser(!showNewUser)
-
-                  }}
-                  >
-                    Create New User
-                  </Button> */}
-                  {/* <GoogleLogin
-                    //clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
-                    clientId={
-                      BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
-                        ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
-                        : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
-                    }
-                    //clientId={ID}
-                    render={(renderProps) => (
-                      <Button
-                        className={classes.myButton}
-                        style={{ float: 'right' }}
-                        onClick={renderProps.onClick}
-                        disabled={renderProps.disabled}
-                      >
-                        {' '}
-                        Create New User
-                      </Button>
-                    )}
-                    // accessType="offline"
-                    // prompt="consent"
-                    // responseType="code"
-                    // buttonText="Log In"
-                    accessType="offline"
-                    prompt="consent"
-                    responseType="code"
-                    buttonText="Log In"
-                    ux_mode="redirect"
-                    redirectUri={
-                      BASE_URL.substring(8, 18) == '3s3sftsr90'
-                        ? 'https://manifestmy.space'
-                        : 'https://manifestmy.life'
-                    }
-                    //redirectUri="http://localhost:3000"
-                    scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
-                    onSuccess={responseGoogle}
-                    onFailure={responseGoogle}
-                    isSignedIn={false}
-                    disable={true}
-                    cookiePolicy={'single_host_origin'}
-                  /> */}
-                </div>
-              ) : null}
-            </div>
+                </Col>
+              </Col>
+            ) : null}
           </div>
         </Toolbar>
       </AppBar>

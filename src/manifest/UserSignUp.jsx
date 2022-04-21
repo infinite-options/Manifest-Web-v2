@@ -745,7 +745,7 @@ export default function UserSignUp() {
                             disabled={renderProps.disabled}
                             alt={''}
                             style={{
-                              minWidth: '60%',
+                              minWidth: '70%',
                               maxWidth: '70%',
                               padding: '0',
                               margin: '0',
@@ -766,7 +766,7 @@ export default function UserSignUp() {
                         variant="contained"
                         alt={''}
                         style={{
-                          minWidth: '60%',
+                          minWidth: '70%',
                           maxWidth: '70%',
                           padding: '0',
                           margin: '0',
@@ -787,7 +787,7 @@ export default function UserSignUp() {
                         src={Email}
                         alt={''}
                         style={{
-                          minWidth: '60%',
+                          minWidth: '70%',
                           maxWidth: '70%',
                           padding: '0',
                           margin: '0',

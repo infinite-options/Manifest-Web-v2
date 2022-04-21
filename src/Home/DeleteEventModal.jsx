@@ -11,10 +11,6 @@ import {
 } from 'react-bootstrap';
 import axios from 'axios';
 import LoginContext from '../LoginContext';
-import {
-  deleteTheCalenderEvent,
-  updateTheCalenderEvent,
-} from './GoogleApiService';
 import moment from 'moment';
 
 const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
@@ -25,6 +21,7 @@ export default function DeleteEventModal(props) {
   var userID = '';
   var userTime_zone = '';
   var userEmail = '';
+  var userPic = '';
   if (
     document.cookie
       .split(';')
@@ -42,10 +39,15 @@ export default function DeleteEventModal(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_email='))
       .split('=')[1];
+    userPic = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_pic='))
+      .split('=')[1];
   } else {
     userID = loginContext.loginState.curUser;
     userTime_zone = loginContext.loginState.curUserTimeZone;
     userEmail = loginContext.loginState.curUserEmail;
+    userPic = loginContext.loginState.curUserPic;
   }
   const [recurrence, setRecurrence] = useState('');
   const [recurrenceRule, setRecurrenceRule] = useState('');

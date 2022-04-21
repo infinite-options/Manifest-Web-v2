@@ -234,7 +234,7 @@ export default class WeekRoutines extends Component {
       if (arr[i].is_persistent === true) {
         color = '#FFB84D';
       } else {
-        color = '#00E535';
+        color = '#00BC00';
       }
     }
     return color;
@@ -612,7 +612,7 @@ export default class WeekRoutines extends Component {
                         //     curDate2.format('D') === today.format('D') &&
                         //     curDate2.format('M') === today.format('M')
                         //   ) {
-                        //     return '#00E535';
+                        //     return '#00BC00';
                         //   } else if (
                         //     JSON.stringify(start_time) ===
                         //     JSON.stringify(end_time)
@@ -646,7 +646,7 @@ export default class WeekRoutines extends Component {
                             : curDate2.format('D') === today.format('D') &&
                               curDate2.format('M') === today.format('M') &&
                               arr[i].is_persistent == false
-                            ? '#00E535'
+                            ? '#00BC00'
                             : arr[i].is_complete
                             ? '#BBC7D7'
                             : 'lightslategray',

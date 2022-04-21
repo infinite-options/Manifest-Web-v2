@@ -60,8 +60,7 @@ export default function App() {
           {/* <Link to="/">Home</Link> */}
 
           <Navigation />
-          {loginState.loggedIn ? <MiniNavigation /> : ''}
-
+          {/* <MiniNavigation /> */}
           {/* <Switch>
           <Route path="/"> */}
           <Nav />

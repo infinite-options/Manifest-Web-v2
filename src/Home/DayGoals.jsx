@@ -338,7 +338,7 @@ export default class DayGoals extends Component {
               (tempEndTime.getMinutes() - tempStartTime.getMinutes()) / 60;
             let height =
               (hourDiff + minDiff) * this.state.pxPerHourForConversion;
-            let color = '#00E535';
+            let color = '#00BC00';
 
             sameTimeEventCount++;
             for (let i = 0; i < arr.length; i++) {
@@ -367,7 +367,7 @@ export default class DayGoals extends Component {
             }
             // change color if more than one event in same time.
             if (sameTimeEventCount <= 1) {
-              color = hour % 2 === 0 ? '#00E535' : '#739FD2';
+              color = hour % 2 === 0 ? '#00BC00' : '#739FD2';
             } else if (sameTimeEventCount === 2) {
               color = '#739FD2';
             } else {
@@ -581,6 +581,7 @@ export default class DayGoals extends Component {
           padding: '10px',
           width: '280px',
           //marginRight:'-60px'
+          backgroundColor: '#F2F7FC',
         }}
       >
         Today's Goals:

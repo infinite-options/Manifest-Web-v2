@@ -1,0 +1,231 @@
+.topleft {
+    font-family: "Quicksand";
+    font-size: 2em;
+    letter-spacing: 0px;
+    color: #000000;
+    font-weight: bold;
+    padding-left: .5em;
+    padding-bottom: 1em;
+    padding-top: 1em;
+}
+
+.button {
+    margin-top: -2em;
+    background-color: white;
+    border-color: #000000;
+    border-radius: 5px;
+    border-width: 1px;
+    text-align: center;
+    font-family: "Quicksand";
+    font-size: 0.80em;
+    padding: 0.2em 2em;
+}
+
+.mid {
+    font-family: "Quicksand";
+    font-size: 2em;
+    letter-spacing: 0.72px;
+    color: #000000;
+    text-align: center;
+    margin-bottom: -.5rem
+}
+
+img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: .3fr 9fr .65fr;
+    padding: 10px 5px;
+}
+
+.one {
+    background-image: url('../manifest/LoginAssets/Back_arrow.svg');
+    /* background-image: url("Arrow.png") no-repeat; */
+    width: 1rem;
+    height: 1rem;
+    display: block;
+    content: "";
+    float: right;
+    text-align: center;
+}
+
+.two {
+    margin-top: 0.45rem;
+    border-top: 3px solid #000000;
+    max-width: 100%;
+    text-align: left;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 2fr 7fr 1fr 1fr;
+    grid-template-rows: 3fr 3fr;
+    grid-template-areas:
+        "s1 s2 s4 s5"
+        "s1 s3 s4 s5";
+    background-color: #FFFFFF;
+    border-radius: 20px;
+
+}
+
+.s1 {
+    grid-area: s1;
+    padding: 1rem;
+}
+
+.circle {
+    border: 5px solid #707070;
+    border-radius: 50% 50%;
+    height: 3.5rem;
+    width: 3.5rem;
+
+}
+
+.s2 {
+    padding-top: 0.7rem;
+    grid-area: s2;
+    border-bottom: 3px solid #000000;
+}
+
+.s3 {
+    padding-top: .7rem;
+    grid-area: s3;
+}
+
+.s4 {
+    grid-area: s4;
+    padding-top: 2.0rem;
+
+}
+
+.s5 {
+    grid-area: s5;
+    padding-top: 1.6rem;
+}
+
+.bigbox {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.graybox {
+    width: 35em;
+    height: 35em;
+    margin: auto;
+    background: #F1F1F1 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 6px #00000029;
+    border-radius: 10px;
+    opacity: 1;
+    position: relative;
+}
+
+.gird_cut {
+    padding-top: 1rem;
+    width: 85%;
+    height: 7rem;
+    margin: auto;
+    font-size: 0.8em;
+}
+
+.YourUsers {
+    opacity: 1;
+    font-family: "Quicksand";
+    font-size: 1.5em;
+    padding-top: 1.5em;
+    font-weight: bold;
+}
+
+.buttonadd {
+    background-color: white;
+    border-color: #000000;
+    border-radius: 10px;
+    border-width: 3px;
+    text-align: center;
+    font-family: "Quicksand";
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-top: .9rem;
+    padding: 0.8em 5.5em;
+}
+.con {
+    max-width: 300px;
+    display: block;}
+.right {
+    display: table;
+    margin-left: 7rem;
+
+}
+
+.duperr {
+    background-color: white;
+    border-color: #000000;
+    border-radius: 5px;
+    border-width: 1px;
+    text-align: center;
+    font-family: "Quicksand";
+    font-size: 1.0em;
+    font-weight: bold;
+    padding: 0.5em 1.8em;
+    margin-bottom: 1.2rem;
+    width: 100%;
+    display: block;
+
+}
+
+.button2 {
+    background-color: #09B4FF;
+    border-color: white;
+    border-radius: 5px;
+    border-width: 0px;
+    text-align: center;
+    font-family: "Quicksand";
+    font-size: 0.80em;
+    padding: 0.5em 1.8em;
+}
+
+.button3 {
+    background-color: white;
+    border-color: #000000;
+    border-radius: 5px;
+    border-width: 1px;
+    text-align: center;
+    font-family: "Quicksand";
+    font-size: 0.80em;
+    padding: 0.5em 1.8em;
+}
+.biggird {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 600px 30px;
+    grid-template-areas:
+        "comp1 comp2"
+        "comp3 comp3";
+    font-weight: bold;
+    border-radius: 10px;
+    margin-left: 0.5rem;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    overflow: auto;
+    justify-content: center;
+    align-items: center;
+}
+
+.comp1 {
+    grid-area: comp1;
+}
+
+.comp2 {
+    grid-area: comp2;
+}
+
+.comp3 {
+    margin-top: 2rem;
+    grid-area: comp3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

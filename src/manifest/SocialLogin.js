@@ -510,7 +510,7 @@ function SocialLogin(props) {
                   disabled={renderProps.disabled}
                   alt={''}
                   style={{
-                    minWidth: '60%',
+                    minWidth: '70%',
                     maxWidth: '70%',
                     padding: '0',
                     margin: 0,
@@ -530,7 +530,7 @@ function SocialLogin(props) {
               src={Apple}
               alt={''}
               style={{
-                minWidth: '60%',
+                minWidth: '70%',
                 maxWidth: '70%',
                 padding: '0',
                 margin: 0,

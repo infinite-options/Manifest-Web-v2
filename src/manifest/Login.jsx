@@ -694,7 +694,7 @@ export default function Login() {
                             disabled={renderProps.disabled}
                             alt={''}
                             style={{
-                              minWidth: '60%',
+                              minWidth: '70%',
                               maxWidth: '70%',
                               padding: '0',
                               margin: 0,
@@ -721,7 +721,7 @@ export default function Login() {
                         alt={''}
                         className={classes.buttonLayout}
                         style={{
-                          minWidth: '60%',
+                          minWidth: '70%',
                           maxWidth: '70%',
                           padding: '0',
                           margin: 0,
@@ -742,7 +742,7 @@ export default function Login() {
                         src={Email}
                         alt={''}
                         style={{
-                          minWidth: '60%',
+                          minWidth: '70%',
                           maxWidth: '70%',
                           padding: '0',
                           margin: '0',

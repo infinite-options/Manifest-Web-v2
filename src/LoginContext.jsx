@@ -14,5 +14,6 @@ export const LoginInitState = {
   usersOfTA: [],
   curUser: '',
   curUserTimeZone: '',
-  curUserEmail:'',
+  curUserEmail: '',
+  curUserPic: '',
 };

@@ -37,6 +37,8 @@ import EditISContext from './EditIS/EditISContext';
 import EditIS from './EditIS/EditIS';
 import LoginContext from '../LoginContext';
 
+import MiniNavigation from '../manifest/miniNavigation';
+
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
@@ -60,6 +62,7 @@ export default function GoalHome(props) {
   var userTime_zone = '';
   var userEmail = '';
 
+  var userPic = '';
   var taID = '';
   var taEmail = '';
   if (
@@ -88,11 +91,16 @@ export default function GoalHome(props) {
       .split('; ')
       .find((row) => row.startsWith('ta_email='))
       .split('=')[1];
+    userPic = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_pic='))
+      .split('=')[1];
   } else {
     console.log('in here', console.log(loginContext.loginState));
     console.log('document cookie', document.cookie);
     userID = loginContext.loginState.curUser;
     userEmail = loginContext.loginState.curUserEmail;
+    userPic = loginContext.loginState.curUserPic;
 
     if (loginContext.loginState.usersOfTA.length === 0) {
       userTime_zone = 'America/Tijuana';
@@ -150,6 +158,8 @@ export default function GoalHome(props) {
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;
           const curUserEI = usersOfTA[0].user_email_id;
+
+          const curUserP = usersOfTA[0].user_picture;
           console.log('timezone', curUserTZ);
           loginContext.setLoginState({
             ...loginContext.loginState,
@@ -157,6 +167,7 @@ export default function GoalHome(props) {
             curUser: curUserID,
             curUserTimeZone: curUserTZ,
             curUserEmail: curUserEI,
+            curUserPic: curUserP,
           });
           console.log(curUserID);
           console.log('timezone', curUserTZ);
@@ -859,6 +870,8 @@ export default function GoalHome(props) {
     dateContainer: {
       height: '61px',
       color: '#000000',
+      width: '100%',
+      backgroundColor: '#F2F7FC',
     },
   });
 
@@ -1185,9 +1198,18 @@ export default function GoalHome(props) {
 
   function dayViewAbstracted() {
     return (
-      <div style={{ width: '100%' }}>
+      <Container
+        style={{
+          background: '#F2F7FC',
+          width: '100%',
+          margin: '0rem',
+        }}
+      >
         <Row
-          style={{ float: 'right', width: '100%', padding: '0', margin: '0' }}
+          noGutters={true}
+          // style={{ overflowY: 'scroll', maxHeight: '1350px' }}
+          className="d-flex justify-content-end"
+          style={{ marginLeft: '-5rem', marginRight: '0rem' }}
         >
           <DayEvents
             dateContext={stateValue.todayDateObject}
@@ -1221,7 +1243,7 @@ export default function GoalHome(props) {
             BASE_URL={stateValue.BASE_URL}
           />
         </Row>
-      </div>
+      </Container>
     );
   }
 
@@ -2727,6 +2749,7 @@ export default function GoalHome(props) {
                       minHeight: '1440px',
                     }}
                   >
+                    <MiniNavigation />
                     <Button
                       className={classes.buttonSelection}
                       onClick={() => {
@@ -2810,68 +2833,31 @@ export default function GoalHome(props) {
                   </div>
                   <div style={{ width: '70%', float: 'left' }}>
                     {editingRTS.editing ? null : (
-                      <Box
-                        bgcolor="#F2F7FC"
-                        className={classes.dateContainer}
-                        style={{ width: '100%' }}
-                        // flex
-                      >
+                      <Box className={classes.dateContainer}>
                         <Container
-                          style={{ marginRight: '-10rem', width: '100%' }}
+                          style={{ paddingLeft: '5rem', width: '100%' }}
                         >
                           {stateValue.calendarView === 'Week' ? (
-                            <Row style={{ margin: '0px', width: '100%' }}>
-                              <Col
-                                style={{
-                                  width: '10%',
-                                  paddingTop: '1rem',
-                                }}
-                              >
-                                <FontAwesomeIcon
-                                  style={{ cursor: 'pointer' }}
-                                  icon={faCalendarDay}
-                                  size="2x"
-                                  onClick={(e) => {
-                                    stateValue.calendarView === 'Week'
-                                      ? setStateValue((prevState) => {
-                                          return {
-                                            ...prevState,
-                                            calendarView: 'Day',
-                                          };
-                                        })
-                                      : setStateValue((prevState) => {
-                                          return {
-                                            ...prevState,
-                                            calendarView: 'Week',
-                                          };
-                                        });
-                                  }}
-                                />
-                              </Col>
-                              <Col
-                                style={{
-                                  width: '10%',
-                                  paddingTop: '1rem',
-                                  marginLeft: '0rem',
-                                }}
-                              >
-                                <div>
-                                  <FontAwesomeIcon
-                                    style={{ cursor: 'pointer' }}
-                                    icon={faChevronLeft}
-                                    size="2x"
-                                    onClick={(e) => {
-                                      prevWeek();
-                                    }}
-                                  />
-                                </div>
-                              </Col>
+                            <Row
+                              style={{
+                                margin: '0px',
+                                width: '100%',
+                                paddingBottom: '0.2rem',
+                                borderBottom: '1px solid #707070',
+                              }}
+                            >
                               <Col
                                 md="auto"
-                                style={{ textAlign: 'center', width: '70%' }}
-                                className="bigfancytext"
+                                style={{
+                                  font: 'normal normal bold 28px Quicksand-Bold',
+                                  letterSpacing: '0px',
+                                  color: '#000000',
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                }}
                               >
-                                {0 <= today.format('D') - curDate.format('D') &&
+                                {/* {0 <= today.format('D') - curDate.format('D') &&
                                 today.format('D') - curDate.format('D') <= 6 &&
                                 today.format('M') - curDate.format('M') ===
                                   0 ? (
@@ -2892,36 +2878,113 @@ export default function GoalHome(props) {
                                   >
                                     Week of {startWeek.format('D MMMM YYYY')}{' '}
                                   </p>
-                                )}
-                                {/* <p
-                                  style={{
-                                    font: 'normal normal bold 20px SF Pro',
-                                    paddingBottom: '0px',
-                                  }}
-                                  className="normalfancytext"
-                                >
-                                  {userTime_zone}
-                                </p> */}
+                                )} */}
+                                {startWeek.format('MMMM YYYY')}
                               </Col>
+
                               <Col
+                                xs={1}
+                                style={{
+                                  padding: 0,
+                                  display: 'flex',
+
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}
+                              >
+                                <div>
+                                  <FontAwesomeIcon
+                                    style={{
+                                      cursor: 'pointer',
+                                      color: '#707070',
+                                      marginRight: '1rem',
+                                    }}
+                                    icon={faChevronLeft}
+                                    size="2x"
+                                    onClick={(e) => {
+                                      prevWeek();
+                                    }}
+                                  />
+                                  <FontAwesomeIcon
+                                    // style={{ marginLeft: "50%" }}
+                                    style={{
+                                      float: 'right',
+                                      cursor: 'pointer',
+                                      color: '#707070',
+                                    }}
+                                    icon={faChevronRight}
+                                    size="2x"
+                                    className="X"
+                                    onClick={(e) => {
+                                      nextWeek();
+                                    }}
+                                  />
+                                </div>
+                              </Col>
+
+                              <Col
+                                xs={1}
+                                style={{
+                                  padding: 0,
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                }}
+                              >
+                                {/* <FontAwesomeIcon
+                                  style={{ cursor: 'pointer' }}
+                                  icon={faCalendarDay}
+                                  size="2x"
+                                  onClick={(e) => {
+                                    stateValue.calendarView === 'Week'
+                                      ? setStateValue((prevState) => {
+                                          return {
+                                            ...prevState,
+                                            calendarView: 'Day',
+                                          };
+                                        })
+                                      : setStateValue((prevState) => {
+                                          return {
+                                            ...prevState,
+                                            calendarView: 'Week',
+                                          };
+                                        });
+                                  }}
+                                /> */}
+                                <img
+                                  src="/WeeklyCal.png"
+                                  style={{
+                                    cursor: 'pointer',
+                                    width: '36px',
+                                    objectFit: 'contain',
+                                    verticalAlign: 'middle',
+                                  }}
+                                  onClick={(e) => {
+                                    stateValue.calendarView === 'Week'
+                                      ? setStateValue((prevState) => {
+                                          return {
+                                            ...prevState,
+                                            calendarView: 'Day',
+                                          };
+                                        })
+                                      : setStateValue((prevState) => {
+                                          return {
+                                            ...prevState,
+                                            calendarView: 'Week',
+                                          };
+                                        });
+                                  }}
+                                />
+                              </Col>
+
+                              {/* <Col
                                 style={{
                                   width: '10%',
                                   textAlign: 'right',
                                   paddingTop: '1rem',
                                 }}
-                              >
-                                <FontAwesomeIcon
-                                  // style={{ marginLeft: "50%" }}
-                                  style={{ float: 'right', cursor: 'pointer' }}
-                                  icon={faChevronRight}
-                                  size="2x"
-                                  className="X"
-                                  onClick={(e) => {
-                                    nextWeek();
-                                  }}
-                                />
-                              </Col>
-                              <Col
+                              ></Col> */}
+                              {/* <Col
                                 style={{
                                   width: '10%',
                                   textAlign: 'right',
@@ -2939,17 +3002,116 @@ export default function GoalHome(props) {
                                     curWeek();
                                   }}
                                 />
+                              </Col> */}
+                              <Col
+                                xs={1}
+                                style={{
+                                  padding: 0,
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                }}
+                              >
+                                <img
+                                  src="/Today.png"
+                                  style={{
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                  }}
+                                  onClick={(e) => {
+                                    curWeek();
+                                  }}
+                                />
+                              </Col>
+                              <Col
+                                style={{
+                                  float: 'right',
+                                  font: 'normal normal bold 18px Quicksand-Bold',
+                                  letterSpacing: '0px',
+                                  color: '#000000',
+                                  marginRight: '1rem',
+                                  display: 'flex',
+                                  justifyContent: 'end',
+                                  alignItems: 'center',
+                                  padding: 0,
+                                }}
+                              >
+                                {userTime_zone}
                               </Col>
                             </Row>
                           ) : (
-                            <Row style={{ margin: '0px', width: '100%' }}>
+                            <Row
+                              style={{
+                                margin: '0px',
+                                width: '100%',
+                                paddingBottom: '0.2rem',
+                                borderBottom: '1px solid #707070',
+                              }}
+                            >
                               <Col
+                                md="auto"
                                 style={{
-                                  width: '10%',
-                                  paddingTop: '1rem',
+                                  textAlign: 'left',
+                                  font: 'normal normal bold 28px Quicksand-Bold',
+                                  letterSpacing: '0px',
+                                  color: '#000000',
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
                                 }}
                               >
-                                <FontAwesomeIcon
+                                {today.format('MMMM YYYY')}
+                              </Col>
+                              <Col
+                                xs={1}
+                                style={{
+                                  padding: 0,
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                }}
+                              >
+                                <div>
+                                  <FontAwesomeIcon
+                                    style={{
+                                      cursor: 'pointer',
+                                      color: '#707070',
+                                      marginRight: '1rem',
+                                    }}
+                                    icon={faChevronLeft}
+                                    size="2x"
+                                    onClick={(e) => {
+                                      prevDay();
+                                    }}
+                                  />
+                                  <FontAwesomeIcon
+                                    // style={{ marginLeft: "50%" }}
+                                    style={{
+                                      float: 'right',
+                                      cursor: 'pointer',
+                                      color: '#707070',
+                                    }}
+                                    icon={faChevronRight}
+                                    size="2x"
+                                    className="X"
+                                    onClick={(e) => {
+                                      nextDay();
+                                    }}
+                                  />
+                                </div>
+                              </Col>
+                              <Col
+                                xs={1}
+                                style={{
+                                  padding: 0,
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                }}
+                              >
+                                {/* <FontAwesomeIcon
                                   style={{ cursor: 'pointer' }}
                                   icon={faCalendarWeek}
                                   size="2x"
@@ -2968,72 +3130,43 @@ export default function GoalHome(props) {
                                           };
                                         });
                                   }}
+                                /> */}
+                                <img
+                                  src="/DailyCal.png"
+                                  style={{
+                                    cursor: 'pointer',
+                                    width: '36px',
+                                    objectFit: 'contain',
+                                    verticalAlign: 'middle',
+                                  }}
+                                  onClick={(e) => {
+                                    stateValue.calendarView === 'Week'
+                                      ? setStateValue((prevState) => {
+                                          return {
+                                            ...prevState,
+                                            calendarView: 'Day',
+                                          };
+                                        })
+                                      : setStateValue((prevState) => {
+                                          return {
+                                            ...prevState,
+                                            calendarView: 'Week',
+                                          };
+                                        });
+                                  }}
                                 />
                               </Col>
-                              <Col
-                                style={{
-                                  width: '10%',
-                                  paddingTop: '1rem',
-                                  marginLeft: '0rem',
-                                }}
-                              >
-                                <div>
-                                  <FontAwesomeIcon
-                                    style={{ cursor: 'pointer' }}
-                                    icon={faChevronLeft}
-                                    size="2x"
-                                    onClick={(e) => {
-                                      prevDay();
-                                    }}
-                                  />
-                                </div>
-                              </Col>
-                              <Col
-                                md="auto"
-                                style={{ textAlign: 'center', width: '70%' }}
-                                className="bigfancytext"
-                              >
-                                <p
-                                  style={{
-                                    font: 'normal normal bold 28px SF Pro',
-                                    paddingBottom: '0px',
-                                  }}
-                                >
-                                  {stateValue.todayDateObject.format('dddd')}{' '}
-                                  {stateValue.todayDateObject.get('date')}{' '}
-                                  {stateValue.todayDateObject.format('MMMM')}{' '}
-                                  {getYear()}{' '}
-                                </p>
 
-                                <p
-                                  style={{
-                                    font: 'normal normal bold 20px SF Pro',
-                                    paddingBottom: '0px',
-                                  }}
-                                  className="normalfancytext"
-                                >
-                                  {userTime_zone}
-                                </p>
-                              </Col>
-                              <Col
+                              {/* <Col
                                 style={{
                                   width: '10%',
                                   textAlign: 'right',
                                   paddingTop: '1rem',
                                 }}
                               >
-                                <FontAwesomeIcon
-                                  // style={{ marginLeft: "50%" }}
-                                  style={{ float: 'right', cursor: 'pointer' }}
-                                  icon={faChevronRight}
-                                  size="2x"
-                                  className="X"
-                                  onClick={(e) => {
-                                    nextDay();
-                                  }}
-                                />
-                              </Col>
-                              <Col
+                               
+                              </Col> */}
+                              {/* <Col
                                 style={{
                                   width: '10%',
                                   textAlign: 'right',
@@ -3051,6 +3184,43 @@ export default function GoalHome(props) {
                                     curDay();
                                   }}
                                 />
+                              </Col> */}
+                              <Col
+                                xs={1}
+                                style={{
+                                  padding: 0,
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                }}
+                              >
+                                <img
+                                  src="/Today.png"
+                                  style={{
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                  }}
+                                  onClick={(e) => {
+                                    curDay();
+                                  }}
+                                />
+                              </Col>
+                              <Col
+                                style={{
+                                  float: 'right',
+                                  font: 'normal normal bold 18px Quicksand-Bold',
+                                  letterSpacing: '0px',
+                                  color: '#000000',
+                                  marginRight: '1rem',
+                                  display: 'flex',
+                                  justifyContent: 'end',
+                                  alignItems: 'center',
+                                  padding: 0,
+                                }}
+                              >
+                                {userTime_zone}
                               </Col>
                             </Row>
                           )}

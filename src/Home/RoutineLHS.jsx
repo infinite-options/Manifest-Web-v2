@@ -1767,7 +1767,7 @@ export default function RoutineLHS(props) {
                 ) {
                   return '#FFB84D';
                 } else if (r.is_persistent == 'False') {
-                  return '#00E535';
+                  return '#00BC00';
                 } else {
                   return '#9b4aff';
                 }

@@ -835,7 +835,7 @@ export default function EventLHS(props) {
                   ) {
                     return '#FFB84D';
                   } else if (r.is_persistent == 'False') {
-                    return '#00E535';
+                    return '#00BC00';
                   } else {
                     return '#D6B7FF';
                   }

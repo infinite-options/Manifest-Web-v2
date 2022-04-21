@@ -508,7 +508,14 @@ export default class DayEvents extends Component {
 
   render() {
     return (
-      <div style={{ padding: '10px', width: '350px', marginLeft: '-35px' }}>
+      <div
+        style={{
+          padding: '10px',
+          width: '350px',
+          marginLeft: '-35px',
+          backgroundColor: '#F2F7FC',
+        }}
+      >
         <div style={{ paddingLeft: '90px' }}>Today's Events:</div>
 
         <Container>

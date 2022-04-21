@@ -514,7 +514,7 @@ const EditRTS = (props) => {
             editingRTSContext.editingRTS.newItem.is_persistent === 'false' ||
             editingRTSContext.editingRTS.newItem.is_persistent === 'False'
           ) {
-            return '#00E535';
+            return '#00BC00';
           } else {
             return '#FFB84D';
           }

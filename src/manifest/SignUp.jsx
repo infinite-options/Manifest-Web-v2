@@ -403,7 +403,7 @@ export default function Signup() {
                         src={Email}
                         alt={''}
                         style={{
-                          minWidth: '60%',
+                          minWidth: '70%',
                           maxWidth: '70%',
                           padding: '0',
                           margin: '0',

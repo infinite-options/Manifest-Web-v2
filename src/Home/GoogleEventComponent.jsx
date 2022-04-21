@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { publishTheCalenderEvent } from './GoogleApiService';
 import {
   Form,
   Button,
@@ -33,6 +32,7 @@ export default function GoogleEventComponent(props) {
   var userID = '';
   var userTime_zone = '';
   var userEmail = '';
+  var userPic = '';
   if (
     document.cookie
       .split(';')
@@ -50,10 +50,15 @@ export default function GoogleEventComponent(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_email='))
       .split('=')[1];
+    userPic = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_pic='))
+      .split('=')[1];
   } else {
     userID = loginContext.loginState.curUser;
     userTime_zone = loginContext.loginState.curUserTimeZone;
     userEmail = loginContext.loginState.curUserEmail;
+    userPic = loginContext.loginState.curUserPic;
   }
   console.log('in add events', userEmail);
   console.log('in add events', document.cookie);

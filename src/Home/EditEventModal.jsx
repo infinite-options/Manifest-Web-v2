@@ -14,11 +14,6 @@ import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './DatePicker.css';
-import {
-  deleteTheCalenderEvent,
-  publishTheCalenderEvent,
-  updateTheCalenderEvent,
-} from './GoogleApiService';
 import LoginContext from '../LoginContext';
 import moment from 'moment';
 
@@ -31,6 +26,7 @@ export default function EditEventModal(props) {
   var userID = '';
   var userTime_zone = '';
   var userEmail = '';
+  var userPic = '';
   if (
     document.cookie
       .split(';')
@@ -48,10 +44,15 @@ export default function EditEventModal(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_email='))
       .split('=')[1];
+    userPic = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_pic='))
+      .split('=')[1];
   } else {
     userID = loginContext.loginState.curUser;
     userTime_zone = loginContext.loginState.curUserTimeZone;
     userEmail = loginContext.loginState.curUserEmail;
+    userPic = loginContext.loginState.curUserPic;
   }
 
   const [fields, setFields] = useState([{ email: userEmail }]);
