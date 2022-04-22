@@ -6,6 +6,7 @@ import { Button, TextField, InputAdornment } from '@material-ui/core';
 import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import VisibilityIcon from '@material-ui/icons/Visibility';
+import TimezoneSelect from 'react-timezone-select';
 import Events from '../images/Events.png';
 import Routines from '../images/Routines.png';
 import Goals from '../images/Goals.png';
@@ -151,6 +152,7 @@ export default function Signup() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [newPhoneNumber, setNewPhoneNumber] = useState('');
+  const [selectedTimezone, setSelectedTimezone] = useState({});
   const [newFName, setNewFName] = useState('');
   const [newLName, setNewLName] = useState('');
   const [newEmployer, setNewEmployer] = useState('');
@@ -191,7 +193,7 @@ export default function Signup() {
       last_name: newLName,
       phone_number: newPhoneNumber,
       employer: newEmployer,
-      ta_time_zone: moment.tz.guess(),
+      ta_time_zone: selectedTimezone.value,
     };
     axios.get(BASE_URL + 'GetTAEmailId/' + newEmail).then((response) => {
       console.log(response.data);
@@ -531,6 +533,28 @@ export default function Signup() {
                 <Row className={classes.buttonLayout}>
                   <Col></Col>
                   <Col xs={8}>
+                    <Form.Group>
+                      <div
+                        style={{
+                          opacity: 1,
+                          background: '#FFFFFF',
+                          borderRadius: '10px',
+                          alignItems: 'center',
+                          marginBottom: '-0.8rem',
+                        }}
+                      >
+                        <TimezoneSelect
+                          value={selectedTimezone}
+                          onChange={setSelectedTimezone}
+                        />
+                      </div>
+                    </Form.Group>
+                  </Col>
+                  <Col></Col>
+                </Row>
+                <Row className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8}>
                     {newEmail === '' ? required : ''}
                     <TextField
                       className={classes.textfield}
@@ -681,26 +705,27 @@ export default function Signup() {
               <Row className={classes.buttonLayout}>
                 <Row className={classes.buttonLayout}>
                   <Col></Col>
-                  <Col className={classes.headers}>
-                    Trusted Advisor Sign Up successful
+                  <Col className={classes.headers} xs={10}>
+                    Trusted Advisor Sign Up Successful
                   </Col>
                   <Col></Col>
                 </Row>
                 <Row className={classes.buttonLayout}>
                   <Col></Col>
-                  <Col className={classes.body}>
+                  <Col className={classes.body} xs={10}>
                     If you want to receive notifications, your next step is to
                     download our Mobile App. Thanks for Signing Up!
                   </Col>
                   <Col></Col>
                 </Row>
                 <Row className={classes.buttonLayout}>
-                  <Col></Col>
+                  <Col xs={1}></Col>
                   <Col
                     style={{
                       display: 'flex',
                       flexDirection: 'row',
                       justifyContent: 'space-between',
+                      marginTop: '1rem',
                     }}
                   >
                     <Col>
@@ -712,8 +737,9 @@ export default function Signup() {
                           className="img"
                           src={AppleAppStore}
                           style={{
-                            width: '177px',
-                            height: '70px',
+                            width: '217px',
+                            height: '65px',
+                            objectFit: 'cover',
                           }}
                         />
                       </a>
@@ -727,18 +753,19 @@ export default function Signup() {
                           className="img"
                           src={GooglePlayStore}
                           style={{
-                            width: '177px',
-                            height: '70px',
+                            width: '217px',
+                            // height: '74px',
+                            objectFit: 'cover',
                           }}
                         />
                       </a>
                     </Col>
                   </Col>
-                  <Col></Col>
+                  <Col xs={1}></Col>
                 </Row>
                 <Row xs={12} className={classes.buttonLayout}>
                   <Col></Col>
-                  <Col>
+                  <Col style={{ marginTop: '1rem' }}>
                     <Button
                       className={classes.signupbuttons}
                       onClick={() => history.push('/login')}

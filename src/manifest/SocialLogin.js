@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Box, Button } from '@material-ui/core';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { useHistory } from 'react-router-dom';
+import TimezoneSelect from 'react-timezone-select';
 import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
 import { withRouter } from 'react-router';
 import Google from '../manifest/LoginAssets/Google.svg';
@@ -42,6 +43,7 @@ const useStyles = makeStyles({
     background: '#FFFFFF',
     borderRadius: '10px',
     marginBottom: '0.2rem',
+    width: '95%',
   },
 });
 
@@ -57,7 +59,7 @@ function SocialLogin(props) {
   const [newFName, setNewFName] = useState('');
   const [newLName, setNewLName] = useState('');
   const [newEmployer, setNewEmployer] = useState('');
-
+  const [selectedTimezone, setSelectedTimezone] = useState({});
   const [socialId, setSocialId] = useState('');
   const [refreshToken, setrefreshToken] = useState('');
   const [accessToken, setAccessToken] = useState('');
@@ -121,8 +123,8 @@ function SocialLogin(props) {
       code: auth_code,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
-      // redirect_uri: 'http://localhost:3000',
-      redirect_uri: redirecturi,
+      redirect_uri: 'http://localhost:3000',
+      // redirect_uri: redirecturi,
       grant_type: 'authorization_code',
     };
 
@@ -335,7 +337,7 @@ function SocialLogin(props) {
         last_name: newLName,
         phone_number: newPhoneNumber,
         employer: newEmployer,
-        ta_time_zone: '',
+        ta_time_zone: selectedTimezone.value,
         ta_google_auth_token: accessToken,
         ta_google_refresh_token: refreshToken,
         ta_social_id: socialId,
@@ -367,6 +369,9 @@ function SocialLogin(props) {
     const bodyStyle = {
       backgroundColor: ' #F2F7FC',
       font: 'normal normal 600 16px Quicksand-Regular',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
     };
     return (
       <Modal
@@ -380,8 +385,22 @@ function SocialLogin(props) {
           </Modal.Header>
           <Modal.Body style={bodyStyle}>
             <Form.Group className="formEltMargin">
-              <Form.Group as={Row} className="formEltMargin">
-                <Col>
+              <Form.Group
+                as={Row}
+                className="formEltMargin"
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Col
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
                   <Form.Control
                     type="text"
                     placeholder="First Name"
@@ -390,7 +409,13 @@ function SocialLogin(props) {
                     className={classes.textfield}
                   />
                 </Col>
-                <Col>
+                <Col
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
                   <Form.Control
                     type="text"
                     placeholder="Last Name"
@@ -401,7 +426,16 @@ function SocialLogin(props) {
                 </Col>
               </Form.Group>
               <Col>
-                <Form.Group as={Row} className="formEltMargin">
+                <Form.Group
+                  as={Row}
+                  className="formEltMargin"
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                  }}
+                >
                   <Form.Control
                     type="text"
                     placeholder="Employer"
@@ -412,7 +446,16 @@ function SocialLogin(props) {
                 </Form.Group>
               </Col>
               <Col>
-                <Form.Group as={Row} className="formEltMargin">
+                <Form.Group
+                  as={Row}
+                  className="formEltMargin"
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                  }}
+                >
                   <Form.Control
                     type="tel"
                     placeholder="Phone Number"
@@ -424,7 +467,24 @@ function SocialLogin(props) {
                 </Form.Group>
               </Col>
               <Col>
-                <Form.Group as={Row} className="formEltMargin">
+                <Form.Group className="formEltMargin">
+                  <TimezoneSelect
+                    value={selectedTimezone}
+                    onChange={setSelectedTimezone}
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group
+                  as={Row}
+                  className="formEltMargin"
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                  }}
+                >
                   <Form.Control
                     plaintext
                     readOnly
@@ -494,13 +554,13 @@ function SocialLogin(props) {
               isSignedIn={false}
               disable={true}
               cookiePolicy={'single_host_origin'}
-              redirectUri={
-                BASE_URL.substring(8, 18) == '3s3sftsr90'
-                  ? 'https://manifestmy.space'
-                  : 'https://manifestmy.life'
-              }
+              // redirectUri={
+              //   BASE_URL.substring(8, 18) == '3s3sftsr90'
+              //     ? 'https://manifestmy.space'
+              //     : 'https://manifestmy.life'
+              // }
               scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
-              // redirectUri="http://localhost:3000"
+              redirectUri="http://localhost:3000"
               onSuccess={responseGoogle}
               onFailure={responseGoogle}
               render={(renderProps) => (

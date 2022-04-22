@@ -225,8 +225,8 @@ export default function UserSignUp() {
       code: auth_code,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
-      // redirect_uri: 'http://localhost:3000',
-      redirect_uri: redirecturi,
+      redirect_uri: 'http://localhost:3000',
+      // redirect_uri: redirecturi,
       grant_type: 'authorization_code',
     };
 
@@ -493,7 +493,7 @@ export default function UserSignUp() {
               >
                 <Button
                   onClick={handleSocialSignUpDone}
-                  className={classes.signupbuttons}
+                  className={classes.loginbutton}
                 >
                   Sign Up
                 </Button>
@@ -507,7 +507,7 @@ export default function UserSignUp() {
                   justifyContent: 'center',
                 }}
               >
-                <Button onClick={hideSignUp} className={classes.loginbutton}>
+                <Button onClick={hideSignUp} className={classes.signupbuttons}>
                   Cancel
                 </Button>
               </Col>
@@ -729,13 +729,13 @@ export default function UserSignUp() {
                         isSignedIn={false}
                         disable={true}
                         cookiePolicy={'single_host_origin'}
-                        redirectUri={
-                          BASE_URL.substring(8, 18) == '3s3sftsr90'
-                            ? 'https://manifestmy.space'
-                            : 'https://manifestmy.life'
-                        }
+                        // redirectUri={
+                        //   BASE_URL.substring(8, 18) == '3s3sftsr90'
+                        //     ? 'https://manifestmy.space'
+                        //     : 'https://manifestmy.life'
+                        // }
                         scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
-                        // redirectUri="http://localhost:3000"
+                        redirectUri="http://localhost:3000"
                         onSuccess={responseGoogle}
                         onFailure={responseGoogle}
                         render={(renderProps) => (
@@ -1077,12 +1077,13 @@ export default function UserSignUp() {
                   <Col></Col>
                 </Row>
                 <Row className={classes.buttonLayout}>
-                  <Col></Col>
+                  <Col xs={1}></Col>
                   <Col
                     style={{
                       display: 'flex',
                       flexDirection: 'row',
                       justifyContent: 'space-between',
+                      marginTop: '1rem',
                     }}
                   >
                     <Col>
@@ -1094,8 +1095,9 @@ export default function UserSignUp() {
                           className="img"
                           src={AppleAppStore}
                           style={{
-                            width: '177px',
-                            height: '70px',
+                            width: '217px',
+                            height: '65px',
+                            objectFit: 'cover',
                           }}
                         />
                       </a>
@@ -1109,14 +1111,15 @@ export default function UserSignUp() {
                           className="img"
                           src={GooglePlayStore}
                           style={{
-                            width: '177px',
-                            height: '70px',
+                            width: '217px',
+                            // height: '74px',
+                            objectFit: 'cover',
                           }}
                         />
                       </a>
                     </Col>
                   </Col>
-                  <Col></Col>
+                  <Col xs={1}></Col>
                 </Row>
               </Row>
             </Row>
