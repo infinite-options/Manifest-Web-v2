@@ -123,8 +123,8 @@ function SocialLogin(props) {
       code: auth_code,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
-      redirect_uri: 'http://localhost:3000',
-      // redirect_uri: redirecturi,
+      // redirect_uri: 'http://localhost:3000',
+      redirect_uri: redirecturi,
       grant_type: 'authorization_code',
     };
 
@@ -554,13 +554,13 @@ function SocialLogin(props) {
               isSignedIn={false}
               disable={true}
               cookiePolicy={'single_host_origin'}
-              // redirectUri={
-              //   BASE_URL.substring(8, 18) == '3s3sftsr90'
-              //     ? 'https://manifestmy.space'
-              //     : 'https://manifestmy.life'
-              // }
+              redirectUri={
+                BASE_URL.substring(8, 18) == '3s3sftsr90'
+                  ? 'https://manifestmy.space'
+                  : 'https://manifestmy.life'
+              }
               scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
-              redirectUri="http://localhost:3000"
+              // redirectUri="http://localhost:3000"
               onSuccess={responseGoogle}
               onFailure={responseGoogle}
               render={(renderProps) => (
