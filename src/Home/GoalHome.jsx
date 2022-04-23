@@ -61,7 +61,7 @@ export default function GoalHome(props) {
   var userID = '';
   var userTime_zone = '';
   var userEmail = '';
-
+  var userN = '';
   var userPic = '';
   var taID = '';
   var taEmail = '';
@@ -95,6 +95,10 @@ export default function GoalHome(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_pic='))
       .split('=')[1];
+    userN = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_name='))
+      .split('=')[1];
   } else {
     console.log('in here', console.log(loginContext.loginState));
     console.log('document cookie', document.cookie);
@@ -102,6 +106,7 @@ export default function GoalHome(props) {
     userEmail = loginContext.loginState.curUserEmail;
     userPic = loginContext.loginState.curUserPic;
 
+    userN = loginContext.loginState.curUserName;
     if (loginContext.loginState.usersOfTA.length === 0) {
       userTime_zone = 'America/Tijuana';
     } else {

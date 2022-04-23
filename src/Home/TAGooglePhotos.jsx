@@ -24,7 +24,7 @@ export default function TAGooglePhotos(props) {
   var userID = '';
   var userTime_zone = '';
   var userEmail = '';
-
+  var userN = '';
   var taID = '';
   var taEmail = '';
   if (
@@ -45,6 +45,10 @@ export default function TAGooglePhotos(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_email='))
       .split('=')[1];
+    userN = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_name='))
+      .split('=')[1];
     taID = document.cookie
       .split('; ')
       .find((row) => row.startsWith('ta_uid='))
@@ -58,6 +62,7 @@ export default function TAGooglePhotos(props) {
     // console.log('document cookie', document.cookie);
     userID = loginContext.loginState.curUser;
     userEmail = loginContext.loginState.curUserEmail;
+    userN = loginContext.loginState.curUserName;
 
     if (loginContext.loginState.usersOfTA.length === 0) {
       userTime_zone = 'America/Tijuana';

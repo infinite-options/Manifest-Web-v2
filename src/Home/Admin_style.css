@@ -1,5 +1,5 @@
 .topleft {
-    font-family: "Quicksand";
+    font-family: "Quicksand-Bold";
     font-size: 2em;
     letter-spacing: 0px;
     color: #000000;
@@ -9,20 +9,10 @@
     padding-top: 1em;
 }
 
-.button {
-    margin-top: -2em;
-    background-color: white;
-    border-color: #000000;
-    border-radius: 5px;
-    border-width: 1px;
-    text-align: center;
-    font-family: "Quicksand";
-    font-size: 0.80em;
-    padding: 0.2em 2em;
-}
+
 
 .mid {
-    font-family: "Quicksand";
+    font-family: "Quicksand-Bold";
     font-size: 2em;
     letter-spacing: 0.72px;
     color: #000000;
@@ -43,18 +33,18 @@ img {
 }
 
 .one {
-    background-image: url('../manifest/LoginAssets/Back_arrow.svg');
+    /* background-image: url('../manifest/LoginAssets/Back_arrow.svg'); */
     /* background-image: url("Arrow.png") no-repeat; */
-    width: 1rem;
-    height: 1rem;
+    /* width: 1rem;
+    height: 1rem; */
     display: block;
     content: "";
     float: right;
-    text-align: center;
+    /* text-align: center; */
 }
 
 .two {
-    margin-top: 0.45rem;
+    margin-top: 1rem;
     border-top: 3px solid #000000;
     max-width: 100%;
     text-align: left;
@@ -80,25 +70,27 @@ img {
 .circle {
     border: 5px solid #707070;
     border-radius: 50% 50%;
-    height: 3.5rem;
-    width: 3.5rem;
+    height: 47px;
+    width: 47px;
 
 }
 
 .s2 {
     padding-top: 0.7rem;
     grid-area: s2;
+    padding-bottom: 0;
     border-bottom: 3px solid #000000;
 }
 
 .s3 {
-    padding-top: .7rem;
+    /* padding-top: .7rem; */
     grid-area: s3;
 }
 
 .s4 {
     grid-area: s4;
-    padding-top: 2.0rem;
+    padding-top: 1.6rem;
+    
 
 }
 
@@ -111,32 +103,54 @@ img {
     margin-top: 2rem;
     text-align: center;
 }
-
+.listofusers{
+    overflow: scroll;
+    height: 400px;
+}
 .graybox {
-    width: 35em;
-    height: 35em;
-    margin: auto;
+    width: 100%;
+    /* height: auto; */
+    height: 518px;
+    /* overflow: scroll; */
+    margin-left: 3rem;
     background: #F1F1F1 0% 0% no-repeat padding-box;
     box-shadow: 0px 3px 6px #00000029;
     border-radius: 10px;
     opacity: 1;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.deleteButton{
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 6px #00000029;
+    border: 2px solid #FF3939;
+    border-radius: 10px;
+    text-align: center;
+    font: normal normal bold 16px Quicksand-Bold;
+    letter-spacing: 0px;
+    color: #FF3939;
+    width: 350px;
 }
 
-.gird_cut {
-    padding-top: 1rem;
+.grid_cut {
+    /* padding-top: 1rem; */
     width: 85%;
-    height: 7rem;
-    margin: auto;
-    font-size: 0.8em;
+    height: 4rem;
+    margin: 1.5rem auto;
+    font-size: 16px;
 }
 
 .YourUsers {
     opacity: 1;
-    font-family: "Quicksand";
-    font-size: 1.5em;
-    padding-top: 1.5em;
+    font-family: "Quicksand-Bold";
+    font-size: 18px;
+    text-align: center;
+    /* padding-top: 1.5em; */
     font-weight: bold;
+    /* overflow: scroll; */
 }
 
 .buttonadd {
@@ -145,15 +159,18 @@ img {
     border-radius: 10px;
     border-width: 3px;
     text-align: center;
-    font-family: "Quicksand";
-    font-size: 1.5rem;
+    font-family: "Quicksand-Bold";
+    font-size: 16px;
     font-weight: bold;
     margin-top: .9rem;
     padding: 0.8em 5.5em;
 }
 .con {
-    max-width: 300px;
+    max-width: 100%;
+    min-width: 100%;
+    width: 350px;
     display: block;}
+
 .right {
     display: table;
     margin-left: 7rem;
@@ -161,15 +178,15 @@ img {
 }
 
 .duperr {
-    background-color: white;
-    border-color: #000000;
-    border-radius: 5px;
-    border-width: 1px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 6px #00000029;
+    border: 2px solid #707070;
+    border-radius: 10px;
     text-align: center;
-    font-family: "Quicksand";
-    font-size: 1.0em;
+    font-family: "Quicksand-Bold";
+    font-size: 16px;
     font-weight: bold;
-    padding: 0.5em 1.8em;
+    /* padding: 0.5em 1.8em; */
     margin-bottom: 1.2rem;
     width: 100%;
     display: block;
@@ -182,7 +199,7 @@ img {
     border-radius: 5px;
     border-width: 0px;
     text-align: center;
-    font-family: "Quicksand";
+    font-family: "Quicksand-Bold";
     font-size: 0.80em;
     padding: 0.5em 1.8em;
 }
@@ -193,23 +210,20 @@ img {
     border-radius: 5px;
     border-width: 1px;
     text-align: center;
-    font-family: "Quicksand";
+    font-family: "Quicksand-Bold";
     font-size: 0.80em;
     padding: 0.5em 1.8em;
 }
-.biggird {
-    display: grid;
+.biggrid {
+    /* display: grid;
     grid-template-columns: 50% 50%;
     grid-template-rows: 600px 30px;
     grid-template-areas:
         "comp1 comp2"
-        "comp3 comp3";
-    font-weight: bold;
-    border-radius: 10px;
-    margin-left: 0.5rem;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    overflow: auto;
+        "comp3 comp3"; */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }

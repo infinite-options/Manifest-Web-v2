@@ -238,6 +238,7 @@ export default function Login() {
           curUser: '',
           curUserTimeZone: '',
           curUserEmail: '',
+          curUserName: '',
         });
         console.log('Login successful');
         console.log(email);
@@ -357,6 +358,7 @@ export default function Login() {
             curUser: '',
             curUserTimeZone: '',
             curUserEmail: '',
+            curUserName: '',
           });
           console.log('Login successful');
           console.log(email);
@@ -418,6 +420,7 @@ export default function Login() {
             curUser: '',
             curUserTimeZone: '',
             curUserEmail: '',
+            curUserName: '',
           });
           history.push({
             pathname: '/home',

@@ -33,6 +33,7 @@ export default function GoogleEventComponent(props) {
   var userTime_zone = '';
   var userEmail = '';
   var userPic = '';
+  var userN = '';
   if (
     document.cookie
       .split(';')
@@ -54,11 +55,17 @@ export default function GoogleEventComponent(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_pic='))
       .split('=')[1];
+    userN = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_name='))
+      .split('=')[1];
   } else {
     userID = loginContext.loginState.curUser;
     userTime_zone = loginContext.loginState.curUserTimeZone;
     userEmail = loginContext.loginState.curUserEmail;
     userPic = loginContext.loginState.curUserPic;
+
+    userN = loginContext.loginState.curUserName;
   }
   console.log('in add events', userEmail);
   console.log('in add events', document.cookie);

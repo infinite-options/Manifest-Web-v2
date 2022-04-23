@@ -59,6 +59,8 @@ export default function AboutModal(props) {
   var taID = '';
   var userTime_zone = '';
   var userEmail = '';
+  var userN = '';
+  var userPic = '';
   if (
     document.cookie
       .split(';')
@@ -80,10 +82,20 @@ export default function AboutModal(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_email='))
       .split('=')[1];
+    userPic = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_pic='))
+      .split('=')[1];
+    userN = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_name='))
+      .split('=')[1];
   } else {
     userID = loginContext.loginState.curUser;
     userTime_zone = loginContext.loginState.curUserTimeZone;
     userEmail = loginContext.loginState.curUserEmail;
+    userPic = loginContext.loginState.curUserPic;
+    userN = loginContext.loginState.curUserName;
   }
   console.log(taID);
   const [imageChanged, setImageChanged] = useState(false);
@@ -419,6 +431,7 @@ export default function AboutModal(props) {
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;
           const curUserEI = usersOfTA[0].user_email_id;
+          const curUserN = usersOfTA[0].user_name;
           // console.log('pog', loginContext.loginState.curUser)
           if (loginContext.loginState.curUser == '') {
             // edge case on refresh
@@ -428,6 +441,7 @@ export default function AboutModal(props) {
               curUser: curUserID,
               curUserTimeZone: curUserTZ,
               curUserEmail: curUserEI,
+              curUserName: curUserN,
             });
           } else {
             loginContext.setLoginState({
@@ -449,6 +463,7 @@ export default function AboutModal(props) {
             curUser: '',
             curUserTimeZone: '',
             curUserEmail: '',
+            curUserName: '',
           });
           console.log('No User Found');
         }

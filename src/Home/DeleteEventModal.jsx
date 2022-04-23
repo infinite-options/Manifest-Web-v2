@@ -22,6 +22,7 @@ export default function DeleteEventModal(props) {
   var userTime_zone = '';
   var userEmail = '';
   var userPic = '';
+  var userN = '';
   if (
     document.cookie
       .split(';')
@@ -43,11 +44,16 @@ export default function DeleteEventModal(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_pic='))
       .split('=')[1];
+    userN = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_name='))
+      .split('=')[1];
   } else {
     userID = loginContext.loginState.curUser;
     userTime_zone = loginContext.loginState.curUserTimeZone;
     userEmail = loginContext.loginState.curUserEmail;
     userPic = loginContext.loginState.curUserPic;
+    userN = loginContext.loginState.curUserName;
   }
   const [recurrence, setRecurrence] = useState('');
   const [recurrenceRule, setRecurrenceRule] = useState('');

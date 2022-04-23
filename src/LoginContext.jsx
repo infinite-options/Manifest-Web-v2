@@ -16,4 +16,5 @@ export const LoginInitState = {
   curUserTimeZone: '',
   curUserEmail: '',
   curUserPic: '',
+  curUserName: '',
 };

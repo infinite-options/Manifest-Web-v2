@@ -61,6 +61,7 @@ export default function Home(props) {
   var userTime_zone = '';
   var userEmail = '';
   var userPic = '';
+  var userN = '';
   var taID = '';
   var taEmail = '';
   if (
@@ -85,6 +86,10 @@ export default function Home(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_pic='))
       .split('=')[1];
+    userN = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_name='))
+      .split('=')[1];
     taID = document.cookie
       .split('; ')
       .find((row) => row.startsWith('ta_uid='))
@@ -99,6 +104,7 @@ export default function Home(props) {
     userID = loginContext.loginState.curUser;
     userEmail = loginContext.loginState.curUserEmail;
     userPic = loginContext.loginState.curUserPic;
+    userN = loginContext.loginState.curUserName;
 
     if (loginContext.loginState.usersOfTA.length === 0) {
       userTime_zone = 'America/Tijuana';
@@ -159,6 +165,7 @@ export default function Home(props) {
           const curUserTZ = usersOfTA[0].time_zone;
           const curUserEI = usersOfTA[0].user_email_id;
           const curUserP = usersOfTA[0].user_picture;
+          const curUserN = usersOfTA[0].user_name;
           console.log('timezone', curUserTZ);
           loginContext.setLoginState({
             ...loginContext.loginState,
@@ -167,6 +174,7 @@ export default function Home(props) {
             curUserTimeZone: curUserTZ,
             curUserEmail: curUserEI,
             curUserPic: curUserP,
+            curUserName: curUserN,
           });
           console.log(curUserID);
           console.log('timezone', curUserTZ);

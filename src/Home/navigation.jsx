@@ -1,29 +1,14 @@
-import React, { useContext, useEffect } from 'react';
-import { useState } from 'react';
-import Toolbar from '@material-ui/core/Toolbar';
-import Button from '@material-ui/core/Button';
-import AppBar from '@material-ui/core/AppBar';
-import Box from '@material-ui/core/Box';
-import makeStyles from '@material-ui/core/styles/makeStyles';
+import React, { useContext, useEffect, useState } from 'react';
+import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import Typography from '@material-ui/core/Typography';
+import { Row, Col } from 'react-bootstrap';
+import Toolbar from '@material-ui/core/Toolbar';
+import AppBar from '@material-ui/core/AppBar';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import LoginContext from '../LoginContext';
-import axios from 'axios';
-import {
-  Form,
-  Container,
-  Row,
-  Col,
-  Modal,
-  Dropdown,
-  DropdownButton,
-  Spinner,
-} from 'react-bootstrap';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
-const ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-const SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
 
 /* Custom Hook to make styles */
 const useStyles = makeStyles({
@@ -96,13 +81,14 @@ export function Navigation() {
   var selectedUser = loginContext.loginState.curUser;
   const currentUser = loginContext.loginState.curUser;
   const curUserPic = loginContext.loginState.curUserPic;
+  const curUserName = loginContext.loginState.curUserName;
   var curUserID = '';
   var curUserTZ = '';
 
   let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
   let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
   const [taImage, setTaImage] = useState('');
-  const [userImage, setUserImage] = useState(curUserPic);
+  const [userImage, setUserImage] = useState('');
   console.log(currentUser, curUserPic);
   useEffect(() => {
     if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
@@ -120,8 +106,8 @@ export function Navigation() {
       console.log(response);
       setTaImage(response.data.result[0].url);
     });
-    // setUserImage(curUserPic);
-  });
+    setUserImage(curUserPic);
+  }, []);
   console.log(CLIENT_ID, CLIENT_SECRET);
   const [showGiveAccess, toggleGiveAccess] = useState(false);
   const [showAssignUser, toggleAssignUser] = useState(false);
@@ -129,18 +115,7 @@ export function Navigation() {
   const [showAssignConfirmed, toggleAssignConfirmed] = useState(false);
   const [taListCreated, toggleGetTAList] = useState(false);
   const [uaListCreated, toggleGetUnassignedList] = useState(false);
-  const [selectedTimezone, setSelectedTimezone] = useState({});
-  const [timezone, setTimezone] = useState(
-    Intl.DateTimeFormat().resolvedOptions().timeZone
-  );
   const [patientName, setPatientName] = useState('');
-  const [emailUser, setEmailUser] = useState('');
-  const [socialId, setSocialId] = useState('');
-  const [refreshToken, setrefreshToken] = useState('');
-  const [accessToken, setAccessToken] = useState('');
-  const [accessExpiresIn, setaccessExpiresIn] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
 
   const [taName, setTAName] = useState('');
   const [taID, setTAID] = useState('');
@@ -149,7 +124,6 @@ export function Navigation() {
   const [userID, setUserID] = useState('');
   let redirecturi = 'https://manifestmy.space';
   console.log(redirecturi);
-
   console.log('document cookie', document.cookie);
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
@@ -164,21 +138,6 @@ export function Navigation() {
   console.log('Cur ta', selectedUser);
 
   const userListRendered = () => {
-    // if (
-    //   document.cookie
-    //     .split(';')
-    //     .some((item) => item.trim().startsWith('ta_uid='))
-    // ) {
-    //   // var temp = document.cookie
-    //   //   .split('; ')
-    //   //   .find((row) => row.startsWith('ta_uid='))
-    //   //   .split('=')[1];
-    //   // console.log(temp)
-    //   selectedUser = document.cookie
-    //     .split('; ')
-    //     .find((row) => row.startsWith('ta_uid='))
-    //     .split('=')[1];
-
     console.log('document cookie list of users', listOfUsers);
     let elements = [];
 
@@ -236,416 +195,8 @@ export function Navigation() {
     return elements;
   };
 
-  const taListRendered = () => {
-    console.log('ta list', taList);
-    // console.log(taList)
-    taList.sort((a, b) => a.ta_first_name.localeCompare(b.ta_first_name));
-    const elements = taList.map((ta) => (
-      <option
-        key={ta.ta_unique_id}
-        value={JSON.stringify({
-          ta_unique_id: ta.ta_unique_id,
-          ta_first_name: ta.ta_first_name,
-          ta_last_name: ta.ta_last_name,
-        })}
-      >
-        {ta.ta_last_name}, {ta.ta_first_name}
-      </option>
-    ));
-    return elements;
-  };
-
-  const uaListRendered = () => {
-    console.log('ua list', uaList);
-    // console.log(uaList)
-    // uaList.sort((a, b) => a.ua_first_name.localeCompare(b.ua_first_name));
-    const elements = uaList.map((ua) => (
-      <option
-        key={ua.user_unique_id}
-        value={JSON.stringify({
-          user_unique_id: ua.user_unique_id,
-          name: ua.name,
-        })}
-      >
-        {ua.name}
-      </option>
-    ));
-    return elements;
-  };
-
-  const getTAList = () => {
-    if (!taListCreated) {
-      console.log('in getTAList: ' + selectedUser);
-      axios
-        .get(BASE_URL + 'listAllTA/' + selectedUser)
-        .then((response) => {
-          console.log(response.data);
-          //taList = response.data.result
-          setTAList(response.data.result);
-          console.log(taList);
-
-          toggleGetTAList(true);
-        })
-        .catch((err) => {
-          if (err.response) {
-            console.log(err.response);
-          }
-          console.log(err);
-        });
-    }
-  };
-
-  const getUnassignedList = () => {
-    if (!uaListCreated) {
-      console.log('in getUnassignedList: ');
-      axios
-        .get(BASE_URL + 'ListAllAdminUsers')
-        .then((response) => {
-          console.log(response.data);
-          //uaList = response.data.result
-          setUnassignedList(response.data.result);
-          console.log('ua list GET', uaList);
-
-          toggleGetUnassignedList(true);
-        })
-        .catch((err) => {
-          if (err.response) {
-            console.log(err.response);
-          }
-          console.log(err);
-        });
-    }
-  };
-
-  const giveAccessModal = () => {
-    if (showGiveAccess) {
-      return (
-        <div
-          style={{
-            height: '100%',
-            width: '100%',
-            zIndex: '101',
-            left: '0',
-            top: '0',
-            overflow: 'auto',
-            position: 'fixed',
-            display: 'grid',
-            backgroundColor: 'rgba(255, 255, 255, 0.5)',
-          }}
-        >
-          <div
-            style={{
-              position: 'relative',
-              justifySelf: 'center',
-              alignSelf: 'center',
-              display: 'block',
-              backgroundColor: '#E6E6E6',
-              width: '400px',
-              // height: "100px",
-              color: '#000000',
-              padding: '40px',
-              font: ' normal normal bold 20px Quicksand-Bold',
-            }}
-          >
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              Give another advisor access
-            </div>
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              Are you sure you want to give {taName} access to the information
-              of user, {patientName}
-            </div>
-            <div>
-              <button
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  color: '#7D7D7D',
-                  border: '1px solid #7D7D7D',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
-                onClick={() => {
-                  toggleGiveAccess(false);
-                }}
-              >
-                No
-              </button>
-              <button
-                style={{
-                  backgroundColor: '#09B4FF',
-                  color: 'white',
-                  border: '1px solid #FFFFFF',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
-                onClick={() => {
-                  // let myObj = {
-                  //   ta_people_id: taID,
-                  //   user_id: selectedUser
-                  // }
-                  console.log('TA', taID, currentUser);
-
-                  axios
-                    .post(BASE_URL + 'anotherTAAccess', {
-                      ta_people_id: taID,
-                      user_id: currentUser,
-                    })
-                    .then((response) => {
-                      console.log(response);
-                    });
-
-                  toggleConfirmed(true);
-                  toggleGetTAList(false);
-                  toggleGiveAccess(false);
-                }}
-              >
-                Yes
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-    } else {
-      return null;
-    }
-  };
-
-  /* Sanmesh3 Assign User Modal */
-  const assignUserModal = () => {
-    if (showAssignUser) {
-      return (
-        <div
-          style={{
-            height: '100%',
-            width: '100%',
-            zIndex: '101',
-            left: '0',
-            top: '0',
-            overflow: 'auto',
-            position: 'fixed',
-            display: 'grid',
-            backgroundColor: 'rgba(255, 255, 255, 0.5)',
-          }}
-        >
-          <div
-            style={{
-              position: 'relative',
-              justifySelf: 'center',
-              alignSelf: 'center',
-              display: 'block',
-              backgroundColor: '#F2F7FC',
-              width: '400px',
-              // height: "100px",
-              color: '#000000',
-              padding: '40px',
-              font: 'normal normal bold 20px Quicksand-Bold',
-            }}
-          >
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              Assign user to TA
-            </div>
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              Are you sure you want to assign selected user to TA?
-            </div>
-            <div>
-              <button
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  color: '#7D7D7D',
-                  border: '1px solid #7D7D7D',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
-                onClick={() => {
-                  toggleAssignUser(false);
-                }}
-              >
-                No
-              </button>
-              <button
-                style={{
-                  backgroundColor: '#09B4FF',
-                  color: 'white',
-                  border: '1px solid #FFFFFF',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
-                onClick={() => {
-                  // let myObj = {
-                  //   ta_people_id: taID,
-                  //   user_id: selectedUser
-                  // }
-                  // console.log('TA', taID, currentUser);
-
-                  axios
-                    .post(BASE_URL + 'AssociateUser', {
-                      ta_people_id: selectedUser,
-                      user_id: userID,
-                    })
-                    .then((response) => {
-                      console.log(response);
-                      loginContext.setLoginState({
-                        ...loginContext.loginState,
-                        reload: !loginContext.loginState.reload,
-                      });
-                    });
-
-                  toggleAssignConfirmed(true);
-                  toggleGetUnassignedList(false);
-                  toggleAssignUser(false);
-                }}
-              >
-                Yes
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-    } else {
-      return null;
-    }
-  };
-
-  const confirmedModal = () => {
-    if (showConfirmed) {
-      return (
-        <div
-          style={{
-            height: '100%',
-            width: '100%',
-            zIndex: '101',
-            left: '0',
-            top: '0',
-            overflow: 'auto',
-            position: 'fixed',
-            display: 'grid',
-            backgroundColor: 'rgba(255, 255, 255, 0.5)',
-          }}
-        >
-          <div
-            style={{
-              position: 'relative',
-              justifySelf: 'center',
-              alignSelf: 'center',
-              display: 'block',
-              backgroundColor: '#E6E6E6',
-              width: '400px',
-              // height: "100px",
-              color: '#000000',
-              font: 'normal normal bold 20px Quicksand-Bold',
-              padding: '40px',
-            }}
-          >
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              Access Granted
-            </div>
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              {taName} now has access to the information of user, {patientName}
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <button
-                style={{
-                  backgroundColor: '#09B4FF',
-                  color: 'white',
-                  border: 'solid',
-                  borderWidth: '2px',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
-                onClick={() => {
-                  toggleConfirmed(false);
-                }}
-              >
-                Okay
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-    } else {
-      return null;
-    }
-  };
-
-  /* Sanmesh3 Assign User Modal */
-  const assignConfirmedModal = () => {
-    if (showAssignConfirmed) {
-      return (
-        <div
-          style={{
-            height: '100%',
-            width: '100%',
-            zIndex: '101',
-            left: '0',
-            top: '0',
-            overflow: 'auto',
-            position: 'fixed',
-            display: 'grid',
-            backgroundColor: 'rgba(255, 255, 255, 0.5)',
-          }}
-        >
-          <div
-            style={{
-              position: 'relative',
-              justifySelf: 'center',
-              alignSelf: 'center',
-              display: 'block',
-              backgroundColor: '#E6E6E6',
-              width: '400px',
-              // height: "100px",
-              color: '#000000',
-              font: 'normal normal bold 20px Quicksand-Bold',
-              padding: '40px',
-            }}
-          >
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              Access Granted
-            </div>
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              Selected user now assigned to TA
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <button
-                style={{
-                  backgroundColor: '#09B4FF',
-                  color: 'white',
-                  border: 'solid',
-                  borderWidth: '2px',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
-                onClick={() => {
-                  toggleAssignConfirmed(false);
-                }}
-              >
-                Okay
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-    } else {
-      return null;
-    }
-  };
-
   return (
     <>
-      {giveAccessModal()}
-      {assignUserModal()}
-      {confirmedModal()}
-      {assignConfirmedModal()}
       <AppBar
         className={classes.navigationBar}
         style={{
@@ -664,45 +215,6 @@ export function Navigation() {
               />
             </Col>
 
-            {/* <div
-              style={{
-                width: '20%',
-                marginLeft: '-17rem',
-                // marginRight: '-10rem',
-              }}
-            >
-              {document.cookie
-                .split(';')
-                .some((item) => item.trim().startsWith('ta_uid=')) ? (
-                <div
-                  style={{
-                    width: '200%',
-                  }}
-                >
-                  <select
-                    className={classes.myButton}
-                    style={{ textAlign: 'center', display: 'inline' }}
-                    onChange={(e) => {
-                      if (e.target.value != null) {
-                        console.log(
-                          'Assigning List',
-                          JSON.parse(e.target.value)
-                        );
-
-                        setUserID(JSON.parse(e.target.value).user_unique_id);
-                        toggleAssignUser(true);
-                      }
-                    }}
-                  >
-                   
-                    <option value="null" selected>
-                      Assign User
-                    </option>
-                    {uaListRendered()}
-                  </select>
-                </div>
-              ) : null}
-            </div> */}
             {document.cookie
               .split(';')
               .some((item) => item.trim().startsWith('ta_uid=')) ? (
@@ -811,6 +323,7 @@ export function Navigation() {
                                 .user_email_id,
                               curUserPic: JSON.parse(e.target.value)
                                 .user_picture,
+                              curUserName: JSON.parse(e.target.value).user_name,
                             });
                             // setUserImage(
                             //   JSON.parse(e.target.value).user_picture
@@ -893,46 +406,10 @@ export function Navigation() {
                         width: '45px',
                         height: '45px',
                         borderRadius: '100%',
+                        cursor: 'pointer',
                       }}
                       onClick={() => history.push('/admin')}
                     />
-
-                    {/* <div
-                    style={{
-                      float: 'left',
-                      width: '60%',
-                      borderRadius: '15px',
-                    }}
-                  >
-                    <select
-                      //className={classes.buttonColor}
-                      //variant="text"
-                      //onClick={homeNavigation}
-                      className={classes.myButton}
-                      style={{
-                        float: 'left',
-                        width: '100%',
-                        backgroundColor: '#F2F7FC',
-                      }}
-                      onChange={(e) => {
-                        if (e.target.value != null) {
-                          console.log('Another', JSON.parse(e.target.value));
-                          setTAName(
-                            JSON.parse(e.target.value).ta_first_name +
-                              ' ' +
-                              JSON.parse(e.target.value).ta_last_name
-                          );
-                          setTAID(JSON.parse(e.target.value).ta_unique_id);
-                          toggleGiveAccess(true);
-                        }
-                      }}
-                    >
-                      <option value="null" selected>
-                        Give Another Advisor Access
-                      </option>
-                      {taListRendered()}
-                    </select>
-                  </div> */}
                   </div>
                 </Col>
               </Col>

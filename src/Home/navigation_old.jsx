@@ -692,8 +692,7 @@ export function Navigation_old() {
   console.log(loginContext);
   getTAList();
   getUnassignedList();
-  console.log(taList);
-  console.log(uaList);
+
   // const info = (accessToken) =>{
   //   fetch(
   //     `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${accessToken}`,

@@ -1750,7 +1750,7 @@ export default function GoalLHS(props) {
               marginLeft: '1rem',
               height: '4.5rem',
               borderRadius: '10px',
-              width: '65%',
+              width: '75%',
               display: 'flex',
               justifyContent: 'space-between',
               backgroundColor: (() => {
@@ -1781,17 +1781,6 @@ export default function GoalLHS(props) {
                 justifyContent: 'flex-start',
               }}
             >
-              <div
-                style={{
-                  color: '#000000',
-                  font: 'normal normal bold 18px Quicksand-Bold',
-                  marginLeft: '10px',
-                }}
-              >
-                {r['gr_title']}
-              </div>
-
-              {/* ({date}) */}
               <div style={{ marginLeft: '1rem' }}>
                 {r.gr_start_day_and_time && r.gr_end_day_and_time ? (
                   <div
@@ -1808,6 +1797,17 @@ export default function GoalLHS(props) {
                   <Col> </Col>
                 )}
               </div>
+              <div
+                style={{
+                  color: '#000000',
+                  font: 'normal normal bold 16px Quicksand-Bold',
+                  marginLeft: '10px',
+                }}
+              >
+                {r['gr_title']}
+              </div>
+
+              {/* ({date}) */}
             </div>
 
             <div
@@ -1819,15 +1819,18 @@ export default function GoalLHS(props) {
             >
               <div>
                 <Col
-                  xs={7}
+                  // xs={7}
                   style={{ paddingRight: '1rem', marginTop: '0.5rem' }}
                 >
                   <img
                     src={r.gr_photo}
                     alt="Routines"
-                    className="center"
-                    height="28px"
-                    width="28px"
+                    // className="center"
+                    style={{
+                      height: '40px',
+                      width: '40px',
+                      objectFit: 'cover',
+                    }}
                   />
                 </Col>
               </div>

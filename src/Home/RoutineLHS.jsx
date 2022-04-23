@@ -5,33 +5,18 @@ import moment from 'moment';
 import {
   faUser,
   faUserAltSlash,
-  faTrophy,
-  faRunning,
   faBookmark,
-  faEdit,
   faList,
   faCopy,
-  faAlignCenter,
 } from '@fortawesome/free-solid-svg-icons';
-import { useHistory, Redirect } from 'react-router-dom';
-import {
-  ListGroup,
-  Row,
-  Col,
-  Modal,
-  InputGroup,
-  FormControl,
-  Table,
-} from 'react-bootstrap';
+import { useHistory } from 'react-router-dom';
+import { ListGroup, Row, Col } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import EditIcon from './EditRTS/EditIcon.jsx';
 import EditActionIcon from './EditATS/EditIcon.jsx';
 import EditStepsIcon from './EditIS/EditIcon.jsx';
-import Button from '@material-ui/core/Button';
-import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
-import { Footer } from 'rsuite';
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const useStyles = makeStyles({
@@ -1827,15 +1812,20 @@ export default function RoutineLHS(props) {
             >
               <div>
                 <Col
-                  xs={7}
-                  style={{ paddingRight: '1rem', marginTop: '0.5rem' }}
+                  // xs={7}
+                  style={{
+                    // paddingRight: '1rem',
+                    marginTop: '0.5rem',
+                  }}
                 >
                   <img
                     src={r.gr_photo}
                     alt="Routines"
-                    className="center"
-                    height="28px"
-                    width="28px"
+                    style={{
+                      height: '40px',
+                      width: '40px',
+                      objectFit: 'cover',
+                    }}
                   />
                 </Col>
               </div>

@@ -66,6 +66,7 @@ export default function Events(props) {
   var taID = '';
   var taEmail = '';
   var userPic = '';
+  var userN = '';
   if (
     document.cookie
       .split(';')
@@ -88,6 +89,10 @@ export default function Events(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_pic='))
       .split('=')[1];
+    userN = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_name='))
+      .split('=')[1];
     taID = document.cookie
       .split('; ')
       .find((row) => row.startsWith('ta_uid='))
@@ -103,6 +108,7 @@ export default function Events(props) {
     userID = loginContext.loginState.curUser;
     userEmail = loginContext.loginState.curUserEmail;
     userPic = loginContext.loginState.curUserPic;
+    userN = loginContext.loginState.curUserName;
 
     //userTime_zone = 'America/Tijuana';
     if (loginContext.loginState.usersOfTA.length === 0) {
