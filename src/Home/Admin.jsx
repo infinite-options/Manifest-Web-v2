@@ -4,6 +4,13 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
 import axios from 'axios';
 import Popover from '@material-ui/core/Popover';
+import moment from 'moment';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 import { GoogleLogin } from 'react-google-login';
 import TimezoneSelect from 'react-timezone-select';
 import Box from '@material-ui/core/Box';
@@ -14,7 +21,31 @@ import './Admin_style.css';
 import MiniNavigation from '../manifest/miniNavigation';
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
-const useStyles = makeStyles({});
+const useStyles = makeStyles({
+  loginbutton: {
+    background: '#000000 0% 0% no-repeat padding-box',
+    borderRadius: '10px',
+    font: 'normal normal  16px Quicksand-Regular',
+    color: '#ffffff',
+    textTransform: 'none',
+    width: '100%',
+    marginTop: '0.3rem',
+  },
+  textfield: {
+    background: '#FFFFFF',
+    borderRadius: '10px',
+    marginBottom: '0.2rem',
+  },
+  signupbuttons: {
+    background: '#ffffff 0% 0% no-repeat padding-box',
+    borderRadius: '10px',
+    font: 'normal normal bold 16px Quicksand-Bold',
+    color: '#000000',
+    textTransform: 'none',
+    width: '100%',
+    marginTop: '0.3rem',
+  },
+});
 
 export function Admin() {
   const history = useHistory();
@@ -43,14 +74,58 @@ export function Admin() {
   const currentUser = loginContext.loginState.curUser;
   const curUserPic = loginContext.loginState.curUserPic;
   const curUserName = loginContext.loginState.curUserName;
+
+  var usrID = '';
+  var tID = '';
+  var userTime_zone = '';
+  var userEmail = '';
+  var userN = '';
+  var userPic = '';
+
+  if (
+    document.cookie
+      .split(';')
+      .some((item) => item.trim().startsWith('patient_uid='))
+  ) {
+    usrID = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_uid='))
+      .split('=')[1];
+    tID = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('ta_uid='))
+      .split('=')[1];
+    userTime_zone = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_timeZone='))
+      .split('=')[1];
+    userEmail = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_email='))
+      .split('=')[1];
+    userPic = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_pic='))
+      .split('=')[1];
+    userN = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_name='))
+      .split('=')[1];
+  } else {
+    usrID = loginContext.loginState.curUser;
+    userTime_zone = loginContext.loginState.curUserTimeZone;
+    userEmail = loginContext.loginState.curUserEmail;
+    userPic = loginContext.loginState.curUserPic;
+    userN = loginContext.loginState.curUserName;
+  }
+
   console.log(selectedTA, currentUser, curUserName);
+  const [called, toggleCalled] = useState(false);
   const [showNewUser, toggleNewUser] = useState(false);
   const [showGiveAccess, toggleGiveAccess] = useState(false);
   const [showAssignUser, toggleAssignUser] = useState(false);
   const [showConfirmed, toggleConfirmed] = useState(false);
   const [showAssignConfirmed, toggleAssignConfirmed] = useState(false);
-  const [taListCreated, toggleGetTAList] = useState(false);
-  const [uaListCreated, toggleGetUnassignedList] = useState(false);
   const [selectedTimezone, setSelectedTimezone] = useState({});
   const [userInfo, setUserInfo] = useState({});
   const [emailUser, setEmailUser] = useState('');
@@ -60,25 +135,25 @@ export function Admin() {
   const [accessExpiresIn, setaccessExpiresIn] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [patientName, setPatientName] = useState('');
+  const [deleteUser, setDeleteUser] = useState(false);
+  const [relinquishRole, setRelinquishRole] = useState(false);
   const [taName, setTAName] = useState('');
   const [taID, setTAID] = useState('');
   const [taList, setTAList] = useState([]);
   const [uaList, setUnassignedList] = useState([]);
   const [userID, setUserID] = useState('');
-
+  const [taListUser, setTaListUser] = useState([]);
   const [anchorElTA, setAnchorElTA] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [duplicateRelationships, setDuplicateRelationships] = useState(false);
+  const [duplicateList, setDuplicateList] = useState([]);
+  const [selectedRelationship, setSelectedRelationship] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState('');
   let redirecturi = 'https://manifestmy.space';
 
-  useEffect(() => {
-    console.log('home line 94');
-    console.log(
-      document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('ta_email='))
-        .split('=')[1]
-    );
+  console.log('taListUser', taListUser.length);
+
+  const getUserOfTA = () => {
     axios
       .get(
         BASE_URL +
@@ -105,11 +180,11 @@ export function Admin() {
             curUserTimeZone: curUserTZ,
             curUserEmail: curUserEI,
             curUserPic: curUserP,
-            cuUserName: curUserN,
+            curUserName: curUserN,
           });
           console.log(curUserID);
-
           console.log('timezone', curUserTZ);
+
           //GoogleEvents();
           // return userID;
         } else {
@@ -127,7 +202,23 @@ export function Admin() {
       .catch((error) => {
         console.log(error);
       });
-  }, [userID, loginContext.loginState.reload]);
+  };
+
+  const getTAofUser = () => {
+    axios
+      .get(BASE_URL + 'ListAllTAUser/' + usrID)
+      .then((response) => {
+        console.log('listAllTAUser', response.data.result);
+        setTaListUser(response.data.result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  useEffect(() => {
+    getUserOfTA();
+    getTAofUser();
+  }, [usrID, loginContext.loginState.reload]);
 
   //popover open and close
   const handleClickTA = (event) => {
@@ -244,46 +335,175 @@ export function Admin() {
   };
 
   const getTAList = () => {
-    if (!taListCreated) {
-      console.log('in getTAList: ' + selectedTA);
-      axios
-        .get(BASE_URL + 'listAllTA/' + selectedTA)
-        .then((response) => {
-          console.log(response.data);
-          //taList = response.data.result
-          setTAList(response.data.result);
-          console.log(taList);
-
-          toggleGetTAList(true);
-        })
-        .catch((err) => {
-          if (err.response) {
-            console.log(err.response);
-          }
-          console.log(err);
-        });
-    }
+    console.log('in getTAList: ' + selectedTA);
+    axios
+      .get(BASE_URL + 'listAllTA/' + selectedTA)
+      .then((response) => {
+        console.log(response.data);
+        //taList = response.data.result
+        setTAList(response.data.result);
+        console.log(taList);
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+      });
   };
-
+  const getDuplicateRelationships = () => {
+    console.log('in getDuplicateRelationships: ');
+    axios
+      .get(BASE_URL + 'relationships')
+      .then((response) => {
+        console.log(response.data.result[0]);
+        //taList = response.data.result
+        setDuplicateList(response.data.result);
+        console.log(taList);
+        setDuplicateRelationships(true);
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+      });
+  };
   const getUnassignedList = () => {
-    if (!uaListCreated) {
-      console.log('in getUnassignedList: ');
-      axios
-        .get(BASE_URL + 'ListAllAdminUsers')
-        .then((response) => {
-          console.log(response.data);
-          //uaList = response.data.result
-          setUnassignedList(response.data.result);
-          console.log('ua list GET', uaList);
+    console.log('in getUnassignedList: ');
+    axios
+      .get(BASE_URL + 'ListAllAdminUsers')
+      .then((response) => {
+        console.log(response.data);
+        //uaList = response.data.result
+        setUnassignedList(response.data.result);
+        console.log('ua list GET', uaList);
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+      });
+  };
+  const deleteRelationshipModal = () => {
+    if (duplicateRelationships) {
+      return (
+        <div
+          style={{
+            height: '100%',
+            maxHeight: '100%',
+            width: '100%',
+            zIndex: '101',
+            left: '0',
+            top: '0',
+            overflow: 'auto',
+            position: 'fixed',
+            display: 'grid',
+            boxShadow: ' 0px 3px 6px #00000029',
+            borderRadius: '5px',
+            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              justifySelf: 'center',
+              alignSelf: 'center',
+              display: 'block',
+              backgroundColor: '#E6E6E6',
+              // width: '400px',
+              minHeight: 'auto',
+              // overflow: 'scroll',
+              color: '#000000',
+              padding: '40px',
+              font: 'normal normal bold 16px Quicksand-Bold',
+            }}
+          >
+            <div style={{ textAlign: 'center' }}>Duplicate Relationships</div>
+            <Table
+              style={{
+                textAlign: 'center',
+                // marginBottom: '20px',
+                height: '200px',
+                overflow: 'scroll',
+              }}
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell>User Name</TableCell>
+                  <TableCell>TA Name</TableCell>
+                  <TableCell>Relationship Created</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {duplicateList.map((relation) => {
+                  return (
+                    <TableRow
+                      onClick={() => setSelectedRelationship(relation.id)}
+                    >
+                      <TableCell>{relation.user_name}</TableCell>
+                      <TableCell>{relation.ta_name}</TableCell>
+                      <TableCell>
+                        {moment(relation.r_timestamp).format(
+                          'MMMM DD, YYYY, hh:mm a'
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+            <div>
+              <button
+                style={{
+                  backgroundColor: '#09B4FF',
+                  color: 'white',
+                  border: '1px solid #FFFFFF',
+                  borderRadius: '5px',
+                  width: '30%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                }}
+                onClick={() => {
+                  console.log('Relation', selectedRelationship);
 
-          toggleGetUnassignedList(true);
-        })
-        .catch((err) => {
-          if (err.response) {
-            console.log(err.response);
-          }
-          console.log(err);
-        });
+                  axios
+                    .post(
+                      BASE_URL + 'deleteRelationships/' + selectedRelationship
+                    )
+                    .then((response) => {
+                      console.log(response);
+                    });
+
+                  setShowDeleteConfirm(true);
+                  setDuplicateRelationships(false);
+                }}
+              >
+                Yes
+              </button>
+              <button
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  color: '#7D7D7D',
+                  border: '1px solid #A7A7A7',
+                  borderRadius: '5px',
+                  width: '30%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                }}
+                onClick={() => {
+                  setDuplicateRelationships(false);
+                }}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
     }
   };
 
@@ -354,7 +574,6 @@ export function Admin() {
                     });
 
                   toggleConfirmed(true);
-                  toggleGetTAList(false);
                   toggleGiveAccess(false);
                 }}
               >
@@ -456,7 +675,6 @@ export function Admin() {
                     });
 
                   toggleAssignConfirmed(true);
-                  toggleGetUnassignedList(false);
                   toggleAssignUser(false);
                 }}
               >
@@ -486,7 +704,247 @@ export function Admin() {
       return null;
     }
   };
+  const deleteModal = () => {
+    if (deleteUser) {
+      return (
+        <div
+          style={{
+            height: '100%',
+            width: '100%',
+            zIndex: '101',
+            left: '0',
+            top: '0',
+            overflow: 'auto',
+            position: 'fixed',
+            display: 'grid',
+            boxShadow: ' 0px 3px 6px #00000029',
+            borderRadius: '5px',
+            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              justifySelf: 'center',
+              alignSelf: 'center',
+              display: 'block',
+              backgroundColor: '#E6E6E6',
+              width: '400px',
+              // height: "100px",
+              color: '#000000',
+              padding: '40px',
+              font: 'normal normal bold 16px Quicksand-Bold',
+            }}
+          >
+            {/* <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Changes saved
+            </div> */}
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Are you sure you want to delete the user?
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <button
+                style={{
+                  backgroundColor: '#09B4FF',
+                  color: 'white',
+                  border: '1px solid #FFFFFF',
+                  borderRadius: '5px',
+                  width: '30%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                }}
+                onClick={() => {
+                  deleteUserFunc();
+                  // let body = {
+                  //   user_id: usrID,
+                  // };
+                  // axios.post(BASE_URL + 'deleteUser', body).then((response) => {
+                  //   console.log('deleting');
+                  //   console.log(response.data);
+                  //   // document.cookie = 'patient_uid=1;max-age=0';
+                  //   // document.cookie = 'patient_name=1;max-age=0';
+                  //   // document.cookie = 'patient_email=1;max-age=0';
+                  //   // document.cookie = 'patient_pic=1;max-age=0';
+                  //   loginContext.setLoginState({
+                  //     ...loginContext.loginState,
+                  //     reload: !loginContext.loginState.reload,
+                  //   });
+                  //   setDeleteUser(!deleteUser);
+                  //   toggleCalled(!called);
+                  //   history.push('/home');
+                  // });
+                }}
+              >
+                Yes
+                {console.log('list of users', loginContext.loginState.reload)}
+              </button>
+              <button
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  color: '#7D7D7D',
+                  border: '1px solid #A7A7A7',
+                  borderRadius: '5px',
+                  width: '30%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                }}
+                onClick={() => {
+                  setDeleteUser(false);
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  };
 
+  const removeRoleModal = () => {
+    if (relinquishRole) {
+      return (
+        <div
+          style={{
+            height: '100%',
+            width: '100%',
+            zIndex: '101',
+            left: '0',
+            top: '0',
+            overflow: 'auto',
+            position: 'fixed',
+            display: 'grid',
+            boxShadow: ' 0px 3px 6px #00000029',
+            borderRadius: '5px',
+            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              justifySelf: 'center',
+              alignSelf: 'center',
+              display: 'block',
+              backgroundColor: '#E6E6E6',
+              width: '400px',
+              // height: "100px",
+              color: '#000000',
+              padding: '40px',
+              font: 'normal normal bold 16px Quicksand-Bold',
+            }}
+          >
+            {/* <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Changes saved
+            </div> */}
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Are you sure you want to remove your role as the advisor?
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <button
+                style={{
+                  backgroundColor: '#09B4FF',
+                  color: 'white',
+                  border: '1px solid #FFFFFF',
+                  borderRadius: '5px',
+                  width: '30%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                }}
+                onClick={() => {
+                  removeRoleFunc();
+                }}
+              >
+                Yes
+              </button>
+              <button
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  color: '#7D7D7D',
+                  border: '1px solid #A7A7A7',
+                  borderRadius: '5px',
+                  width: '30%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                }}
+                onClick={() => {
+                  setRelinquishRole(!relinquishRole);
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  };
+  const confirmedDeleteModal = () => {
+    if (showDeleteConfirm) {
+      return (
+        <div
+          style={{
+            height: '100%',
+            width: '100%',
+            zIndex: '101',
+            left: '0',
+            top: '0',
+            overflow: 'auto',
+            position: 'fixed',
+            display: 'grid',
+            boxShadow: ' 0px 3px 6px #00000029',
+            borderRadius: '5px',
+            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              justifySelf: 'center',
+              alignSelf: 'center',
+              display: 'block',
+              backgroundColor: '#E6E6E6',
+              width: '400px',
+              // height: "100px",
+              color: '#000000',
+              padding: '40px',
+              font: 'normal normal bold 16px Quicksand-Bold',
+            }}
+          >
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Deleted
+            </div>
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              The duplicate relationship has now been deleted!
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <button
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  color: '#7D7D7D',
+                  border: '1px solid #A7A7A7',
+                  borderRadius: '5px',
+                  width: '30%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                }}
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                }}
+              >
+                Okay
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  };
   const confirmedModal = () => {
     if (showConfirmed) {
       return (
@@ -779,7 +1237,50 @@ export function Admin() {
         console.log(err);
       });
   };
+  function removeRoleFunc() {
+    let body = {
+      user_id: usrID,
+      ta_people_id: tID,
+    };
+    axios.post(BASE_URL + 'deletePeople', body).then((response) => {
+      console.log('deleting');
+      console.log(response.data);
+      setRelinquishRole(!relinquishRole);
+      toggleCalled(!called);
+      document.cookie = 'patient_name=' + listOfUsers[0].user_name;
+      document.cookie = 'patient_timeZone=' + listOfUsers[0].time_zone;
+      document.cookie = 'patient_uid=' + listOfUsers[0].user_unique_id;
+      document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
+      document.cookie = 'patient_pic=' + listOfUsers[0].user_picture;
+      loginContext.setLoginState({
+        ...loginContext.loginState,
+        reload: true,
+      });
+      history.push('/home');
+    });
+  }
 
+  function deleteUserFunc() {
+    let body = {
+      user_id: usrID,
+    };
+    axios.post(BASE_URL + 'deleteUser', body).then((response) => {
+      console.log('deleting');
+      console.log(response.data);
+      document.cookie = 'patient_name=' + listOfUsers[0].user_name;
+      document.cookie = 'patient_timeZone=' + listOfUsers[0].time_zone;
+      document.cookie = 'patient_uid=' + listOfUsers[0].user_unique_id;
+      document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
+      document.cookie = 'patient_pic=' + listOfUsers[0].user_picture;
+      loginContext.setLoginState({
+        ...loginContext.loginState,
+        reload: !loginContext.loginState.reload,
+      });
+      setDeleteUser(!deleteUser);
+      toggleCalled(!called);
+      history.push('/home');
+    });
+  }
   function onSubmitUser() {
     let body = {
       email_id: emailUser,
@@ -791,7 +1292,7 @@ export function Admin() {
       first_name: firstName,
       last_name: lastName,
       time_zone: selectedTimezone.value,
-      ta_people_id: selectedTA,
+      ta_people_id: tID,
     };
     console.log('body', body);
     axios
@@ -808,6 +1309,7 @@ export function Admin() {
         console.log(error);
       });
   }
+
   return (
     <div
       style={{
@@ -835,53 +1337,36 @@ export function Admin() {
               justifySelf: 'center',
               alignSelf: 'center',
               display: 'block',
-              backgroundColor: '#889AB5',
+              backgroundColor: '#F2F7FC',
               width: '400px',
               // height: "100px",
-              color: 'white',
+              color: '#000000',
               padding: '40px',
             }}
           >
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              New User
+            <div style={{ font: 'normal normal 600 16px Quicksand-Regular' }}>
+              New User Sign Up
             </div>
-            <div>Email:</div>
-            <div style={{ marginBottom: '20px' }}>{emailUser}</div>
-            <div>First Name:</div>
-            <input
+            <div style={{ font: 'normal normal 600 16px Quicksand-Regular' }}>
+              {emailUser}
+            </div>
+            <Form.Control
               placeholder={firstName}
-              style={{
-                marginBottom: '20px',
-                height: '40px',
-                width: '100%',
-                borderRadius: '15px',
-                border: 'none',
-              }}
+              className={classes.textfield}
               onChange={(e) => {
                 setFirstName(e.target.value);
-                //console.log("change", e.target.value)
               }}
-            ></input>
-            <div>Last Name:</div>
-            <input
+            />
+            <Form.Control
               placeholder={lastName}
-              style={{
-                marginBottom: '20px',
-                height: '40px',
-                width: '100%',
-                borderRadius: '15px',
-                border: 'none',
-              }}
+              className={classes.textfield}
               onChange={(e) => {
                 setLastName(e.target.value);
-                //console.log("change", e.target.value)
               }}
-            ></input>
+            />
             {/* <input placeholder="timezone" style={{marginBottom: '20px', height: '40px', width: "100%", borderRadius: '15px', border: 'none'}}></input>
              */}
             <div className="App">
-              <h2>Select Timezone</h2>
-              <blockquote>Please make a selection</blockquote>
               <div className="select-wrapper" style={{ color: '#000000' }}>
                 <TimezoneSelect
                   value={selectedTimezone}
@@ -889,51 +1374,40 @@ export function Admin() {
                 />
               </div>
             </div>
-            <div>
-              <button
-                style={{
-                  backgroundColor: '#889AB5',
-                  color: 'white',
-                  border: 'solid',
-                  borderWidth: '2px',
-                  borderRadius: '25px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                  marginTop: '1rem',
-                }}
-                onClick={() => {
-                  toggleNewUser(false);
-                }}
-              >
-                Close
-              </button>
-              <button
-                style={{
-                  backgroundColor: '#889AB5',
-                  color: 'white',
-                  border: 'solid',
-                  borderWidth: '2px',
-                  borderRadius: '25px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
-                onClick={() => {
-                  toggleNewUser(false);
-                  onSubmitUser();
-                }}
-              >
-                Save
-              </button>
-            </div>
+            <Row>
+              <Col>
+                <Button
+                  className={classes.loginbutton}
+                  onClick={() => {
+                    toggleNewUser(false);
+                    onSubmitUser();
+                  }}
+                >
+                  Save
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  className={classes.signupbuttons}
+                  onClick={() => {
+                    toggleNewUser(false);
+                  }}
+                >
+                  Close
+                </Button>
+              </Col>
+            </Row>
           </div>
         </div>
       </Box>
+      {deleteRelationshipModal()}
       {giveAccessModal()}
       {assignUserModal()}
       {confirmedModal()}
+      {deleteModal()}
+      {removeRoleModal()}
       {assignConfirmedModal()}
+      {confirmedDeleteModal()}
       <div style={{ width: '30%' }}>
         <MiniNavigation />
       </div>
@@ -950,30 +1424,105 @@ export function Admin() {
         <div class="two"></div>
       </div>
       <div class="biggrid">
-        <Row>
-          <Col sm={4} lg={4}>
+        <Row style={{ width: '100%' }}>
+          <Col
+            sm={6}
+            lg={6}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             <div class="graybox">
               <div class="YourUsers">
-                Your Users ({listOfUsers.length})
+                <Row>
+                  <Col xs={3}></Col>
+                  <Col> Your Users ({listOfUsers.length})</Col>
+                  <Col xs={3}>
+                    <GoogleLogin
+                      //clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
+                      clientId={
+                        BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
+                          ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
+                          : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
+                      }
+                      //clientId={ID}
+                      render={(renderProps) => (
+                        <button
+                          class="buttonadd"
+                          onClick={renderProps.onClick}
+                          disabled={renderProps.disabled}
+                        >
+                          +
+                        </button>
+                      )}
+                      // accessType="offline"
+                      // prompt="consent"
+                      // responseType="code"
+                      // buttonText="Log In"
+                      accessType="offline"
+                      prompt="consent"
+                      responseType="code"
+                      buttonText="Log In"
+                      ux_mode="redirect"
+                      // redirectUri={
+                      //   BASE_URL.substring(8, 18) == '3s3sftsr90'
+                      //     ? 'https://manifestmy.space'
+                      //     : 'https://manifestmy.life'
+                      // }
+                      redirectUri="http://localhost:3000"
+                      scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
+                      onSuccess={responseGoogle}
+                      onFailure={responseGoogle}
+                      isSignedIn={false}
+                      disable={true}
+                      cookiePolicy={'single_host_origin'}
+                    />
+                  </Col>
+                </Row>
+
                 <div class="listofusers">
                   {listOfUsers.map((users) => {
                     return (
                       <div class="grid_cut">
                         <div class="grid">
                           <div class="g s1">
-                            <div class="circle"></div>
+                            <div class="circle">
+                              {users.user_picture == '' ? (
+                                <img
+                                  src={'/NoImage.png'}
+                                  style={{
+                                    borderRadius: '100%',
+                                    height: '47px',
+                                    width: '47px',
+                                    objectFit: 'cover',
+                                  }}
+                                />
+                              ) : (
+                                <img
+                                  src={users.user_picture}
+                                  style={{
+                                    borderRadius: '100%',
+                                    height: '47px',
+                                    width: '47px',
+                                  }}
+                                />
+                              )}
+                            </div>
                           </div>
                           <div class="g s2"> {users.user_name}</div>
                           <div class="g s3"> {users.time_zone}</div>
                           <div class="g s4">
                             <img
-                              src="edit.png"
+                              src="/Edit.png"
                               style={{ width: '25px', height: '25px' }}
                             />
                           </div>
                           <div class="g s5">
                             <img
-                              src="delete.png"
+                              src="/Delete.png"
                               style={{ width: '25px', height: '25px' }}
                             />
                           </div>
@@ -983,50 +1532,9 @@ export function Admin() {
                   })}
                 </div>
               </div>
-              <div>
-                <GoogleLogin
-                  //clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
-                  clientId={
-                    BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
-                      ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
-                      : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
-                  }
-                  //clientId={ID}
-                  render={(renderProps) => (
-                    <button
-                      class="buttonadd"
-                      onClick={renderProps.onClick}
-                      disabled={renderProps.disabled}
-                    >
-                      Add User +
-                    </button>
-                  )}
-                  // accessType="offline"
-                  // prompt="consent"
-                  // responseType="code"
-                  // buttonText="Log In"
-                  accessType="offline"
-                  prompt="consent"
-                  responseType="code"
-                  buttonText="Log In"
-                  ux_mode="redirect"
-                  // redirectUri={
-                  //   BASE_URL.substring(8, 18) == '3s3sftsr90'
-                  //     ? 'https://manifestmy.space'
-                  //     : 'https://manifestmy.life'
-                  // }
-                  redirectUri="http://localhost:3000"
-                  scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
-                  onSuccess={responseGoogle}
-                  onFailure={responseGoogle}
-                  isSignedIn={false}
-                  disable={true}
-                  cookiePolicy={'single_host_origin'}
-                />
-              </div>
             </div>
           </Col>
-          <Col
+          {/* <Col
             style={{
               display: 'flex',
               flexDirection: 'column',
@@ -1082,11 +1590,7 @@ export function Admin() {
                   <button class="duperr">Check of Duplicate Users</button>
                 </div>
 
-                <div class="con">
-                  <button class="duperr">
-                    Check of Duplicate Relationships
-                  </button>
-                </div>
+               
               </Col>
               <Col sm={6} lg={6} class="bigbox">
                 <div class="con">
@@ -1134,6 +1638,124 @@ export function Admin() {
             <Row>
               <button class="deleteButton">Delete User</button>
             </Row>
+          </Col> */}
+          <Col
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <div class="con">
+              <button
+                class="duperr"
+                onClick={(e) => {
+                  getTAList();
+                  handleClickTA(e);
+                }}
+              >
+                Give Another TA Access
+              </button>
+            </div>
+            <Popover
+              id={idTA}
+              open={openTA}
+              anchorEl={anchorElTA}
+              onClose={handleCloseTA}
+              // anchorReference="anchorPosition"
+              // anchorPosition={{ top: 285, left: 100 }}
+              anchorOrigin={{
+                vertical: 'center',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+              }}
+              style={{
+                backgroundClip: 'context-box',
+                borderRadius: '20px',
+              }}
+            >
+              {taListRendered()}
+            </Popover>
+            <div class="con">
+              <button class="duperr">Trusted Advisor Look Up</button>
+            </div>
+
+            <div class="con">
+              <button
+                class="duperr"
+                onClick={() => getDuplicateRelationships()}
+              >
+                Check for Duplicate Relationships
+              </button>
+            </div>
+            <div class="con">
+              <button
+                class="duperr"
+                onClick={(e) => {
+                  getUnassignedList();
+                  handleClickUser(e);
+                }}
+              >
+                Assign User
+              </button>
+            </div>
+            <Popover
+              id={idUser}
+              open={openUser}
+              anchorEl={anchorElUser}
+              onClose={handleCloseUser}
+              // anchorReference="anchorPosition"
+              // anchorPosition={{ top: 285, left: 100 }}
+              anchorOrigin={{
+                vertical: 'center',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+              }}
+              style={{
+                backgroundClip: 'context-box',
+                borderRadius: '20px',
+              }}
+            >
+              {uaListRendered()}
+            </Popover>
+            {taListUser.length > 1 ? (
+              <div class="con">
+                <button
+                  class="duperr"
+                  onClick={() => setRelinquishRole(!relinquishRole)}
+                >
+                  Relinquish Advisor Role
+                </button>
+              </div>
+            ) : (
+              <div class="con">
+                <button
+                  class="deleteButton"
+                  onClick={() => setDeleteUser(!deleteUser)}
+                >
+                  Delete User
+                </button>
+              </div>
+            )}
+            {/* {taListUser.length == 1 ? (
+              <div class="con">
+                <button
+                  class="deleteButton"
+                  onClick={() => setDeleteUser(!deleteUser)}
+                >
+                  Delete User
+                </button>
+              </div>
+            ) : (
+              ''
+            )} */}
           </Col>
         </Row>
 

@@ -102,26 +102,29 @@ export function Navigation() {
       CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
       console.log(CLIENT_ID, CLIENT_SECRET);
     }
+    // axios.get(BASE_URL + 'getPeopleImages/' + selectedUser).then((response) => {
+    //   console.log(response);
+    //   setTaImage(response.data.result[0].url);
+    //   setUserImage(curUserPic);
+    // });
+  }, []);
+  const getTAImage = () => {
     axios.get(BASE_URL + 'getPeopleImages/' + selectedUser).then((response) => {
       console.log(response);
       setTaImage(response.data.result[0].url);
     });
+  };
+  useEffect(() => {
+    getTAImage();
     setUserImage(curUserPic);
-  }, []);
+  }, [loginContext.loginState.reload]);
+  // useEffect(() => {
+  //   setUserImage(curUserPic);
+  // }, [currentUser]);
   console.log(CLIENT_ID, CLIENT_SECRET);
-  const [showGiveAccess, toggleGiveAccess] = useState(false);
-  const [showAssignUser, toggleAssignUser] = useState(false);
-  const [showConfirmed, toggleConfirmed] = useState(false);
-  const [showAssignConfirmed, toggleAssignConfirmed] = useState(false);
   const [taListCreated, toggleGetTAList] = useState(false);
-  const [uaListCreated, toggleGetUnassignedList] = useState(false);
   const [patientName, setPatientName] = useState('');
 
-  const [taName, setTAName] = useState('');
-  const [taID, setTAID] = useState('');
-  const [taList, setTAList] = useState([]);
-  const [uaList, setUnassignedList] = useState([]);
-  const [userID, setUserID] = useState('');
   let redirecturi = 'https://manifestmy.space';
   console.log(redirecturi);
   console.log('document cookie', document.cookie);

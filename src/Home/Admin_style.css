@@ -108,11 +108,13 @@ img {
     height: 400px;
 }
 .graybox {
-    width: 100%;
+    /* width: 100%; */
+    max-width: 70%;
+    min-width: 70%;
+    width: 350px;
     /* height: auto; */
     height: 518px;
     /* overflow: scroll; */
-    margin-left: 3rem;
     background: #F1F1F1 0% 0% no-repeat padding-box;
     box-shadow: 0px 3px 6px #00000029;
     border-radius: 10px;
@@ -132,7 +134,7 @@ img {
     font: normal normal bold 16px Quicksand-Bold;
     letter-spacing: 0px;
     color: #FF3939;
-    width: 350px;
+    width: 100%;
 }
 
 .grid_cut {
@@ -154,6 +156,7 @@ img {
 }
 
 .buttonadd {
+    width: 60px;
     background-color: white;
     border-color: #000000;
     border-radius: 10px;
@@ -162,12 +165,12 @@ img {
     font-family: "Quicksand-Bold";
     font-size: 16px;
     font-weight: bold;
-    margin-top: .9rem;
-    padding: 0.8em 5.5em;
+    /* margin-top: .9rem; */
+    /* padding: 0.8em 5.5em; */
 }
 .con {
-    max-width: 100%;
-    min-width: 100%;
+     max-width: 70%;
+    min-width: 70%;
     width: 350px;
     display: block;}
 

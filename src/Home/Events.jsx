@@ -153,10 +153,7 @@ export default function Events(props) {
 
   // const [userID, setUserID] = useState(" ");
 
-  // function GetUserID(e){
-  useEffect(() => {
-    console.log('home line 94');
-    console.log('document.cookie', document.cookie);
+  const getUserOfTA = () => {
     axios
       .get(
         BASE_URL +
@@ -167,13 +164,14 @@ export default function Events(props) {
             .split('=')[1]
       )
       .then((response) => {
-        console.log(response);
+        console.log('list of users home', response.data.result);
         if (response.data.result.length > 0) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;
           const curUserEI = usersOfTA[0].user_email_id;
           const curUserP = usersOfTA[0].user_picture;
+          const curUserN = usersOfTA[0].user_name;
           console.log('timezone', curUserTZ);
           loginContext.setLoginState({
             ...loginContext.loginState,
@@ -182,18 +180,15 @@ export default function Events(props) {
             curUserTimeZone: curUserTZ,
             curUserEmail: curUserEI,
             curUserPic: curUserP,
+            curUserName: curUserN,
           });
           console.log(curUserID);
           console.log('timezone', curUserTZ);
-          // setUserID(curUserID);
-          // console.log(userID);
-          GrabFireBaseRoutinesGoalsData();
-          //GrabFireBaseRoutinesData();
+
           //GoogleEvents();
-          GetUserAcessToken();
           // return userID;
         } else {
-          console.log('No User Found');
+          // const usersOfTA = 'Loading';
           // loginContext.setLoginState({
           //   ...loginContext.loginState,
           //   usersOfTA: response.data.result,
@@ -201,12 +196,16 @@ export default function Events(props) {
           //   curUserTimeZone: '',
           //   curUserEmail: '',
           // });
+          console.log('No User Found');
         }
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [loginContext.loginState.reload, userID]);
+  };
+  useEffect(() => {
+    getUserOfTA();
+  }, [userID, loginContext.loginState.reload]);
 
   useEffect(() => {
     if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {

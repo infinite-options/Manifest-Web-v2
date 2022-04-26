@@ -139,15 +139,7 @@ export default function Home(props) {
   as possible based on past experience, if not included 
   causes alarms and excessive rendering */
 
-  // function GetUserID(e){
-  useEffect(() => {
-    console.log('home line 94');
-    console.log(
-      document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('ta_email='))
-        .split('=')[1]
-    );
+  const getUserOfTA = () => {
     axios
       .get(
         BASE_URL +
@@ -178,9 +170,7 @@ export default function Home(props) {
           });
           console.log(curUserID);
           console.log('timezone', curUserTZ);
-          GrabFireBaseRoutinesGoalsData();
-          GrabFireBaseRoutinesData();
-          GetUserAcessToken();
+
           //GoogleEvents();
           // return userID;
         } else {
@@ -198,8 +188,10 @@ export default function Home(props) {
       .catch((error) => {
         console.log(error);
       });
+  };
+  useEffect(() => {
+    getUserOfTA();
   }, [userID, loginContext.loginState.reload]);
-  // }
   console.log('list of users home', loginContext.loginState.reload);
   useEffect(() => {
     if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
