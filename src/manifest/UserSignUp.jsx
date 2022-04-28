@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { GoogleLogin } from 'react-google-login';
+import AppleLogin from 'react-apple-login';
 import { useHistory, Link } from 'react-router-dom';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import TimezoneSelect from 'react-timezone-select';
@@ -193,6 +194,9 @@ export default function UserSignUp() {
     });
   }, [loginContext.loginState.reload]);
 
+  const responseApple = (response) => {
+    console.log(response);
+  };
   const responseGoogle = (response) => {
     console.log('response', response);
 
@@ -760,7 +764,7 @@ export default function UserSignUp() {
                 <Row xs={12} className={classes.buttonLayout}>
                   <Col></Col>
                   <Col xs={8} className={classes.loginbuttons}>
-                    <Button>
+                    {/* <Button>
                       <img
                         src={Apple}
                         variant="contained"
@@ -775,7 +779,40 @@ export default function UserSignUp() {
                           window.AppleID.auth.signIn();
                         }}
                       ></img>
-                    </Button>
+                    </Button> */}
+                    <AppleLogin
+                      clientId="com.infiniteoptions-manifestmy.life"
+                      // redirectURI="https://redirectUrl.com"
+                      redirectURI={
+                        BASE_URL.substring(8, 18) == '3s3sftsr90'
+                          ? 'https://manifestmy.space'
+                          : 'https://manifestmy.life'
+                      }
+                      // onSuccess={responseApple}
+                      // onError={responseApple}
+                      onSuccess={(res) => console.log(res)}
+                      onError={(error) => console.log(error)}
+                      // redirectURI={
+                      //   'https://gyn3vgy3fb.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserAppleLogin'
+                      // }
+                      usePopup={false}
+                      responseType={'code'}
+                      scope={'email name'}
+                      render={(renderProps) => (
+                        <img
+                          src={Apple}
+                          onClick={renderProps.onClick}
+                          disabled={renderProps.disabled}
+                          alt={''}
+                          style={{
+                            minWidth: '70%',
+                            maxWidth: '70%',
+                            padding: '0',
+                            margin: 0,
+                          }}
+                        ></img>
+                      )}
+                    />
                   </Col>
                   <Col></Col>
                 </Row>

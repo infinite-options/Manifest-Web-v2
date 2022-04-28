@@ -81,7 +81,11 @@ img {
     padding-bottom: 0;
     border-bottom: 3px solid #000000;
 }
-
+.s2_1 {
+    padding-top: 0.7rem;
+    grid-area: s2;
+    padding-bottom: 0;
+}
 .s3 {
     /* padding-top: .7rem; */
     grid-area: s3;
@@ -146,7 +150,7 @@ img {
     /* padding-top: 1rem; */
     width: 85%;
     height: 4rem;
-    margin: 1.5rem auto;
+    margin: 2rem auto;
     font-size: 16px;
     cursor: pointer;
 }

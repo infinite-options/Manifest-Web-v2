@@ -151,6 +151,8 @@ export function Admin() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState('');
   const [advisorLookup, setAdvisorLookup] = useState(false);
   const [advisorList, setAdvisorList] = useState([]);
+  const [access, setAccess] = useState(false);
+  // const [advisorList, setAdvisorList] = useState([]);
   let redirecturi = 'https://manifestmy.space';
 
   console.log('taListUser', taListUser.length);
@@ -268,27 +270,50 @@ export function Admin() {
   const taListRendered = () => {
     taList.sort((a, b) => a.ta_name.localeCompare(b.ta_name));
     return (
-      <div>
+      <div class="listofusers">
         {taList.map((ta) => {
           return (
             <div
-              style={{
-                cursor: 'pointer',
-                color: ta.TA_status === 'EXI' ? 'grey' : 'black',
-                backgroundColor: ta.TA_status === 'Exi' ? 'grey' : 'white',
-              }}
+              class="grid_cut"
+              // style={{
+              //   cursor: 'pointer',
+              //   color: ta.TA_status === 'EXI' ? 'grey' : 'black',
+              //   backgroundColor: ta.TA_status === 'Exi' ? 'grey' : 'white',
+              // }}
               onClick={(event) => {
                 console.log('event', ta);
                 if (ta != null) {
                   console.log('Another', ta);
                   setTAName(ta.ta_name);
                   setTAID(ta.ta_unique_id);
-                  toggleGiveAccess(true);
+                  // toggleGiveAccess(true);
                 }
                 handleCloseTA();
               }}
             >
-              {ta.ta_name}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '2fr 7fr 1fr 1fr',
+                  gridTemplateRows: '3fr 3fr',
+                  gridTemplateAreas: `  "s1 s2 s4 s5"
+        "s1 s3 s4 s5"`,
+                  backgroundColor:
+                    ta.TA_status === 'Exi' ? '#9FFFCB' : '#FFFFFF',
+                  borderRadius: '20px',
+                  border:
+                    taID === ta.ta_unique_id
+                      ? '4px solid #9FFFCB'
+                      : ta.TA_status === 'Exi'
+                      ? '4px solid #9FFFCB'
+                      : '4px solid #FFFFFF',
+                }}
+              >
+                <div class="g s1">
+                  <div class="circle"></div>
+                </div>
+                <div class="g s2_1"> {ta.ta_name}</div>
+              </div>
             </div>
           );
         })}
@@ -342,7 +367,7 @@ export function Admin() {
     console.log('in getTAList: ' + selectedTA);
     var bodyFormData = new FormData();
 
-    bodyFormData.append('user_full_name', userN);
+    bodyFormData.append('user_full_name', usrID);
     console.log(bodyFormData);
     axios
       .post(BASE_URL + 'NewExiTA/', bodyFormData)
@@ -381,7 +406,7 @@ export function Admin() {
     console.log('in getTAInfo: ');
     var bodyFormData = new FormData();
 
-    bodyFormData.append('user_full_name', userN);
+    bodyFormData.append('user_full_name', usrID);
     console.log(bodyFormData);
     axios
       .post(BASE_URL + 'gettasgivenusername/', bodyFormData)
@@ -571,6 +596,166 @@ export function Admin() {
       return null;
     }
   };
+
+  const anotherTAAccessModal = () => {
+    if (access) {
+      return (
+        <div
+          style={{
+            height: '100%',
+            maxHeight: '100%',
+            width: '100%',
+            zIndex: '101',
+            left: '0',
+            top: '0',
+            overflow: 'scroll',
+            position: 'fixed',
+            display: 'grid',
+            boxShadow: ' 0px 3px 6px #00000029',
+            borderRadius: '5px',
+            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              justifySelf: 'center',
+              alignSelf: 'center',
+              display: 'block',
+              backgroundColor: '#E6E6E6',
+              width: '800px',
+              minHeight: 'auto',
+              // overflow: 'scroll',
+              color: '#000000',
+              padding: '40px',
+              font: 'normal normal bold 16px Quicksand-Bold',
+            }}
+          >
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Give another TA access
+            </div>
+            <Row>
+              <Col>
+                <div class="listofusers">
+                  {listOfUsers.map((users) => {
+                    return (
+                      <div
+                        class="grid_cut"
+                        onClick={() => {
+                          getTAList();
+                          document.cookie =
+                            'patient_uid=' + users.user_unique_id;
+                          document.cookie = 'patient_name=' + users.user_name;
+                          document.cookie =
+                            'patient_timeZone=' + users.time_zone;
+                          document.cookie =
+                            'patient_email=' + users.user_email_id;
+                          document.cookie = 'patient_pic=' + users.user_picture;
+                          console.log(document.cookie);
+                          loginContext.setLoginState({
+                            ...loginContext.loginState,
+                            curUser: users.user_unique_id,
+                            curUserTimeZone: users.time_zone,
+                            curUserEmail: users.user_email_id,
+                            curUserPic: users.user_picture,
+                            curUserName: users.user_name,
+                          });
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '2fr 7fr 1fr 1fr',
+                            gridTemplateRows: '3fr 3fr',
+                            gridTemplateAreas: `  "s1 s2 s4 s5"
+        "s1 s3 s4 s5"`,
+                            backgroundColor: '#FFFFFF',
+                            border:
+                              usrID === users.user_unique_id
+                                ? '4px solid #9FFFCB'
+                                : '4px solid #FFFFFF',
+                            borderRadius: '20px',
+                          }}
+                        >
+                          <div class="g s1">
+                            <div class="circle">
+                              {users.user_picture == '' ? (
+                                <img
+                                  src={'/UserNoImage.png'}
+                                  style={{
+                                    borderRadius: '100%',
+                                    height: '47px',
+                                    width: '47px',
+                                    objectFit: 'cover',
+                                  }}
+                                />
+                              ) : (
+                                <img
+                                  src={users.user_picture}
+                                  style={{
+                                    borderRadius: '100%',
+                                    height: '47px',
+                                    width: '47px',
+                                  }}
+                                />
+                              )}
+                            </div>
+                          </div>
+                          <div class="g s2_1"> {users.user_name}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Col>
+              <Col>{taListRendered()}</Col>
+            </Row>
+            <div style={{ marginTop: '20px' }}>
+              <button
+                style={{
+                  backgroundColor: '#09B4FF',
+                  color: 'white',
+                  border: '1px solid #FFFFFF',
+                  borderRadius: '5px',
+                  width: '30%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                }}
+                onClick={() => {
+                  console.log('Relation', selectedRelationship);
+                  toggleGiveAccess(true);
+                  // setShowDeleteConfirm(true);
+                  // setDuplicateRelationships(false);
+                }}
+              >
+                Give Access
+              </button>
+              <button
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  color: '#7D7D7D',
+                  border: '1px solid #A7A7A7',
+                  borderRadius: '5px',
+                  width: '30%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                }}
+                onClick={() => {
+                  setAccess(false);
+                  setTAID('');
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  };
+
   const advisorLookupModal = () => {
     if (advisorLookup) {
       return (
@@ -704,7 +889,7 @@ export function Admin() {
           style={{
             height: '100%',
             width: '100%',
-            zIndex: '101',
+            zIndex: '1040',
             left: '0',
             top: '0',
             overflow: 'auto',
@@ -729,12 +914,11 @@ export function Admin() {
               font: 'normal normal bold 16px Quicksand-Bold',
             }}
           >
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+            {/* <div style={{ textAlign: 'center', marginBottom: '20px' }}>
               Give another advisor access
-            </div>
+            </div> */}
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              Are you sure you want to give {taName} access to the information
-              of user, {userN}
+              You are giving {taName} access to {userN}'s profile.
             </div>
             <div>
               <button
@@ -765,6 +949,9 @@ export function Admin() {
 
                   toggleConfirmed(true);
                   toggleGiveAccess(false);
+                  setAccess(false);
+                  setTAID('');
+                  setTAList([]);
                 }}
               >
                 Yes
@@ -926,9 +1113,9 @@ export function Admin() {
               font: 'normal normal bold 16px Quicksand-Bold',
             }}
           >
-            {/* <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              Changes saved
-            </div> */}
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Delete User
+            </div>
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
               Are you sure you want to delete the user?
             </div>
@@ -1025,9 +1212,9 @@ export function Admin() {
               font: 'normal normal bold 16px Quicksand-Bold',
             }}
           >
-            {/* <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              Changes saved
-            </div> */}
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Remove Advisor Role
+            </div>
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
               Are you sure you want to remove your role as the advisor?
             </div>
@@ -1142,7 +1329,7 @@ export function Admin() {
           style={{
             height: '100%',
             width: '100%',
-            zIndex: '101',
+            zIndex: '1040',
             left: '0',
             top: '0',
             overflow: 'auto',
@@ -1599,6 +1786,7 @@ export function Admin() {
       {assignConfirmedModal()}
       {confirmedDeleteModal()}
       {advisorLookupModal()}
+      {anotherTAAccessModal()}
       <div style={{ width: '30%' }}>
         <MiniNavigation />
       </div>
@@ -1704,7 +1892,7 @@ export function Admin() {
                             <div class="circle">
                               {users.user_picture == '' ? (
                                 <img
-                                  src={'/NoImage.png'}
+                                  src={'/UserNoImage.png'}
                                   style={{
                                     borderRadius: '100%',
                                     height: '47px',
@@ -1871,14 +2059,15 @@ export function Admin() {
               <button
                 class="duperr"
                 onClick={(e) => {
-                  getTAList();
-                  handleClickTA(e);
+                  // getTAList();
+                  // handleClickTA(e);
+                  setAccess(true);
                 }}
               >
                 Give Another TA Access
               </button>
             </div>
-            <Popover
+            {/* <Popover
               id={idTA}
               open={openTA}
               anchorEl={anchorElTA}
@@ -1899,7 +2088,7 @@ export function Admin() {
               }}
             >
               {taListRendered()}
-            </Popover>
+            </Popover> */}
             <div class="con">
               <button class="duperr" onClick={() => getTAInfo()}>
                 Trusted Advisor Look Up

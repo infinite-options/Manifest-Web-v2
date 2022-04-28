@@ -288,7 +288,7 @@ export function Navigation() {
                           />
                         ) : (
                           <img
-                            src={'/NoImage.png'}
+                            src={'/UserNoImage.png'}
                             style={{
                               width: '45px',
                               height: '45px',
@@ -298,7 +298,7 @@ export function Navigation() {
                         )
                       ) : (
                         <img
-                          src={'/NoImage.png'}
+                          src={'/UserNoImage.png'}
                           style={{
                             width: '45px',
                             height: '45px',
@@ -457,7 +457,7 @@ export function Navigation() {
                     {' '}
                     {taImage === '' ? (
                       <img
-                        src={'/NoImage.png'}
+                        src={'/UserNoImage.png'}
                         style={{
                           width: '45px',
                           height: '45px',
