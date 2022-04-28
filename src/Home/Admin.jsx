@@ -134,6 +134,8 @@ export function Admin() {
   const [refreshToken, setrefreshToken] = useState('');
   const [accessToken, setAccessToken] = useState('');
   const [accessExpiresIn, setaccessExpiresIn] = useState('');
+
+  const [patientName, setPatientName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [deleteUser, setDeleteUser] = useState(false);
@@ -153,6 +155,7 @@ export function Admin() {
   const [advisorLookup, setAdvisorLookup] = useState(false);
   const [advisorList, setAdvisorList] = useState([]);
   const [access, setAccess] = useState(false);
+  const [assign, setAssign] = useState(false);
   const [showAdvisors, setShowAdvisors] = useState(false);
   // const [advisorList, setAdvisorList] = useState([]);
   let redirecturi = 'https://manifestmy.space';
@@ -453,6 +456,7 @@ export function Admin() {
         console.log(response.data);
         //uaList = response.data.result
         setUnassignedList(response.data.result);
+        setAssign(true);
         console.log('ua list GET', uaList);
       })
       .catch((err) => {
@@ -461,6 +465,190 @@ export function Admin() {
         }
         console.log(err);
       });
+  };
+  const assignUserListModal = () => {
+    if (assign) {
+      return (
+        <div
+          style={{
+            height: '100%',
+            maxHeight: '100%',
+            width: '100%',
+            zIndex: '101',
+            left: '0',
+            top: '0',
+            overflow: 'auto',
+            position: 'fixed',
+            display: 'grid',
+            boxShadow: ' 0px 3px 6px #00000029',
+            borderRadius: '5px',
+            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              justifySelf: 'center',
+              alignSelf: 'center',
+              display: 'block',
+              backgroundColor: '#E6E6E6',
+              width: '900px',
+              height: '500px',
+              overflow: 'scroll',
+              color: '#000000',
+              padding: '40px',
+              font: 'normal normal bold 16px Quicksand-Bold',
+            }}
+          >
+            <div style={{ textAlign: 'center' }}>Assign User</div>
+            <div style={{ textAlign: 'center' }}>
+              Select the user you want to be assigned as the TA!
+            </div>
+            <Table
+              style={{
+                textAlign: 'left',
+                // marginBottom: '20px',
+                width: '100%',
+                height: '200px',
+                overflow: 'scroll',
+              }}
+            >
+              <TableHead>
+                <TableRow style={{ borderBottom: '2px solid #000000' }}>
+                  <TableCell
+                    style={{ font: 'normal normal bold 16px Quicksand-Bold' }}
+                  >
+                    User Name
+                  </TableCell>
+                  <TableCell
+                    style={{ font: 'normal normal bold 16px Quicksand-Bold' }}
+                  >
+                    User ID
+                  </TableCell>
+                  <TableCell
+                    style={{ font: 'normal normal bold 16px Quicksand-Bold' }}
+                  >
+                    Timezone
+                  </TableCell>
+                  <TableCell
+                    style={{ font: 'normal normal bold 16px Quicksand-Bold' }}
+                  ></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {uaList == '' ? (
+                  <TableRow>
+                    <TableCell
+                      style={{
+                        font: 'normal normal normal 16px Quicksand-Regular',
+                        textAlign: 'center',
+                      }}
+                    ></TableCell>
+                    <TableCell
+                      style={{
+                        font: 'normal normal normal 16px Quicksand-Regular',
+                        textAlign: 'center',
+                      }}
+                    >
+                      No Unassigned User
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        font: 'normal normal normal 16px Quicksand-Regular',
+                        textAlign: 'center',
+                      }}
+                    ></TableCell>
+                  </TableRow>
+                ) : (
+                  uaList.map((ua) => {
+                    return (
+                      <TableRow
+                        // style={{
+                        //   backgroundColor:
+                        //     selectedRelationship === relation.id
+                        //       ? 'white'
+                        //       : null,
+                        // }}
+                        onClick={() => setUserID(ua.user_unique_id)}
+                      >
+                        <TableCell
+                          style={{
+                            font: 'normal normal normal 16px Quicksand-Regular',
+                          }}
+                        >
+                          {ua.name}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            font: 'normal normal normal 16px Quicksand-Regular',
+                          }}
+                        >
+                          {ua.user_unique_id}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            font: 'normal normal normal 16px Quicksand-Regular',
+                          }}
+                        >
+                          {ua.user_unique_id}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            font: 'normal normal normal 16px Quicksand-Regular',
+                          }}
+                        >
+                          <button
+                            style={{
+                              backgroundColor: '#FFFFFF',
+                              color: '#7D7D7D',
+                              border: '1px solid #A7A7A7',
+                              borderRadius: '5px',
+                              // width: '30%',
+                              height: '22px',
+                              margin: '4px',
+                              font: 'normal normal normal 16px Quicksand-Regular',
+                            }}
+                            onClick={() => {
+                              setPatientName(ua.name);
+                              setUserID(ua.user_unique_id);
+                              toggleAssignUser(true);
+                            }}
+                          >
+                            Become TA
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
+
+            <div>
+              <button
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  color: '#7D7D7D',
+                  border: '1px solid #A7A7A7',
+                  borderRadius: '5px',
+                  width: '30%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                  marginTop: '2%',
+                }}
+                onClick={() => {
+                  setAssign(false);
+                }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
   };
   const deleteRelationshipModal = () => {
     if (duplicateRelationships) {
@@ -648,7 +836,6 @@ export function Admin() {
       return null;
     }
   };
-
   const anotherTAAccessModal = () => {
     if (access) {
       return (
@@ -1132,7 +1319,7 @@ export function Admin() {
                   axios
                     .post(BASE_URL + 'anotherTAAccess', {
                       ta_people_id: taID,
-                      user_id: usrID,
+                      user_id: userID,
                     })
                     .then((response) => {
                       console.log(response);
@@ -1180,7 +1367,7 @@ export function Admin() {
           style={{
             height: '100%',
             width: '100%',
-            zIndex: '101',
+            zIndex: '1040',
             left: '0',
             top: '0',
             overflow: 'auto',
@@ -1209,7 +1396,8 @@ export function Admin() {
               Assign user to TA
             </div>
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              Are you sure you want to assign selected user to TA?
+              You are assigning {patientName} as your user. You will now become
+              their TA.
             </div>
             <div>
               <button
@@ -1244,6 +1432,7 @@ export function Admin() {
 
                   toggleAssignConfirmed(true);
                   toggleAssignUser(false);
+                  setAssign(false);
                 }}
               >
                 Yes
@@ -1585,7 +1774,7 @@ export function Admin() {
           style={{
             height: '100%',
             width: '100%',
-            zIndex: '101',
+            zIndex: '1040',
             left: '0',
             top: '0',
             overflow: 'auto',
@@ -1978,6 +2167,7 @@ export function Admin() {
       {confirmedDeleteModal()}
       {advisorLookupModal()}
       {anotherTAAccessModal()}
+      {assignUserListModal()}
       <div style={{ width: '30%' }}>
         <MiniNavigation />
       </div>
@@ -2299,13 +2489,13 @@ export function Admin() {
                 class="duperr"
                 onClick={(e) => {
                   getUnassignedList();
-                  handleClickUser(e);
+                  // handleClickUser(e);
                 }}
               >
                 Assign User
               </button>
             </div>
-            <Popover
+            {/* <Popover
               id={idUser}
               open={openUser}
               anchorEl={anchorElUser}
@@ -2326,7 +2516,7 @@ export function Admin() {
               }}
             >
               {uaListRendered()}
-            </Popover>
+            </Popover> */}
             {taListUser.length > 1 ? (
               <div class="con">
                 <button
