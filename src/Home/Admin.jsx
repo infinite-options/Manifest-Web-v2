@@ -128,6 +128,7 @@ export function Admin() {
   const [showAssignConfirmed, toggleAssignConfirmed] = useState(false);
   const [selectedTimezone, setSelectedTimezone] = useState({});
   const [userInfo, setUserInfo] = useState({});
+  const [allUsers, setAllUsers] = useState([]);
   const [emailUser, setEmailUser] = useState('');
   const [socialId, setSocialId] = useState('');
   const [refreshToken, setrefreshToken] = useState('');
@@ -152,6 +153,7 @@ export function Admin() {
   const [advisorLookup, setAdvisorLookup] = useState(false);
   const [advisorList, setAdvisorList] = useState([]);
   const [access, setAccess] = useState(false);
+  const [showAdvisors, setShowAdvisors] = useState(false);
   // const [advisorList, setAdvisorList] = useState([]);
   let redirecturi = 'https://manifestmy.space';
 
@@ -385,6 +387,25 @@ export function Admin() {
         console.log(err);
       });
   };
+  const getAllUsers = () => {
+    console.log('in getAllUsers: ' + selectedTA);
+
+    axios
+      .get(BASE_URL + 'listAllUsersDropDownList/')
+      // .get(BASE_URL + 'listAllTA/' + selectedTA)
+      .then((response) => {
+        console.log(response.data);
+        //taList = response.data.result
+        setAllUsers(response.data.result);
+        setAdvisorLookup(true);
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+      });
+  };
   const getDuplicateRelationships = () => {
     console.log('in getDuplicateRelationships: ');
     axios
@@ -405,8 +426,8 @@ export function Admin() {
   const getTAInfo = () => {
     console.log('in getTAInfo: ');
     var bodyFormData = new FormData();
-
-    bodyFormData.append('user_full_name', usrID);
+    // let uid = usid;
+    bodyFormData.append('user_full_name', userID);
     console.log(bodyFormData);
     axios
       .post(BASE_URL + 'gettasgivenusername/', bodyFormData)
@@ -414,7 +435,8 @@ export function Admin() {
         console.log(response.data.result[0]);
         //taList = response.data.result
         setAdvisorList(response.data.result);
-        setAdvisorLookup(true);
+        setShowAdvisors(true);
+        // setAdvisorLookup(true);
       })
       .catch((err) => {
         if (err.response) {
@@ -479,15 +501,16 @@ export function Admin() {
               Select the duplicate relationship you want to delete!
             </div>
             <Table
+              class="relationTable"
               style={{
-                textAlign: 'center',
+                textAlign: 'left',
                 // marginBottom: '20px',
                 height: '200px',
                 overflow: 'scroll',
               }}
             >
               <TableHead>
-                <TableRow>
+                <TableRow style={{ borderBottom: '2px solid #000000' }}>
                   <TableCell
                     style={{ font: 'normal normal bold 16px Quicksand-Bold' }}
                   >
@@ -506,41 +529,68 @@ export function Admin() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {duplicateList.map((relation) => {
-                  return (
-                    <TableRow
+                {duplicateList == '' ? (
+                  <TableRow>
+                    <TableCell
                       style={{
-                        backgroundColor:
-                          selectedRelationship === relation.id ? 'white' : null,
+                        font: 'normal normal normal 16px Quicksand-Regular',
+                        textAlign: 'center',
                       }}
-                      onClick={() => setSelectedRelationship(relation.id)}
+                    ></TableCell>
+                    <TableCell
+                      style={{
+                        font: 'normal normal normal 16px Quicksand-Regular',
+                        textAlign: 'center',
+                      }}
                     >
-                      <TableCell
+                      No Duplicate Relationships
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        font: 'normal normal normal 16px Quicksand-Regular',
+                        textAlign: 'center',
+                      }}
+                    ></TableCell>
+                  </TableRow>
+                ) : (
+                  duplicateList.map((relation) => {
+                    return (
+                      <TableRow
                         style={{
-                          font: 'normal normal normal 16px Quicksand-Regular',
+                          backgroundColor:
+                            selectedRelationship === relation.id
+                              ? 'white'
+                              : null,
                         }}
+                        onClick={() => setSelectedRelationship(relation.id)}
                       >
-                        {relation.user_name}
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          font: 'normal normal normal 16px Quicksand-Regular',
-                        }}
-                      >
-                        {relation.ta_name}
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          font: 'normal normal normal 16px Quicksand-Regular',
-                        }}
-                      >
-                        {moment(relation.r_timestamp).format(
-                          'MMMM DD, YYYY, hh:mm a'
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                        <TableCell
+                          style={{
+                            font: 'normal normal normal 16px Quicksand-Regular',
+                          }}
+                        >
+                          {relation.user_name}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            font: 'normal normal normal 16px Quicksand-Regular',
+                          }}
+                        >
+                          {relation.ta_name}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            font: 'normal normal normal 16px Quicksand-Regular',
+                          }}
+                        >
+                          {moment(relation.r_timestamp).format(
+                            'MMMM DD, YYYY, hh:mm a'
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
               </TableBody>
             </Table>
 
@@ -554,6 +604,7 @@ export function Admin() {
                   width: '30%',
                   marginLeft: '10%',
                   marginRight: '10%',
+                  marginTop: '2%',
                 }}
                 onClick={() => {
                   console.log('Relation', selectedRelationship);
@@ -581,6 +632,7 @@ export function Admin() {
                   width: '30%',
                   marginLeft: '10%',
                   marginRight: '10%',
+                  marginTop: '2%',
                 }}
                 onClick={() => {
                   setDuplicateRelationships(false);
@@ -622,7 +674,7 @@ export function Admin() {
               justifySelf: 'center',
               alignSelf: 'center',
               display: 'block',
-              backgroundColor: '#E6E6E6',
+              backgroundColor: '#F1F1F1',
               width: '800px',
               minHeight: 'auto',
               // overflow: 'scroll',
@@ -781,70 +833,208 @@ export function Admin() {
               justifySelf: 'center',
               alignSelf: 'center',
               display: 'block',
-              backgroundColor: '#E6E6E6',
-              // width: '400px',
-              minHeight: 'auto',
-              // overflow: 'scroll',
+              backgroundColor: '#FFFFFF',
+              width: '900px',
+              height: '500px',
+              overflow: 'scroll',
               color: '#000000',
               padding: '40px',
-              font: 'normal normal bold 16px Quicksand-Bold',
+              font: 'normal normal bold 20px Quicksand-Bold',
             }}
           >
-            <div style={{ textAlign: 'center' }}>Advisors for {userN}</div>
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Trusted Advisor Look Up
+            </div>
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Please select a user, then click 'Trusted Advisors'.
+            </div>
 
             <Table
               style={{
-                textAlign: 'center',
+                textAlign: 'left',
                 // marginBottom: '20px',
                 height: '200px',
                 overflow: 'scroll',
               }}
             >
               <TableHead>
-                <TableRow>
-                  <TableCell
+                <Row
+                  style={{
+                    borderBottom: '2px solid #A8A8A8',
+                    borderTop: '2px solid #000000',
+                    height: '32px',
+                  }}
+                >
+                  <Col
+                    xs={3}
                     style={{ font: 'normal normal bold 16px Quicksand-Bold' }}
                   >
-                    Advisor Name
-                  </TableCell>
-                  <TableCell
+                    User Name
+                  </Col>
+                  <Col
+                    xs={3}
                     style={{ font: 'normal normal bold 16px Quicksand-Bold' }}
                   >
-                    Phone Number
-                  </TableCell>
-                  <TableCell
+                    User ID
+                  </Col>
+                  <Col
+                    xs={3}
                     style={{ font: 'normal normal bold 16px Quicksand-Bold' }}
                   >
-                    Email
-                  </TableCell>
-                </TableRow>
+                    Timezone
+                  </Col>
+                  <Col
+                    xs={3}
+                    style={{ font: 'normal normal bold 16px Quicksand-Bold' }}
+                  ></Col>
+                </Row>
               </TableHead>
               <TableBody>
-                {advisorList.map((advisor) => {
+                {allUsers.map((user) => {
                   return (
-                    <TableRow>
-                      <TableCell
-                        style={{
-                          font: 'normal normal normal 16px Quicksand-Regular',
-                        }}
-                      >
-                        {advisor.ta_name}
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          font: 'normal normal normal 16px Quicksand-Regular',
-                        }}
-                      >
-                        {advisor.ta_phone_number}
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          font: 'normal normal normal 16px Quicksand-Regular',
-                        }}
-                      >
-                        {advisor.ta_email_id}
-                      </TableCell>
-                    </TableRow>
+                    <Row
+                      style={{
+                        width: '100%',
+
+                        display: 'flex',
+                        flexDirection: 'column',
+                        borderBottom: '2px solid #A8A8A8',
+                      }}
+                    >
+                      <Row style={{ height: '32px' }}>
+                        <Col
+                          xs={3}
+                          style={{
+                            font: 'normal normal normal 16px Quicksand-Regular',
+                          }}
+                        >
+                          name
+                          {/* {user.concat(u.user_first_name, ' ', u.user_last_name)} */}
+                        </Col>
+                        <Col
+                          xs={3}
+                          style={{
+                            font: 'normal normal normal 16px Quicksand-Regular',
+                          }}
+                        >
+                          {user.user_unique_id}
+                        </Col>
+                        <Col
+                          xs={3}
+                          style={{
+                            font: 'normal normal normal 16px Quicksand-Regular',
+                          }}
+                        >
+                          tiemzone
+                          {/* {advisor.ta_email_id} */}
+                        </Col>
+                        <Col xs={3}>
+                          <button
+                            style={{
+                              backgroundColor: '#FFFFFF',
+                              color: '#7D7D7D',
+                              border: '1px solid #A7A7A7',
+                              borderRadius: '5px',
+                              // width: '30%',
+                              height: '22px',
+                              margin: '4px',
+                              font: 'normal normal normal 16px Quicksand-Regular',
+                            }}
+                            onClick={() => {
+                              setUserID(user.user_unique_id);
+                              getTAInfo();
+                            }}
+                          >
+                            Trusted Advisors
+                          </button>
+                        </Col>
+                      </Row>
+                      <Row style={{ maxHeight: '150px', overflow: 'scroll' }}>
+                        {showAdvisors && user.user_unique_id === userID ? (
+                          <Row
+                            style={{
+                              width: '100%',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              marginLeft: '10%',
+                            }}
+                          >
+                            {console.log('advisorList', advisorList)}
+                            <Row style={{ height: '32px' }}>
+                              <Col
+                                style={{
+                                  font: 'normal normal bold 16px Quicksand-Bold',
+                                }}
+                              >
+                                Trusted Advisors
+                              </Col>
+                              <Col
+                                style={{
+                                  font: 'normal normal bold 16px Quicksand-Bold',
+                                }}
+                              >
+                                TA ID
+                              </Col>
+                              <Col
+                                style={{
+                                  font: 'normal normal bold 16px Quicksand-Bold',
+                                }}
+                              ></Col>
+                              <Col
+                                style={{
+                                  font: 'normal normal bold 16px Quicksand-Bold',
+                                }}
+                              ></Col>
+                            </Row>
+                            {advisorList.map((advisor) => {
+                              return (
+                                <Row style={{ border: 'none', height: '32px' }}>
+                                  <Col
+                                    style={{
+                                      font: 'normal normal normal 16px Quicksand-Regular',
+                                    }}
+                                  >
+                                    {advisor.ta_name}
+                                  </Col>
+                                  <Col
+                                    style={{
+                                      font: 'normal normal normal 16px Quicksand-Regular',
+                                    }}
+                                  >
+                                    {advisor.ta_people_id}
+                                  </Col>
+                                  <Col
+                                    style={{
+                                      font: 'normal normal normal 16px Quicksand-Regular',
+                                    }}
+                                  >
+                                    <a href={`tel:${advisor.ta_phone_number}`}>
+                                      <img
+                                        src={'/Phone.png'}
+                                        style={{
+                                          width: '26px',
+                                          height: '26px',
+                                        }}
+                                      />
+                                    </a>
+                                    <a href={`mailto:${advisor.ta_email_id}`}>
+                                      <img
+                                        src={'/Mail.png'}
+                                        style={{
+                                          width: '26px',
+                                          height: '26px',
+                                        }}
+                                      />
+                                    </a>
+                                  </Col>
+                                  <Col></Col>
+                                </Row>
+                              );
+                            })}
+                          </Row>
+                        ) : null}
+                      </Row>
+                    </Row>
                   );
                 })}
               </TableBody>
@@ -869,6 +1059,7 @@ export function Admin() {
                 }}
                 onClick={() => {
                   setAdvisorLookup(false);
+                  setShowAdvisors(false);
                 }}
               >
                 Okay
@@ -2090,7 +2281,7 @@ export function Admin() {
               {taListRendered()}
             </Popover> */}
             <div class="con">
-              <button class="duperr" onClick={() => getTAInfo()}>
+              <button class="duperr" onClick={() => getAllUsers()}>
                 Trusted Advisor Look Up
               </button>
             </div>

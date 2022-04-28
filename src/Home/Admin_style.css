@@ -256,3 +256,7 @@ img {
     justify-content: center;
     align-items: center;
 }
+
+table.relationTable tr:nth-of-type(2n) td {
+    border-bottom: 1px solid #000000;
+}
