@@ -149,6 +149,8 @@ export function Admin() {
   const [duplicateList, setDuplicateList] = useState([]);
   const [selectedRelationship, setSelectedRelationship] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState('');
+  const [advisorLookup, setAdvisorLookup] = useState(false);
+  const [advisorList, setAdvisorList] = useState([]);
   let redirecturi = 'https://manifestmy.space';
 
   console.log('taListUser', taListUser.length);
@@ -366,8 +368,28 @@ export function Admin() {
         console.log(response.data.result[0]);
         //taList = response.data.result
         setDuplicateList(response.data.result);
-        console.log(taList);
         setDuplicateRelationships(true);
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+      });
+  };
+  const getTAInfo = () => {
+    console.log('in getTAInfo: ');
+    var bodyFormData = new FormData();
+
+    bodyFormData.append('user_full_name', userN);
+    console.log(bodyFormData);
+    axios
+      .post(BASE_URL + 'gettasgivenusername/', bodyFormData)
+      .then((response) => {
+        console.log(response.data.result[0]);
+        //taList = response.data.result
+        setAdvisorList(response.data.result);
+        setAdvisorLookup(true);
       })
       .catch((err) => {
         if (err.response) {
@@ -542,6 +564,131 @@ export function Admin() {
                 Cancel
               </button>
             </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  };
+  const advisorLookupModal = () => {
+    if (advisorLookup) {
+      return (
+        <div
+          style={{
+            height: '100%',
+            maxHeight: '100%',
+            width: '100%',
+            zIndex: '101',
+            left: '0',
+            top: '0',
+            overflow: 'auto',
+            position: 'fixed',
+            display: 'grid',
+            boxShadow: ' 0px 3px 6px #00000029',
+            borderRadius: '5px',
+            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              justifySelf: 'center',
+              alignSelf: 'center',
+              display: 'block',
+              backgroundColor: '#E6E6E6',
+              // width: '400px',
+              minHeight: 'auto',
+              // overflow: 'scroll',
+              color: '#000000',
+              padding: '40px',
+              font: 'normal normal bold 16px Quicksand-Bold',
+            }}
+          >
+            <div style={{ textAlign: 'center' }}>Advisors for {userN}</div>
+
+            <Table
+              style={{
+                textAlign: 'center',
+                // marginBottom: '20px',
+                height: '200px',
+                overflow: 'scroll',
+              }}
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell
+                    style={{ font: 'normal normal bold 16px Quicksand-Bold' }}
+                  >
+                    Advisor Name
+                  </TableCell>
+                  <TableCell
+                    style={{ font: 'normal normal bold 16px Quicksand-Bold' }}
+                  >
+                    Phone Number
+                  </TableCell>
+                  <TableCell
+                    style={{ font: 'normal normal bold 16px Quicksand-Bold' }}
+                  >
+                    Email
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {advisorList.map((advisor) => {
+                  return (
+                    <TableRow>
+                      <TableCell
+                        style={{
+                          font: 'normal normal normal 16px Quicksand-Regular',
+                        }}
+                      >
+                        {advisor.ta_name}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          font: 'normal normal normal 16px Quicksand-Regular',
+                        }}
+                      >
+                        {advisor.ta_phone_number}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          font: 'normal normal normal 16px Quicksand-Regular',
+                        }}
+                      >
+                        {advisor.ta_email_id}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+
+            <Row
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <button
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  color: '#7D7D7D',
+                  border: '1px solid #A7A7A7',
+                  borderRadius: '5px',
+                  width: '30%',
+                  marginLeft: '10%',
+                  marginRight: '10%',
+                }}
+                onClick={() => {
+                  setAdvisorLookup(false);
+                }}
+              >
+                Okay
+              </button>
+            </Row>
           </div>
         </div>
       );
@@ -1451,6 +1598,7 @@ export function Admin() {
       {removeRoleModal()}
       {assignConfirmedModal()}
       {confirmedDeleteModal()}
+      {advisorLookupModal()}
       <div style={{ width: '30%' }}>
         <MiniNavigation />
       </div>
@@ -1753,7 +1901,9 @@ export function Admin() {
               {taListRendered()}
             </Popover>
             <div class="con">
-              <button class="duperr">Trusted Advisor Look Up</button>
+              <button class="duperr" onClick={() => getTAInfo()}>
+                Trusted Advisor Look Up
+              </button>
             </div>
 
             <div class="con">
