@@ -60,7 +60,7 @@ const useStyles = makeStyles({
     borderRadius: '15px',
     '&:hover, &:focus': {
       backgroundColor: '#000000',
-      color: '#F2F7FC',
+      color: '#000000',
     },
     height: '40px',
     width: '30%',
@@ -148,6 +148,10 @@ export function Navigation() {
       <option
         key={user.user_unique_id}
         // value={user.user_unique_id}
+        style={{
+          font: 'normal normal bold 16px Quicksand-Bold',
+          color: '#000000',
+        }}
         value={JSON.stringify({
           user_unique_id: user.user_unique_id,
           user_name: user.user_name,
@@ -157,6 +161,12 @@ export function Navigation() {
         })}
       >
         {user.user_name}
+        {/* {
+          document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('patient_name='))
+            .split('=')[1]
+        } */}
       </option>
     ));
 
@@ -190,7 +200,7 @@ export function Navigation() {
         document.cookie = 'patient_timeZone=' + listOfUsers[0].time_zone;
         document.cookie = 'patient_uid=' + listOfUsers[0].user_unique_id;
         document.cookie = 'patient_pic=' + listOfUsers[0].user_picture;
-      } else {
+
         console.log('document cookie set to loading');
         document.cookie = 'patient_name=Loading';
       }
@@ -254,14 +264,48 @@ export function Navigation() {
                         paddingRight: '1rem',
                       }}
                     >
-                      <img
-                        src={userImage}
-                        style={{
-                          width: '45px',
-                          height: '45px',
-                          borderRadius: '100%',
-                        }}
-                      />
+                      {document.cookie
+                        .split(';')
+                        .some((item) =>
+                          item.trim().startsWith('patient_pic=')
+                        ) ? (
+                        document.cookie
+                          .split('; ')
+                          .find((row) => row.startsWith('patient_pic='))
+                          .split('=')[1] !== '' ? (
+                          <img
+                            src={
+                              document.cookie
+                                .split('; ')
+                                .find((row) => row.startsWith('patient_pic='))
+                                .split('=')[1]
+                            }
+                            style={{
+                              width: '45px',
+                              height: '45px',
+                              borderRadius: '100%',
+                            }}
+                          />
+                        ) : (
+                          <img
+                            src={'/NoImage.png'}
+                            style={{
+                              width: '45px',
+                              height: '45px',
+                              borderRadius: '100%',
+                            }}
+                          />
+                        )
+                      ) : (
+                        <img
+                          src={'/NoImage.png'}
+                          style={{
+                            width: '45px',
+                            height: '45px',
+                            borderRadius: '100%',
+                          }}
+                        />
+                      )}
                     </Col>
 
                     <Col
@@ -347,7 +391,7 @@ export function Navigation() {
                             width: '80%',
                           }}
                         >
-                          <option selected disabled hidden>
+                          <option selected disabled>
                             {
                               document.cookie
                                 .split('; ')
@@ -355,7 +399,14 @@ export function Navigation() {
                                 .split('=')[1]
                             }
                           </option>
-
+                          {/* <option selected disabled>
+                            {
+                              document.cookie
+                                .split('; ')
+                                .find((row) => row.startsWith('patient_name='))
+                                .split('=')[1]
+                            }
+                          </option> */}
                           {userListRendered()}
                         </select>
                       </Row>
@@ -403,16 +454,30 @@ export function Navigation() {
                       justifyContent: 'right',
                     }}
                   >
-                    <img
-                      src={taImage}
-                      style={{
-                        width: '45px',
-                        height: '45px',
-                        borderRadius: '100%',
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => history.push('/admin')}
-                    />
+                    {' '}
+                    {taImage === '' ? (
+                      <img
+                        src={'/NoImage.png'}
+                        style={{
+                          width: '45px',
+                          height: '45px',
+                          borderRadius: '100%',
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => history.push('/admin')}
+                      />
+                    ) : (
+                      <img
+                        src={taImage}
+                        style={{
+                          width: '45px',
+                          height: '45px',
+                          borderRadius: '100%',
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => history.push('/admin')}
+                      />
+                    )}
                   </div>
                 </Col>
               </Col>

@@ -71,9 +71,9 @@ export function Admin() {
 
   const listOfUsers = loginContext.loginState.usersOfTA;
   var selectedTA = loginContext.loginState.ta.id;
-  const currentUser = loginContext.loginState.curUser;
-  const curUserPic = loginContext.loginState.curUserPic;
-  const curUserName = loginContext.loginState.curUserName;
+  // const currentUser = loginContext.loginState.curUser;
+  // const curUserPic = loginContext.loginState.curUserPic;
+  // const curUserName = loginContext.loginState.curUserName;
 
   var usrID = '';
   var tID = '';
@@ -119,7 +119,7 @@ export function Admin() {
     userN = loginContext.loginState.curUserName;
   }
 
-  console.log(selectedTA, currentUser, curUserName);
+  console.log(selectedTA, usrID, userN);
   const [called, toggleCalled] = useState(false);
   const [showNewUser, toggleNewUser] = useState(false);
   const [showGiveAccess, toggleGiveAccess] = useState(false);
@@ -264,7 +264,7 @@ export function Admin() {
   // };
 
   const taListRendered = () => {
-    taList.sort((a, b) => a.ta_first_name.localeCompare(b.ta_first_name));
+    taList.sort((a, b) => a.ta_name.localeCompare(b.ta_name));
     return (
       <div>
         {taList.map((ta) => {
@@ -272,19 +272,21 @@ export function Admin() {
             <div
               style={{
                 cursor: 'pointer',
+                color: ta.TA_status === 'EXI' ? 'grey' : 'black',
+                backgroundColor: ta.TA_status === 'Exi' ? 'grey' : 'white',
               }}
               onClick={(event) => {
                 console.log('event', ta);
                 if (ta != null) {
                   console.log('Another', ta);
-                  setTAName(ta.ta_first_name + ' ' + ta.ta_last_name);
+                  setTAName(ta.ta_name);
                   setTAID(ta.ta_unique_id);
                   toggleGiveAccess(true);
                 }
                 handleCloseTA();
               }}
             >
-              {ta.ta_last_name}, {ta.ta_first_name}
+              {ta.ta_name}
             </div>
           );
         })}
@@ -336,8 +338,13 @@ export function Admin() {
 
   const getTAList = () => {
     console.log('in getTAList: ' + selectedTA);
+    var bodyFormData = new FormData();
+
+    bodyFormData.append('user_full_name', userN);
+    console.log(bodyFormData);
     axios
-      .get(BASE_URL + 'listAllTA/' + selectedTA)
+      .post(BASE_URL + 'NewExiTA/', bodyFormData)
+      // .get(BASE_URL + 'listAllTA/' + selectedTA)
       .then((response) => {
         console.log(response.data);
         //taList = response.data.result
@@ -421,6 +428,9 @@ export function Admin() {
             }}
           >
             <div style={{ textAlign: 'center' }}>Duplicate Relationships</div>
+            <div style={{ textAlign: 'center' }}>
+              Select the duplicate relationship you want to delete!
+            </div>
             <Table
               style={{
                 textAlign: 'center',
@@ -431,20 +441,52 @@ export function Admin() {
             >
               <TableHead>
                 <TableRow>
-                  <TableCell>User Name</TableCell>
-                  <TableCell>TA Name</TableCell>
-                  <TableCell>Relationship Created</TableCell>
+                  <TableCell
+                    style={{ font: 'normal normal bold 16px Quicksand-Bold' }}
+                  >
+                    User Name
+                  </TableCell>
+                  <TableCell
+                    style={{ font: 'normal normal bold 16px Quicksand-Bold' }}
+                  >
+                    TA Name
+                  </TableCell>
+                  <TableCell
+                    style={{ font: 'normal normal bold 16px Quicksand-Bold' }}
+                  >
+                    Relationship Created
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {duplicateList.map((relation) => {
                   return (
                     <TableRow
+                      style={{
+                        backgroundColor:
+                          selectedRelationship === relation.id ? 'white' : null,
+                      }}
                       onClick={() => setSelectedRelationship(relation.id)}
                     >
-                      <TableCell>{relation.user_name}</TableCell>
-                      <TableCell>{relation.ta_name}</TableCell>
-                      <TableCell>
+                      <TableCell
+                        style={{
+                          font: 'normal normal normal 16px Quicksand-Regular',
+                        }}
+                      >
+                        {relation.user_name}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          font: 'normal normal normal 16px Quicksand-Regular',
+                        }}
+                      >
+                        {relation.ta_name}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          font: 'normal normal normal 16px Quicksand-Regular',
+                        }}
+                      >
                         {moment(relation.r_timestamp).format(
                           'MMMM DD, YYYY, hh:mm a'
                         )}
@@ -454,6 +496,7 @@ export function Admin() {
                 })}
               </TableBody>
             </Table>
+
             <div>
               <button
                 style={{
@@ -480,7 +523,7 @@ export function Admin() {
                   setDuplicateRelationships(false);
                 }}
               >
-                Yes
+                Delete
               </button>
               <button
                 style={{
@@ -496,7 +539,7 @@ export function Admin() {
                   setDuplicateRelationships(false);
                 }}
               >
-                No
+                Cancel
               </button>
             </div>
           </div>
@@ -544,7 +587,7 @@ export function Admin() {
             </div>
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
               Are you sure you want to give {taName} access to the information
-              of user, {curUserName}
+              of user, {userN}
             </div>
             <div>
               <button
@@ -562,12 +605,12 @@ export function Admin() {
                   //   ta_people_id: taID,
                   //   user_id: selectedTA
                   // }
-                  console.log('TA', taID, currentUser);
+                  console.log('TA', taID, usrID);
 
                   axios
                     .post(BASE_URL + 'anotherTAAccess', {
                       ta_people_id: taID,
-                      user_id: currentUser,
+                      user_id: usrID,
                     })
                     .then((response) => {
                       console.log(response);
@@ -659,12 +702,12 @@ export function Admin() {
                   //   ta_people_id: taID,
                   //   user_id: selectedTA
                   // }
-                  // console.log('TA', taID, currentUser);
+                  // console.log('TA', taID, usrID);
 
                   axios
                     .post(BASE_URL + 'AssociateUser', {
                       ta_people_id: selectedTA,
-                      user_id: userID,
+                      user_id: usrID,
                     })
                     .then((response) => {
                       console.log(response);
@@ -981,7 +1024,7 @@ export function Admin() {
               Access Granted
             </div>
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              {taName} now has access to the information of user, {curUserName}
+              {taName} now has access to the information of user, {userN}
             </div>
             <div style={{ textAlign: 'center' }}>
               <button
@@ -1486,7 +1529,28 @@ export function Admin() {
                 <div class="listofusers">
                   {listOfUsers.map((users) => {
                     return (
-                      <div class="grid_cut">
+                      <div
+                        class="grid_cut"
+                        onClick={() => {
+                          document.cookie =
+                            'patient_uid=' + users.user_unique_id;
+                          document.cookie = 'patient_name=' + users.user_name;
+                          document.cookie =
+                            'patient_timeZone=' + users.time_zone;
+                          document.cookie =
+                            'patient_email=' + users.user_email_id;
+                          document.cookie = 'patient_pic=' + users.user_picture;
+                          console.log(document.cookie);
+                          loginContext.setLoginState({
+                            ...loginContext.loginState,
+                            curUser: users.user_unique_id,
+                            curUserTimeZone: users.time_zone,
+                            curUserEmail: users.user_email_id,
+                            curUserPic: users.user_picture,
+                            curUserName: users.user_name,
+                          });
+                        }}
+                      >
                         <div class="grid">
                           <div class="g s1">
                             <div class="circle">
@@ -1518,12 +1582,20 @@ export function Admin() {
                             <img
                               src="/Edit.png"
                               style={{ width: '25px', height: '25px' }}
+                              onClick={() => {
+                                history.push('/about');
+                              }}
                             />
                           </div>
                           <div class="g s5">
                             <img
                               src="/Delete.png"
                               style={{ width: '25px', height: '25px' }}
+                              onClick={() =>
+                                taListUser.length > 1
+                                  ? setRelinquishRole(!relinquishRole)
+                                  : setDeleteUser(!deleteUser)
+                              }
                             />
                           </div>
                         </div>
@@ -1735,16 +1807,9 @@ export function Admin() {
                 </button>
               </div>
             ) : (
-              <div class="con">
-                <button
-                  class="deleteButton"
-                  onClick={() => setDeleteUser(!deleteUser)}
-                >
-                  Delete User
-                </button>
-              </div>
+              console.log('delete')
             )}
-            {/* {taListUser.length == 1 ? (
+            {taListUser.length == 1 ? (
               <div class="con">
                 <button
                   class="deleteButton"
@@ -1754,8 +1819,8 @@ export function Admin() {
                 </button>
               </div>
             ) : (
-              ''
-            )} */}
+              console.log('relinquish')
+            )}
           </Col>
         </Row>
 
