@@ -120,7 +120,7 @@ export default class TAUploadImage extends Component {
           variant="text"
           style={{
             textDecoration: 'underline',
-            color: '#ffffff',
+            color: '#000000',
             fontSize: '14px',
             cursor: 'pointer',
           }}

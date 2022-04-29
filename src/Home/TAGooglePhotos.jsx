@@ -397,7 +397,7 @@ export default function TAGooglePhotos(props) {
         variant="text"
         style={{
           textDecoration: 'underline',
-          color: '#ffffff',
+          color: '#000000',
           fontSize: '14px',
           cursor: 'pointer',
         }}

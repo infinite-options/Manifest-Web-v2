@@ -45,6 +45,26 @@ const useStyles = makeStyles({
     width: '100%',
     marginTop: '0.3rem',
   },
+  cancelButtons: {
+    backgroundColor: '#FFFFFF',
+    color: '#7D7D7D',
+    border: '1px solid #A7A7A7',
+    borderRadius: '5px',
+    width: '30%',
+    marginLeft: '10%',
+    marginRight: '10%',
+    marginTop: '2%',
+  },
+  saveButtons: {
+    backgroundColor: '#09B4FF',
+    color: 'white',
+    border: '1px solid #FFFFFF',
+    borderRadius: '5px',
+    width: '30%',
+    marginLeft: '10%',
+    marginRight: '10%',
+    marginTop: '2%',
+  },
 });
 
 export function Admin() {
@@ -146,8 +166,6 @@ export function Admin() {
   const [uaList, setUnassignedList] = useState([]);
   const [userID, setUserID] = useState('');
   const [taListUser, setTaListUser] = useState([]);
-  const [anchorElTA, setAnchorElTA] = useState(null);
-  const [anchorElUser, setAnchorElUser] = useState(null);
   const [duplicateRelationships, setDuplicateRelationships] = useState(false);
   const [duplicateList, setDuplicateList] = useState([]);
   const [selectedRelationship, setSelectedRelationship] = useState('');
@@ -193,18 +211,7 @@ export function Admin() {
           });
           console.log(curUserID);
           console.log('timezone', curUserTZ);
-
-          //GoogleEvents();
-          // return userID;
         } else {
-          // const usersOfTA = 'Loading';
-          // loginContext.setLoginState({
-          //   ...loginContext.loginState,
-          //   usersOfTA: response.data.result,
-          //   curUser: '',
-          //   curUserTimeZone: '',
-          //   curUserEmail: '',
-          // });
           console.log('No User Found');
         }
       })
@@ -229,49 +236,6 @@ export function Admin() {
     getTAofUser();
   }, [usrID, loginContext.loginState.reload]);
 
-  //popover open and close
-  const handleClickTA = (event) => {
-    setAnchorElTA(event.currentTarget);
-  };
-
-  const handleCloseTA = () => {
-    setAnchorElTA(null);
-  };
-
-  const openTA = Boolean(anchorElTA);
-  const idTA = openTA ? 'simple-popover' : undefined;
-
-  //popover open and close
-  const handleClickUser = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseUser = () => {
-    setAnchorElUser(null);
-  };
-
-  const openUser = Boolean(anchorElUser);
-  const idUser = openUser ? 'simple-popover' : undefined;
-
-  // const taListRendered = () => {
-  //   console.log('ta list', taList);
-  //   // console.log(taList)
-  //   taList.sort((a, b) => a.ta_first_name.localeCompare(b.ta_first_name));
-  //   const elements = taList.map((ta) => (
-  //     <option
-  //       key={ta.ta_unique_id}
-  //       value={JSON.stringify({
-  //         ta_unique_id: ta.ta_unique_id,
-  //         ta_first_name: ta.ta_first_name,
-  //         ta_last_name: ta.ta_last_name,
-  //       })}
-  //     >
-  //       {ta.ta_last_name}, {ta.ta_first_name}
-  //     </option>
-  //   ));
-  //   return elements;
-  // };
-
   const taListRendered = () => {
     taList.sort((a, b) => a.ta_name.localeCompare(b.ta_name));
     return (
@@ -280,11 +244,6 @@ export function Admin() {
           return (
             <div
               class="grid_cut"
-              // style={{
-              //   cursor: 'pointer',
-              //   color: ta.TA_status === 'EXI' ? 'grey' : 'black',
-              //   backgroundColor: ta.TA_status === 'Exi' ? 'grey' : 'white',
-              // }}
               onClick={(event) => {
                 console.log('event', ta);
                 if (ta != null) {
@@ -293,7 +252,6 @@ export function Admin() {
                   setTAID(ta.ta_unique_id);
                   // toggleGiveAccess(true);
                 }
-                handleCloseTA();
               }}
             >
               <div
@@ -325,54 +283,12 @@ export function Admin() {
       </div>
     );
   };
-
-  // const uaListRendered = () => {
-  //   console.log('ua list', uaList);
-  //   // console.log(uaList)
-  //   // uaList.sort((a, b) => a.ua_first_name.localeCompare(b.ua_first_name));
-  //   const elements = uaList.map((ua) => (
-  //     <option
-  //       key={ua.user_unique_id}
-  //       value={JSON.stringify({
-  //         user_unique_id: ua.user_unique_id,
-  //         name: ua.name,
-  //       })}
-  //     >
-  //       {ua.name}
-  //     </option>
-  //   ));
-  //   return elements;
-  // };
-
-  const uaListRendered = () => {
-    console.log('ua list', uaList);
-    // console.log(uaList)
-    // uaList.sort((a, b) => a.ua_first_name.localeCompare(b.ua_first_name));
-    return uaList.map((ua) => (
-      <div
-        style={{
-          cursor: 'pointer',
-        }}
-        onClick={(e) => {
-          if (ua != null) {
-            console.log('Assigning List', ua);
-
-            setUserID(ua.user_unique_id);
-            toggleAssignUser(true);
-          }
-          handleCloseUser();
-        }}
-      >
-        {ua.name}
-      </div>
-    ));
-  };
-
-  const getTAList = () => {
-    console.log('in getTAList: ' + selectedTA);
+  //  list of all tas, with relationship status with user
+  const getTAList = (usid) => {
+    console.log('in getTAList: ');
     var bodyFormData = new FormData();
-
-    bodyFormData.append('user_full_name', usrID);
+    let uid = usid;
+    bodyFormData.append('user_full_name', uid);
     console.log(bodyFormData);
     axios
       .post(BASE_URL + 'NewExiTA/', bodyFormData)
@@ -390,6 +306,7 @@ export function Admin() {
         console.log(err);
       });
   };
+  // list of all users in the system
   const getAllUsers = () => {
     console.log('in getAllUsers: ' + selectedTA);
 
@@ -399,6 +316,9 @@ export function Admin() {
       .then((response) => {
         console.log(response.data);
         //taList = response.data.result
+        response.data.result.sort((a, b) =>
+          a.user_name.localeCompare(b.user_name)
+        );
         setAllUsers(response.data.result);
         setAdvisorLookup(true);
       })
@@ -409,6 +329,7 @@ export function Admin() {
         console.log(err);
       });
   };
+  // list of duplicate relationships
   const getDuplicateRelationships = () => {
     console.log('in getDuplicateRelationships: ');
     axios
@@ -426,11 +347,12 @@ export function Admin() {
         console.log(err);
       });
   };
-  const getTAInfo = () => {
+  // list of all tas of a user
+  const getTAInfo = (usid) => {
     console.log('in getTAInfo: ');
     var bodyFormData = new FormData();
-    // let uid = usid;
-    bodyFormData.append('user_full_name', userID);
+    let uid = usid;
+    bodyFormData.append('user_full_name', uid);
     console.log(bodyFormData);
     axios
       .post(BASE_URL + 'gettasgivenusername/', bodyFormData)
@@ -439,6 +361,7 @@ export function Admin() {
         //taList = response.data.result
         setAdvisorList(response.data.result);
         setShowAdvisors(true);
+        // setUserID('');
         // setAdvisorLookup(true);
       })
       .catch((err) => {
@@ -448,6 +371,7 @@ export function Admin() {
         console.log(err);
       });
   };
+  // list of all users with only admin as ta
   const getUnassignedList = () => {
     console.log('in getUnassignedList: ');
     axios
@@ -466,6 +390,8 @@ export function Admin() {
         console.log(err);
       });
   };
+
+  // modal which displays list of unassigned users
   const assignUserListModal = () => {
     if (assign) {
       return (
@@ -562,15 +488,7 @@ export function Admin() {
                 ) : (
                   uaList.map((ua) => {
                     return (
-                      <TableRow
-                        // style={{
-                        //   backgroundColor:
-                        //     selectedRelationship === relation.id
-                        //       ? 'white'
-                        //       : null,
-                        // }}
-                        onClick={() => setUserID(ua.user_unique_id)}
-                      >
+                      <TableRow onClick={() => setUserID(ua.user_unique_id)}>
                         <TableCell
                           style={{
                             font: 'normal normal normal 16px Quicksand-Regular',
@@ -624,25 +542,23 @@ export function Admin() {
               </TableBody>
             </Table>
 
-            <div>
+            <Row
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                postion: 'fixed',
+              }}
+            >
               <button
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  color: '#7D7D7D',
-                  border: '1px solid #A7A7A7',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                  marginTop: '2%',
-                }}
+                className={classes.cancelButtons}
                 onClick={() => {
                   setAssign(false);
                 }}
               >
                 Close
               </button>
-            </div>
+            </Row>
           </div>
         </div>
       );
@@ -650,6 +566,7 @@ export function Admin() {
       return null;
     }
   };
+  // modal which displays list of duplicate relationships
   const deleteRelationshipModal = () => {
     if (duplicateRelationships) {
       return (
@@ -745,6 +662,7 @@ export function Admin() {
                     return (
                       <TableRow
                         style={{
+                          cursor: 'pointer',
                           backgroundColor:
                             selectedRelationship === relation.id
                               ? 'white'
@@ -784,16 +702,7 @@ export function Admin() {
 
             <div>
               <button
-                style={{
-                  backgroundColor: '#09B4FF',
-                  color: 'white',
-                  border: '1px solid #FFFFFF',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                  marginTop: '2%',
-                }}
+                className={classes.saveButtons}
                 onClick={() => {
                   console.log('Relation', selectedRelationship);
 
@@ -812,16 +721,7 @@ export function Admin() {
                 Delete
               </button>
               <button
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  color: '#7D7D7D',
-                  border: '1px solid #A7A7A7',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                  marginTop: '2%',
-                }}
+                className={classes.cancelButtons}
                 onClick={() => {
                   setDuplicateRelationships(false);
                 }}
@@ -836,6 +736,7 @@ export function Admin() {
       return null;
     }
   };
+  // modal to give another access
   const anotherTAAccessModal = () => {
     if (access) {
       return (
@@ -881,7 +782,8 @@ export function Admin() {
                       <div
                         class="grid_cut"
                         onClick={() => {
-                          getTAList();
+                          getTAList(users.user_unique_id);
+                          setUserID(users.user_unique_id);
                           document.cookie =
                             'patient_uid=' + users.user_unique_id;
                           document.cookie = 'patient_name=' + users.user_name;
@@ -951,15 +853,7 @@ export function Admin() {
             </Row>
             <div style={{ marginTop: '20px' }}>
               <button
-                style={{
-                  backgroundColor: '#09B4FF',
-                  color: 'white',
-                  border: '1px solid #FFFFFF',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
+                className={classes.saveButtons}
                 onClick={() => {
                   console.log('Relation', selectedRelationship);
                   toggleGiveAccess(true);
@@ -970,15 +864,7 @@ export function Admin() {
                 Give Access
               </button>
               <button
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  color: '#7D7D7D',
-                  border: '1px solid #A7A7A7',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
+                className={classes.cancelButtons}
                 onClick={() => {
                   setAccess(false);
                   setTAID('');
@@ -994,7 +880,7 @@ export function Admin() {
       return null;
     }
   };
-
+  // modal which displays list of users and their advisors
   const advisorLookupModal = () => {
     if (advisorLookup) {
       return (
@@ -1095,8 +981,7 @@ export function Admin() {
                             font: 'normal normal normal 16px Quicksand-Regular',
                           }}
                         >
-                          name
-                          {/* {user.concat(u.user_first_name, ' ', u.user_last_name)} */}
+                          {user.user_name}
                         </Col>
                         <Col
                           xs={3}
@@ -1112,8 +997,7 @@ export function Admin() {
                             font: 'normal normal normal 16px Quicksand-Regular',
                           }}
                         >
-                          tiemzone
-                          {/* {advisor.ta_email_id} */}
+                          {user.time_zone}
                         </Col>
                         <Col xs={3}>
                           <button
@@ -1129,7 +1013,7 @@ export function Admin() {
                             }}
                             onClick={() => {
                               setUserID(user.user_unique_id);
-                              getTAInfo();
+                              getTAInfo(user.user_unique_id);
                             }}
                           >
                             Trusted Advisors
@@ -1232,18 +1116,11 @@ export function Admin() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                postion: 'fixed',
               }}
             >
               <button
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  color: '#7D7D7D',
-                  border: '1px solid #A7A7A7',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
+                className={classes.cancelButtons}
                 onClick={() => {
                   setAdvisorLookup(false);
                   setShowAdvisors(false);
@@ -1300,15 +1177,7 @@ export function Admin() {
             </div>
             <div>
               <button
-                style={{
-                  backgroundColor: '#09B4FF',
-                  color: 'white',
-                  border: '1px solid #FFFFFF',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
+                className={classes.saveButtons}
                 onClick={() => {
                   // let myObj = {
                   //   ta_people_id: taID,
@@ -1319,7 +1188,7 @@ export function Admin() {
                   axios
                     .post(BASE_URL + 'anotherTAAccess', {
                       ta_people_id: taID,
-                      user_id: userID,
+                      user_id: usrID,
                     })
                     .then((response) => {
                       console.log(response);
@@ -1401,15 +1270,7 @@ export function Admin() {
             </div>
             <div>
               <button
-                style={{
-                  backgroundColor: '#09B4FF',
-                  color: 'white',
-                  border: '1px solid #FFFFFF',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
+                className={classes.saveButtons}
                 onClick={() => {
                   // let myObj = {
                   //   ta_people_id: taID,
@@ -1419,15 +1280,11 @@ export function Admin() {
 
                   axios
                     .post(BASE_URL + 'AssociateUser', {
-                      ta_people_id: selectedTA,
-                      user_id: usrID,
+                      ta_people_id: tID,
+                      user_id: userID,
                     })
                     .then((response) => {
                       console.log(response);
-                      loginContext.setLoginState({
-                        ...loginContext.loginState,
-                        reload: !loginContext.loginState.reload,
-                      });
                     });
 
                   toggleAssignConfirmed(true);
@@ -1501,50 +1358,16 @@ export function Admin() {
             </div>
             <div style={{ textAlign: 'center' }}>
               <button
-                style={{
-                  backgroundColor: '#09B4FF',
-                  color: 'white',
-                  border: '1px solid #FFFFFF',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
+                className={classes.saveButtons}
                 onClick={() => {
                   deleteUserFunc();
-                  // let body = {
-                  //   user_id: usrID,
-                  // };
-                  // axios.post(BASE_URL + 'deleteUser', body).then((response) => {
-                  //   console.log('deleting');
-                  //   console.log(response.data);
-                  //   // document.cookie = 'patient_uid=1;max-age=0';
-                  //   // document.cookie = 'patient_name=1;max-age=0';
-                  //   // document.cookie = 'patient_email=1;max-age=0';
-                  //   // document.cookie = 'patient_pic=1;max-age=0';
-                  //   loginContext.setLoginState({
-                  //     ...loginContext.loginState,
-                  //     reload: !loginContext.loginState.reload,
-                  //   });
-                  //   setDeleteUser(!deleteUser);
-                  //   toggleCalled(!called);
-                  //   history.push('/home');
-                  // });
                 }}
               >
                 Yes
                 {console.log('list of users', loginContext.loginState.reload)}
               </button>
               <button
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  color: '#7D7D7D',
-                  border: '1px solid #A7A7A7',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
+                className={classes.cancelButtons}
                 onClick={() => {
                   setDeleteUser(false);
                 }}
@@ -1600,15 +1423,7 @@ export function Admin() {
             </div>
             <div style={{ textAlign: 'center' }}>
               <button
-                style={{
-                  backgroundColor: '#09B4FF',
-                  color: 'white',
-                  border: '1px solid #FFFFFF',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
+                className={classes.saveButtons}
                 onClick={() => {
                   removeRoleFunc();
                 }}
@@ -1616,15 +1431,7 @@ export function Admin() {
                 Yes
               </button>
               <button
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  color: '#7D7D7D',
-                  border: '1px solid #A7A7A7',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
+                className={classes.cancelButtons}
                 onClick={() => {
                   setRelinquishRole(!relinquishRole);
                 }}
@@ -1679,15 +1486,7 @@ export function Admin() {
             </div>
             <div style={{ textAlign: 'center' }}>
               <button
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  color: '#7D7D7D',
-                  border: '1px solid #A7A7A7',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
+                className={classes.cancelButtons}
                 onClick={() => {
                   setShowDeleteConfirm(false);
                 }}
@@ -1742,17 +1541,13 @@ export function Admin() {
             </div>
             <div style={{ textAlign: 'center' }}>
               <button
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  color: '#7D7D7D',
-                  border: '1px solid #A7A7A7',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
+                className={classes.cancelButtons}
                 onClick={() => {
                   toggleConfirmed(false);
+                  loginContext.setLoginState({
+                    ...loginContext.loginState,
+                    reload: !loginContext.loginState.reload,
+                  });
                 }}
               >
                 Okay
@@ -1807,17 +1602,13 @@ export function Admin() {
             </div>
             <div style={{ textAlign: 'center' }}>
               <button
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  color: '#7D7D7D',
-                  border: '1px solid #A7A7A7',
-                  borderRadius: '5px',
-                  width: '30%',
-                  marginLeft: '10%',
-                  marginRight: '10%',
-                }}
+                className={classes.cancelButtons}
                 onClick={() => {
                   toggleAssignConfirmed(false);
+                  loginContext.setLoginState({
+                    ...loginContext.loginState,
+                    reload: true,
+                  });
                 }}
               >
                 Okay
@@ -1968,16 +1759,6 @@ export function Admin() {
             console.log(error);
           });
 
-        //console.log('res', userInfo);
-        //  let e = userInfo['email'];
-        //  let fn = userInfo['given_name'];
-        //  let ln = userInfo['family_name'];
-        //  let si = userInfo['id'];
-
-        //  setEmailUser(e);
-        //  setFirstName(fn);
-        //  setLastName(ln);
-        //  setSocialId(si);
         toggleNewUser(!showNewUser);
 
         return (
@@ -1994,6 +1775,8 @@ export function Admin() {
         console.log(err);
       });
   };
+
+  // remove advisor role
   function removeRoleFunc() {
     let body = {
       user_id: usrID,
@@ -2016,7 +1799,7 @@ export function Admin() {
       history.push('/home');
     });
   }
-
+  // delete user
   function deleteUserFunc() {
     let body = {
       user_id: usrID,
@@ -2038,6 +1821,8 @@ export function Admin() {
       history.push('/home');
     });
   }
+
+  // create new user
   function onSubmitUser() {
     let body = {
       email_id: emailUser,
@@ -2323,111 +2108,7 @@ export function Admin() {
               </div>
             </div>
           </Col>
-          {/* <Col
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Row>
-              <Col
-                sm={6}
-                lg={6}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <div class="con">
-                  <button
-                    class="duperr"
-                    onClick={(e) => {
-                      getTAList();
-                      handleClickTA(e);
-                    }}
-                  >
-                    Give Another TA Access
-                  </button>
-                </div>
-                <Popover
-                  id={idTA}
-                  open={openTA}
-                  anchorEl={anchorElTA}
-                  onClose={handleCloseTA}
-                  // anchorReference="anchorPosition"
-                  // anchorPosition={{ top: 285, left: 100 }}
-                  anchorOrigin={{
-                    vertical: 'center',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                  }}
-                  style={{
-                    backgroundClip: 'context-box',
-                    borderRadius: '20px',
-                  }}
-                >
-                  {taListRendered()}
-                </Popover>
-                <div class="con">
-                  <button class="duperr">Check of Duplicate Users</button>
-                </div>
 
-               
-              </Col>
-              <Col sm={6} lg={6} class="bigbox">
-                <div class="con">
-                  <button
-                    class="duperr"
-                    onClick={(e) => {
-                      getUnassignedList();
-                      handleClickUser(e);
-                    }}
-                  >
-                    Assign User
-                  </button>
-                </div>
-                <Popover
-                  id={idUser}
-                  open={openUser}
-                  anchorEl={anchorElUser}
-                  onClose={handleCloseUser}
-                  // anchorReference="anchorPosition"
-                  // anchorPosition={{ top: 285, left: 100 }}
-                  anchorOrigin={{
-                    vertical: 'center',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                  }}
-                  style={{
-                    backgroundClip: 'context-box',
-                    borderRadius: '20px',
-                  }}
-                >
-                  {uaListRendered()}
-                </Popover>
-                <div class="con">
-                  <button class="duperr">Trusted Advisor Look Up</button>
-                </div>
-
-                <div class="con">
-                  <button class="duperr">Relinquish Advisor Roles</button>
-                </div>
-              </Col>
-            </Row>
-            <Row>
-              <button class="deleteButton">Delete User</button>
-            </Row>
-          </Col> */}
           <Col
             style={{
               display: 'flex',
@@ -2440,36 +2121,12 @@ export function Admin() {
               <button
                 class="duperr"
                 onClick={(e) => {
-                  // getTAList();
-                  // handleClickTA(e);
                   setAccess(true);
                 }}
               >
                 Give Another TA Access
               </button>
             </div>
-            {/* <Popover
-              id={idTA}
-              open={openTA}
-              anchorEl={anchorElTA}
-              onClose={handleCloseTA}
-              // anchorReference="anchorPosition"
-              // anchorPosition={{ top: 285, left: 100 }}
-              anchorOrigin={{
-                vertical: 'center',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center',
-              }}
-              style={{
-                backgroundClip: 'context-box',
-                borderRadius: '20px',
-              }}
-            >
-              {taListRendered()}
-            </Popover> */}
             <div class="con">
               <button class="duperr" onClick={() => getAllUsers()}>
                 Trusted Advisor Look Up
@@ -2495,28 +2152,7 @@ export function Admin() {
                 Assign User
               </button>
             </div>
-            {/* <Popover
-              id={idUser}
-              open={openUser}
-              anchorEl={anchorElUser}
-              onClose={handleCloseUser}
-              // anchorReference="anchorPosition"
-              // anchorPosition={{ top: 285, left: 100 }}
-              anchorOrigin={{
-                vertical: 'center',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center',
-              }}
-              style={{
-                backgroundClip: 'context-box',
-                borderRadius: '20px',
-              }}
-            >
-              {uaListRendered()}
-            </Popover> */}
+
             {taListUser.length > 1 ? (
               <div class="con">
                 <button
@@ -2546,9 +2182,6 @@ export function Admin() {
 
         <div class="g comp3">
           <div class="bottom">
-            {/* <button class="button2">Save</button>
-            <button class="button3">Cancel</button> */}
-
             <Button
               class="button3"
               onClick={(e) => {

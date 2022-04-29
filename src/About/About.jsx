@@ -1060,7 +1060,7 @@ export default function AboutModal(props) {
                     paddingLeft: '0',
                     marginLeft: '0',
                     width: '70%',
-                    color: '#ffffff',
+                    color: '#000000',
                     fontSize: '14px',
                   }}
                 >
@@ -1105,16 +1105,28 @@ export default function AboutModal(props) {
                 </Col>
                 <Col xs={4}>
                   <div>
-                    <img
-                      style={{
-                        height: '5rem',
-                        width: '5rem',
-                        backgroundColor: '#ffffff',
-                        borderRadius: '10px',
-                        objectFit: 'cover',
-                      }}
-                      src={taPhoto}
-                    />
+                    {taPhoto == '' ? (
+                      <img
+                        style={{
+                          height: '5rem',
+                          width: '5rem',
+                          backgroundColor: '#ffffff',
+                          borderRadius: '10px',
+                        }}
+                        src={'/UserNoImage.png'}
+                      />
+                    ) : (
+                      <img
+                        style={{
+                          height: '5rem',
+                          width: '5rem',
+                          backgroundColor: '#ffffff',
+                          borderRadius: '10px',
+                          objectFit: 'cover',
+                        }}
+                        src={taPhoto}
+                      />
+                    )}
                   </div>
                 </Col>
               </Row>
@@ -1135,7 +1147,7 @@ export default function AboutModal(props) {
                     <Select
                       value={taObject.relationship}
                       style={{
-                        backgroundColor: '#000000',
+                        backgroundColor: '#ffffff',
                         paddingLeft: '15px',
                       }}
                       renderValue={() => {
@@ -1171,7 +1183,7 @@ export default function AboutModal(props) {
                     <Select
                       value={taObject.time_zone || ''}
                       style={{
-                        backgroundColor: '#000000',
+                        backgroundColor: '#ffffff',
                         paddingLeft: '15px',
                       }}
                       onChange={(e) => {
@@ -1782,7 +1794,7 @@ export default function AboutModal(props) {
                 xs={8}
                 style={{
                   width: '70%',
-                  color: '#ffffff',
+                  color: '#000000',
                   fontSize: '14px',
                 }}
               >
@@ -1831,19 +1843,36 @@ export default function AboutModal(props) {
                     }}
                   ></div>
                 ) : ( */}
-                <img
-                  style={{
-                    display: 'block',
-                    float: 'right',
-                    width: '5rem',
-                    height: '5rem',
-                    objectFit: 'cover',
-                    marginTop: '15px',
-                    //marginBottom: '15px',
-                  }}
-                  src={userPhoto}
-                  alt="Profile"
-                />
+                {userPhoto == '' ? (
+                  <img
+                    style={{
+                      display: 'block',
+                      float: 'right',
+                      width: '5rem',
+                      height: '5rem',
+                      objectFit: 'cover',
+                      marginTop: '15px',
+                      //marginBottom: '15px',
+                    }}
+                    src={userPhoto}
+                    alt="Profile"
+                  />
+                ) : (
+                  <img
+                    style={{
+                      display: 'block',
+                      float: 'right',
+                      width: '5rem',
+                      height: '5rem',
+                      objectFit: 'cover',
+                      marginTop: '15px',
+                      //marginBottom: '15px',
+                    }}
+                    src={'/UserNoImage.png'}
+                    alt="Profile"
+                  />
+                )}
+
                 {/* )} */}
               </Col>
               {/* <Col style={{ float: 'right' }} xs={4}>
@@ -2571,16 +2600,29 @@ export default function AboutModal(props) {
                     }}
                   >
                     <div>
-                      <img
-                        style={{
-                          width: '5rem',
-                          height: '5rem',
-                          objectFit: 'cover',
-                          backgroundColor: '#ffffff',
-                          borderRadius: '10px',
-                        }}
-                        src={lp.pic ? lp.pic : ''}
-                      />
+                      {lp.pic == '' ? (
+                        <img
+                          style={{
+                            width: '5rem',
+                            height: '5rem',
+                            objectFit: 'cover',
+                            backgroundColor: '#ffffff',
+                            borderRadius: '10px',
+                          }}
+                          src={'UserNoImage.png'}
+                        />
+                      ) : (
+                        <img
+                          style={{
+                            width: '5rem',
+                            height: '5rem',
+                            objectFit: 'cover',
+                            backgroundColor: '#ffffff',
+                            borderRadius: '10px',
+                          }}
+                          src={lp.pic ? lp.pic : ''}
+                        />
+                      )}
                     </div>
 
                     <div
@@ -2610,7 +2652,7 @@ export default function AboutModal(props) {
                       <FontAwesomeIcon
                         title="Edit Person"
                         style={{
-                          color: '#ffffff',
+                          color: '#000000',
                           margin: '0.5rem',
                           cursor: 'pointer',
                         }}
@@ -2638,10 +2680,10 @@ export default function AboutModal(props) {
                           event.target.style.color = '#48D6D2';
                         }}
                         onMouseOut={(event) => {
-                          event.target.style.color = '#FFFFFF';
+                          event.target.style.color = '#000000';
                         }}
                         style={{
-                          color: '#ffffff',
+                          color: '#000000',
                           margin: '0.5rem',
                           cursor: 'pointer',
                         }}
@@ -2675,15 +2717,27 @@ export default function AboutModal(props) {
                   }}
                 >
                   <div>
-                    <img
-                      style={{
-                        height: '5rem',
-                        width: '5rem',
-                        backgroundColor: '#ffffff',
-                        borderRadius: '10px',
-                      }}
-                      src={photo}
-                    />
+                    {photo == '' ? (
+                      <img
+                        style={{
+                          height: '5rem',
+                          width: '5rem',
+                          backgroundColor: '#ffffff',
+                          borderRadius: '10px',
+                        }}
+                        src={'UserNoImage.png'}
+                      />
+                    ) : (
+                      <img
+                        style={{
+                          height: '5rem',
+                          width: '5rem',
+                          backgroundColor: '#ffffff',
+                          borderRadius: '10px',
+                        }}
+                        src={photo}
+                      />
+                    )}
                   </div>
                   <div
                     style={{
