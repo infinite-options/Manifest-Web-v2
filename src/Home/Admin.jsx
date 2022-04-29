@@ -273,7 +273,28 @@ export function Admin() {
                 }}
               >
                 <div class="g s1">
-                  <div class="circle"></div>
+                  <div class="circle">
+                    {ta.ta_picture == '' ? (
+                      <img
+                        src={'/UserNoImage.png'}
+                        style={{
+                          borderRadius: '100%',
+                          height: '47px',
+                          width: '47px',
+                          objectFit: 'cover',
+                        }}
+                      />
+                    ) : (
+                      <img
+                        src={ta.ta_picture}
+                        style={{
+                          borderRadius: '100%',
+                          height: '47px',
+                          width: '47px',
+                        }}
+                      />
+                    )}
+                  </div>
                 </div>
                 <div class="g s2_1"> {ta.ta_name}</div>
               </div>
@@ -337,6 +358,9 @@ export function Admin() {
       .then((response) => {
         console.log(response.data.result[0]);
         //taList = response.data.result
+        response.data.result.sort((a, b) =>
+          a.user_name.localeCompare(b.user_name)
+        );
         setDuplicateList(response.data.result);
         setDuplicateRelationships(true);
       })
