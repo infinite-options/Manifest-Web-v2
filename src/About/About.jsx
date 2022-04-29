@@ -2076,7 +2076,7 @@ export default function AboutModal(props) {
                 value={
                   aboutMeObject.timeSettings.timeZone.split('_').join(' ') || ''
                 }
-                style={{ backgroundColor: '#000000', paddingLeft: '15px' }}
+                style={{ backgroundColor: '#ffffff', paddingLeft: '15px' }}
                 onChange={(e) => {
                   e.stopPropagation();
                   setAboutMeObject((prevState) => ({
@@ -2499,7 +2499,7 @@ export default function AboutModal(props) {
               color: '#000000',
             }}
           >
-            <Form.Label>Message Day</Form.Label>
+            <Form.Label>Current Medication</Form.Label>
             <Form.Control
               style={{ borderRadius: '10px', height: '100px' }}
               as="textarea"
@@ -2524,7 +2524,7 @@ export default function AboutModal(props) {
                 color: '#000000',
               }}
             >
-              Message Card
+              Notes
             </Form.Label>
             <Form.Control
               style={{ borderRadius: '10px', height: '100px' }}
@@ -2550,7 +2550,7 @@ export default function AboutModal(props) {
                 color: '#000000',
               }}
             >
-              Major Events
+              Medication Schedule
             </Form.Label>
             <Form.Control
               style={{ borderRadius: '10px', height: '100px' }}
