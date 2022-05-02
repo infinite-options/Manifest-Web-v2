@@ -14,13 +14,8 @@ const EditRTS = (props) => {
   const [photo, setPhoto] = useState(
     editingRTSContext.editingRTS.newItem.gr_photo
   );
-<<<<<<< HEAD
-  
-  const user = props.CurrentId
-=======
 
   const user = props.CurrentId;
->>>>>>> origin/master
 
   console.log('obj. ', editingRTSContext.editingRTS.newItem.user_id);
   const tz = {
@@ -96,11 +91,6 @@ const EditRTS = (props) => {
       ...editingRTSContext.editingRTS,
       editing: true,
     });
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> origin/master
     // editingRTSContext.editingRTS.editing = !editingRTSContext.editingRTS.editing;
     e.stopPropagation();
     let object = { ...editingRTSContext.editingRTS.newItem };
