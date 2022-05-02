@@ -11,10 +11,6 @@ import {
 } from 'react-bootstrap';
 import axios from 'axios';
 import LoginContext from '../LoginContext';
-import {
-  deleteTheCalenderEvent,
-  updateTheCalenderEvent,
-} from './GoogleApiService';
 import moment from 'moment';
 
 const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
@@ -25,6 +21,8 @@ export default function DeleteEventModal(props) {
   var userID = '';
   var userTime_zone = '';
   var userEmail = '';
+  var userPic = '';
+  var userN = '';
   if (
     document.cookie
       .split(';')
@@ -42,10 +40,20 @@ export default function DeleteEventModal(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_email='))
       .split('=')[1];
+    userPic = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_pic='))
+      .split('=')[1];
+    userN = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_name='))
+      .split('=')[1];
   } else {
     userID = loginContext.loginState.curUser;
     userTime_zone = loginContext.loginState.curUserTimeZone;
     userEmail = loginContext.loginState.curUserEmail;
+    userPic = loginContext.loginState.curUserPic;
+    userN = loginContext.loginState.curUserName;
   }
   const [recurrence, setRecurrence] = useState('');
   const [recurrenceRule, setRecurrenceRule] = useState('');
@@ -442,8 +450,8 @@ export default function DeleteEventModal(props) {
     top: '50%',
     transform: 'translate(0%, -50%)',
     width: '400px',
-    color: '#67ABFC',
-    border: '1px solid #67ABFC',
+    color: '#D6B7FF',
+    border: '1px solid #D6B7FF',
   };
   return (
     <div>
@@ -544,9 +552,9 @@ export default function DeleteEventModal(props) {
                     padding: '0',
                     margin: '0 20px',
                     backgroundColor: 'inherit',
-                    border: '1px #67ABFC solid',
+                    border: '1px #D6B7FF solid',
                     borderRadius: '30px',
-                    color: '#67ABFC',
+                    color: '#D6B7FF',
                     textAlign: 'center',
                   }}
                   onClick={closeDeleteRecurringModal}
@@ -561,9 +569,9 @@ export default function DeleteEventModal(props) {
                     padding: '0',
                     margin: '0 20px',
                     backgroundColor: 'inherit',
-                    border: '1px #67ABFC solid',
+                    border: '1px #D6B7FF solid',
                     borderRadius: '30px',
-                    color: '#67ABFC',
+                    color: '#D6B7FF',
                     textAlign: 'center',
                   }}
                   onClick={(e) => {

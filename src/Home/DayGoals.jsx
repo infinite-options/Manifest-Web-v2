@@ -6,7 +6,7 @@ export default class DayGoals extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      goals:[],
+      goals: [],
       pxPerHour: '30px', //preset size for all columns
       pxPerHourForConversion: 55, // if pxPerHour is change, this should change to reflect it
       zIndex: 1, //thought i needed to increment zIndex for div overlaps but seems to be fine being at 1 for all divs
@@ -69,7 +69,7 @@ export default class DayGoals extends Component {
     for (let i = 0; i < arr.length; i++) {
       tempStart = arr[i].start_day_and_time;
       tempEnd = arr[i].end_day_and_time;
-      console.log('timezone date', tempStart)
+      console.log('timezone date', tempStart);
       console.log('timezone date', tempEnd);
       let tempStartTime = new Date(tempStart.replace(/-/g, '/'));
       let tempEndTime = new Date(tempEnd.replace(/-/g, '/'));
@@ -85,7 +85,7 @@ export default class DayGoals extends Component {
         })
       );
       console.log('timezone date', CurrentDate);
-      
+
       CurrentDate.setHours(0, 0, 0, 0);
 
       let startDate = new Date(
@@ -338,7 +338,7 @@ export default class DayGoals extends Component {
               (tempEndTime.getMinutes() - tempStartTime.getMinutes()) / 60;
             let height =
               (hourDiff + minDiff) * this.state.pxPerHourForConversion;
-            let color = '#376DAC';
+            let color = '#00BC00';
 
             sameTimeEventCount++;
             for (let i = 0; i < arr.length; i++) {
@@ -367,7 +367,7 @@ export default class DayGoals extends Component {
             }
             // change color if more than one event in same time.
             if (sameTimeEventCount <= 1) {
-              color = hour % 2 === 0 ? '#376DAC' : '#739FD2';
+              color = hour % 2 === 0 ? '#00BC00' : '#739FD2';
             } else if (sameTimeEventCount === 2) {
               color = '#739FD2';
             } else {
@@ -581,6 +581,7 @@ export default class DayGoals extends Component {
           padding: '10px',
           width: '280px',
           //marginRight:'-60px'
+          backgroundColor: '#F2F7FC',
         }}
       >
         Today's Goals:

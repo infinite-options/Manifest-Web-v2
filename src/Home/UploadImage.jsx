@@ -105,8 +105,8 @@ export default class UploadImage extends Component {
               margin: '5px',
               border:
                 this.state.imageList[i].url === this.state.photo_url
-                  ? '3px solid #FF6B4A'
-                  : '1px solid #FF6B4A',
+                  ? '3px solid #FFB84D'
+                  : '1px solid #FFB84D',
             }}
             onClick={(e) => this.onPhotoClick(this.state.imageList[i].url)}
           >
@@ -128,7 +128,7 @@ export default class UploadImage extends Component {
           variant="text"
           style={{
             textDecoration: 'underline',
-            color: '#ffffff',
+            color: '#000000',
             fontSize: '14px',
           }}
           onClick={this.onHandleShowClick}

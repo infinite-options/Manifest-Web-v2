@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { publishTheCalenderEvent } from './GoogleApiService';
 import {
   Form,
   Button,
@@ -33,6 +32,8 @@ export default function GoogleEventComponent(props) {
   var userID = '';
   var userTime_zone = '';
   var userEmail = '';
+  var userPic = '';
+  var userN = '';
   if (
     document.cookie
       .split(';')
@@ -50,10 +51,21 @@ export default function GoogleEventComponent(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_email='))
       .split('=')[1];
+    userPic = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_pic='))
+      .split('=')[1];
+    userN = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_name='))
+      .split('=')[1];
   } else {
     userID = loginContext.loginState.curUser;
     userTime_zone = loginContext.loginState.curUserTimeZone;
     userEmail = loginContext.loginState.curUserEmail;
+    userPic = loginContext.loginState.curUserPic;
+
+    userN = loginContext.loginState.curUserName;
   }
   console.log('in add events', userEmail);
   console.log('in add events', document.cookie);
@@ -625,7 +637,7 @@ export default function GoogleEventComponent(props) {
       top: '50%',
       transform: 'translate(-50%, 0%)',
       width: '400px',
-      color: '#67ABFC',
+      color: '#D6B7FF',
     };
 
     const inputStyle = {
@@ -636,12 +648,12 @@ export default function GoogleEventComponent(props) {
       width: '70px',
       borderRadius: '4px',
       marginRight: '8px',
-      color: '#67ABFC',
+      color: '#D6B7FF',
     };
 
     const selectStyle = {
       display: 'inline-block',
-      color: '#67ABFC',
+      color: '#D6B7FF',
     };
 
     const weekStyle = {
@@ -649,10 +661,10 @@ export default function GoogleEventComponent(props) {
       alignItems: 'center',
       textAlign: 'center',
       marginTop: '10px',
-      color: '#67ABFC',
+      color: '#D6B7FF',
     };
     const dotSelected = {
-      backgroundColor: '#67ABFC',
+      backgroundColor: '#D6B7FF',
       color: '#ffffff',
     };
 
@@ -693,7 +705,7 @@ export default function GoogleEventComponent(props) {
                   style={{
                     cursor: 'pointer',
                     padding: '1rem',
-                    backgroundColor: '#67ABFC',
+                    backgroundColor: '#D6B7FF',
                     color: '#ffffff',
                   }}
                   onClick={(e) => selectedDot(e, i)}
@@ -710,7 +722,7 @@ export default function GoogleEventComponent(props) {
                     cursor: 'pointer',
                     padding: '1rem',
                     backgroundColor: '#ffffff',
-                    color: '#67ABFC',
+                    color: '#D6B7FF',
                   }}
                   onClick={(e) => selectedDot(e, i)}
                 >
@@ -760,7 +772,7 @@ export default function GoogleEventComponent(props) {
                 display: 'flex',
                 alignItems: 'center',
                 marginLeft: '5px',
-                color: '#67ABFC',
+                color: '#D6B7FF',
               }}
             >
               Repeat every
@@ -779,14 +791,14 @@ export default function GoogleEventComponent(props) {
               >
                 <Dropdown.Item
                   eventKey="Day"
-                  style={{ color: '#67ABFC' }}
+                  style={{ color: '#D6B7FF' }}
                   onSelect={(eventKey) => handleRepeatDropDown(eventKey)}
                 >
                   day
                 </Dropdown.Item>
                 <Dropdown.Item
                   eventKey="WEEK"
-                  style={{ color: '#67ABFC' }}
+                  style={{ color: '#D6B7FF' }}
                   onSelect={(eventKey) =>
                     handleRepeatDropDown(eventKey, week_days)
                   }
@@ -795,14 +807,14 @@ export default function GoogleEventComponent(props) {
                 </Dropdown.Item>
                 <Dropdown.Item
                   eventKey="MONTH"
-                  style={{ color: '#67ABFC' }}
+                  style={{ color: '#D6B7FF' }}
                   onSelect={(eventKey) => handleRepeatDropDown(eventKey)}
                 >
                   month
                 </Dropdown.Item>
                 <Dropdown.Item
                   eventKey="YEAR"
-                  style={{ color: '#67ABFC' }}
+                  style={{ color: '#D6B7FF' }}
                   onSelect={(eventKey) => handleRepeatDropDown(eventKey)}
                 >
                   year
@@ -896,9 +908,9 @@ export default function GoogleEventComponent(props) {
                     padding: '0',
                     margin: '0 20px',
                     backgroundColor: 'inherit',
-                    border: '1px #67ABFC solid',
+                    border: '1px #D6B7FF solid',
                     borderRadius: '30px',
-                    color: '#67ABFC',
+                    color: '#D6B7FF',
                     textAlign: 'center',
                   }}
                   onClick={closeRepeatModal}
@@ -913,9 +925,9 @@ export default function GoogleEventComponent(props) {
                     padding: '0',
                     margin: '0 20px',
                     backgroundColor: 'inherit',
-                    border: '1px #67ABFC solid',
+                    border: '1px #D6B7FF solid',
                     borderRadius: '30px',
-                    color: '#67ABFC',
+                    color: '#D6B7FF',
                     textAlign: 'center',
                   }}
                   onClick={saveRepeatChanges}
@@ -1017,17 +1029,18 @@ export default function GoogleEventComponent(props) {
         )
         .then((response) => {
           console.log(response);
+          const timer = setTimeout(() => {
+            fetchEvent();
+          }, 2000);
 
-          // editingEventContext.setEditingEvent({
-          //   ...editingEventContext.editingEvent,
-          //   editing: false,
-          // });
-          // props.setEvents(event);
+          return () => clearTimeout(timer);
         })
         .catch((error) => {
           console.log('error', error);
         });
-
+    };
+    createEvent();
+    const fetchEvent = async () => {
       let start =
         props.stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
       let endofWeek = moment(props.stateValue.dateContext).add(6, 'days');
@@ -1091,7 +1104,6 @@ export default function GoogleEventComponent(props) {
         })
         .catch((error) => console.log(error));
     };
-    createEvent();
     editingEventContext.setEditingEvent({
       ...editingEventContext.editingEvent,
       editing: false,
@@ -1109,7 +1121,7 @@ export default function GoogleEventComponent(props) {
             marginLeft: '2rem',
             //marginRight: '3rem',
             width: '90%',
-            backgroundColor: '#67ABFC',
+            backgroundColor: '#D6B7FF',
             color: '#ffffff',
           }}
         >
@@ -1491,7 +1503,9 @@ export default function GoogleEventComponent(props) {
                 color: '#ffffff',
                 textAlign: 'center',
               }}
-              onClick={(e) => submit(e)}
+              onClick={(e) => {
+                submit(e);
+              }}
             >
               Save Changes
             </button>

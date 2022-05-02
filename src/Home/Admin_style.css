@@ -1,0 +1,262 @@
+.topleft {
+    font-family: "Quicksand-Bold";
+    font-size: 2em;
+    letter-spacing: 0px;
+    color: #000000;
+    font-weight: bold;
+    padding-left: .5em;
+    padding-bottom: 1em;
+    padding-top: 1em;
+}
+
+
+
+.mid {
+    font-family: "Quicksand-Bold";
+    font-size: 2em;
+    letter-spacing: 0.72px;
+    color: #000000;
+    text-align: center;
+    margin-bottom: -.5rem
+}
+
+img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: .3fr 9fr .65fr;
+    padding: 10px 5px;
+}
+
+.one {
+    /* background-image: url('../manifest/LoginAssets/Back_arrow.svg'); */
+    /* background-image: url("Arrow.png") no-repeat; */
+    /* width: 1rem;
+    height: 1rem; */
+    display: block;
+    content: "";
+    float: right;
+    /* text-align: center; */
+}
+
+.two {
+    margin-top: 1rem;
+    border-top: 3px solid #000000;
+    max-width: 100%;
+    text-align: left;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 2fr 7fr 1fr 1fr;
+    grid-template-rows: 3fr 3fr;
+    grid-template-areas:
+        "s1 s2 s4 s5"
+        "s1 s3 s4 s5";
+    background-color: #FFFFFF;
+    border-radius: 20px;
+
+}
+
+.s1 {
+    grid-area: s1;
+    padding: 1rem;
+}
+
+.circle {
+    border: 5px solid #707070;
+    border-radius: 50% 50%;
+    height: 47px;
+    width: 47px;
+
+}
+
+.s2 {
+    padding-top: 0.7rem;
+    grid-area: s2;
+    padding-bottom: 0;
+    border-bottom: 3px solid #000000;
+}
+.s2_1 {
+    padding-top: 0.7rem;
+    grid-area: s2;
+    padding-bottom: 0;
+}
+.s3 {
+    /* padding-top: .7rem; */
+    grid-area: s3;
+}
+
+.s4 {
+    grid-area: s4;
+    padding-top: 1.6rem;
+    
+
+}
+
+.s5 {
+    grid-area: s5;
+    padding-top: 1.6rem;
+}
+
+.bigbox {
+    margin-top: 2rem;
+    text-align: center;
+}
+.listofusers{
+    overflow: scroll;
+    height: 400px;
+}
+.graybox {
+    /* width: 100%; */
+    max-width: 70%;
+    min-width: 70%;
+    width: 350px;
+    /* height: auto; */
+    height: 518px;
+    /* overflow: scroll; */
+    background: #F1F1F1 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 6px #00000029;
+    border-radius: 10px;
+    opacity: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.deleteButton{
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 6px #00000029;
+    border: 2px solid #FF3939;
+    border-radius: 10px;
+    text-align: center;
+    font-family: "Quicksand-Bold";
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 0px;
+    color: #FF3939;
+    width: 100%;
+    margin-bottom: 1.2rem;
+
+    display: block;
+}
+
+.grid_cut {
+    /* padding-top: 1rem; */
+    width: 85%;
+    height: 4rem;
+    margin: 2rem auto;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.YourUsers {
+    opacity: 1;
+    font-family: "Quicksand-Bold";
+    font-size: 18px;
+    text-align: center;
+    /* padding-top: 1.5em; */
+    font-weight: bold;
+    /* overflow: scroll; */
+}
+
+.buttonadd {
+    width: 60px;
+    background-color: white;
+    border-color: #000000;
+    border-radius: 10px;
+    border-width: 3px;
+    text-align: center;
+    font-family: "Quicksand-Bold";
+    font-size: 16px;
+    font-weight: bold;
+    /* margin-top: .9rem; */
+    /* padding: 0.8em 5.5em; */
+}
+.con {
+     max-width: 70%;
+    min-width: 70%;
+    width: 350px;
+    display: block;}
+
+.right {
+    display: table;
+    margin-left: 7rem;
+
+}
+
+.duperr {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 6px #00000029;
+    border: 2px solid #707070;
+    border-radius: 10px;
+    text-align: center;
+    font-family: "Quicksand-Bold";
+    font-size: 16px;
+    font-weight: bold;
+    /* padding: 0.5em 1.8em; */
+    margin-bottom: 1.2rem;
+    width: 100%;
+    display: block;
+
+}
+
+.button2 {
+    background-color: #09B4FF;
+    border-color: white;
+    border-radius: 5px;
+    border-width: 0px;
+    text-align: center;
+    font-family: "Quicksand-Bold";
+    font-size: 0.80em;
+    padding: 0.5em 1.8em;
+}
+
+.button3 {
+    background-color: white;
+    border-color: #000000;
+    border-radius: 5px;
+    border-width: 1px;
+    text-align: center;
+    font-family: "Quicksand-Bold";
+    font-size: 0.80em;
+    padding: 0.5em 1.8em;
+}
+.biggrid {
+    /* display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 600px 30px;
+    grid-template-areas:
+        "comp1 comp2"
+        "comp3 comp3"; */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.comp1 {
+    grid-area: comp1;
+}
+
+.comp2 {
+    grid-area: comp2;
+}
+
+.comp3 {
+    margin-top: 2rem;
+    grid-area: comp3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+table.relationTable tr:nth-of-type(2n) td {
+    border-bottom: 1px solid #000000;
+}

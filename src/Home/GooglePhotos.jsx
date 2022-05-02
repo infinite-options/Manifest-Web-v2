@@ -4,30 +4,12 @@ import { useHistory } from 'react-router-dom';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import LoginContext from '../LoginContext';
 import axios from 'axios';
-import {
-  Form,
-  Button,
-  Container,
-  Row,
-  Col,
-  Modal,
-  Dropdown,
-  DropdownButton,
-} from 'react-bootstrap';
+import { Button, Container, Row, Col, Modal } from 'react-bootstrap';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
-/* Custom Hook to make styles */
-const useStyles = makeStyles({
-  /* navigationContainer */
-});
-
 /* Navigation Bar component function */
 export default function GooglePhotos(props) {
-  const history = useHistory();
-
-  const classes = useStyles();
-
   const loginContext = useContext(LoginContext);
   var selectedUser = loginContext.loginState.curUser;
   if (
@@ -42,7 +24,9 @@ export default function GooglePhotos(props) {
   var userID = '';
   var userTime_zone = '';
   var userEmail = '';
+  var userPic = '';
 
+  var userN = '';
   var taID = '';
   var taEmail = '';
   if (
@@ -63,6 +47,14 @@ export default function GooglePhotos(props) {
       .split('; ')
       .find((row) => row.startsWith('patient_email='))
       .split('=')[1];
+    userPic = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_pic='))
+      .split('=')[1];
+    userN = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('patient_name='))
+      .split('=')[1];
     taID = document.cookie
       .split('; ')
       .find((row) => row.startsWith('ta_uid='))
@@ -76,7 +68,8 @@ export default function GooglePhotos(props) {
     // console.log('document cookie', document.cookie);
     userID = loginContext.loginState.curUser;
     userEmail = loginContext.loginState.curUserEmail;
-
+    userPic = loginContext.loginState.curUserPic;
+    userN = loginContext.loginState.curUserName;
     if (loginContext.loginState.usersOfTA.length === 0) {
       userTime_zone = 'America/Tijuana';
     } else {
@@ -170,7 +163,7 @@ export default function GooglePhotos(props) {
             let arr = [];
             if (mediaItems.length > 0) {
               mediaItems.map((items) => {
-                arr.push({ id: items.baseUrl });
+                arr.push({ baseUrl: items.baseUrl, id: items.id });
               });
               //setID(response.data.mediaItems['id']);
               console.log(arr);
@@ -251,7 +244,7 @@ export default function GooglePhotos(props) {
                       let mediaItems = response.data.mediaItems;
                       let arr = [];
                       mediaItems.map((items) => {
-                        arr.push(items.baseUrl);
+                        arr.push({ baseUrl: items.baseUrl, id: items.id });
                       });
                       //setID(response.data.mediaItems['id']);
                       console.log(arr);
@@ -290,6 +283,12 @@ export default function GooglePhotos(props) {
   }
   const onPhotoClick = (e) => {
     console.log('this is the E: ', e);
+    // setPhotoUrl(e);
+    // const salt = Math.floor(Math.random() * 9999999999);
+    // let image_name = image.name;
+    // image_name = image_name + salt.toString();
+    // setImageName(image_name);
+    // setImageURL(URL.createObjectURL(image));
     setPhotoUrl(e);
 
     // this.setState({ border: !this.state.border });
@@ -308,7 +307,7 @@ export default function GooglePhotos(props) {
       top: '30%',
       transform: 'translate(50%, -50%)',
       width: '700px',
-      color: '#67ABFC',
+      color: '#D6B7FF',
     };
     const bodyStyle = {
       height: '300px',
@@ -333,7 +332,7 @@ export default function GooglePhotos(props) {
                         borderRadius: '12px',
                         margin: '5px',
                       }}
-                      onClick={(e) => onPhotoClick(id.id)}
+                      onClick={(e) => onPhotoClick(id.baseUrl)}
                     >
                       <img
                         style={{
@@ -341,8 +340,8 @@ export default function GooglePhotos(props) {
                           height: '70px',
                           objectFit: 'cover',
                         }}
-                        src={id.id}
-                        alt={id.id}
+                        src={id.baseUrl}
+                        alt={id.baseUrl}
                       ></img>
                     </button>
                   );
@@ -364,9 +363,9 @@ export default function GooglePhotos(props) {
                     padding: '0',
                     margin: '0 20px',
                     backgroundColor: 'inherit',
-                    border: '1px #67ABFC solid',
+                    border: '1px #D6B7FF solid',
                     borderRadius: '30px',
-                    color: '#67ABFC',
+                    color: '#D6B7FF',
                     textAlign: 'center',
                   }}
                   onClick={closeViewPhotosModal}
@@ -381,9 +380,9 @@ export default function GooglePhotos(props) {
                     padding: '0',
                     margin: '0 20px',
                     backgroundColor: 'inherit',
-                    border: '1px #67ABFC solid',
+                    border: '1px #D6B7FF solid',
                     borderRadius: '30px',
-                    color: '#67ABFC',
+                    color: '#D6B7FF',
                     textAlign: 'center',
                   }}
                   onClick={onSubmitImage}
@@ -404,7 +403,7 @@ export default function GooglePhotos(props) {
         variant="text"
         style={{
           textDecoration: 'underline',
-          color: '#ffffff',
+          color: '#000000',
           fontSize: '14px',
           textAlign: 'left',
         }}

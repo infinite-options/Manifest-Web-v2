@@ -1,39 +1,71 @@
 import React, { useContext, useEffect, useState } from 'react';
-import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import GoogleLogin from 'react-google-login';
-import Cookies from 'js-cookie';
 import axios from 'axios';
-import { Grid, Button } from '@material-ui/core';
+import { Box, Button } from '@material-ui/core';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import { useHistory } from 'react-router-dom';
+import TimezoneSelect from 'react-timezone-select';
 import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
-//import { AuthContext } from '../auth/AuthContext';
 import { withRouter } from 'react-router';
-import Facebook from '../manifest/LoginAssets/Facebook.svg';
 import Google from '../manifest/LoginAssets/Google.svg';
-import Apple from '../manifest/LoginAssets/Apple.svg';
+import Apple from '../manifest/LoginAssets/AppleSignUp.svg';
 import LoginContext from 'LoginContext';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
 let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+const useStyles = makeStyles({
+  loginbuttons: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  signupbuttons: {
+    background: '#000000 0% 0% no-repeat padding-box',
+    borderRadius: '10px',
+    font: 'normal normal bold 16px Quicksand-Bold',
+    color: '#ffffff',
+    margin: '1rem',
+    textTransform: 'none',
+  },
+  loginbutton: {
+    background: '#ffffff 0% 0% no-repeat padding-box',
+    borderRadius: '10px',
+    font: 'normal normal bold 16px Quicksand-Bold',
+    color: '#000000',
+    margin: '1rem',
+    textTransform: 'none',
+  },
+  buttonLayout: { width: '100%', padding: '0', margin: '0' },
+
+  textfield: {
+    background: '#FFFFFF',
+    borderRadius: '10px',
+    marginBottom: '0.2rem',
+    width: '95%',
+  },
+});
 
 function SocialLogin(props) {
   // const Auth = useContext(AuthContext);
   const loginContext = useContext(LoginContext);
+  const classes = useStyles();
   const history = useHistory();
   const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loginSuccessful, setLoginSuccessful] = useState(false);
   const [newEmail, setNewEmail] = useState('');
-  const [newPassword, setNewPassword] = useState('');
   const [newPhoneNumber, setNewPhoneNumber] = useState('');
   const [newFName, setNewFName] = useState('');
   const [newLName, setNewLName] = useState('');
   const [newEmployer, setNewEmployer] = useState('');
-
+  const [selectedTimezone, setSelectedTimezone] = useState({});
   const [socialId, setSocialId] = useState('');
   const [refreshToken, setrefreshToken] = useState('');
   const [accessToken, setAccessToken] = useState('');
   const [accessExpiresIn, setaccessExpiresIn] = useState('');
+  const [alreadyExists, setAlreadyExists] = useState(false);
+
   let redirecturi = 'https://manifestmy.space';
   useEffect(() => {
     if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
@@ -49,18 +81,16 @@ function SocialLogin(props) {
     }
   }, [loginContext.loginState.reload]);
 
-  // const responseGoogle = (response) => {
-  //   console.log('response', response);
-  //   if (response.profileObj) {
-  //     console.log('Google login successful');
-  //     let email = response.profileObj.email;
-  //     let accessToken = response.accessToken;
-  //     let socialId = response.googleId;
-  //     _socialLoginAttempt(email, accessToken, socialId);
-  //   } else {
-  //     console.log('Google login unsuccessful');
-  //   }
-  // };
+  useEffect(() => {
+    window.AppleID.auth.init({
+      clientId: process.env.REACT_APP_APPLE_CLIENT_ID, // This is the service ID we created.
+      scope: 'name email', // To tell apple we want the user name and emails fields in the response it sends us.
+      redirectURI: process.env.REACT_APP_TA_APPLE_REDIRECT_URI, // As registered along with our service ID
+      // state: 'origin:web', // Any string of your choice that you may use for some logic. It's optional and you may omit it.
+      usePopup: true, // Important if we want to capture the data apple sends on the client side.
+    });
+  }, [loginContext.loginState.reload]);
+
   const responseGoogle = (response) => {
     console.log('response', response);
 
@@ -154,32 +184,7 @@ function SocialLogin(props) {
               if (response.data.message === 'User ID doesnt exist') {
                 setSocialSignUpModalShow(!socialSignUpModalShow);
               } else {
-                console.log('ACCESS', accessToken);
-                document.cookie = 'ta_uid=' + response.data.result;
-                document.cookie = 'ta_email=' + newEmail;
-                document.cookie = 'patient_name=Loading';
-                loginContext.setLoginState({
-                  ...loginContext.loginState,
-                  loggedIn: true,
-                  ta: {
-                    ...loginContext.loginState.ta,
-                    id: response.data.result.toString(),
-                    email: newEmail.toString(),
-                  },
-                  usersOfTA: [],
-                  curUser: '',
-                  curUserTimeZone: '',
-                  curUserEmail: '',
-                });
-                //setLoggedIn(true);
-
-                history.push({
-                  pathname: '/home',
-                  state: {
-                    email: e.toString(),
-                    accessToken: accessToken.toString(),
-                  },
-                });
+                setAlreadyExists(!alreadyExists);
               }
             });
           })
@@ -205,74 +210,108 @@ function SocialLogin(props) {
       });
   };
   console.log(newEmail);
-  const responseFacebook = (response) => {
-    console.log(response);
-    if (response.email) {
-      console.log('Facebook login successful');
-      let email = response.email;
-      let accessToken = response.accessToken;
-      let socialId = response.id;
-      _socialLoginAttempt(email, accessToken, socialId);
-    } else {
-      console.log('Facebook login unsuccessful');
-    }
-  };
 
-  const _socialLoginAttempt = (email, accessToken, socialId) => {
-    axios
-      .get(BASE_URL + 'loginSocialTA/' + email)
-      .then((res) => {
-        console.log('loginSocialTA', res);
-        if (res.data.result !== false) {
-          document.cookie = 'ta_uid=' + res.data.result[0];
-          document.cookie = 'ta_email=' + email;
-          document.cookie = 'patient_name=Loading';
-          loginContext.setLoginState({
-            ...loginContext.loginState,
-            loggedIn: true,
-            ta: {
-              ...loginContext.loginState.ta,
-              id: res.data.result,
-              email: email.toString(),
-            },
-            usersOfTA: [],
-            curUser: '',
-            curUserTimeZone: '',
-            curUserEmail: '',
-          });
-          console.log('Login successful');
-          console.log(email);
-          history.push({
-            pathname: '/home',
-            state: email,
-          });
-          // Successful log in, Try to update tokens, then continue to next page based on role
-        } else {
-          console.log('log in error');
-          setNewEmail(email);
-          //props.history.push('/socialsignup');
-          setSocialSignUpModalShow(true);
-        }
-      })
-      .catch((err) => {
-        if (err.response) {
-          console.log(err.response);
-        }
-        console.log(err);
-      });
-  };
+  const alreadyExistsModal = () => {
+    const headerStyle = {
+      border: 'none',
+      textAlign: 'center',
+      display: 'flex',
+      alignItems: 'center',
+      font: 'normal normal 600 20px Quicksand-Book',
+      textTransform: 'uppercase',
+      backgroundColor: ' #F2F7FC',
+      padding: '1rem',
+    };
+    const footerStyle = {
+      border: 'none',
+      backgroundColor: ' #F2F7FC',
+    };
+    const bodyStyle = {
+      backgroundColor: ' #F2F7FC',
+      font: 'normal normal 600 16px Quicksand-Regular',
+    };
+    return (
+      <Modal
+        show={alreadyExists}
+        onHide={hideAlreadyExists}
+        style={{ marginTop: '70px', padding: 0 }}
+      >
+        <Form>
+          <Modal.Header style={headerStyle} closeButton>
+            <Modal.Title>TA Account Exists</Modal.Title>
+          </Modal.Header>
 
+          <Modal.Body style={bodyStyle}>
+            <div>
+              The TA with email: {newEmail} exists! Please log in to continue
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer style={footerStyle}>
+            <Row
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: '1rem',
+              }}
+            >
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Button
+                  type="submit"
+                  onClick={hideLoginSuccessful}
+                  className={classes.signupbuttons}
+                >
+                  Cancel
+                </Button>
+              </Col>
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Button
+                  type="submit"
+                  onClick={() => history.push('/login')}
+                  className={classes.loginbutton}
+                >
+                  Log in
+                </Button>
+              </Col>
+            </Row>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+    );
+  };
+  const hideAlreadyExists = () => {
+    //setSignUpModalShow(false);
+    setAlreadyExists(!alreadyExists);
+    history.push('/');
+  };
   const hideSignUp = () => {
     //setSignUpModalShow(false);
     setSocialSignUpModalShow(false);
-    history.push('/');
+    props.setSignupSuccessful(true);
+    // setLoginSuccessful(true);
+    // history.push('/aboutus');
     setNewPhoneNumber('');
     setNewFName('');
     setNewLName('');
     setNewEmployer('');
-  };
-  const handleNewEmailChange = (event) => {
-    setNewEmail(event.target.value);
   };
 
   const handleNewPhoneNumberChange = (event) => {
@@ -298,7 +337,7 @@ function SocialLogin(props) {
         last_name: newLName,
         phone_number: newPhoneNumber,
         employer: newEmployer,
-        ta_time_zone: '',
+        ta_time_zone: selectedTimezone.value,
         ta_google_auth_token: accessToken,
         ta_google_refresh_token: refreshToken,
         ta_social_id: socialId,
@@ -313,235 +352,261 @@ function SocialLogin(props) {
       });
   };
   const socialSignUpModal = () => {
+    const headerStyle = {
+      border: 'none',
+      textAlign: 'center',
+      display: 'flex',
+      justifyContent: 'center',
+      font: 'normal normal 600 20px Quicksand-Book',
+      textTransform: 'uppercase',
+      backgroundColor: ' #F2F7FC',
+      padding: '1rem',
+    };
+    const footerStyle = {
+      border: 'none',
+      backgroundColor: ' #F2F7FC',
+    };
+    const bodyStyle = {
+      backgroundColor: ' #F2F7FC',
+      font: 'normal normal 600 16px Quicksand-Regular',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    };
     return (
       <Modal
         show={socialSignUpModalShow}
         onHide={hideSignUp}
-        style={{ marginTop: '70px' }}
+        style={{ marginTop: '70px', padding: 0 }}
       >
-        <Form as={Container}>
-          <h3
-            className="bigfancytext formEltMargin"
-            style={{
-              textAlign: 'center',
-              letterSpacing: '0.49px',
-              color: '#000000',
-              opacity: 1,
-            }}
-          >
-            Sign Up with Social Media
-          </h3>
-          <Form.Group className="formEltMargin">
-            <Form.Group as={Row} className="formEltMargin">
-              <Col>
-                <Form.Control
-                  type="text"
-                  placeholder="First Name"
-                  value={newFName}
-                  onChange={handleNewFNameChange}
+        <Form>
+          <Modal.Header style={headerStyle} closeButton>
+            <Modal.Title>Sign Up with social media</Modal.Title>
+          </Modal.Header>
+          <Modal.Body style={bodyStyle}>
+            <Form.Group className="formEltMargin">
+              <Form.Group
+                as={Row}
+                className="formEltMargin"
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Col
                   style={{
-                    background: '#FFFFFF 0% 0% no-repeat padding-box',
-                    borderRadius: '26px',
-                    opacity: 1,
-                    width: '230px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                   }}
-                />
+                >
+                  <Form.Control
+                    type="text"
+                    placeholder="First Name"
+                    value={newFName}
+                    onChange={handleNewFNameChange}
+                    className={classes.textfield}
+                  />
+                </Col>
+                <Col
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Form.Control
+                    type="text"
+                    placeholder="Last Name"
+                    value={newLName}
+                    onChange={handleNewLNameChange}
+                    className={classes.textfield}
+                  />
+                </Col>
+              </Form.Group>
+              <Col>
+                <Form.Group
+                  as={Row}
+                  className="formEltMargin"
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                  }}
+                >
+                  <Form.Control
+                    type="text"
+                    placeholder="Employer"
+                    value={newEmployer}
+                    onChange={handleNewEmployerChange}
+                    className={classes.textfield}
+                  />
+                </Form.Group>
               </Col>
               <Col>
-                <Form.Control
-                  type="text"
-                  placeholder="Last Name"
-                  value={newLName}
-                  onChange={handleNewLNameChange}
+                <Form.Group
+                  as={Row}
+                  className="formEltMargin"
                   style={{
-                    background: '#FFFFFF 0% 0% no-repeat padding-box',
-                    borderRadius: '26px',
-                    opacity: 1,
-                    width: '230px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'column',
                   }}
-                />
+                >
+                  <Form.Control
+                    type="tel"
+                    placeholder="Phone Number"
+                    pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                    value={newPhoneNumber}
+                    onChange={handleNewPhoneNumberChange}
+                    className={classes.textfield}
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group className="formEltMargin">
+                  <TimezoneSelect
+                    value={selectedTimezone}
+                    onChange={setSelectedTimezone}
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group
+                  as={Row}
+                  className="formEltMargin"
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                  }}
+                >
+                  <Form.Control
+                    plaintext
+                    readOnly
+                    value={newEmail}
+                    className={classes.textfield}
+                  />
+                </Form.Group>
               </Col>
             </Form.Group>
-            <Col>
-              <Form.Group as={Row} className="formEltMargin">
-                <Form.Control
-                  type="text"
-                  placeholder="Employer"
-                  value={newEmployer}
-                  onChange={handleNewEmployerChange}
-                  style={{
-                    background: '#FFFFFF 0% 0% no-repeat padding-box',
-                    borderRadius: '26px',
-                    opacity: 1,
-                    width: '500px',
-                  }}
-                />
-              </Form.Group>
-            </Col>
-            <Col>
-              <Form.Group as={Row} className="formEltMargin">
-                <Form.Control
-                  type="tel"
-                  placeholder="Phone Number"
-                  pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                  value={newPhoneNumber}
-                  onChange={handleNewPhoneNumberChange}
-                  style={{
-                    background: '#FFFFFF 0% 0% no-repeat padding-box',
-                    borderRadius: '26px',
-                    opacity: 1,
-                    width: '500px',
-                  }}
-                />
-              </Form.Group>
-            </Col>
-            <Col>
-              <Form.Group as={Row} className="formEltMargin">
-                <Form.Control
-                  plaintext
-                  readOnly
-                  value={newEmail}
-                  style={{
-                    background: '#FFFFFF 0% 0% no-repeat padding-box',
-                    borderRadius: '26px',
-                    opacity: 1,
-                    width: '500px',
-                  }}
-                />
-              </Form.Group>
-            </Col>
-          </Form.Group>
-
-          <Form.Group className="formEltMargin">
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Button
-                variant="primary"
-                type="submit"
-                onClick={handleSocialSignUpDone}
+          </Modal.Body>
+          <Modal.Footer style={footerStyle}>
+            <Form.Group className="formEltMargin">
+              <div
                 style={{
-                  background: '#F8BE28 0% 0% no-repeat padding-box',
-                  borderRadius: '20px',
-                  opacity: 1,
-                  width: '300px',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                Sign Up
-              </Button>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  onClick={handleSocialSignUpDone}
+                  className={classes.signupbuttons}
+                >
+                  Sign Up
+                </Button>
 
-              <Button
-                variant="primary"
-                type="submit"
-                onClick={hideSignUp}
-                style={{
-                  marginTop: '10px',
-                  background: '#FF6B4A 0% 0% no-repeat padding-box',
-                  borderRadius: '20px',
-                  opacity: 1,
-                  width: '300px',
-                }}
-              >
-                Cancel
-              </Button>
-            </div>
-          </Form.Group>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  onClick={hideSignUp}
+                  className={classes.loginbutton}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </Form.Group>
+          </Modal.Footer>
         </Form>
       </Modal>
     );
   };
-  return (
-    <Grid
-      container
-      spacing={3}
-      // display="flex"
-      direction="row"
-      justifyContent="center"
-      align="center"
-    >
-      <Grid
-        item
-        xs={4}
-        direction="column"
-        align="center"
-        justifyContent="center"
-      >
-        <FacebookLogin
-          appId={process.env.REACT_APP_FACEBOOK_APP_ID}
-          autoLoad={false}
-          fields="name,email,picture"
-          onClick="return false"
-          callback={responseFacebook}
-          size="small"
-          // icon={<SiFacebook/>}
-          textButton="Continue with Facebook"
-          render={(renderProps) => (
-            <img
-              src={Facebook}
-              onClick={renderProps.onClick}
-              disabled={renderProps.disabled}
-              alt={''}
-            ></img>
-          )}
-        />
-      </Grid>
-      <Grid item xs={4}>
-        <Button style={{}}>
-          <GoogleLogin
-            //clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-            //clientId={CLIENT_ID}
-            clientId={
-              BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
-                ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
-                : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
-            }
-            accessType="offline"
-            prompt="consent"
-            responseType="code"
-            buttonText="Log In"
-            ux_mode="redirect"
-            isSignedIn={false}
-            disable={true}
-            cookiePolicy={'single_host_origin'}
-            redirectUri={
-              BASE_URL.substring(8, 18) == '3s3sftsr90'
-                ? 'https://manifestmy.space'
-                : 'https://manifestmy.life'
-            }
-            scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
-            // redirectUri="http://localhost:3000"
-            onSuccess={responseGoogle}
-            onFailure={responseGoogle}
-            render={(renderProps) => (
-              <img
-                src={Google}
-                onClick={renderProps.onClick}
-                disabled={renderProps.disabled}
-                alt={''}
-              ></img>
-            )}
-          />
-          {console.log(CLIENT_ID)}
-        </Button>
-      </Grid>
 
-      <Grid item xs={4}>
-        <img
-          src={Apple}
-          variant="contained"
-          alt={''}
-          onClick={() => {
-            window.AppleID.auth.signIn();
-          }}
-        ></img>
-      </Grid>
+  const hideLoginSuccessful = () => {
+    setLoginSuccessful(false);
+  };
+
+  return (
+    <Row xs={12} className={classes.buttonLayout}>
+      <Row xs={12} className={classes.buttonLayout}>
+        <Col></Col>
+        <Col xs={8} className={classes.loginbuttons}>
+          <Button>
+            <GoogleLogin
+              clientId={
+                BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
+                  ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
+                  : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
+              }
+              accessType="offline"
+              prompt="consent"
+              responseType="code"
+              buttonText="Log In"
+              ux_mode="redirect"
+              isSignedIn={false}
+              disable={true}
+              cookiePolicy={'single_host_origin'}
+              redirectUri={
+                BASE_URL.substring(8, 18) == '3s3sftsr90'
+                  ? 'https://manifestmy.space'
+                  : 'https://manifestmy.life'
+              }
+              scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
+              // redirectUri="http://localhost:3000"
+              onSuccess={responseGoogle}
+              onFailure={responseGoogle}
+              render={(renderProps) => (
+                <img
+                  src={Google}
+                  onClick={renderProps.onClick}
+                  disabled={renderProps.disabled}
+                  alt={''}
+                  style={{
+                    minWidth: '70%',
+                    maxWidth: '70%',
+                    padding: '0',
+                    margin: 0,
+                  }}
+                ></img>
+              )}
+            />
+          </Button>
+        </Col>
+        <Col></Col>
+      </Row>
+      <Row xs={12} className={classes.buttonLayout}>
+        <Col></Col>
+        <Col xs={8} className={classes.loginbuttons}>
+          <Button>
+            <img
+              src={Apple}
+              alt={''}
+              style={{
+                minWidth: '70%',
+                maxWidth: '70%',
+                padding: '0',
+                margin: 0,
+              }}
+              className={classes.buttonLayout}
+              onClick={() => {
+                window.AppleID.auth.signIn();
+              }}
+            ></img>
+          </Button>
+        </Col>
+        <Col></Col>
+      </Row>{' '}
       {socialSignUpModal()}
-    </Grid>
+      {alreadyExistsModal()}
+    </Row>
   );
 }
 
