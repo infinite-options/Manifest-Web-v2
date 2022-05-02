@@ -7,7 +7,7 @@ import DayRoutines from 'Home/DayRoutines';
 import { Step } from '@material-ui/core';
 import moment from 'moment';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const convertDateToDayString = (dateObject) => {
   // console.log(dateObject)
@@ -93,7 +93,7 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
 
           axios
             .get(
-              BASE_URL + 'getgoalsandroutines/' +
+              BASE_URL + 'getroutines/' +
                 step
             )
             .then((response) => {
@@ -116,9 +116,9 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
               console.log(
                 'item',
                 getGoalsEndPoint[0].gr_start_day_and_time,
-                routine.id
+                routine.gr_unique_id
               );
-              console.log(getGoalsEndPoint[0].repeat);
+              console.log(routine);
               let itemToChange;
               for (var k = 0; k < getGoalsEndPoint.length; k++) {
                 if (routine.gr_unique_id === getGoalsEndPoint[k].gr_unique_id) {

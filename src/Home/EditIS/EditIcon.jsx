@@ -5,7 +5,7 @@ import axios from 'axios';
 import EditISContext from './EditISContext';
 import { propTypes } from 'react-bootstrap/esm/Image';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const convertDateToDayString = (dateObject) => {
   // console.log(dateObject)

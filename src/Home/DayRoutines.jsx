@@ -1,19 +1,20 @@
-import React, { Component, useState, useEffect } from 'react';
-// import firebase from "./firebase";
+import React, { Component } from 'react';
 import moment from 'moment';
 import { Container, Row, Col } from 'react-bootstrap';
-import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
-function DayRoutines(props) {
-  const [stateValue, setStateValue] = useState({
-    routines: [], // array to hold all routines
-    pxPerHour: '30px', //preset size for all columns
-    pxPerHourForConversion: 30, // if pxPerHour is change, this should change to reflect it
-    zIndex: 1, //thought i needed to increment zIndex for div overlaps but seems to be fine being at 1 for all divs
-    eventBoxSize: '200', //width size for event box
-  });
+export default class DayRoutines extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      routines: [], // array to hold all routines
+      pxPerHour: '30px', //preset size for all columns
+      pxPerHourForConversion: 55, // if pxPerHour is change, this should change to reflect it
+      zIndex: 1, //thought i needed to increment zIndex for div overlaps but seems to be fine being at 1 for all divs
+      eventBoxSize: '200', //width size for event box
+    };
+  }
 
-  const dayView = () => {
+  dayView = () => {
     //this essentially creates the time row
     let arr = [];
     for (let i = 0; i < 24; ++i) {
@@ -21,12 +22,20 @@ function DayRoutines(props) {
         <Row key={'dayDayViewRoutines' + i}>
           <Col
             style={{
-              borderTop: '1px solid  mistyrose',
+              //borderTop: '1px solid  mistyrose',
+              textAlign: 'right',
+              //height: this.state.pxPerHour,
               textAlign: 'center',
-              height: stateValue.pxPerHour,
+              height: '55px',
             }}
           >
-            {i}:00
+            {i == 0
+              ? '12am'
+              : i == 12
+              ? i + 'pm'
+              : i > 11
+              ? i - 12 + 'pm'
+              : i + 'am'}
           </Col>
         </Row>
       );
@@ -34,8 +43,8 @@ function DayRoutines(props) {
     return arr;
   };
 
-  const RoutineClicked = () => {
-    console.log(props.dayRoutineClick());
+  RoutineClicked = () => {
+    console.log(this.props.dayRoutineClick());
   };
 
   /**
@@ -43,40 +52,42 @@ function DayRoutines(props) {
    *
    */
 
-  const getEventItem = (hour) => {
+  getEventItem = (hour) => {
     var res = [];
     var tempStart = null;
     var tempEnd = null;
-    var arr = props.routines;
+    var arr = this.props.routines;
     var sameTimeEventCount = 0;
-    let itemWidth = stateValue.eventBoxSize;
+    let itemWidth = this.state.eventBoxSize;
     var addmarginLeft = 0;
     var fontSize = 10;
-
+    console.log(this.props.dateContext.toString());
     for (let i = 0; i < arr.length; i++) {
       tempStart = arr[i].start_day_and_time;
       tempEnd = arr[i].end_day_and_time;
 
-      let tempStartTime = new Date(tempStart);
-      let tempEndTime = new Date(tempEnd);
+      let tempStartTime = new Date(tempStart.replace(/-/g, '/'));
+      let tempEndTime = new Date(tempEnd.replace(/-/g, '/'));
 
-      let curDate = props.dateContext.get('date');
-      let curMonth = props.dateContext.get('month');
-      let curYear = props.dateContext.get('year');
+      let curDate = this.props.dateContext.get('date');
+      let curMonth = this.props.dateContext.get('month');
+      let curYear = this.props.dateContext.get('year');
 
-      const tz = {
-        timeZone: this.props.timeZone,
-      };
-      console.log('day routines timezone ', tz);
       let CurrentDate = new Date(
-        new Date(curYear, curMonth, curDate).toLocaleString(tz, tz)
+        new Date(curYear, curMonth, curDate).toLocaleString('en-US', {
+          timeZone: this.props.TimeZone,
+        })
       );
       CurrentDate.setHours(0, 0, 0, 0);
-      console.log('day routines timezone ', CurrentDate);
+
       let startDate = new Date(
-        new Date(arr[i].start_day_and_time).toLocaleString(tz, tz)
+        new Date(arr[i].start_day_and_time.replace(/-/g, '/')).toLocaleString(
+          'en-US',
+          {
+            timeZone: this.props.TimeZone,
+          }
+        )
       );
-      console.log('day routines timezone ', startDate);
       startDate.setHours(0, 0, 0, 0);
       let isDisplayedTodayCalculated = false;
 
@@ -87,7 +98,9 @@ function DayRoutines(props) {
       let repeatEnds = arr[i].repeat_type;
 
       let repeatEndsOn = new Date(
-        new Date(arr[i].repeat_ends_on).toLocaleString(tz, tz)
+        new Date(arr[i].repeat_ends_on).toLocaleString('en-US', {
+          timeZone: this.props.TimeZone,
+        })
       );
       repeatEndsOn.setHours(0, 0, 0, 0);
 
@@ -155,8 +168,8 @@ function DayRoutines(props) {
                 }
                 const new_date = moment(initFullDate, 'MM/DD/YYYY');
                 const nextDayOfTheWeek = getNextDayOfTheWeek(dow, new_date);
-                console.log('NextDayOfWeek: ', nextDayOfTheWeek.format('L'));
-                console.log('numberOfWeeks: ', numberOfWeek);
+                //console.log("NextDayOfWeek: ", nextDayOfTheWeek.format("L"));
+                //console.log("numberOfWeeks: ", numberOfWeek);
                 const date = nextDayOfTheWeek
                   .clone()
                   .add(numberOfWeek * repeatEvery, 'weeks')
@@ -250,12 +263,12 @@ function DayRoutines(props) {
           if (tempStartTime.getDate() !== tempEndTime.getDate()) {
             let minsToMarginTop =
               (tempStartTime.getMinutes() / 60) *
-              stateValue.pxPerHourForConversion;
+              this.state.pxPerHourForConversion;
             let hourDiff = 24 - tempStartTime.getHours();
             let minDiff = 0;
             let color = 'lavender';
             let height =
-              (hourDiff + minDiff) * stateValue.pxPerHourForConversion;
+              (hourDiff + minDiff) * this.state.pxPerHourForConversion;
             sameTimeEventCount++;
             if (isDisplayedTodayCalculated) {
               let newElement = (
@@ -272,20 +285,21 @@ function DayRoutines(props) {
                     }
                     onMouseOver={(e) => {
                       e.target.style.color = '#FFFFFF';
-                      e.target.style.background = 'RebeccaPurple';
+                      e.target.style.background = 'lightslategray';
                       e.target.style.zIndex = '2';
                     }}
                     onMouseOut={(e) => {
                       e.target.style.zIndex = '1';
-                      e.target.style.color = '#000000';
+                      e.target.style.color = '#FFFFFF';
                       e.target.style.background = color;
                     }}
                     key={i}
-                    onClick={RoutineClicked}
+                    onClick={this.RoutineClicked}
                     style={{
-                      zIndex: stateValue.zIndex,
+                      zIndex: this.state.zIndex,
                       marginTop: minsToMarginTop + 'px',
                       padding: '5px',
+                      paddingBottom: '15px',
                       fontSize: fontSize + 'px',
                       border: '1px lightgray solid ',
                       float: 'left',
@@ -306,13 +320,13 @@ function DayRoutines(props) {
           } else {
             let minsToMarginTop =
               (tempStartTime.getMinutes() / 60) *
-              stateValue.pxPerHourForConversion;
+              this.state.pxPerHourForConversion;
             let hourDiff = tempEndTime.getHours() - tempStartTime.getHours();
             let minDiff =
               (tempEndTime.getMinutes() - tempStartTime.getMinutes()) / 60;
             let height =
-              (hourDiff + minDiff) * stateValue.pxPerHourForConversion;
-            let color = 'PaleTurquoise';
+              (hourDiff + minDiff) * this.state.pxPerHourForConversion;
+            let color = '#FFB84D';
             sameTimeEventCount++;
             for (let i = 0; i < arr.length; i++) {
               tempStart = arr[i].start_day_and_time;
@@ -340,11 +354,11 @@ function DayRoutines(props) {
             }
             // change color if more than one event in same time.
             if (sameTimeEventCount <= 1) {
-              color = hour % 2 === 0 ? 'PaleTurquoise' : 'skyblue';
+              color = hour % 2 === 0 ? '#FFB84D' : '#ff957d';
             } else if (sameTimeEventCount === 2) {
-              color = 'skyblue';
+              color = '#ff957d';
             } else {
-              color = 'blue';
+              color = '#FFB84D';
             }
             if (isDisplayedTodayCalculated) {
               let newElement = (
@@ -361,20 +375,21 @@ function DayRoutines(props) {
                   }
                   onMouseOver={(e) => {
                     e.target.style.color = '#FFFFFF';
-                    e.target.style.background = 'RebeccaPurple';
+                    e.target.style.background = 'lightslategray';
                     e.target.style.zIndex = '2';
                   }}
                   onMouseOut={(e) => {
                     e.target.style.zIndex = '1';
-                    e.target.style.color = '#000000';
+                    e.target.style.color = '#FFFFFF';
                     e.target.style.border = '1px lightgray solid';
                     e.target.style.background = color;
                   }}
-                  onClick={RoutineClicked}
+                  onClick={this.RoutineClicked}
                   style={{
-                    zIndex: stateValue.zIndex,
+                    zIndex: this.state.zIndex,
                     marginTop: minsToMarginTop + 'px',
                     padding: '5px',
+                    paddingBottom: '15px',
                     border: '1px lightgray solid ',
                     borderRadius: '5px',
                     position: 'absolute',
@@ -403,7 +418,7 @@ function DayRoutines(props) {
         let minsToMarginTop = 0;
         let hourDiff = tempEndTime.getHours();
         let minDiff = tempEndTime.getMinutes() / 60;
-        let height = (hourDiff + minDiff) * stateValue.pxPerHourForConversion;
+        let height = (hourDiff + minDiff) * this.state.pxPerHourForConversion;
         let color = 'lavender';
         sameTimeEventCount++;
         if (isDisplayedTodayCalculated) {
@@ -421,20 +436,21 @@ function DayRoutines(props) {
                 }
                 onMouseOver={(e) => {
                   e.target.style.color = '#FFFFFF';
-                  e.target.style.background = 'RebeccaPurple';
+                  e.target.style.background = 'lightslategray';
                   e.target.style.zIndex = '2';
                 }}
                 onMouseOut={(e) => {
                   e.target.style.zIndex = '1';
-                  e.target.style.color = '#000000';
+                  e.target.style.color = '#FFFFFF';
                   e.target.style.background = color;
                 }}
                 key={i}
-                onClick={RoutineClicked}
+                onClick={this.RoutineClicked}
                 style={{
-                  zIndex: stateValue.zIndex,
+                  zIndex: this.state.zIndex,
                   marginTop: minsToMarginTop + 'px',
                   padding: '5px',
+                  paddingBottom: '15px',
                   fontSize: fontSize + 'px',
                   border: '1px lightgray solid ',
                   float: 'left',
@@ -462,8 +478,8 @@ function DayRoutines(props) {
         curYear >= tempStartTime.getFullYear()
       ) {
         let minsToMarginTop = 0;
-        let hourDiff = 24;
-        let height = hourDiff * stateValue.pxPerHourForConversion;
+        //let hourDiff = 24;
+        let height = 24 * this.state.pxPerHourForConversion;
         let color = 'lavender';
         sameTimeEventCount++;
         if (isDisplayedTodayCalculated) {
@@ -481,20 +497,21 @@ function DayRoutines(props) {
                 }
                 onMouseOver={(e) => {
                   e.target.style.color = '#FFFFFF';
-                  e.target.style.background = 'RebeccaPurple';
+                  e.target.style.background = 'lightslategray';
                   e.target.style.zIndex = '2';
                 }}
                 onMouseOut={(e) => {
                   e.target.style.zIndex = '1';
-                  e.target.style.color = '#000000';
+                  e.target.style.color = '#FFFFFF';
                   e.target.style.background = color;
                 }}
                 key={i}
-                onClick={RoutineClicked}
+                onClick={this.RoutineClicked}
                 style={{
-                  zIndex: stateValue.zIndex,
+                  zIndex: this.state.zIndex,
                   marginTop: minsToMarginTop + 'px',
                   padding: '5px',
+                  paddingBottom: '15px',
                   fontSize: fontSize + 'px',
                   border: '1px lightgray solid ',
                   float: 'left',
@@ -520,7 +537,7 @@ function DayRoutines(props) {
   /**
    * dayViewItems: goes through hours 0 to 24, and calling getEventItem for each hour
    */
-  const dayViewItems = () => {
+  dayViewItems = () => {
     var arr = [];
     for (let i = 0; i < 24; ++i) {
       arr.push(
@@ -528,13 +545,14 @@ function DayRoutines(props) {
           <Col
             style={{
               position: 'relative',
-              borderTop: '1px solid mistyrose',
-              width: '220px',
-              background: 'aliceblue',
-              height: stateValue.pxPerHour,
+              color: 'white',
+              borderBottom: '2px solid #b1b3b6',
+              margin: '0px',
+              width: '100%',
+              height: '55px',
             }}
           >
-            {getEventItem(i)}
+            {this.getEventItem(i)}
           </Col>
         </Row>
       );
@@ -542,26 +560,33 @@ function DayRoutines(props) {
     return arr;
   };
 
-  return (
-    <div
-      style={{
-        padding: '20px',
-        width: '900px',
-        borderRadius: '20px',
-      }}
-    >
-      Today's Routines:
-      <Container style={{}}>
-        <Row>
-          <Col>
-            <Container style={{ margin: '0', padding: '0' }}>
-              {dayViewItems()}
-            </Container>
-          </Col>
-        </Row>
-      </Container>
-    </div>
-  );
+  render() {
+    return (
+      <div
+        style={{
+          //margin: '10px',
+          padding: '10px',
+          width: '280px',
+          backgroundColor: '#F2F7FC',
+        }}
+      >
+        Today's Routines:
+        <Container>
+          <Row
+            ref={this.hourDisplay}
+            noGutters={true}
+            className="d-flex justify-content-end"
+          >
+            <Col>
+              <Container style={{ margin: '0', padding: '0' }}>
+                {this.dayViewItems()}
+              </Container>
+            </Col>
+          </Row>
+        </Container>
+      </div>
+    );
+  }
 }
 
 function getFormattedDate(date) {
@@ -620,4 +645,3 @@ function getMonthNumber(str) {
       return '';
   }
 }
-export default DayRoutines;

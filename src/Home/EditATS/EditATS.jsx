@@ -5,8 +5,9 @@ import moment from 'moment';
 import axios from 'axios';
 import AddIconModal from '../AddIconModal';
 import UploadImage from '../UploadImage';
+import GooglePhotos from '../GooglePhotos';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 const convertDateToDayString = (dateObject) => {
   //console.log(dateObject);
   const year = dateObject.getFullYear();
@@ -52,8 +53,6 @@ const EditATS = (props) => {
   );
   console.log('obj. ', props);
 
-
-  
   const [showUploadImage, setShowUploadImage] = useState(false);
   const [image, setImage] = useState(null);
   const [imageName, setImageName] = useState('');
@@ -129,7 +128,6 @@ const EditATS = (props) => {
 
     return [a_time, b_time];
   };
-
 
   useEffect(() => {
     if (editingATSContext.editingATS.newItem.at_unique_id === undefined) {
@@ -361,42 +359,42 @@ const EditATS = (props) => {
             for (var i = 0; i < response.data.result.length; i++) {
               temp.push(response.data.result[i]);
             }
-              temp.sort((a, b) => {
-                const [a_start, b_start] = [
-                  new Date(a.at_datetime_started),
-                  new Date(b.at_datetime_started),
-                ];
-                const [a_end, b_end] = [
-                  new Date(a.at_datetime_completed),
-                  new Date(b.at_datetime_completed),
-                ];
+            temp.sort((a, b) => {
+              const [a_start, b_start] = [
+                new Date(a.at_datetime_started),
+                new Date(b.at_datetime_started),
+              ];
+              const [a_end, b_end] = [
+                new Date(a.at_datetime_completed),
+                new Date(b.at_datetime_completed),
+              ];
 
-                const [a_start_time, b_start_time] = getTimes(
-                  a.at_datetime_started,
-                  b.at_datetime_started
-                );
-                const [a_end_time, b_end_time] = getTimes(
-                  a.at_datetime_completed,
-                  b.at_datetime_completed
-                );
+              const [a_start_time, b_start_time] = getTimes(
+                a.at_datetime_started,
+                b.at_datetime_started
+              );
+              const [a_end_time, b_end_time] = getTimes(
+                a.at_datetime_completed,
+                b.at_datetime_completed
+              );
 
-                if (a_start_time < b_start_time) return -1;
-                else if (a_start_time > b_start_time) return 1;
+              if (a_start_time < b_start_time) return -1;
+              else if (a_start_time > b_start_time) return 1;
+              else {
+                if (a_end_time < b_end_time) return -1;
+                else if (a_end_time > b_end_time) return 1;
                 else {
-                  if (a_end_time < b_end_time) return -1;
-                  else if (a_end_time > b_end_time) return 1;
+                  if (a_start < b_start) return -1;
+                  else if (a_start > b_start) return 1;
                   else {
-                    if (a_start < b_start) return -1;
-                    else if (a_start > b_start) return 1;
-                    else {
-                      if (a_end < b_end) return -1;
-                      else if (a_end > b_end) return 1;
-                    }
+                    if (a_end < b_end) return -1;
+                    else if (a_end > b_end) return 1;
                   }
                 }
+              }
 
-                return 0;
-              });
+              return 0;
+            });
             const tempObj = {};
             for (const key in props.getActionsEndPoint) {
               tempObj[key] = props.getActionsEndPoint[key];
@@ -467,7 +465,10 @@ const EditATS = (props) => {
                   photo_url: '',
                 },
               });
-              console.log('xxx ATS photo',editingATSContext.editingATS.newItem.photo);
+              console.log(
+                'xxx ATS photo',
+                editingATSContext.editingATS.newItem.photo
+              );
             }}
           >
             Upload
@@ -510,8 +511,8 @@ const EditATS = (props) => {
         marginLeft: '2rem',
         marginRight: '3rem',
         width: '50%',
-        backgroundColor: '#E4C33A',
-        color: '#ffffff',
+        backgroundColor: '#4D94FF',
+        color: '#000000',
       }}
     >
       {uploadImageModal()}
@@ -566,6 +567,7 @@ const EditATS = (props) => {
                   setPhotoUrl={setPhoto}
                   currentUserId={props.CurrentId}
                 />
+                <GooglePhotos photoUrl={photo} setPhotoUrl={setPhoto} />
               </Col>
               <Col>
                 <img alt="icon" src={photo} height="100" width="100" />
@@ -777,13 +779,35 @@ const EditATS = (props) => {
             >
               <button
                 style={{
-                  width: '100px',
+                  width: '127px',
+                  height: '37px',
                   padding: '0',
                   margin: '0 20px',
-                  backgroundColor: 'inherit',
-                  border: '3px white solid',
-                  color: '#ffffff',
+                  background: '#09B4FF 0% 0% no-repeat padding-box',
+                  boxShadow: '0px 3px 6px #00000029',
+                  borderRadius: '5px',
                   textAlign: 'center',
+                  border: '1px solid #09B4FF',
+                  color: '#FFFFFF',
+                  font: 'normal normal 600 16px Quicksand-Book',
+                }}
+                onClick={updateATS}
+              >
+                Save
+              </button>
+              <button
+                style={{
+                  width: '127px',
+                  height: '37px',
+                  padding: '0',
+                  margin: '0 20px',
+                  background: ' #FFFFFF 0% 0% no-repeat padding-box',
+                  boxShadow: '0px 3px 6px #00000029',
+                  border: '1px solid #A7A7A7',
+                  borderRadius: '5px',
+                  textAlign: 'center',
+                  color: '#7D7D7D',
+                  font: 'normal normal 600 16px Quicksand-Book',
                 }}
                 onClick={() => {
                   editingATSContext.setEditingATS({
@@ -793,20 +817,6 @@ const EditATS = (props) => {
                 }}
               >
                 Cancel
-              </button>
-              <button
-                style={{
-                  width: '100px',
-                  padding: '0',
-                  margin: '0 20px',
-                  backgroundColor: 'inherit',
-                  border: '3px white solid',
-                  color: '#ffffff',
-                  textAlign: 'center',
-                }}
-                onClick={updateATS}
-              >
-                Save
               </button>
             </div>
           </Row>

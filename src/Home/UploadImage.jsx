@@ -3,7 +3,7 @@ import { Button, Modal } from 'react-bootstrap';
 import { Form, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 export default class UploadImage extends Component {
   constructor(props) {
@@ -20,35 +20,33 @@ export default class UploadImage extends Component {
     };
   }
 
- 
   onPhotoClick = (e) => {
     console.log('this is the E: ', e);
-    this.setState({ photo_url: e});
+    this.setState({ photo_url: e });
 
-    this.setState({border: !this.state.border})
-  
+    this.setState({ border: !this.state.border });
   };
 
-  onChange = (e) => {
-    if (e.target.files[0]) {
-      const image = e.target.files[0];
-      console.log(image.name);
-      this.setState({ image: image });
-    }
-  };
+  // onChange = (e) => {
+  //   if (e.target.files[0]) {
+  //     const image = e.target.files[0];
+  //     console.log(image.name);
+  //     this.setState({ image: image });
+  //   }
+  // };
 
-  onClickUpload = () => {
-    if (this.state.image === null) {
-      alert('Please select an image to upload');
-      return;
-    }
-    const salt = Math.floor(Math.random() * 9999999999);
-    let image_name = this.state.image.name;
-    image_name = image_name + salt.toString();
-    this.setState({ saltedImageName: image_name });
-    this.setState({ photo_url: URL.createObjectURL(this.state.image) });
-    console.log(this.state);
-  };
+  // onClickUpload = () => {
+  //   if (this.state.image === null) {
+  //     alert('Please select an image to upload');
+  //     return;
+  //   }
+  //   const salt = Math.floor(Math.random() * 9999999999);
+  //   let image_name = this.state.image.name;
+  //   image_name = image_name + salt.toString();
+  //   this.setState({ saltedImageName: image_name });
+  //   this.setState({ photo_url: URL.createObjectURL(this.state.image) });
+  //   console.log(this.state);
+  // };
 
   onClickConfirm = () => {
     //this.props.setPhotoUrl(this.state.photo_url);
@@ -84,10 +82,10 @@ export default class UploadImage extends Component {
     this.setState({ show: !toggle });
   };
 
-  onUploadImage = () => {
-    let toggle = this.state.modal;
-    this.setState({ modal: !toggle });
-  };
+  // onUploadImage = () => {
+  //   let toggle = this.state.modal;
+  //   this.setState({ modal: !toggle });
+  // };
 
   onSubmitImage = () => {
     let toggle = this.state.show;
@@ -105,9 +103,10 @@ export default class UploadImage extends Component {
             style={{
               borderRadius: '12px',
               margin: '5px',
-              border: this.state.imageList[i].url === this.state.photo_url 
-              ? '3px solid #FF6B4A'
-              : '1px solid #FF6B4A'              
+              border:
+                this.state.imageList[i].url === this.state.photo_url
+                  ? '3px solid #FFB84D'
+                  : '1px solid #FFB84D',
             }}
             onClick={(e) => this.onPhotoClick(this.state.imageList[i].url)}
           >
@@ -115,7 +114,6 @@ export default class UploadImage extends Component {
               style={{
                 width: '100px',
                 height: '70px',
-                
               }}
               src={this.state.imageList[i].url}
             ></img>
@@ -130,7 +128,7 @@ export default class UploadImage extends Component {
           variant="text"
           style={{
             textDecoration: 'underline',
-            color: '#ffffff',
+            color: '#000000',
             fontSize: '14px',
           }}
           onClick={this.onHandleShowClick}
@@ -153,13 +151,13 @@ export default class UploadImage extends Component {
             <Button variant="secondary" onClick={this.onHandleShowClick}>
               Close
             </Button>
-           {/*  <Button variant="primary" onClick={this.onUploadImage}>
+            {/*  <Button variant="primary" onClick={this.onUploadImage}>
               Upload New Image
             </Button> */}
 
             {/* MODAL I WANT ON FIREBASE */}
 
-           {/*  <Modal show={this.state.modal} onHide={this.onUploadImage}>
+            {/*  <Modal show={this.state.modal} onHide={this.onUploadImage}>
               <Modal.Header closeButton>
                 <Modal.Title>Upload Image</Modal.Title>
               </Modal.Header>

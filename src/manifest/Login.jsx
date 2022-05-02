@@ -1,34 +1,147 @@
-import React from 'react';
-import Toolbar from '@material-ui/core/Toolbar';
-import AppBar from '@material-ui/core/AppBar';
+import React, { useEffect, useState, useContext } from 'react';
+import axios from 'axios';
+import { Link, useHistory } from 'react-router-dom';
+import { GoogleLogin } from 'react-google-login';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { Box, TextField, Button } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
-import Typography from '@material-ui/core/Typography';
-import Ellipse from '../manifest/LoginAssets/Ellipse.svg';
-import LoginImage from '../manifest/LoginAssets/Login.svg';
-import Facebook from '../manifest/LoginAssets/Facebook.svg';
+import {
+  Button,
+  TextField,
+  Typography,
+  InputAdornment,
+} from '@material-ui/core';
+import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import LoginContext from 'LoginContext';
+import Events from '../images/Events.png';
+import Routines from '../images/Routines.png';
+import Goals from '../images/Goals.png';
 import Google from '../manifest/LoginAssets/Google.svg';
 import Apple from '../manifest/LoginAssets/Apple.svg';
-import SignUpImage from '../manifest/LoginAssets/SignUp.svg';
-import Cookies from 'js-cookie';
-import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
-import { GoogleLogin } from 'react-google-login';
-import axios from 'axios';
-import { useState, useContext } from 'react';
-import LoginContext from 'LoginContext';
-import { AlternateEmail } from '@material-ui/icons';
+import Email from '../manifest/LoginAssets/Email.svg';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+import BackArrow from '../manifest/LoginAssets/Back_arrow.svg';
+import Footer from './Footer';
+
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 /* Custom Hook to make styles */
 const useStyles = makeStyles({
-  textFieldBackgorund: {
-    backgroundColor: '#FFFFFF',
+  boxLayout: {
+    border: '1px solid #707070',
+    borderRadius: '10px',
+    backgroundColor: 'rgba(0,0,0,.2)',
+    maxWidth: '90%',
+    width: '50%',
+    padding: '1rem',
+    marginTop: '1rem',
+    marginBottom: '1rem',
   },
-
-  buttonImage: {
-    backgroundImage: `url(${Ellipse})`,
+  heading: {
+    font: 'normal normal 600 50px Quicksand-Book',
+    color: '#000000',
+    textAlign: 'center',
+    marginTop: '1rem',
+    paddingLeft: '7rem',
+  },
+  backArrowImage: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: '1rem',
+    width: '50px',
+    height: '50px',
+    cursor: 'pointer',
+  },
+  subHeading: {
+    font: 'normal normal 600 22px Quicksand-Book',
+    color: '#000000',
+    textAlign: 'center',
+  },
+  headers: {
+    textAlign: 'left',
+    font: 'normal normal 22px Quicksand-Bold',
+    color: '#FFFFFF',
+  },
+  body: {
+    textAlign: 'center',
+    font: 'normal normal 600 16px Quicksand-Regular',
+    color: '#FFFFFF',
+  },
+  bodyCenter: {
+    textAlign: 'center',
+    font: 'normal normal 600 16px Quicksand-Regular',
+    color: '#FFFFFF',
+    margin: '0.5rem 0rem',
+  },
+  bodylogin: {
+    textAlign: 'center',
+    font: 'normal normal 600 13px Quicksand-Regular',
+    color: '#FFFFFF',
+    marginTop: '0.3rem',
+  },
+  bodyLink: {
+    textAlign: 'center',
+    font: 'normal normal 600 13px Quicksand-Regular',
+    color: '#FFFFFF',
+    textDecoration: 'underline',
+    cursor: 'pointer',
+  },
+  loginbuttons: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loginbutton: {
+    background: '#000000 0% 0% no-repeat padding-box',
+    borderRadius: '10px',
+    font: 'normal normal  16px Quicksand-Regular',
+    color: '#ffffff',
+    textTransform: 'none',
+    width: '100%',
+    marginTop: '0.3rem',
+  },
+  signupbuttons: {
+    background: '#ffffff 0% 0% no-repeat padding-box',
+    borderRadius: '10px',
+    font: 'normal normal bold 16px Quicksand-Bold',
+    color: '#000000',
+    margin: '1rem',
+    textTransform: 'none',
+  },
+  signupbutton: {
+    background: '#000000 0% 0% no-repeat padding-box',
+    borderRadius: '10px',
+    font: 'normal normal bold 16px Quicksand-Bold',
+    color: '#ffffff',
+    margin: '1rem',
+    textTransform: 'none',
+  },
+  buttonLayout: { width: '100%', padding: '0', margin: '0' },
+  infoLayout: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRight: '2px solid black',
+  },
+  infoText: {
+    marginTop: '0.5rem',
+    textAlign: 'center',
+    font: 'normal normal 600 16px Quicksand-Regular',
+    color: '#000000',
+    width: '80%',
+  },
+  infoImage: {
+    width: '80px',
+    height: '80px',
+  },
+  textfield: {
+    background: '#FFFFFF',
+    borderRadius: '10px',
+    marginBottom: '0.2rem',
   },
 });
 
@@ -39,11 +152,47 @@ export default function Login() {
   const classes = useStyles();
   const history = useHistory();
 
+  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loggedIn, setLoggedIn] = useState();
   const [validation, setValidation] = useState('');
-  const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
+  const [doNotExistShow, setDoNotExistShow] = useState(false);
+  const [userExistShow, setUserExistShow] = useState(false);
+  const [accessToken, setAccessToken] = useState('');
+  const [idToken, setIdToken] = useState('');
+  const [socialId, setSocialId] = useState('');
+  const [taID, setTaID] = useState('');
+  const [emailLogin, setEmailLogin] = useState(false);
+  const [passVisible, setPassvisble] = React.useState({
+    password: '',
+    showPassword: false,
+  });
+  useEffect(() => {
+    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    } else {
+      console.log('base_url', BASE_URL.substring(8, 18));
+      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+      console.log(CLIENT_ID, CLIENT_SECRET);
+    }
+  }, [loginContext.loginState.reload]);
+
+  useEffect(() => {
+    window.AppleID.auth.init({
+      clientId: process.env.REACT_APP_APPLE_CLIENT_ID, // This is the service ID we created.
+      scope: 'name email', // To tell apple we want the user name and emails fields in the response it sends us.
+      redirectURI: process.env.REACT_APP_TA_APPLE_REDIRECT_URI, // As registered along with our service ID
+      // state: 'origin:web', // Any string of your choice that you may use for some logic. It's optional and you may omit it.
+      usePopup: true, // Important if we want to capture the data apple sends on the client side.
+    });
+  }, [loginContext.loginState.reload]);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -52,40 +201,153 @@ export default function Login() {
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
+  const handleClickShowPassword = () => {
+    setPassvisble({ ...passVisible, showPassword: !passVisible.showPassword });
+  };
 
   const responseGoogle = (response) => {
-     // console.log(response);
+    console.log(response);
     if (response.profileObj) {
-      // console.log('Google login successful');
       let email = response.profileObj.email;
-      let accessToken = response.accessToken;
-      let socialId = response.googleId;
-      _socialLoginAttempt(email);
+      let ta_id = '';
+      setEmail(response.profileObj.email);
+      setSocialId(response.googleId);
+      axios.get(BASE_URL + `taTokenEmail/${email}`).then((response) => {
+        console.log(
+          'in events',
+          response['data']['ta_unique_id'],
+          response['data']['ta_google_auth_token']
+        );
+        console.log('in events', response);
+        setAccessToken(response['data']['ta_google_auth_token']);
+        let url =
+          'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
+        document.cookie = 'ta_uid=' + response['data']['ta_unique_id'];
+        document.cookie = 'ta_email=' + email;
+        document.cookie = 'patient_name=Loading';
+        loginContext.setLoginState({
+          ...loginContext.loginState,
+          reload: true,
+          loggedIn: true,
+          ta: {
+            ...loginContext.loginState.ta,
+            id: response['data']['ta_unique_id'],
+            email: email.toString(),
+          },
+          usersOfTA: [],
+          curUser: '',
+          curUserTimeZone: '',
+          curUserEmail: '',
+          curUserName: '',
+        });
+        console.log('Login successful');
+        console.log(email);
+        history.push({
+          pathname: '/home',
+          state: email,
+        });
+        setTaID(response['data']['ta_unique_id']);
+        ta_id = response['data']['ta_unique_id'];
+        var old_at = response['data']['ta_google_auth_token'];
+        console.log('in events', old_at);
+        var refreshToken = response['data']['ta_google_refresh_token'];
+
+        let checkExp_url = url + old_at;
+        console.log('in events', checkExp_url);
+        fetch(
+          `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`,
+          {
+            method: 'GET',
+          }
+        )
+          .then((response) => {
+            console.log('in events', response);
+            if (response['status'] === 400) {
+              console.log('in events if');
+              let authorization_url =
+                'https://accounts.google.com/o/oauth2/token';
+
+              var details = {
+                refresh_token: refreshToken,
+                client_id: CLIENT_ID,
+                client_secret: CLIENT_SECRET,
+                grant_type: 'refresh_token',
+              };
+
+              var formBody = [];
+              for (var property in details) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + '=' + encodedValue);
+              }
+              formBody = formBody.join('&');
+
+              fetch(authorization_url, {
+                method: 'POST',
+                headers: {
+                  'Content-Type':
+                    'application/x-www-form-urlencoded;charset=UTF-8',
+                },
+                body: formBody,
+              })
+                .then((response) => {
+                  return response.json();
+                })
+                .then((responseData) => {
+                  console.log(responseData);
+                  return responseData;
+                })
+                .then((data) => {
+                  console.log(data);
+                  let at = data['access_token'];
+                  var id_token = data['id_token'];
+                  setAccessToken(at);
+                  setIdToken(id_token);
+                  console.log('in events', at);
+                  let url = BASE_URL + `UpdateAccessToken/${ta_id}`;
+                  axios
+                    .post(url, {
+                      google_auth_token: at,
+                    })
+                    .then((response) => {})
+                    .catch((err) => {
+                      console.log(err);
+                    });
+                  return accessToken;
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+            } else {
+              setAccessToken(old_at);
+              console.log(old_at);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        console.log('in events', refreshToken, accessToken);
+      });
+
+      _socialLoginAttempt(email, accessToken, socialId, 'GOOGLE');
     }
   };
 
-  const responseFacebook = (response) => {
-    // console.log(response);
-    if (response.email) {
-      // console.log('Facebook login successful');
-      let email = response.email;
-      let accessToken = response.accessToken;
-      let socialId = response.id;
-      _socialLoginAttempt(email);
-    }
-  };
-
-  const _socialLoginAttempt = (email) => {
+  const _socialLoginAttempt = (email, at, socialId, platform) => {
     axios
       .get(BASE_URL + 'loginSocialTA/' + email)
       .then((res) => {
-        console.log(res);
+        console.log('loginSocialTA in events', res.data.result);
         if (res.data.result !== false) {
-          document.cookie = 'ta_uid=' + res.data.result;
+          // setTaID(res.data.result[0]);
+          document.cookie = 'ta_uid=' + res.data.result[0];
           document.cookie = 'ta_email=' + email;
           document.cookie = 'patient_name=Loading';
+          setAccessToken(res.data.result[1]);
+          setLoggedIn(true);
           loginContext.setLoginState({
             ...loginContext.loginState,
+            reload: true,
             loggedIn: true,
             ta: {
               ...loginContext.loginState.ta,
@@ -95,6 +357,8 @@ export default function Login() {
             usersOfTA: [],
             curUser: '',
             curUserTimeZone: '',
+            curUserEmail: '',
+            curUserName: '',
           });
           console.log('Login successful');
           console.log(email);
@@ -104,8 +368,21 @@ export default function Login() {
           });
           // Successful log in, Try to update tokens, then continue to next page based on role
         } else {
-          console.log('log in error');
-          history.push('/signup');
+          axios
+            .get(BASE_URL + 'GetUserEmailId/' + email)
+            .then((response) => {
+              if (response.data.message === 'User ID doesnt exist') {
+                console.log('log in error');
+                // history.push('/signup');
+                setDoNotExistShow(true);
+              } else {
+                setUserExistShow(true);
+              }
+            })
+            .catch((error) => {
+              console.log('its in landing page');
+              console.log(error);
+            });
         }
       })
       .catch((err) => {
@@ -122,9 +399,8 @@ export default function Login() {
     axios
       .get(BASE_URL + 'loginTA/' + email.toString() + '/' + password.toString())
       .then((response) => {
-        
         if (response.data.result !== false) {
-          console.log('respnse true', response.data.result)
+          console.log('respnse true', response.data.result);
           console.log('response', response.data);
           document.cookie = 'ta_uid=' + response.data.result;
           document.cookie = 'ta_email=' + email;
@@ -133,6 +409,7 @@ export default function Login() {
           console.log('response id', response.data.result, loggedIn);
           loginContext.setLoginState({
             ...loginContext.loginState,
+            reload: true,
             loggedIn: true,
             ta: {
               ...loginContext.loginState.ta,
@@ -142,6 +419,8 @@ export default function Login() {
             usersOfTA: [],
             curUser: '',
             curUserTimeZone: '',
+            curUserEmail: '',
+            curUserName: '',
           });
           history.push({
             pathname: '/home',
@@ -158,60 +437,186 @@ export default function Login() {
       });
   };
 
-/*   const responseGoogle = (response) => {
-    console.log('response', response);
-    if (response.profileObj !== null || response.profileObj !== undefined) {
-      let e = response.profileObj.email;
-      let at = response.accessToken;
-      let rt = response.googleId;
-      let first_name = response.profileObj.givenName;
-      let last_name = response.profileObj.familyName;
-      console.log(e, at, rt, first_name, last_name);
-      axios
-        .get(BASE_URL + 'loginSocialTA/' + e)
-        .then((response) => {
-          console.log('social login');
-          console.log(response.data.result);
-          if (response.data !== false) {
-            document.cookie = 'ta_uid=' + response.data.result;
-            document.cookie = 'ta_email=' + e;
-            document.cookie = 'patient_name=Loading';
-            loginContext.setLoginState({
-              ...loginContext.loginState,
-              loggedIn: true,
-              ta: {
-                ...loginContext.loginState.ta,
-                id: response.data.result,
-                email: email.toString(),
-              },
-              usersOfTA: [],
-              curUser: '',
-              curUserTimeZone: '',
-            });
-            console.log('Login successful');
-            console.log(e);
-            history.push({
-              pathname: '/home',
-              state: e,
-            });
-          } else {
-            console.log('social sign up with', e);
-            this.setState({
-              socialSignUpModalShow: true,
-              newEmail: e,
-            });
-            history.push({
-              pathname: '/signup',
-              state: '',
-            });
-            console.log('social sign up modal displayed');
-          }
-        })
-        .catch((error) => {
-          console.log('error', error);
-        });
-    }
-  }; */
+  const taDoNotExist = () => {
+    const modalStyle = {
+      position: 'absolute',
+      top: '30%',
+      left: '2%',
+      width: '400px',
+    };
+    const headerStyle = {
+      border: 'none',
+      textAlign: 'center',
+      display: 'flex',
+      alignItems: 'center',
+      font: 'normal normal 600 20px Quicksand-Book',
+      textTransform: 'uppercase',
+      backgroundColor: ' #F2F7FC',
+      padding: '1rem',
+    };
+    const footerStyle = {
+      border: 'none',
+      backgroundColor: ' #F2F7FC',
+    };
+    const bodyStyle = {
+      backgroundColor: ' #F2F7FC',
+      font: 'normal normal 600 16px Quicksand-Regular',
+    };
+    return (
+      <Modal
+        show={doNotExistShow}
+        onHide={hideDoNotExist}
+        style={{ marginTop: '70px', padding: 0 }}
+      >
+        <Form>
+          <Modal.Header style={headerStyle} closeButton>
+            <Modal.Title>TA Account Does Not Exist</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body style={bodyStyle}>
+            <div>
+              The TA with email: {email} does not exist! Please Sign Up!
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer style={footerStyle}>
+            <Row
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: '1rem',
+                width: '100%',
+              }}
+            >
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Button
+                  type="submit"
+                  onClick={hideDoNotExist}
+                  className={classes.signupbutton}
+                >
+                  Cancel
+                </Button>
+              </Col>
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Button
+                  type="submit"
+                  onClick={() => history.push('/signup')}
+                  className={classes.signupbuttons}
+                >
+                  Sign Up
+                </Button>
+              </Col>
+            </Row>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+    );
+  };
+  const hideDoNotExist = () => {
+    setDoNotExistShow(false);
+  };
+
+  const userExistModal = () => {
+    const modalStyle = {
+      position: 'absolute',
+      top: '30%',
+      left: '2%',
+      width: '400px',
+    };
+    const headerStyle = {
+      border: 'none',
+      textAlign: 'center',
+      display: 'flex',
+      alignItems: 'center',
+      font: 'normal normal 600 20px Quicksand-Book',
+      textTransform: 'uppercase',
+      backgroundColor: ' #F2F7FC',
+      padding: '1rem',
+    };
+    const footerStyle = {
+      border: 'none',
+      backgroundColor: ' #F2F7FC',
+      display: 'flex',
+      flexDirection: 'row',
+    };
+    const bodyStyle = {
+      backgroundColor: ' #F2F7FC',
+      font: 'normal normal 600 16px Quicksand-Regular',
+    };
+    return (
+      <Modal
+        show={userExistShow}
+        onHide={hideUserExist}
+        style={{ marginTop: '70px', padding: 0 }}
+      >
+        <Form>
+          <Modal.Header style={headerStyle} closeButton>
+            <Modal.Title>User Account Exists</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body style={bodyStyle}>
+            <div>
+              The User with email: {email} exists! Please contact your TA for
+              further details!
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer style={footerStyle}>
+            <Row
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: '1rem',
+              }}
+            >
+              <Col></Col>
+              <Col
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Button
+                  type="submit"
+                  onClick={hideUserExist}
+                  className={classes.signupbutton}
+                >
+                  Okay
+                </Button>
+              </Col>
+              <Col></Col>
+            </Row>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+    );
+  };
+  const hideUserExist = () => {
+    setUserExistShow(false);
+    history.push('/');
+  };
 
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
@@ -221,157 +626,286 @@ export default function Login() {
     //console.log(ta_uid);
     history.push('/home');
   } else {
+    //document.cookie = 'ta_uid=' + taID;
   }
-
   return (
-    <Box
-      display="flex"
-      style={{ width: '100%', height: '100%', backgroundColor: '#F2F7FC' }}
+    <div
+      style={{
+        background: '#F2F7FC',
+        height: '100vh',
+        position: 'relative',
+      }}
     >
-      <Box style={{ position: 'fixed', top: '100px', left: '-100px' }}>
-        <img src={Ellipse} alt="Ellipse" />
-      </Box>
-      <Box display="flex" marginTop="35%" marginLeft="30%">
-        <Button
-          onClick={() => history.push('/signup')}
-          style={{
-            width: '7.5rem',
-            height: '7.5rem',
-            backgroundImage: `url(${SignUpImage})`,
-          }}
-        ></Button>
-      </Box>
-      <Box></Box>
-
-      <Box
-        marginTop="15%"
-        display="flex"
-        flexDirection="column"
-        style={{ width: '15rem' }}
+      <div
+        fluid
+        style={{
+          backgroundImage: `url(${'login_background.jpg'})`,
+          width: '100%',
+          backgroundSize: 'cover',
+          minHeight: '60vh',
+          backgroundPosition: 'center',
+          justifyContent: 'center',
+        }}
       >
-        <Box marginBottom="1rem" width="100%">
-          <TextField
-            className={classes.textFieldBackgorund}
-            variant="outlined"
-            label="Email"
-            size="small"
-            error={validation}
-            fullWidth={true}
-            onChange={handleEmailChange}
-          />
-        </Box>
-
-        <Box>
-          <TextField
-            className={classes.textFieldBackgorund}
-            variant="outlined"
-            label="Password"
-            size="small"
-            type="password"
-            error={validation}
-            fullWidth={true}
-            onChange={handlePasswordChange}
-          />
-        </Box>
-
-        <Box color="red" style={{ textTransform: 'lowercase' }}>
-          <Typography>{validation}</Typography>
-        </Box>
-        <Box justifyContent="flex-start">
-          <Button style={{ textTransform: 'lowercase', fontWeight: 'bold' }}>
-            Forgot Password?
-          </Button>
-        </Box>
-
-        <Box
-          marginTop="1rem"
-          display="flex"
-          justifyContent="center"
-          style={{ fontWeight: 'bold' }}
-        >
-          Or Login With
-        </Box>
-
-        <Box display="flex" justifyContent="center" marginTop="1rem">
-          <Box>
-            <Button
-              disableRipple={true}
-              disableFocusRipple={true}
-              disableTouchRipple={true}
-              disableElevation={true}
-              style={{
-                borderRadius: '32px',
-                height: '3rem',
-                backgroundImage: `url(${Facebook})`,
-              }}
-            ></Button>
-          </Box>
-          <Box>
-            <GoogleLogin
-              clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
-              render={(renderProps) => (
-                <Button
-                  style={{
-                    borderRadius: '32px',
-                    height: '3rem',
-                    backgroundImage: `url(${Google})`,
-                  }}
-                  onClick={renderProps.onClick}
-                  disabled={renderProps.disabled}
-                ></Button>
-              )}
-              buttonText="Log In"
-              onSuccess={responseGoogle}
-              onFailure={responseGoogle}
-              isSignedIn={false}
-              disable={false}
-              cookiePolicy={'single_host_origin'}
-            />
-          </Box>
-          <Box>
-            <Button
-              disableRipple={true}
-              disableFocusRipple={true}
-              disableTouchRipple={true}
-              disableElevation={true}
-              style={{
-                borderRadius: '32px',
-                height: '3rem',
-                backgroundImage: `url(${Apple})`,
-              }}
-            ></Button>
-          </Box>
-        </Box>
-
-        <Box
-          display="flex"
-          justifyContent="center"
-          marginTop="5rem"
-          marginBottom="7.5rem"
-          style={{ fontWeight: 'bold' }}
-        >
-          Don't have an account?
-        </Box>
-      </Box>
-
-      <Box marginTop="14%" marginLeft="2rem">
-        <Button
-          onClick={handleSubmit}
+        <Row
           style={{
-            width: '7.5rem',
-            height: '7.5rem',
-            backgroundImage: `url(${LoginImage})`,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            margin: 0,
+            padding: 0,
           }}
-        ></Button>
-      </Box>
+        >
+          <Row style={{ width: '100%' }}>
+            <Col className={classes.backArrowImage}>
+              <img src={BackArrow} onClick={() => history.push('/')} />
+            </Col>
+            <Col xs={10} className={classes.heading}>
+              Welcome to Manifest My Life
+            </Col>
+            <Col></Col>
+          </Row>
+          <br />
+          <Row className={classes.subHeading}>
+            A little help to manage your everyday
+          </Row>
+          <Row className={classes.boxLayout}>
+            {emailLogin === false ? (
+              <Row xs={12} className={classes.buttonLayout}>
+                <Row xs={12} className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8} className={classes.loginbuttons}>
+                    <div className={classes.body}>
+                      Trusted Advisors please log in using one of the following
+                      methods:
+                    </div>
+                  </Col>
+                  <Col></Col>
+                </Row>
+                <Row xs={12} className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8} className={classes.loginbuttons}>
+                    <Button>
+                      <GoogleLogin
+                        clientId={CLIENT_ID}
+                        render={(renderProps) => (
+                          <img
+                            src={Google}
+                            onClick={renderProps.onClick}
+                            disabled={renderProps.disabled}
+                            alt={''}
+                            style={{
+                              minWidth: '70%',
+                              maxWidth: '70%',
+                              padding: '0',
+                              margin: 0,
+                            }}
+                          ></img>
+                        )}
+                        buttonText="Log In"
+                        onSuccess={responseGoogle}
+                        onFailure={responseGoogle}
+                        isSignedIn={false}
+                        disable={false}
+                        cookiePolicy={'single_host_origin'}
+                      />
+                    </Button>
+                  </Col>
+                  <Col></Col>
+                </Row>
+                <Row xs={12} className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8} className={classes.loginbuttons}>
+                    <Button>
+                      <img
+                        src={Apple}
+                        alt={''}
+                        className={classes.buttonLayout}
+                        style={{
+                          minWidth: '70%',
+                          maxWidth: '70%',
+                          padding: '0',
+                          margin: 0,
+                        }}
+                        onClick={() => {
+                          window.AppleID.auth.signIn();
+                        }}
+                      ></img>
+                    </Button>
+                  </Col>
+                  <Col></Col>
+                </Row>
+                <Row xs={12} className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8} className={classes.loginbuttons}>
+                    <Button>
+                      <img
+                        src={Email}
+                        alt={''}
+                        style={{
+                          minWidth: '70%',
+                          maxWidth: '70%',
+                          padding: '0',
+                          margin: '0',
+                        }}
+                        onClick={() => {
+                          setEmailLogin(true);
+                        }}
+                      ></img>
+                    </Button>
+                  </Col>
+                  <Col></Col>
+                </Row>
+              </Row>
+            ) : (
+              <Row className={classes.buttonLayout}>
+                <Row className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8}>
+                    {' '}
+                    <TextField
+                      className={classes.textfield}
+                      variant="outlined"
+                      label="Email address"
+                      size="small"
+                      error={validation}
+                      fullWidth={true}
+                      onChange={handleEmailChange}
+                    />
+                  </Col>
+                  <Col></Col>
+                </Row>
 
-      <Box style={{ position: 'fixed', right: '-100px', bottom: '-100px' }}>
-        <img src={Ellipse} alt="Ellipse" />
-      </Box>
+                <Row className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8}>
+                    <TextField
+                      className={classes.textfield}
+                      variant="outlined"
+                      label="Password"
+                      size="small"
+                      type={passVisible.showPassword ? 'text' : 'password'}
+                      error={validation}
+                      fullWidth={true}
+                      onChange={handlePasswordChange}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            {passVisible.showPassword ? (
+                              <VisibilityIcon
+                                onClick={handleClickShowPassword}
+                                style={{ color: '#797D83' }}
+                                aria-hidden="false"
+                              />
+                            ) : (
+                              <VisibilityOff
+                                onClick={handleClickShowPassword}
+                                style={{ color: '#797D83' }}
+                                aria-hidden="false"
+                              ></VisibilityOff>
+                            )}
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Col>
+                  <Col></Col>
+                </Row>
+                <Row xs={12} className={classes.buttonLayout}>
+                  <Col className={classes.bodylogin}>Forgot Password? </Col>
+                  <Col xs={4}></Col>
+                </Row>
+                <Row className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8}>
+                    <Typography
+                      style={{
+                        color: 'black',
+                        textTransform: 'lowercase',
+                        textAlign: 'center',
+                      }}
+                    >
+                      {validation}
+                    </Typography>
+                  </Col>
+                  <Col></Col>
+                </Row>
+                <Row className={classes.buttonLayout}>
+                  <Col></Col>
+                  <Col xs={8}>
+                    <Button
+                      className={classes.loginbutton}
+                      onClick={handleSubmit}
+                    >
+                      Log In
+                    </Button>
+                  </Col>
+                  <Col></Col>
+                </Row>
+              </Row>
+            )}
 
-      {/* <Box hidden={loggedIn === true}>
-                  <Loading/>
-            </Box> */}
-    </Box>
+            <Row xs={12} className={classes.buttonLayout}>
+              <Col></Col>
+              <Col xs={8} className={classes.bodylogin}>
+                Don't have an account?{' '}
+                <span
+                  className={classes.bodyLink}
+                  onClick={() => history.push('/signup')}
+                >
+                  Sign Up
+                </span>
+              </Col>
+              <Col></Col>
+            </Row>
+          </Row>
+          <Row style={{ justifyContent: 'center' }}>
+            <Col xs={8} className={classes.bodyCenter}>
+              With the use of Manifest's web application, the Trusted Advisor
+              can assign events, routines, and goals to the patients schedule
+              which they can then access on the mobile application.
+            </Col>
+          </Row>
+        </Row>
+      </div>
+      <Row
+        style={{
+          display: 'flex',
+          justifyContent: 'space-evenly',
+          marginTop: '1rem',
+          paddingBottom: '3rem',
+        }}
+      >
+        <Col xs={4} className={classes.infoLayout}>
+          <img className={classes.infoImage} src={Events} />
+          <div className={classes.infoText}>Events</div>
+          <div className={classes.infoText}>
+            Schedule events and never forget another appointment or meeting
+            again.
+          </div>
+        </Col>
+        <Col xs={4} className={classes.infoLayout}>
+          <img className={classes.infoImage} src={Routines} />
+          <div className={classes.infoText}>Routines</div>
+          <div className={classes.infoText}>
+            Manage your day by creating routines with actionable steps and
+            scheduling.
+          </div>
+        </Col>
+        <Col xs={4} className={classes.infoLayout}>
+          <img className={classes.infoImage} src={Goals} />
+          <div className={classes.infoText}>Goals</div>
+          <div className={classes.infoText}>
+            Create goals to help motivate yourself to get what you need to get
+            done.
+          </div>
+        </Col>
+      </Row>
+      <Footer />
+      {taDoNotExist()}
+      {userExistModal()}
+    </div>
   );
 }

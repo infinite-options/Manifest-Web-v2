@@ -1,39 +1,29 @@
 import React from 'react';
-import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
-import AppBar from '@material-ui/core/AppBar';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { useHistory } from 'react-router-dom';
-import Typography from '@material-ui/core/Typography';
 
 /* Custom Hook to make styles */
 const useStyles = makeStyles({
   buttonSelection: {
-    width: '14%',
-    height: '70px',
-    // borderBottomLeftRadius: '25%',
-    // borderBottomRightRadius: '25%',
-    borderRadius: '0%',
+    width: '21%',
+    height: '28px',
     textTransform: 'capitalize',
-    color: '#FFFFFF',
-    backgroundColor: '#bbc8d7',
+    borderRadius: '0%',
+    color: '#000000',
     marginLeft: '.5%',
     marginRight: '.5%',
+    background: '#FFFFFF 0% 0% no-repeat padding-box',
+    border: '1px solid #000000',
+    borderRadius: '10px',
   },
   buttonContainer: {
     flex: 1,
     display: 'flex',
     justifyContent: 'flex-start',
     textTransform: 'none',
-  },
-
-  dateContainer: {
-    height: '70px',
-    width: '100%',
-    // borderBottomLeftRadius: "10%",
-    // borderBottomRightRadius: "10%",
-    paddingTpop: '100px',
-    color: '#FFFFFF',
+    background: '#F2F7FC 0% 0% no-repeat padding-box',
+    paddingBottom: '0.5rem',
   },
 });
 
@@ -43,7 +33,6 @@ export default function MiniNavigation() {
 
   const classes = useStyles();
 
-  /* History of the HomePage URL which is shown url tab */
   function homeNavigation() {
     history.push('/home');
   }
@@ -52,21 +41,24 @@ export default function MiniNavigation() {
     history.push('/about');
   }
 
-  /* function mainNavigation() {
-    history.push('/main');
-  } */
-
-  /* History of the ContactPage URL which is shown url tab */
-  function loginNavigation() {
-    history.push('/login');
-  }
-
   function historyNavigation() {
     history.push('/history');
   }
 
-  return (
-    <div className={classes.buttonContainer} style={{ width: '35%' }}>
+  return document.cookie
+    .split(';')
+    .some((item) => item.trim().startsWith('ta_uid=')) ? (
+    <div
+      className={classes.buttonContainer}
+      style={{ width: '100%', paddingTop: '0.5rem' }}
+    >
+      <Button
+        className={classes.buttonSelection}
+        onClick={homeNavigation}
+        id="one"
+      >
+        Calendar
+      </Button>
       <Button
         className={classes.buttonSelection}
         id="one"
@@ -81,21 +73,10 @@ export default function MiniNavigation() {
       >
         About
       </Button>
-      <Button className={classes.buttonSelection} id="one">
-        Events
-      </Button>
-      <Button className={classes.buttonSelection} id="one">
-        Goals
-      </Button>
-      <Button
-        className={classes.buttonSelection}
-        onClick={homeNavigation}
-        id="one"
-      >
-        Routines
-      </Button>
 
       <div style={{ width: '25%' }}></div>
     </div>
+  ) : (
+    ''
   );
 }

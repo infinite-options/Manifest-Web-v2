@@ -6,7 +6,7 @@ import axios from 'axios';
 import EditATSContext from './EditATSContext';
 import { containerSizesSelector } from '@material-ui/data-grid';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const convertDateToDayString = (dateObject) => {
   // console.log(dateObject)
@@ -100,7 +100,7 @@ const EditIcon = ({ routine, task, step, setRID, getActionsEndPoint }) => {
           itemToChange.start_time = startTime;
           console.log('chan', startTime);
 
-          delete itemToChange.at_datetime_started;
+          //delete itemToChange.at_datetime_started;
           // Convert end_day_and_time to day and time
           const endDate = new Date(
             itemToChange.at_datetime_completed.replace(/-/g, '/')
@@ -112,7 +112,7 @@ const EditIcon = ({ routine, task, step, setRID, getActionsEndPoint }) => {
           console.log('chan', endTime);
           itemToChange.end_time = endTime;
           console.log('chan', itemToChange.end_time);
-          delete itemToChange.at_datetime_completed;
+          //delete itemToChange.at_datetime_completed;
           // Convert expected_completion_time to number of minutes
           const expectedCompletionTime =
             itemToChange.at_expected_completion_time
