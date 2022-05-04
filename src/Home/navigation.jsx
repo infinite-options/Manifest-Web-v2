@@ -111,7 +111,11 @@ export function Navigation() {
   const getTAImage = () => {
     axios.get(BASE_URL + 'getPeopleImages/' + selectedUser).then((response) => {
       console.log(response);
-      // setTaImage(response.data.result[0].url);
+      if (response.result.length == 0) {
+        setTaImage('');
+      } else {
+        setTaImage(response.data.result[0].url);
+      }
     });
   };
   useEffect(() => {
