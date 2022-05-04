@@ -26,6 +26,59 @@ const EditRTS = (props) => {
   const [imageName, setImageName] = useState('');
   const [imageURL, setImageURL] = useState('');
 
+
+  //Wrote Code here!
+  //Wrote Code here!
+  const [automatic, setAutomatic] = useState(false);
+  const [changeState, setState] = useState(0);
+  const AUTO_NOTIF_MINUTES = 30;
+
+  function handleAutomatic()
+  {
+    setAutomatic(!automatic);
+    if(!automatic)
+    {
+      console.log("automatic is true");
+      // editingRTSContext.editingRTS.newItem.user_notifications.before.is_enabled = 'True';
+      // editingRTSContext.editingRTS.newItem.ta_notifications.before.is_enabled = 'True';
+      // editingRTSContext.editingRTS.newItem.user_notifications.during.is_enabled = 'True';
+      // editingRTSContext.editingRTS.newItem.ta_notifications.during.is_enabled = 'True';
+      // editingRTSContext.editingRTS.newItem.user_notifications.after.is_enabled = 'True';
+      // editingRTSContext.editingRTS.newItem.ta_notifications.after.is_enabled = 'True';
+    }
+    else
+    {
+      console.log("automatic is false");
+      // editingRTSContext.editingRTS.newItem.user_notifications.before.is_enabled = 'False';
+      // editingRTSContext.editingRTS.newItem.ta_notifications.before.is_enabled = 'False';
+      // editingRTSContext.editingRTS.newItem.user_notifications.during.is_enabled = 'False';
+      // editingRTSContext.editingRTS.newItem.ta_notifications.during.is_enabled = 'False';
+      // editingRTSContext.editingRTS.newItem.user_notifications.after.is_enabled = 'False';
+      // editingRTSContext.editingRTS.newItem.ta_notifications.after.is_enabled = 'False';
+    }
+  }
+  function handleClear()
+  {
+      editingRTSContext.editingRTS.newItem.user_notifications.before.is_enabled = 'False';
+      editingRTSContext.editingRTS.newItem.ta_notifications.before.is_enabled = 'False';
+      editingRTSContext.editingRTS.newItem.user_notifications.during.is_enabled = 'False';
+      editingRTSContext.editingRTS.newItem.ta_notifications.during.is_enabled = 'False';
+      editingRTSContext.editingRTS.newItem.user_notifications.after.is_enabled = 'False';
+      editingRTSContext.editingRTS.newItem.ta_notifications.after.is_enabled = 'False';
+      editingRTSContext.editingRTS.newItem.user_notifications.before.time = convertMins(0);
+      editingRTSContext.editingRTS.newItem.ta_notifications.before.time = convertMins(0);
+      editingRTSContext.editingRTS.newItem.user_notifications.during.time = convertMins(0);
+      editingRTSContext.editingRTS.newItem.ta_notifications.during.time = convertMins(0);
+      editingRTSContext.editingRTS.newItem.user_notifications.after.time = convertMins(0);
+      editingRTSContext.editingRTS.newItem.ta_notifications.after.time = convertMins(0);
+      setState(changeState + 1);
+  }
+  //Wrote Code here!
+  //Wrote Code here!
+
+
+
+
   const getTimes = (a_day_time, b_day_time) => {
     const [a_start_time, b_start_time] = [
       a_day_time.substring(10, a_day_time.length),
@@ -157,6 +210,29 @@ const EditRTS = (props) => {
         ? false
         : true;
     console.log(object.start_day.substring(5, 6));
+    // Wrote code here!
+    // Wrote code here!
+    // Wrote code here!
+    if (automatic)
+    {
+      console.log("True");
+      editingRTSContext.editingRTS.newItem.user_notifications.before.is_enabled = 'True';
+      editingRTSContext.editingRTS.newItem.ta_notifications.before.is_enabled = 'True';
+      editingRTSContext.editingRTS.newItem.user_notifications.during.is_enabled = 'True';
+      editingRTSContext.editingRTS.newItem.ta_notifications.during.is_enabled = 'True';
+      editingRTSContext.editingRTS.newItem.user_notifications.after.is_enabled = 'True';
+      editingRTSContext.editingRTS.newItem.ta_notifications.after.is_enabled = 'True';
+      
+      editingRTSContext.editingRTS.newItem.user_notifications.before.time = convertMins(AUTO_NOTIF_MINUTES);
+      editingRTSContext.editingRTS.newItem.user_notifications.during.time = convertMins(AUTO_NOTIF_MINUTES);
+      editingRTSContext.editingRTS.newItem.user_notifications.after.time = convertMins(AUTO_NOTIF_MINUTES);
+      editingRTSContext.editingRTS.newItem.ta_notifications.before.time = convertMins(AUTO_NOTIF_MINUTES);
+      editingRTSContext.editingRTS.newItem.ta_notifications.during.time = convertMins(AUTO_NOTIF_MINUTES);
+      editingRTSContext.editingRTS.newItem.ta_notifications.after.time = convertMins(AUTO_NOTIF_MINUTES);
+    }
+    // Wrote code here!
+    // Wrote code here!
+    // Wrote code here!
     console.log(new Date().getDate());
     delete object.start_day;
     delete object.start_time;
@@ -1827,6 +1903,53 @@ const EditRTS = (props) => {
             </Row>
           </Row>
         </Col>
+        {/*
+        *  
+        * WROTE CODE HERE 
+        *
+        */}
+        <input 
+          type=
+          "checkbox"
+          checked={
+            automatic
+          }
+          style={{
+            height: '20px',
+            width: '20px' 
+          }}
+          //Causes infinite rerenders
+          // onClick={
+          //   setAutomatic(!automatic)
+          // }
+          onClick={handleAutomatic}
+        >
+          
+        </input>
+        
+        &nbsp;&nbsp;
+        Enable automatic notifications
+
+
+        <button
+          type="submit"
+          style={{
+            border: 'none',
+            borderRadius: '10px',
+            position: 'relative',
+            margin: '10px',
+            left: '50px'
+          }}
+          onClick={handleClear}
+          >
+          Clear all entries
+
+        </button>
+        {/*
+        *  
+        * WROTE CODE HERE 
+        *
+        */}
       </Container>
       <div
         style={{
