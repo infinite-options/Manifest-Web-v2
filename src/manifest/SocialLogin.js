@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import GoogleLogin from 'react-google-login';
+import AppleLogin from 'react-apple-login';
 import axios from 'axios';
 import { Box, Button } from '@material-ui/core';
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -79,16 +80,6 @@ function SocialLogin(props) {
       CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
       console.log(CLIENT_ID, CLIENT_SECRET);
     }
-  }, [loginContext.loginState.reload]);
-
-  useEffect(() => {
-    window.AppleID.auth.init({
-      clientId: process.env.REACT_APP_APPLE_CLIENT_ID, // This is the service ID we created.
-      scope: 'name email', // To tell apple we want the user name and emails fields in the response it sends us.
-      redirectURI: process.env.REACT_APP_TA_APPLE_REDIRECT_URI, // As registered along with our service ID
-      // state: 'origin:web', // Any string of your choice that you may use for some logic. It's optional and you may omit it.
-      usePopup: true, // Important if we want to capture the data apple sends on the client side.
-    });
   }, [loginContext.loginState.reload]);
 
   const responseGoogle = (response) => {
@@ -585,7 +576,7 @@ function SocialLogin(props) {
       <Row xs={12} className={classes.buttonLayout}>
         <Col></Col>
         <Col xs={8} className={classes.loginbuttons}>
-          <Button>
+          {/* <Button>
             <img
               src={Apple}
               alt={''}
@@ -596,11 +587,38 @@ function SocialLogin(props) {
                 margin: 0,
               }}
               className={classes.buttonLayout}
-              onClick={() => {
-                window.AppleID.auth.signIn();
-              }}
+              // onClick={() => {
+              //   window.AppleID.auth.signIn();
+              // }}
+              onClick={() => responseApple()}
             ></img>
-          </Button>
+          </Button> */}
+          <AppleLogin
+            clientId={process.env.REACT_APP_APPLE_CLIENT_ID}
+            onSuccess={(res) => {
+              console.log('res', res);
+            }}
+            onError={(error) => console.log(error)}
+            redirectURI={process.env.REACT_APP_TA_APPLE_REDIRECT_URI}
+            usePopup={false}
+            responseType={'code id_token'}
+            responseMode={'form_post'}
+            scope={'email name'}
+            render={(renderProps) => (
+              <img
+                src={Apple}
+                onClick={renderProps.onClick}
+                disabled={renderProps.disabled}
+                alt={''}
+                style={{
+                  minWidth: '70%',
+                  maxWidth: '70%',
+                  padding: '0',
+                  margin: 0,
+                }}
+              ></img>
+            )}
+          />
         </Col>
         <Col></Col>
       </Row>{' '}

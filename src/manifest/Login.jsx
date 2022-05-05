@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { Link, useHistory } from 'react-router-dom';
 import { GoogleLogin } from 'react-google-login';
+import AppleLogin from 'react-apple-login';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import {
   Button,
@@ -183,15 +184,51 @@ export default function Login() {
       console.log(CLIENT_ID, CLIENT_SECRET);
     }
   }, [loginContext.loginState.reload]);
+  let uid = window.location.href.split('=')[1];
+  console.log(uid);
 
   useEffect(() => {
-    window.AppleID.auth.init({
-      clientId: process.env.REACT_APP_APPLE_CLIENT_ID, // This is the service ID we created.
-      scope: 'name email', // To tell apple we want the user name and emails fields in the response it sends us.
-      redirectURI: process.env.REACT_APP_TA_APPLE_REDIRECT_URI, // As registered along with our service ID
-      // state: 'origin:web', // Any string of your choice that you may use for some logic. It's optional and you may omit it.
-      usePopup: true, // Important if we want to capture the data apple sends on the client side.
-    });
+    axios
+      .get(BASE_URL + 'loginSocialTA/' + uid)
+      .then((res) => {
+        console.log('loginSocialTA in events', res.data.result);
+        if (res.data.result !== false) {
+          // setTaID(res.data.result[0]);
+          document.cookie = 'ta_uid=' + res.data.result[0];
+          document.cookie = 'ta_email=' + uid;
+          document.cookie = 'patient_name=Loading';
+          setAccessToken(res.data.result[1]);
+          setLoggedIn(true);
+          loginContext.setLoginState({
+            ...loginContext.loginState,
+            reload: true,
+            loggedIn: true,
+            ta: {
+              ...loginContext.loginState.ta,
+              id: res.data.result,
+              email: uid.toString(),
+            },
+            usersOfTA: [],
+            curUser: '',
+            curUserTimeZone: '',
+            curUserEmail: '',
+            curUserName: '',
+          });
+          console.log('Login successful');
+          history.push({
+            pathname: '/home',
+            state: uid,
+          });
+          // Successful log in, Try to update tokens, then continue to next page based on role
+        } else {
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+      });
   }, [loginContext.loginState.reload]);
 
   const handleEmailChange = (event) => {
@@ -718,7 +755,7 @@ export default function Login() {
                 <Row xs={12} className={classes.buttonLayout}>
                   <Col></Col>
                   <Col xs={8} className={classes.loginbuttons}>
-                    <Button>
+                    {/* <Button>
                       <img
                         src={Apple}
                         alt={''}
@@ -733,7 +770,33 @@ export default function Login() {
                           window.AppleID.auth.signIn();
                         }}
                       ></img>
-                    </Button>
+                    </Button> */}
+                    <AppleLogin
+                      clientId={process.env.REACT_APP_APPLE_CLIENT_ID}
+                      onSuccess={(res) => {
+                        console.log('res', res);
+                      }}
+                      onError={(error) => console.log(error)}
+                      redirectURI={process.env.REACT_APP_TA_APPLE_REDIRECT_URI}
+                      usePopup={false}
+                      responseType={'code id_token'}
+                      responseMode={'form_post'}
+                      scope={'email name'}
+                      render={(renderProps) => (
+                        <img
+                          src={Apple}
+                          onClick={renderProps.onClick}
+                          disabled={renderProps.disabled}
+                          alt={''}
+                          style={{
+                            minWidth: '70%',
+                            maxWidth: '70%',
+                            padding: '0',
+                            margin: 0,
+                          }}
+                        ></img>
+                      )}
+                    />
                   </Col>
                   <Col></Col>
                 </Row>

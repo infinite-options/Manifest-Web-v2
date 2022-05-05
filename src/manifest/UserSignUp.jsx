@@ -194,9 +194,6 @@ export default function UserSignUp() {
     });
   }, [loginContext.loginState.reload]);
 
-  const responseApple = (response) => {
-    console.log(response);
-  };
   const responseGoogle = (response) => {
     console.log('response', response);
 
@@ -781,22 +778,17 @@ export default function UserSignUp() {
                       ></img>
                     </Button> */}
                     <AppleLogin
-                      clientId="com.infiniteoptions-manifestmy.life"
-                      // redirectURI="https://redirectUrl.com"
-                      redirectURI={
-                        BASE_URL.substring(8, 18) == '3s3sftsr90'
-                          ? 'https://manifestmy.space'
-                          : 'https://manifestmy.life'
-                      }
-                      // onSuccess={responseApple}
-                      // onError={responseApple}
-                      onSuccess={(res) => console.log(res)}
+                      clientId={process.env.REACT_APP_APPLE_CLIENT_ID}
+                      onSuccess={(res) => {
+                        console.log('res', res);
+                      }}
                       onError={(error) => console.log(error)}
-                      // redirectURI={
-                      //   'https://gyn3vgy3fb.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserAppleLogin'
-                      // }
+                      redirectURI={
+                        process.env.REACT_APP_USER_APPLE_REDIRECT_URI
+                      }
                       usePopup={false}
-                      responseType={'code'}
+                      responseType={'code id_token'}
+                      responseMode={'form_post'}
                       scope={'email name'}
                       render={(renderProps) => (
                         <img
