@@ -162,7 +162,7 @@ export default function AppleSignUp() {
   }, []);
 
   const getProfile = () => {
-    if (uid.charAt(0) === 2) {
+    if (uid.charAt(0) === '2') {
       axios
         .get(BASE_URL + 'TAProfile/' + uid)
         .then((response) => {
