@@ -201,7 +201,7 @@ export default function Login() {
           setLoggedIn(true);
           loginContext.setLoginState({
             ...loginContext.loginState,
-            reload: true,
+            reload: false,
             loggedIn: true,
             ta: {
               ...loginContext.loginState.ta,
@@ -264,7 +264,7 @@ export default function Login() {
         document.cookie = 'patient_name=Loading';
         loginContext.setLoginState({
           ...loginContext.loginState,
-          reload: true,
+          reload: false,
           loggedIn: true,
           ta: {
             ...loginContext.loginState.ta,
@@ -384,7 +384,7 @@ export default function Login() {
           setLoggedIn(true);
           loginContext.setLoginState({
             ...loginContext.loginState,
-            reload: true,
+            reload: false,
             loggedIn: true,
             ta: {
               ...loginContext.loginState.ta,
@@ -446,7 +446,7 @@ export default function Login() {
           console.log('response id', response.data.result, loggedIn);
           loginContext.setLoginState({
             ...loginContext.loginState,
-            reload: true,
+            reload: false,
             loggedIn: true,
             ta: {
               ...loginContext.loginState.ta,

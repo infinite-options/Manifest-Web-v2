@@ -121,7 +121,7 @@ export function Navigation() {
   useEffect(() => {
     getTAImage();
     setUserImage(curUserPic);
-  }, [loginContext.loginState.reload]);
+  }, []);
   // useEffect(() => {
   //   setUserImage(curUserPic);
   // }, [currentUser]);

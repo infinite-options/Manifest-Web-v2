@@ -1631,7 +1631,7 @@ export function Admin() {
                   toggleAssignConfirmed(false);
                   loginContext.setLoginState({
                     ...loginContext.loginState,
-                    reload: true,
+                    reload: !loginContext.loginState.reload,
                   });
                 }}
               >
@@ -1721,8 +1721,8 @@ export function Admin() {
       code: auth_code,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
-      redirect_uri: redirecturi,
-      // redirect_uri: 'http://localhost:3000',
+      // redirect_uri: redirecturi,
+      redirect_uri: 'http://localhost:3000',
       grant_type: 'authorization_code',
     };
 
@@ -1818,7 +1818,7 @@ export function Admin() {
       document.cookie = 'patient_pic=' + listOfUsers[0].user_picture;
       loginContext.setLoginState({
         ...loginContext.loginState,
-        reload: true,
+        reload: !loginContext.loginState.reload,
       });
       history.push('/home');
     });
@@ -1831,6 +1831,8 @@ export function Admin() {
     axios.post(BASE_URL + 'deleteUser', body).then((response) => {
       console.log('deleting');
       console.log(response.data);
+      setDeleteUser(!deleteUser);
+      toggleCalled(!called);
       document.cookie = 'patient_name=' + listOfUsers[0].user_name;
       document.cookie = 'patient_timeZone=' + listOfUsers[0].time_zone;
       document.cookie = 'patient_uid=' + listOfUsers[0].user_unique_id;
@@ -1840,8 +1842,6 @@ export function Admin() {
         ...loginContext.loginState,
         reload: !loginContext.loginState.reload,
       });
-      setDeleteUser(!deleteUser);
-      toggleCalled(!called);
       history.push('/home');
     });
   }
@@ -1910,10 +1910,22 @@ export function Admin() {
               padding: '40px',
             }}
           >
-            <div style={{ font: 'normal normal 600 16px Quicksand-Regular' }}>
+            <div
+              style={{
+                font: 'normal normal 600 20px Quicksand-Bold',
+                textAlign: 'center',
+                marginBottom: '2rem',
+              }}
+            >
               New User Sign Up
             </div>
-            <div style={{ font: 'normal normal 600 16px Quicksand-Regular' }}>
+            <div
+              style={{
+                font: 'normal normal 600 16px Quicksand-Regular',
+                textAlign: 'center',
+                marginBottom: '1rem',
+              }}
+            >
               {emailUser}
             </div>
             <Form.Control
@@ -2036,12 +2048,12 @@ export function Admin() {
                       responseType="code"
                       buttonText="Log In"
                       ux_mode="redirect"
-                      redirectUri={
-                        BASE_URL.substring(8, 18) == '3s3sftsr90'
-                          ? 'https://manifestmy.space'
-                          : 'https://manifestmy.life'
-                      }
-                      // redirectUri="http://localhost:3000"
+                      // redirectUri={
+                      //   BASE_URL.substring(8, 18) == '3s3sftsr90'
+                      //     ? 'https://manifestmy.space'
+                      //     : 'https://manifestmy.life'
+                      // }
+                      redirectUri="http://localhost:3000"
                       scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
                       onSuccess={responseGoogle}
                       onFailure={responseGoogle}
