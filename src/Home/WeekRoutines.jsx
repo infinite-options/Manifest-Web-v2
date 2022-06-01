@@ -30,7 +30,6 @@ export default class WeekRoutines extends Component {
 
   sortRoutines = () => {
     var arr = this.props.routines;
-    console.log('is_persistent', this.props);
     console.log('is_persistent', arr);
     var dic = {};
     const tz = {
@@ -41,28 +40,14 @@ export default class WeekRoutines extends Component {
     let endObject = this.props.dateContext.clone();
     let startDay = startObject.startOf('week');
     let endDay = endObject.endOf('week');
-    console.log('endof temp timezone', endDay);
     let startDate = new Date(startDay.format('YYYY-MM-DD'));
     let endDate = endDay.toDate();
-    //let endDate = new Date(endDay.format('YYYY-MM-DD'));
-    console.log('endof temp timezone', endDate);
-    //console.log('endof temp timezone', endDay.toDate());
     startDate.setHours(0, 0, 0);
     endDate.setHours(23, 59, 59);
-    console.log(
-      'startDay = ',
-      startDay,
-      ', startDate = ',
-      startDate,
-      '\nEndDay = ',
-      endDay,
-      ', endDate = ',
-      endDate
-    );
+
     for (let i = 0; i < arr.length; i++) {
       let tempStart = arr[i].start_day_and_time;
-      let tempEnd = arr[i].end_day_and_time;
-      console.log('temp timezone start', tempStart);
+
       let tempStartTime = new Date(
         moment(tempStart.replace(/-/g, '/')).format(
           'ddd MMM D YYYY HH:mm:ss [GMT]ZZ'
@@ -73,7 +58,6 @@ export default class WeekRoutines extends Component {
       //     timeZone: this.props.timeZone,
       //   })
       // );
-      console.log('temp timeZone', arr[i].title, tempStartTime);
       let repeatOccurences = parseInt(arr[i]['repeat_occurences']);
       let repeatEvery = parseInt(arr[i]['repeat_every']);
       let repeatEnds = arr[i]['repeat_type'];
@@ -94,56 +78,57 @@ export default class WeekRoutines extends Component {
           }
         });
       }
-      console.log(
-        'temp Timezone',
-        arr[i].title,
-        arr[i].repeat,
-        repeatOccurences,
-        repeatEvery,
-        repeatEnds,
-        repeatEndsOn,
-        repeatFrequency,
-        repeatWeekDays
-      );
-      console.log('temp timezone', !arr[i].repeat);
+      // console.log(
+      //   'temp Timezone',
+      //   arr[i].title,
+      //   arr[i].repeat,
+      //   repeatOccurences,
+      //   repeatEvery,
+      //   repeatEnds,
+      //   repeatEndsOn,
+      //   repeatFrequency,
+      //   repeatWeekDays
+      // );
       if (!arr[i].repeat) {
-        console.log(
-          'startDate temp timezone',
-          arr[i].title,
-          startDate,
-          endDate
-        );
+        // console.log(
+        //   'startDate temp timezone',
+        //   arr[i].title,
+        //   startDate,
+        //   endDate
+        // );
         if (tempStartTime >= startDate && tempStartTime <= endDate) {
-          console.log('repeat temp timezone', arr[i].title);
-          console.log('temp timezone', tempStartTime);
-          console.log('temp timezone', tempStartTime.getDay());
-          console.log('temp timezone', tempStartTime.getHours());
+          // console.log('repeat temp timezone', arr[i].title);
+          // console.log('temp timezone', tempStartTime);
+          // console.log('temp timezone', tempStartTime.getDay());
+          // console.log('temp timezone', tempStartTime.getHours());
           let key = tempStartTime.getDay() + '_' + tempStartTime.getHours();
-          console.log('repeat temp timzone', key);
+          // console.log('repeat temp timzone', key);
           if (dic[key] == null) {
             dic[key] = [];
           }
           dic[key].push(arr[i]);
-          console.log('repeat temp timezone', dic[key]);
+          // console.log('repeat temp timezone', dic[key]);
         }
       } else {
         for (let j = 0; j < 7; j++) {
           let CurrentDate = new Date(startDate);
-          //console.log('repeat', CurrentDate)
+          // console.log('repeat', CurrentDate);
           let isDisplayedTodayCalculated = false;
 
           CurrentDate.setDate(CurrentDate.getDate() + j);
-          // console.log(CurrentDate, startDate, arr[i].title, repeatEnds)
+          // console.log(CurrentDate, startDate, arr[i].title, repeatEnds);
           if (CurrentDate >= startDate) {
             if (repeatEnds == 'On') {
               // repeatEndsOn.setDate(arr[i]["repeat_ends_on"])
             } else if (repeatEnds == 'Occur') {
               if (repeatFrequency == 'Day') {
-                repeatEndsOn = new Date(startDate);
+                repeatEndsOn = new Date(tempStartTime);
+                // repeatEndsOn = new Date(startDate);
+                // console.log(repeatEndsOn, arr[i].title);
                 repeatEndsOn.setDate(
                   tempStartTime.getDate() + (repeatOccurences - 1) * repeatEvery
                 );
-                // console.log(repeatEndsOn, arr[i].title)
+                // console.log(repeatEndsOn, arr[i].title);
               } else if (repeatFrequency == 'Week') {
                 repeatEndsOn = new Date(startDate);
                 repeatEndsOn.setDate(
@@ -162,23 +147,16 @@ export default class WeekRoutines extends Component {
               }
             } else if (repeatEnds == 'Never') {
               repeatEndsOn = CurrentDate;
-              console.log(
-                'repeat endson',
-                arr[i].title,
-                repeatEndsOn,
-                CurrentDate
-              );
             }
 
-            // console.log(CurrentDate, repeatEndsOn, arr[i].title);
             if (CurrentDate <= repeatEndsOn) {
               if (repeatFrequency == 'Day') {
-                console.log(
-                  CurrentDate,
-                  startDate,
-                  tempStartTime,
-                  arr[i].title
-                );
+                // console.log(
+                //   CurrentDate,
+                //   startDate,
+                //   tempStartTime,
+                //   arr[i].title
+                // );
                 isDisplayedTodayCalculated =
                   Math.floor(repeatEndsOn.getTime() - CurrentDate.getTime()) %
                     repeatEvery ==
@@ -213,7 +191,7 @@ export default class WeekRoutines extends Component {
             }
           }
           if (isDisplayedTodayCalculated) {
-            console.log('repeat title', arr[i].title);
+            //console.log('repeat title', arr[i].title);
             let key = j + '_' + tempStartTime.getHours();
             if (dic[key] == null) {
               dic[key] = [];
@@ -223,7 +201,7 @@ export default class WeekRoutines extends Component {
         }
       }
     }
-    console.log('repeat dict', dic);
+    //console.log('repeat dict', dic);
     return dic;
   };
 
@@ -257,7 +235,7 @@ export default class WeekRoutines extends Component {
     var tempStart = null;
     var tempEnd = null;
     var arr = dic[day + '_' + hour];
-    console.log('startObject = ', arr);
+    //console.log('startObject = ', arr);
     var sameTimeEventCount = 0;
     var addmarginLeft = 0;
     let itemWidth = this.state.eventBoxSize;
@@ -285,7 +263,13 @@ export default class WeekRoutines extends Component {
           timeZone: this.props.TimeZone,
         })
       );
-      console.log('repeat startDate2', CurrentDate);
+      // console.log(
+      //   'repeat startDate2',
+      //   startDay,
+      //   CurrentDate,
+      //   curDate2,
+      //   arr[i].title
+      // );
       CurrentDate.setHours(0, 0, 0, 0);
 
       let startDate2 = new Date(
@@ -293,7 +277,12 @@ export default class WeekRoutines extends Component {
           timeZone: this.props.TimeZone,
         })
       );
-      //console.log('repeat startDate2', startDate2)
+      // console.log(
+      //   'repeat startDate2',
+      //   arr[i].start_day_and_time,
+      //   startDate2,
+      //   arr[i].title
+      // );
       startDate2.setHours(0, 0, 0, 0);
 
       let isDisplayedTodayCalculated = false;
@@ -312,7 +301,7 @@ export default class WeekRoutines extends Component {
           }
         )
       );
-      console.log('repeat ends on', arr[i].title, repeatEndsOn);
+      // console.log('repeat ends on', arr[i].title, repeatEndsOn);
       repeatEndsOn.setHours(0, 0, 0, 0);
 
       let repeatFrequency = arr[i].repeat_frequency;
@@ -329,20 +318,22 @@ export default class WeekRoutines extends Component {
       if (!arr[i].repeat) {
         isDisplayedTodayCalculated =
           CurrentDate.getTime() - startDate2.getTime() == 0;
-        console.log(
-          'repeat',
-          (isDisplayedTodayCalculated =
-            CurrentDate.getTime() - startDate2.getTime() == 0)
-        );
+        // console.log(
+        //   'repeat',
+        //   (isDisplayedTodayCalculated =
+        //     CurrentDate.getTime() - startDate2.getTime() == 0)
+        // );
       } else {
         if (CurrentDate >= startDate2) {
           if (repeatEnds == 'On') {
           } else if (repeatEnds == 'Occur') {
             if (repeatFrequency == 'Day') {
               repeatEndsOn = new Date(startDate2);
+              // console.log(startDate2, arr[i].title);
               repeatEndsOn.setDate(
                 startDate2.getDate() + (repeatOccurences - 1) * repeatEvery
               );
+              // console.log(repeatEndsOn, arr[i].title);
             } else if (repeatFrequency == 'Week') {
               let occurence_dates = [];
 
@@ -374,24 +365,24 @@ export default class WeekRoutines extends Component {
 
               for (let i = 0; i < repeatOccurences; i++) {
                 let dow = repeatWeekDays[i];
-                console.log(dow);
+                // console.log(dow);
                 if (i >= repeatWeekDays.length) {
                   numberOfWeek = Math.floor(i / repeatWeekDays.length);
                   dow = repeatWeekDays[i % repeatWeekDays.length];
                 }
                 const new_date = moment(initFullDate, 'YYYY-MM-DD');
                 const nextDayOfTheWeek = getNextDayOfTheWeek(dow, new_date);
-                //console.log("NextDayOfWeek: ", nextDayOfTheWeek.format("L"));
-                //console.log("numberOfWeeks: ", numberOfWeek);
+                console.log('NextDayOfWeek: ', nextDayOfTheWeek.format('L'));
+                console.log('numberOfWeeks: ', numberOfWeek);
                 const date = nextDayOfTheWeek
                   .clone()
                   .add(numberOfWeek * repeatEvery, 'weeks')
                   .format('L');
                 occurence_dates.push(date);
-                console.log(occurence_dates);
+                // console.log(occurence_dates);
               }
 
-              //console.log("occurence_dates: ", occurence_dates);
+              console.log('occurence_dates: ', occurence_dates);
 
               let today_date_object = new Date(
                 curYear,
@@ -399,10 +390,10 @@ export default class WeekRoutines extends Component {
                 curDate2.date()
               );
               let today = getFormattedDate(today_date_object);
-              console.log(today, occurence_dates);
+              // console.log(today, occurence_dates);
 
               if (occurence_dates.includes(today)) {
-                console.log(today);
+                // console.log(today);
                 isDisplayedTodayCalculated = true;
               }
             } else if (repeatFrequency == 'Month') {
@@ -419,7 +410,7 @@ export default class WeekRoutines extends Component {
           } else if (repeatEnds == 'Never') {
             repeatEndsOn = CurrentDate;
           }
-
+          // console.log('repeat', CurrentDate, repeatEndsOn, arr[i].title);
           if (CurrentDate <= repeatEndsOn) {
             if (repeatFrequency == 'Day') {
               isDisplayedTodayCalculated =
@@ -429,6 +420,8 @@ export default class WeekRoutines extends Component {
                 ) %
                   repeatEvery ==
                 0;
+
+              // console.log('repeat', isDisplayedTodayCalculated, arr[i].title);
             } else if (repeatFrequency == 'Week') {
               isDisplayedTodayCalculated =
                 repeatWeekDays.includes(CurrentDate.getDay()) &&
@@ -463,21 +456,63 @@ export default class WeekRoutines extends Component {
 
       // console.log(arr);
       //console.log("isDisplayedTodayCalculated", isDisplayedTodayCalculated);
-      console.log('arr = ', arr);
+      // console.log(
+      //   'repeat',
+      //   curMonth,
+      //   curYear,
+      //   curDate2,
+      //   tempStartTime,
+      //   tempEndTime,
+
+      //   arr[i].title
+      // );
+      //console.log('arr = ', arr);
       if (isDisplayedTodayCalculated) {
-        //console.log("today is the day");
-        tempStartTime.setMonth(curMonth);
-        tempEndTime.setMonth(curMonth);
+        // console.log(
+        //   'today is the day',
+        //   tempStartTime,
+        //   tempEndTime,
+        //   arr[i].title
+        // );
+        tempStartTime.setMonth(curMonth, 1);
+        tempEndTime.setMonth(curMonth, 1);
+        // console.log(
+        //   'today is the day',
+        //   tempStartTime,
+        //   tempEndTime,
+        //   arr[i].title
+        // );
         tempStartTime.setDate(curDate2.date());
         tempEndTime.setDate(curDate2.date());
+        // console.log(
+        //   'today is the day',
+        //   tempStartTime,
+        //   tempEndTime,
+        //   arr[i].title
+        // );
         tempStartTime.setFullYear(curYear);
         tempEndTime.setFullYear(curYear);
+        // console.log(
+        //   'today is the day',
+        //   tempStartTime,
+        //   tempEndTime,
+        //   arr[i].title
+        // );
       }
 
       let startDate = moment(tempStartTime);
-      console.log('repeat', tempStartTime);
       let endDate = moment(tempEndTime);
-      console.log('repeat', tempStartTime);
+      // console.log(
+      //   'repeat',
+      //   curMonth,
+      //   curYear,
+      //   curDate2,
+      //   tempStartTime,
+      //   tempEndTime,
+      //   startDate,
+      //   endDate,
+      //   arr[i].title
+      // );
       if (
         moment(curDate2).isSameOrAfter(startDate, 'day') &&
         moment(curDate2).isSameOrBefore(endDate, 'day')
@@ -535,23 +570,18 @@ export default class WeekRoutines extends Component {
               }
 
               if (isDisplayedTodayCalculated) {
-                // console.log(
-                //   isDisplayedTodayCalculated,
-                //   arr[i].title,
-                //   tempStartTime,
-                //   tempEndTime
-                // );
-                const [comp_year, comp_month, comp_day] = [
-                  parseInt(arr[i].datetime_completed.substring(0, 4)),
-                  parseInt(arr[i].datetime_completed.substring(5, 7)),
-                  parseInt(arr[i].datetime_completed.substring(8, 10)),
-                ];
                 const [todayYear, todayMonth, todayDay] = [
                   parseInt(today.format('Y')),
                   parseInt(today.format('M')),
                   parseInt(today.format('D')),
                 ];
-                console.log('today year', todayYear, todayMonth, todayDay);
+                // console.log(
+                //   'today year',
+                //   todayYear,
+                //   todayMonth,
+                //   todayDay,
+                //   arr[i].title
+                // );
 
                 // const [started_year, started_month, started_day] = [parseInt(arr[i].datetime_started.substring(0, 4)),
                 //   parseInt(arr[i].datetime_started.substring(5, 7)), parseInt(arr[i].datetime_started.substring(8, 10))];
@@ -560,7 +590,13 @@ export default class WeekRoutines extends Component {
                   parseInt(curDate2.format('M')),
                   parseInt(curDate2.format('D')),
                 ];
-                console.log('today year', curr_year, curr_month, curr_day);
+                // console.log(
+                //   'today year',
+                //   curr_year,
+                //   curr_month,
+                //   curr_day,
+                //   arr[i].title
+                // );
                 const start_time = arr[i].start_day_and_time
                   .substring(11)
                   .split(/[:\s+]/);
@@ -659,11 +695,7 @@ export default class WeekRoutines extends Component {
                       }}
                     >
                       {/* insert border change here: */}
-                      <div>
-                        {arr[i].title}
-                        {console.log('arr[i]', arr[i])}
-                        {console.log('is_persistent', arr[i].is_persistent)}
-                      </div>
+                      <div>{arr[i].title}</div>
                       <div
                         style={{
                           width: '21px',
@@ -693,12 +725,12 @@ export default class WeekRoutines extends Component {
                     </div>
                   </div>
                 );
-                console.log(
-                  'newElement',
-                  newElement,
-                  this.props.getGoalsEndPoint,
-                  arr[i]
-                );
+                // console.log(
+                //   'newElement',
+                //   newElement,
+                //   this.props.getGoalsEndPoint,
+                //   arr[i]
+                // );
                 res.push(newElement);
               }
             } else if (startDate.date() !== endDate.date()) {
@@ -890,7 +922,6 @@ export default class WeekRoutines extends Component {
                     {arr[i].title}
                   </div>
                   <div>
-                    {console.log('arr[i]', arr[i])}
                     <EditIcon
                       routine={arr[i]}
                       task={null}
@@ -907,7 +938,7 @@ export default class WeekRoutines extends Component {
         }
       }
     }
-    console.log('res_wr = ', res);
+    // console.log('res_wr = ', res);
     return res;
   };
 
@@ -1141,11 +1172,6 @@ export default class WeekRoutines extends Component {
     );
   }
 }
-function getMonthDay(date) {
-  let month = (1 + date.getMonth()).toString().padStart(2, '0');
-  let day = date.getDate().toString().padStart(2, '0');
-  return month + ' ' + day;
-}
 
 function getFormattedDate(date) {
   let year = date.getFullYear();
@@ -1158,7 +1184,7 @@ function getFormattedDate(date) {
 function getNextDayOfTheWeek(day, date) {
   const dayINeed = day; // for Thursday
   const today = date.isoWeekday();
-  //console.log("DayINeed, today", dayINeed, today);
+  // console.log("DayINeed, today", dayINeed, today);
 
   // if we haven't yet passed the day of the week that I need:
   if (today <= dayINeed) {
@@ -1168,38 +1194,7 @@ function getNextDayOfTheWeek(day, date) {
   } else {
     // otherwise, give me *next week's* instance of that same day
     var nextDayOfTheWeek = date.add(1, 'weeks').day(dayINeed);
-    //console.log("from getNextday", nextDayOfTheWeek.format("L"));
+    // console.log("from getNextday", nextDayOfTheWeek.format("L"));
     return nextDayOfTheWeek;
-  }
-}
-function getMonthNumber(str) {
-  switch (str) {
-    case 'Jan':
-      return '01';
-    case 'Feb':
-      return '02';
-    case 'Mar':
-      return '03';
-    case 'April':
-      return '04';
-    case 'May':
-      return '05';
-    case 'Jun':
-      return '06';
-    case 'Jul':
-      return '07';
-    case 'Aug':
-      return '08';
-    case 'Sep':
-      return '09';
-    case 'Oct':
-      return '10';
-    case 'Nov':
-      return '11';
-    case 'Dec':
-      return '12';
-    default:
-      console.log("can't change the month");
-      return '';
   }
 }
