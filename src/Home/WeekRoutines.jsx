@@ -222,6 +222,7 @@ export default class WeekRoutines extends Component {
     let currentUser = this.props.theCurrentUserID;
     let startDay = startObject.startOf('week');
     let curDate2 = startDay.clone();
+    console.log('greentick', day);
     curDate2.add(day, 'days');
     const tz = {
       timeZone: this.props.timeZone,
@@ -609,97 +610,78 @@ export default class WeekRoutines extends Component {
                 // Need to strip trailing zeros because the data in the database
                 // is inconsistent about this
                 if (end_time[0][0] == '0') end_time[0] = end_time[0][1];
+
                 let newElement = (
-                  <div key={'event' + i}>
+                  <div
+                    key={'event' + i}
+                    className="clickButton"
+                    data-toggle="tooltip"
+                    data-placement="right"
+                    title={
+                      arr[i].title +
+                      '\nStart: ' +
+                      tempStartTime +
+                      '\nEnd: ' +
+                      tempEndTime
+                    }
+                    // key={i}
+                    onMouseOver={(e) => {
+                      e.target.style.zIndex = '2';
+                      e.target.style.cursor = 'pointer';
+                    }}
+                    onMouseOut={(e) => {
+                      e.target.style.zIndex = '1';
+                    }}
+                    style={{
+                      zIndex: this.state.zIndex,
+                      marginTop: minsToMarginTop + 'px',
+                      padding: '3px',
+                      fontSize: fontSize + 'px',
+                      // border: '1px lightgray solid ',
+
+                      border:
+                        this.props.highLight === arr[i].title
+                          ? '2px solid #FFB84D '
+                          : '',
+                      float: 'left',
+                      borderRadius: '10px',
+                      background:
+                        JSON.stringify(start_time) === JSON.stringify(end_time)
+                          ? '#9b4aff'
+                          : curDate2.format('D') === today.format('D') &&
+                            curDate2.format('M') === today.format('M') &&
+                            arr[i].is_persistent == true
+                          ? '#FFB84D'
+                          : curDate2.format('D') === today.format('D') &&
+                            curDate2.format('M') === today.format('M') &&
+                            arr[i].is_persistent == false
+                          ? '#00BC00'
+                          : arr[i].is_complete
+                          ? '#BBC7D7'
+                          : 'lightslategray',
+                      width: itemWidth + 'px',
+                      position: 'absolute',
+                      height: height + 'px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {/* insert border change here: */}
+                    <div> {arr[i].title}</div>
+
                     <div
-                      className="clickButton"
-                      data-toggle="tooltip"
-                      data-placement="right"
-                      title={
-                        arr[i].title +
-                        '\nStart: ' +
-                        tempStartTime +
-                        '\nEnd: ' +
-                        tempEndTime
-                      }
-                      key={i}
                       style={{
-                        zIndex: this.state.zIndex,
-                        marginTop: minsToMarginTop + 'px',
-                        padding: '3px',
-                        fontSize: fontSize + 'px',
-                        // border: '1px lightgray solid ',
-                        border:
-                          this.props.highLight === arr[i].title
-                            ? '2px solid #FFB84D '
-                            : '',
-                        float: 'left',
-                        borderRadius: '10px',
-                        // background: (() => {
-                        //   if (
-                        //     arr[i].is_persistent === 'true' &&
-                        //     //JSON.stringify(start_time) !== JSON.stringify(end_time) &&
-                        //     curDate2.format('D') === today.format('D') &&
-                        //     curDate2.format('M') === today.format('M')
-                        //   ) {
-                        //     return '#FFB84D';
-                        //   } else if (
-                        //     arr[i].is_persistent === 'false' &&
-                        //     curDate2.format('D') === today.format('D') &&
-                        //     curDate2.format('M') === today.format('M')
-                        //   ) {
-                        //     return '#00BC00';
-                        //   } else if (
-                        //     JSON.stringify(start_time) ===
-                        //     JSON.stringify(end_time)
-                        //   ) {
-                        //     return '#9b4aff';
-                        //   } else if (arr[i].is_complete) {
-                        //     return '#BBC7D7';
-                        //   }
-                        //   else{
-                        //     return 'lightslategray'
-                        //   }
-                        // })(),
-                        // background:
-                        //   curr_year === todayYear &&
-                        //   curr_month === todayMonth &&
-                        //   curr_day === todayDay
-                        //     ? arr[i].is_in_progress === true
-                        //       ? `url(${yelloTick})`
-                        //       : arr[i].is_complete === true
-                        //       ? `url(${greenTick})`
-                        //       : ''
-                        //     : '',
-                        background:
-                          JSON.stringify(start_time) ===
-                          JSON.stringify(end_time)
-                            ? '#9b4aff'
-                            : curDate2.format('D') === today.format('D') &&
-                              curDate2.format('M') === today.format('M') &&
-                              arr[i].is_persistent == true
-                            ? '#FFB84D'
-                            : curDate2.format('D') === today.format('D') &&
-                              curDate2.format('M') === today.format('M') &&
-                              arr[i].is_persistent == false
-                            ? '#00BC00'
-                            : arr[i].is_complete
-                            ? '#BBC7D7'
-                            : 'lightslategray',
-                        width: itemWidth + 'px',
-                        position: 'absolute',
-                        height: height + 'px',
                         display: 'flex',
+                        flexDirection: 'column',
                         justifyContent: 'space-between',
-                        alignItems: 'center',
+                        height: '100%',
                       }}
                     >
-                      {/* insert border change here: */}
-                      <div>{arr[i].title}</div>
-                      <div
+                      {/* <div
                         style={{
                           width: '21px',
-                          height: '13px',
+                          height: '14px',
                           backgroundImage:
                             curr_year === todayYear &&
                             curr_month === todayMonth &&
@@ -712,7 +694,7 @@ export default class WeekRoutines extends Component {
                               : '',
                           backgroundRepeat: 'no-repeat',
                         }}
-                      ></div>
+                      ></div> */}
                       <div>
                         <EditIcon
                           routine={arr[i]}

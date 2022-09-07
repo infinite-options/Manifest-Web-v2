@@ -17,6 +17,9 @@ import EditIcon from './EditRTS/EditIcon.jsx';
 import EditActionIcon from './EditATS/EditIcon.jsx';
 import EditStepsIcon from './EditIS/EditIcon.jsx';
 import { makeStyles } from '@material-ui/core/styles';
+
+import greenTick from '../manifest/LoginAssets/GreenTick.svg';
+import yelloTick from '../manifest/LoginAssets/YellowTick.svg';
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const useStyles = makeStyles({
@@ -92,6 +95,8 @@ export default function RoutineLHS(props) {
   const [patientToCopyTo, setPatientToCopyTo] = useState({});
   const [copiedRoutineName, setCRN] = useState('');
   const [copiedRoutineID, setCRID] = useState('');
+
+  const [showProgress, setShowProgress] = useState(false);
 
   // var copiedRoutineName = ''
   function createData(
@@ -1713,6 +1718,38 @@ export default function RoutineLHS(props) {
 
   function displayRoutines(r) {
     const ret = getIsAvailableFromGR(r);
+    // let startObject = props.stateValue.dateContext.clone();
+    // let startDay = startObject.startOf('week');
+    // let curDate2 = startDay.clone();
+
+    // const tz = {
+    //   timeZone: props.timeZone,
+    //   // add more here
+    // };
+    // let dateNew = new Date().toLocaleString(tz, tz);
+    // let today = moment(dateNew);
+    // for (let day = 0; day < 7; day++) {
+    //   curDate2.add(day, 'days');
+    //   const [todayYear, todayMonth, todayDay] = [
+    //     parseInt(today.format('Y')),
+    //     parseInt(today.format('M')),
+    //     parseInt(today.format('D')),
+    //   ];
+
+    //   const [curr_year, curr_month, curr_day] = [
+    //     parseInt(curDate2.format('Y')),
+    //     parseInt(curDate2.format('M')),
+    //     parseInt(curDate2.format('D')),
+    //   ];
+    //   if (
+    //     curr_year === todayYear &&
+    //     curr_month === todayMonth &&
+    //     curr_day === todayDay
+    //   ) {
+    //     setShowProgress(true);
+    //   }
+    // }
+
     const start_time = r.gr_start_day_and_time.substring(11).split(/[:\s+]/);
     // Need to strip trailing zeros because the data in the database
     // is inconsistent about this
@@ -1810,26 +1847,45 @@ export default function RoutineLHS(props) {
                 justifyContent: 'space-evenly',
               }}
             >
-              <div>
-                <Col
-                  // xs={7}
-                  style={{
-                    // paddingRight: '1rem',
-                    marginTop: '0.5rem',
-                  }}
-                >
+              <div
+                style={{
+                  marginTop: '0.5rem',
+                  marginLeft: '-1rem',
+                }}
+              >
+                <Col>
                   <img
                     src={r.gr_photo}
                     alt="Routines"
                     style={{
+                      position: 'absolute',
                       height: '40px',
                       width: '40px',
-                      objectFit: 'cover',
+                      top: '0px',
+                      left: '0px',
+                      // zIndex: 1,
+                      objectFit: 'contain',
                     }}
+                  />
+                  <img
+                    style={{
+                      position: 'relative',
+                      width: '14px',
+                      height: '14px',
+
+                      // zIndex: 3,
+                    }}
+                    src={
+                      r.is_in_progress === 'True'
+                        ? yelloTick
+                        : r.is_complete === 'True'
+                        ? greenTick
+                        : ''
+                    }
                   />
                 </Col>
               </div>
-              <div style={{ marginLeft: '1.5rem' }}>
+              <div>
                 <div>
                   {r.is_sublist_available === 'True' ? (
                     <div>
@@ -2363,7 +2419,7 @@ export default function RoutineLHS(props) {
                   task={null}
                   step={currentUser}
                   getGoalsEndPoint={props.getGoalsEndPoint}
-                  //  id={currentUser}
+                  ta_id={props.stateValue.ta_people_id}
                 />
               </div>
               {/* working on this thing */}

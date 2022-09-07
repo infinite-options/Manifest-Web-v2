@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import { Container, Row, Col } from 'react-bootstrap';
 
+import greenTick from '../manifest/LoginAssets/GreenTick.svg';
+import yelloTick from '../manifest/LoginAssets/YellowTick.svg';
+
 export default class DayRoutines extends Component {
   constructor(props) {
     super(props);
@@ -311,7 +314,28 @@ export default class DayRoutines extends Component {
                       marginLeft: addmarginLeft + 'px',
                     }}
                   >
-                    {arr[i].title}
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      {arr[i].title}
+                      <div
+                        style={{
+                          width: '21px',
+                          height: '14px',
+                          backgroundImage:
+                            arr[i].is_in_progress === true
+                              ? `url(${yelloTick})`
+                              : arr[i].is_complete === true
+                              ? `url(${greenTick})`
+                              : '',
+                          backgroundRepeat: 'no-repeat',
+                        }}
+                      ></div>
+                    </div>
                   </div>
                 </div>
               );
@@ -400,7 +424,28 @@ export default class DayRoutines extends Component {
                     marginLeft: addmarginLeft + 'px',
                   }}
                 >
-                  {arr[i].title}
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    {arr[i].title}
+                    <div
+                      style={{
+                        width: '21px',
+                        height: '14px',
+                        backgroundImage:
+                          arr[i].is_in_progress === true
+                            ? `url(${yelloTick})`
+                            : arr[i].is_complete === true
+                            ? `url(${greenTick})`
+                            : '',
+                        backgroundRepeat: 'no-repeat',
+                      }}
+                    ></div>
+                  </div>
                 </div>
               );
               res.push(newElement);
@@ -462,7 +507,29 @@ export default class DayRoutines extends Component {
                   marginLeft: addmarginLeft + 'px',
                 }}
               >
-                {arr[i].title}
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  {arr[i].title}
+                  <div
+                    style={{
+                      width: '21px',
+                      height: '14px',
+
+                      backgroundImage:
+                        arr[i].is_in_progress === true
+                          ? `url(${yelloTick})`
+                          : arr[i].is_complete === true
+                          ? `url(${greenTick})`
+                          : '',
+                      backgroundRepeat: 'no-repeat',
+                    }}
+                  ></div>
+                </div>
               </div>
             </div>
           );
@@ -523,7 +590,28 @@ export default class DayRoutines extends Component {
                   marginLeft: addmarginLeft + 'px',
                 }}
               >
-                {arr[i].title}
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  {arr[i].title}
+                  <div
+                    style={{
+                      width: '21px',
+                      height: '14px',
+                      backgroundImage:
+                        arr[i].is_in_progress === true
+                          ? `url(${yelloTick})`
+                          : arr[i].is_complete === true
+                          ? `url(${greenTick})`
+                          : '',
+                      backgroundRepeat: 'no-repeat',
+                    }}
+                  ></div>
+                </div>
               </div>
             </div>
           );

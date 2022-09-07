@@ -408,7 +408,7 @@ export default function Home(props) {
     showNewAccountmodal: false,
     showAllowTAmodel: false,
 
-    ta_people_id: '',
+    ta_people_id: taID,
     emailIdObject: {},
     theCurrentUserEmail: userEmail,
     newAccountID: '',
@@ -461,6 +461,7 @@ export default function Home(props) {
       is_sublist_available: true,
       photo: '',
       photo_url: '',
+      notifications: '',
       ta_notifications: {
         before: {
           is_enabled: true,
@@ -548,6 +549,7 @@ export default function Home(props) {
       is_sublist_available: true,
       photo: '',
       photo_url: '',
+      notifications: '',
       ta_notifications: {
         before: {
           is_enabled: false,
@@ -1578,7 +1580,21 @@ export default function Home(props) {
                   }
                 }
               }
-
+              let filtered_notifications = [];
+              for (let k = 0; k < x[i].notifications.length; ++k) {
+                const first_notifications = x[i].notifications[k];
+                if (first_notifications) {
+                  if (first_notifications.user_ta_id.charAt(0) === '1') {
+                    filtered_notifications.push(first_notifications);
+                  } else if (
+                    first_notifications.user_ta_id.charAt(0) === '2' &&
+                    first_notifications.user_ta_id === stateValue.ta_people_id
+                  ) {
+                    filtered_notifications.push(first_notifications);
+                  }
+                }
+              }
+              gr.notifications = filtered_notifications;
               // if (!gr.ta_notifications) {
               //   gr.ta_notifications = {
               //     before: {
@@ -2381,6 +2397,11 @@ export default function Home(props) {
                 const first_notifications = x[i].notifications[k];
                 if (first_notifications) {
                   if (first_notifications.user_ta_id.charAt(0) === '1') {
+                    console.log(
+                      'stateValue.ta_people_id',
+
+                      first_notifications
+                    );
                     gr.user_notifications = {
                       before: {
                         is_enabled:
@@ -2415,6 +2436,11 @@ export default function Home(props) {
                     first_notifications.user_ta_id.charAt(0) === '2' &&
                     first_notifications.user_ta_id === stateValue.ta_people_id
                   ) {
+                    console.log(
+                      'stateValue.ta_people_id',
+                      stateValue.ta_people_id,
+                      first_notifications
+                    );
                     gr.ta_notifications = {
                       before: {
                         is_enabled:
@@ -2448,6 +2474,22 @@ export default function Home(props) {
                   }
                 }
               }
+
+              let filtered_notifications = [];
+              for (let k = 0; k < x[i].notifications.length; ++k) {
+                const first_notifications = x[i].notifications[k];
+                if (first_notifications) {
+                  if (first_notifications.user_ta_id.charAt(0) === '1') {
+                    filtered_notifications.push(first_notifications);
+                  } else if (
+                    first_notifications.user_ta_id.charAt(0) === '2' &&
+                    first_notifications.user_ta_id === stateValue.ta_people_id
+                  ) {
+                    filtered_notifications.push(first_notifications);
+                  }
+                }
+              }
+              gr.notifications = filtered_notifications;
 
               // if (!gr.ta_notifications) {
               //   gr.ta_notifications = {

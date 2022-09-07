@@ -54,7 +54,7 @@ const convertTimeLengthToMins = (timeString) => {
   return '' + numMins;
 };
 
-const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
+const EditIcon = ({ routine, task, step, getGoalsEndPoint, ta_id }) => {
   console.log('EDIT STEP: ' + step);
   const editingRTSContext = useContext(EditRTSContext);
   const [routineCall, setroutineCall] = useState(false);
@@ -79,9 +79,13 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
     <div>
       <FontAwesomeIcon
         title="Edit Item"
-        onMouseOver={(event) => {event.target.style.color = '#48D6D2';}}
-        onMouseOut={(event) => {event.target.style.color = '#FFFFFF';}}
-        style={{ color: '#ffffff', cursor:'pointer' }}
+        onMouseOver={(event) => {
+          event.target.style.color = '#48D6D2';
+        }}
+        onMouseOut={(event) => {
+          event.target.style.color = '#FFFFFF';
+        }}
+        style={{ color: '#ffffff', cursor: 'pointer' }}
         icon={faEdit}
         onClick={(e) => {
           e.stopPropagation();
@@ -92,14 +96,14 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
           console.log('clicked editRoutine: step = ', step);
 
           axios
-            .get(
-              BASE_URL + 'getroutines/' +
-                step
-            )
+            .get(BASE_URL + 'getroutines/' + step)
             .then((response) => {
               console.log('logpog-5');
               let temp = [];
-              console.log('in click editicon: editingRTS = ', editingRTSContext.editingRTS);
+              console.log(
+                'in click editicon: editingRTS = ',
+                editingRTSContext.editingRTS
+              );
               // console.log("routineGet", response)
               for (var i = 0; i < response.data.result.length; i++) {
                 // console.log(response.data.result[i])
@@ -136,12 +140,27 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
                   itemToChange.gr_start_day_and_time.replace(/-/g, '/')
                 );
               }
-              console.log('logpog-5.1');
+              console.log('logpog-5.1', itemToChange);
 
               console.log('start', startDate);
               const startDay = convertDateToDayString(startDate);
               const startTime = convertDateToTimeString(startDate);
               console.log(startTime);
+              let filtered_notifications = [];
+              for (let k = 0; k < itemToChange.notifications.length; ++k) {
+                const first_notifications = itemToChange.notifications[k];
+                if (first_notifications) {
+                  if (first_notifications.user_ta_id.charAt(0) === '1') {
+                    filtered_notifications.push(first_notifications);
+                  } else if (
+                    first_notifications.user_ta_id.charAt(0) === '2' &&
+                    first_notifications.user_ta_id === ta_id
+                  ) {
+                    filtered_notifications.push(first_notifications);
+                  }
+                }
+              }
+              itemToChange.notifications = filtered_notifications;
               itemToChange.start_day = startDay;
               itemToChange.start_time = startTime;
               delete itemToChange.gr_start_day_and_time;
@@ -162,26 +181,115 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
               const numMins = convertTimeLengthToMins(expectedCompletionTime);
               itemToChange.numMins = numMins;
               delete itemToChange.gr_expected_completion_time;
+              console.log('itemtochange', itemToChange);
               let [ta_times, user_times] = [{}, {}];
-              ta_times['before'] = itemToChange.notifications[0].before_time.split(':');
-              if (ta_times['before'].length !== 0 && ta_times['before'][0] !== '')
-                ta_times['before'] = parseInt(ta_times['before'][0]) * 60 + parseInt(ta_times['before'][1]);
-              ta_times['during'] = itemToChange.notifications[0].during_time.split(':');
-              if (ta_times['during'].length !== 0 && ta_times['during'][0] !== '')
-                ta_times['during'] = parseInt(ta_times['during'][0]) * 60 + parseInt(ta_times['during'][1]);
-              ta_times['after'] = itemToChange.notifications[0].after_time.split(':');
-              if (ta_times['after'].length !== 0 && ta_times['after'][0] !== '')
-                ta_times['after'] = parseInt(ta_times['after'][0]) * 60 + parseInt(ta_times['after'][1]);
+              let [ta_message, user_message] = [{}, {}];
+              let [ta_is_enabled, user_is_enabled] = [{}, {}];
+              for (let x = 0; x < itemToChange.notifications.length; x++) {
+                if (
+                  itemToChange.notifications[x].user_ta_id.charAt(0) === '1'
+                ) {
+                  user_is_enabled['before'] =
+                    itemToChange.notifications[x].before_is_enable;
+                  user_message['before'] =
+                    itemToChange.notifications[x].before_message;
 
-              user_times['before'] = itemToChange.notifications[1].before_time.split(':');
-              if (user_times['before'].length !== 0 && user_times['before'][0] !== '')
-                user_times['before'] = parseInt(user_times['before'][0]) * 60 + parseInt(user_times['before'][1]);
-              user_times['during'] = itemToChange.notifications[1].during_time.split(':');
-              if (user_times['during'].length !== 0 && user_times['during'][0] !== '')
-                user_times['during'] = parseInt(user_times['during'][0]) * 60 + parseInt(user_times['during'][1]);
-              user_times['after'] = itemToChange.notifications[1].after_time.split(':');
-              if (user_times['after'].length !== 0 && user_times['after'][0] !== '')
-                user_times['after'] = parseInt(user_times['after'][0]) * 60 + parseInt(user_times['after'][1]);
+                  user_times['before'] =
+                    itemToChange.notifications[x].before_time.split(':');
+                  if (
+                    user_times['before'].length !== 0 &&
+                    user_times['before'][0] !== ''
+                  )
+                    user_times['before'] =
+                      parseInt(user_times['before'][0]) * 60 +
+                      parseInt(user_times['before'][1]);
+
+                  user_is_enabled['during'] =
+                    itemToChange.notifications[x].during_is_enable;
+                  user_message['during'] =
+                    itemToChange.notifications[x].during_message;
+                  user_times['during'] =
+                    itemToChange.notifications[x].during_time.split(':');
+                  if (
+                    user_times['during'].length !== 0 &&
+                    user_times['during'][0] !== ''
+                  )
+                    user_times['during'] =
+                      parseInt(user_times['during'][0]) * 60 +
+                      parseInt(user_times['during'][1]);
+                  user_is_enabled['after'] =
+                    itemToChange.notifications[x].after_is_enable;
+                  user_message['after'] =
+                    itemToChange.notifications[x].after_message;
+                  user_times['after'] =
+                    itemToChange.notifications[x].after_time.split(':');
+                  if (
+                    user_times['after'].length !== 0 &&
+                    user_times['after'][0] !== ''
+                  )
+                    user_times['after'] =
+                      parseInt(user_times['after'][0]) * 60 +
+                      parseInt(user_times['after'][1]);
+                }
+              }
+              for (let x = 0; x < itemToChange.notifications.length; x++) {
+                if (
+                  itemToChange.notifications[x].user_ta_id.charAt(0) === '2'
+                ) {
+                  ta_is_enabled['before'] =
+                    itemToChange.notifications[x].before_is_enable;
+                  ta_message['before'] =
+                    itemToChange.notifications[x].before_message;
+                  ta_times['before'] =
+                    itemToChange.notifications[x].before_time.split(':');
+                  if (
+                    ta_times['before'].length !== 0 &&
+                    ta_times['before'][0] !== ''
+                  )
+                    ta_times['before'] =
+                      parseInt(ta_times['before'][0]) * 60 +
+                      parseInt(ta_times['before'][1]);
+                  ta_is_enabled['during'] =
+                    itemToChange.notifications[x].during_is_enable;
+                  ta_message['during'] =
+                    itemToChange.notifications[x].during_message;
+                  ta_times['during'] =
+                    itemToChange.notifications[x].during_time.split(':');
+                  if (
+                    ta_times['during'].length !== 0 &&
+                    ta_times['during'][0] !== ''
+                  )
+                    ta_times['during'] =
+                      parseInt(ta_times['during'][0]) * 60 +
+                      parseInt(ta_times['during'][1]);
+                  ta_is_enabled['after'] =
+                    itemToChange.notifications[x].after_is_enable;
+                  ta_message['after'] =
+                    itemToChange.notifications[x].after_message;
+                  ta_times['after'] =
+                    itemToChange.notifications[x].after_time.split(':');
+                  if (
+                    ta_times['after'].length !== 0 &&
+                    ta_times['after'][0] !== ''
+                  )
+                    ta_times['after'] =
+                      parseInt(ta_times['after'][0]) * 60 +
+                      parseInt(ta_times['after'][1]);
+                } else {
+                  ta_is_enabled['before'] = '';
+                  ta_message['before'] = '';
+                  ta_times['before'] = 0;
+                  ta_is_enabled['during'] = '';
+                  ta_message['during'] = '';
+                  ta_times['during'] = 0;
+                  ta_is_enabled['after'] = '';
+                  ta_message['after'] = '';
+                  ta_times['after'] = 0;
+                }
+              }
+
+              console.log('itemtochange', itemToChange);
+              console.log('itemtochange', user_times, ta_times);
               editingRTSContext.setEditingRTS({
                 ...editingRTSContext.editingRTS,
                 editing:
@@ -201,24 +309,22 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
                     before: {
                       ...editingRTSContext.editingRTS.newItem.ta_notifications
                         .after,
-                      message: itemToChange.notifications[0].before_message,
-                      is_enabled:
-                        itemToChange.notifications[0].before_is_enable,
+                      message: ta_message['before'],
+                      is_enabled: ta_is_enabled['before'],
                       time: ta_times['before'],
                     },
                     during: {
                       ...editingRTSContext.editingRTS.newItem.ta_notifications
                         .after,
-                      message: itemToChange.notifications[0].during_message,
-                      is_enabled:
-                        itemToChange.notifications[0].during_is_enable,
+                      message: ta_message['during'],
+                      is_enabled: ta_is_enabled['during'],
                       time: ta_times['during'],
                     },
                     after: {
                       ...editingRTSContext.editingRTS.newItem.ta_notifications
                         .after,
-                      message: itemToChange.notifications[0].after_message,
-                      is_enabled: itemToChange.notifications[0].after_is_enable,
+                      message: ta_message['after'],
+                      is_enabled: ta_is_enabled['after'],
                       time: ta_times['after'],
                     },
                   },
@@ -228,30 +334,29 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint }) => {
                     before: {
                       ...editingRTSContext.editingRTS.newItem.user_notifications
                         .after,
-                      message: itemToChange.notifications[1].before_message,
-                      is_enabled:
-                        itemToChange.notifications[1].before_is_enable,
+                      message: user_message['before'],
+                      is_enabled: user_is_enabled['before'],
                       time: user_times['before'],
                     },
                     during: {
                       ...editingRTSContext.editingRTS.newItem.user_notifications
                         .after,
-                      message: itemToChange.notifications[1].during_message,
-                      is_enabled:
-                        itemToChange.notifications[1].during_is_enable,
+                      message: user_message['during'],
+                      is_enabled: user_is_enabled['during'],
                       time: user_times['during'],
                     },
                     after: {
                       ...editingRTSContext.editingRTS.newItem.user_notifications
                         .after,
-                      message: itemToChange.notifications[1].after_message,
-                      is_enabled: itemToChange.notifications[1].after_is_enable,
+                      message: user_message['after'],
+                      is_enabled: user_is_enabled['after'],
                       time: user_times['after'],
                     },
                   },
                   ...itemToChange,
                 },
               });
+
               console.log('logpog-8');
 
               // testing
