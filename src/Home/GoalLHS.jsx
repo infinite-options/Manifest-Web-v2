@@ -31,6 +31,8 @@ import EditStepsIcon from './EditIS/EditIcon.jsx';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
+import greenTick from '../manifest/LoginAssets/GreenTick.svg';
+import yelloTick from '../manifest/LoginAssets/YellowTick.svg';
 import { Footer } from 'rsuite';
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
@@ -1817,7 +1819,12 @@ export default function GoalLHS(props) {
                 justifyContent: 'space-evenly',
               }}
             >
-              <div>
+              <div
+                style={{
+                  marginTop: '0.5rem',
+                  marginLeft: '-1rem',
+                }}
+              >
                 <Col
                   // xs={7}
                   style={{ paddingRight: '1rem', marginTop: '0.5rem' }}
@@ -1832,9 +1839,25 @@ export default function GoalLHS(props) {
                       objectFit: 'cover',
                     }}
                   />
+                  <img
+                    style={{
+                      position: 'relative',
+                      width: '14px',
+                      height: '14px',
+
+                      // zIndex: 3,
+                    }}
+                    src={
+                      r.is_in_progress === 'True'
+                        ? yelloTick
+                        : r.is_complete === 'True'
+                        ? greenTick
+                        : ''
+                    }
+                  />
                 </Col>
               </div>
-              <div style={{ marginLeft: '1.5rem' }}>
+              <div>
                 <div>
                   {r.is_sublist_available === 'True' ? (
                     <div>
@@ -2368,6 +2391,7 @@ export default function GoalLHS(props) {
                   task={null}
                   step={currentUser}
                   getGoalsEndPoint={props.getGoalsEndPoint}
+                  ta_id={props.stateValue.ta_people_id}
                   //  id={currentUser}
                 />
               </div>

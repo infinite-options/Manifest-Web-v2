@@ -407,7 +407,7 @@ export default function GoalHome(props) {
     showNewAccountmodal: false,
     showAllowTAmodel: false,
 
-    ta_people_id: '',
+    ta_people_id: taID,
     emailIdObject: {},
     theCurrentUserEmail: userEmail,
     newAccountID: '',
