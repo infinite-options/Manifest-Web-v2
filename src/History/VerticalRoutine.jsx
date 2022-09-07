@@ -165,21 +165,28 @@ const VerticalRoutine = ({
                 justifyContent: 'space-evenly',
               }}
             >
-              <div>
-                <Col
-                  xs={7}
-                  style={{ paddingRight: '1rem', marginTop: '0.5rem' }}
-                >
+              <div
+                style={{
+                  marginTop: '0.5rem',
+                  marginLeft: '-1rem',
+                }}
+              >
+                <Col>
                   <img
                     src={r['photo']}
                     alt="Routines"
                     className="center"
-                    height="28px"
-                    width="28px"
+                    style={{
+                      height: '40px',
+                      width: '40px',
+                      top: '0px',
+                      left: '0px',
+                      objectFit: 'contain',
+                    }}
                   />
                 </Col>
               </div>
-              <div style={{ marginLeft: '1.5rem' }}>
+              <div>
                 {r.is_sublist_available === 'True' ? (
                   <div>
                     <FontAwesomeIcon
@@ -342,21 +349,28 @@ const VerticalRoutine = ({
                 justifyContent: 'space-evenly',
               }}
             >
-              <div>
-                <Col
-                  xs={7}
-                  style={{ paddingRight: '1rem', marginTop: '0.5rem' }}
-                >
+              <div
+                style={{
+                  marginTop: '0.5rem',
+                  marginLeft: '-1rem',
+                }}
+              >
+                <Col>
                   <img
                     src={a['photo']}
                     alt="Routines"
                     className="center"
-                    height="28px"
-                    width="28px"
+                    style={{
+                      height: '30px',
+                      width: '30px',
+                      top: '0px',
+                      left: '0px',
+                      objectFit: 'contain',
+                    }}
                   />
                 </Col>
               </div>
-              <div style={{ marginLeft: '1.5rem' }}>
+              <div>
                 {a.is_sublist_available === 'True' ? (
                   <div>
                     <FontAwesomeIcon
@@ -502,21 +516,28 @@ const VerticalRoutine = ({
                 justifyContent: 'space-evenly',
               }}
             >
-              <div>
-                <Col
-                  xs={7}
-                  style={{ paddingRight: '1rem', marginTop: '0.5rem' }}
-                >
+              <div
+                style={{
+                  marginTop: '0.5rem',
+                  marginLeft: '-1rem',
+                }}
+              >
+                <Col>
                   <img
                     src={i['photo']}
                     alt="Routines"
                     className="center"
-                    height="28px"
-                    width="28px"
+                    style={{
+                      height: '40px',
+                      width: '40px',
+                      top: '0px',
+                      left: '0px',
+                      objectFit: 'contain',
+                    }}
                   />
                 </Col>
               </div>
-              <div style={{ marginLeft: '1.5rem' }}></div>
+              <div></div>
             </div>
           </div>
 

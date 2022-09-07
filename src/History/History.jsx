@@ -985,18 +985,15 @@ export default function MainPage(props) {
             paddingLeft: '0px',
             overflow: 'hidden',
             paddingRight: '0px',
-            paddingTop: '4px',
+            paddingTop: '75px',
           }}
         >
-          {/* <br></br> */}
-          {/* <br></br> */}
           <VerticalRoutine
             onlyAllowed={onlyAllowed()}
             userID={currentUser}
             sendRoutineToParent={sendRoutineToParent}
             allRows={rows}
           />
-          {/* <Container style={{padding:"0px"}}>{vertRou}</Container> */}
         </Col>
       </Row>
     </Container>

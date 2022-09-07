@@ -1822,42 +1822,57 @@ export default function GoalLHS(props) {
               <div
                 style={{
                   marginTop: '0.5rem',
-                  marginLeft: '-1rem',
+                  marginLeft: '-0.2rem',
                 }}
               >
-                <Col
-                  // xs={7}
-                  style={{ paddingRight: '1rem', marginTop: '0.5rem' }}
-                >
+                <Col>
                   <img
                     src={r.gr_photo}
                     alt="Routines"
-                    // className="center"
                     style={{
+                      position: 'absolute',
                       height: '40px',
                       width: '40px',
-                      objectFit: 'cover',
+                      top: '0px',
+                      left: '0px',
+                      objectFit: 'contain',
                     }}
                   />
-                  <img
-                    style={{
-                      position: 'relative',
-                      width: '14px',
-                      height: '14px',
-
-                      // zIndex: 3,
-                    }}
-                    src={
-                      r.is_in_progress === 'True'
-                        ? yelloTick
-                        : r.is_complete === 'True'
-                        ? greenTick
-                        : ''
-                    }
-                  />
+                  {r.is_in_progress === 'True' ? (
+                    <img
+                      style={{
+                        position: 'relative',
+                        width: '10px',
+                        height: '10px',
+                      }}
+                      src={yelloTick}
+                    />
+                  ) : r.is_complete === 'True' ? (
+                    <img
+                      style={{
+                        position: 'relative',
+                        width: '10px',
+                        height: '10px',
+                      }}
+                      src={greenTick}
+                    />
+                  ) : (
+                    <Col
+                      style={{
+                        height: '30px',
+                        width: '30px',
+                        position: 'relative',
+                        objectFit: 'contain',
+                      }}
+                    ></Col>
+                  )}
                 </Col>
               </div>
-              <div>
+              <div
+                style={{
+                  marginLeft: '1rem',
+                }}
+              >
                 <div>
                   {r.is_sublist_available === 'True' ? (
                     <div>
@@ -2578,21 +2593,28 @@ export default function GoalLHS(props) {
                 justifyContent: 'space-evenly',
               }}
             >
-              <div>
-                <Col
-                  xs={7}
-                  style={{ paddingRight: '1rem', marginTop: '0.5rem' }}
-                >
+              <div
+                style={{
+                  marginTop: '0.5rem',
+                  marginLeft: '-1rem',
+                }}
+              >
+                <Col>
                   <img
                     src={a['at_photo']}
                     alt="Routines"
                     className="center"
-                    height="28px"
-                    width="28px"
+                    style={{
+                      height: '30px',
+                      width: '30px',
+                      top: '0px',
+                      left: '0px',
+                      objectFit: 'contain',
+                    }}
                   />
                 </Col>
               </div>
-              <div style={{ marginLeft: '1.5rem' }}>
+              <div>
                 {a.is_sublist_available === 'True' ? (
                   <div>
                     <FontAwesomeIcon
@@ -2950,17 +2972,24 @@ export default function GoalLHS(props) {
                 justifyContent: 'space-evenly',
               }}
             >
-              <div>
-                <Col
-                  xs={7}
-                  style={{ paddingRight: '1rem', marginTop: '0.5rem' }}
-                >
+              <div
+                style={{
+                  marginTop: '0.5rem',
+                  marginLeft: '-1rem',
+                }}
+              >
+                <Col>
                   <img
                     src={i['is_photo']}
                     alt="Routines"
                     className="center"
-                    height="28px"
-                    width="28px"
+                    style={{
+                      height: '40px',
+                      width: '40px',
+                      top: '0px',
+                      left: '0px',
+                      objectFit: 'contain',
+                    }}
                   />
                 </Col>
               </div>
