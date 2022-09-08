@@ -230,7 +230,11 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint, ta_id }) => {
                     user_times['after'] =
                       parseInt(user_times['after'][0]) * 60 +
                       parseInt(user_times['after'][1]);
-                } else {
+                } else if (
+                  itemToChange.notifications[x].user_ta_id.charAt(0) !== '2' &&
+                  itemToChange.notifications[x].user_ta_id.charAt(0) !== '1'
+                ) {
+                  console.log('here in if 2', itemToChange.notifications);
                   user_is_enabled['before'] = 'False';
                   user_message['before'] = '';
                   user_times['before'] = 0;
@@ -240,12 +244,14 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint, ta_id }) => {
                   user_is_enabled['after'] = 'False';
                   user_message['after'] = '';
                   user_times['after'] = 0;
+                } else {
                 }
               }
               for (let x = 0; x < itemToChange.notifications.length; x++) {
                 if (
                   itemToChange.notifications[x].user_ta_id.charAt(0) === '2'
                 ) {
+                  console.log('here in if 2', itemToChange.notifications);
                   ta_is_enabled['before'] =
                     itemToChange.notifications[x].before_is_enable;
                   ta_message['before'] =
@@ -285,7 +291,11 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint, ta_id }) => {
                     ta_times['after'] =
                       parseInt(ta_times['after'][0]) * 60 +
                       parseInt(ta_times['after'][1]);
-                } else {
+                } else if (
+                  itemToChange.notifications[x].user_ta_id.charAt(0) !== '2' &&
+                  itemToChange.notifications[x].user_ta_id.charAt(0) !== '1'
+                ) {
+                  console.log('here in if 2', itemToChange.notifications);
                   ta_is_enabled['before'] = 'False';
                   ta_message['before'] = '';
                   ta_times['before'] = 0;
@@ -295,6 +305,8 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint, ta_id }) => {
                   ta_is_enabled['after'] = 'False';
                   ta_message['after'] = '';
                   ta_times['after'] = 0;
+                } else {
+                  console.log('here in if 2', itemToChange.notifications);
                 }
               }
 
