@@ -231,13 +231,13 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint, ta_id }) => {
                       parseInt(user_times['after'][0]) * 60 +
                       parseInt(user_times['after'][1]);
                 } else {
-                  user_is_enabled['before'] = '';
+                  user_is_enabled['before'] = 'False';
                   user_message['before'] = '';
                   user_times['before'] = 0;
-                  user_is_enabled['during'] = '';
+                  user_is_enabled['during'] = 'False';
                   user_message['during'] = '';
                   user_times['during'] = 0;
-                  user_is_enabled['after'] = '';
+                  user_is_enabled['after'] = 'False';
                   user_message['after'] = '';
                   user_times['after'] = 0;
                 }
@@ -286,13 +286,13 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint, ta_id }) => {
                       parseInt(ta_times['after'][0]) * 60 +
                       parseInt(ta_times['after'][1]);
                 } else {
-                  ta_is_enabled['before'] = '';
+                  ta_is_enabled['before'] = 'False';
                   ta_message['before'] = '';
                   ta_times['before'] = 0;
-                  ta_is_enabled['during'] = '';
+                  ta_is_enabled['during'] = 'False';
                   ta_message['during'] = '';
                   ta_times['during'] = 0;
-                  ta_is_enabled['after'] = '';
+                  ta_is_enabled['after'] = 'False';
                   ta_message['after'] = '';
                   ta_times['after'] = 0;
                 }
