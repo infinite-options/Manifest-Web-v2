@@ -230,6 +230,16 @@ const EditIcon = ({ routine, task, step, getGoalsEndPoint, ta_id }) => {
                     user_times['after'] =
                       parseInt(user_times['after'][0]) * 60 +
                       parseInt(user_times['after'][1]);
+                } else {
+                  user_is_enabled['before'] = '';
+                  user_message['before'] = '';
+                  user_times['before'] = 0;
+                  user_is_enabled['during'] = '';
+                  user_message['during'] = '';
+                  user_times['during'] = 0;
+                  user_is_enabled['after'] = '';
+                  user_message['after'] = '';
+                  user_times['after'] = 0;
                 }
               }
               for (let x = 0; x < itemToChange.notifications.length; x++) {
