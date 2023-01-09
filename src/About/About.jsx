@@ -1854,7 +1854,7 @@ export default function AboutModal(props) {
                       marginTop: '15px',
                       //marginBottom: '15px',
                     }}
-                    src={userPhoto}
+                    src={'/UserNoImage.png'}
                     alt="Profile"
                   />
                 ) : (
@@ -1868,7 +1868,7 @@ export default function AboutModal(props) {
                       marginTop: '15px',
                       //marginBottom: '15px',
                     }}
-                    src={'/UserNoImage.png'}
+                    src={userPhoto}
                     alt="Profile"
                   />
                 )}
