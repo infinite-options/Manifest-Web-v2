@@ -752,6 +752,7 @@ export default function AboutModal(props) {
       phone_number: aboutMeObject.phone_number,
       birth_date: aboutMeObject.birth_date,
     };
+    console.log("about newinputsubmit:", body)
     console.log('body', body);
     if (aboutMeObject.phone_number === 'undefined') {
       body.phone_number = '';
@@ -798,6 +799,9 @@ export default function AboutModal(props) {
     formData.append('picture', userImage);
     for (let value of formData.values()) {
       console.log(value);
+    }
+    for (const key of formData.keys()) {
+      console.log(`formdata: ${key}: ${formData.get(key)}`);
     }
     axios
       .post(BASE_URL + 'updateAboutMe', formData)
