@@ -1,0 +1,106 @@
+.about {
+    display: grid;
+    grid-template-columns: 33.3% 33.3% 33.3%;
+    background-color: #F2F7FC;
+    padding-top: 5%;
+}
+.about-column1 {
+    margin-left: 6%;
+    margin-right: 49%;
+}
+.about-column2 {
+
+}
+.about-column3 {
+    margin-right: 6%;
+}
+.about-input {
+    margin-top: 2%;
+    font-weight: bolder;
+    color: #000000;
+}
+.about-image-container {
+    display: flex;
+}
+.about-image-text {
+    display: inline;
+    margin-left: 12px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.about-image {
+    margin-left: 8%;
+    height: 5rem;
+    width: 5rem;
+    backgroundColor: #ffffff;
+    border-radius: 10px;
+}
+.about-time-text {
+    margin-right: 20px;
+    margin-top: 10px;
+    color: #000000;
+    font-weight: bold;
+}
+.about-time-input {
+    width: 90px;
+    padding: 3px 0;
+    margin-right: 20px;
+    border-radius: 10px;
+    border: 1px solid #889AB5;
+}
+.about-column2-input {
+    border-radius: 10px;
+    width: 59%;
+}
+.about-save-container {
+    text-align: center;
+    background-color: #F2F7FC;
+}
+.about-save-button {
+    color: #000000;
+    background-color: #889AB5;
+    border: 2px solid #000000;
+    border-radius: 20px;
+    margin: 25px;
+    padding: 10px 20px;
+}
+.about-important-container {
+    display: flex;
+    flex-direction: row;
+}
+.about-important-pic {
+    height: 5rem;
+    width: 5rem;
+    backgroundColor: #ffffff;
+    border-radius: 10px;
+}
+.about-important-name {
+    margin-top: 2.5%;
+    margin-left: 3%;
+    padding-top: 1.5%;
+    text-align: center;
+    width: 300px;
+    height: 3rem;
+    font-weight: bold;
+    border-radius: 10px;
+    border-color: #BBC7D7;
+    background-color: #BBC7D7;
+    color: #000000;
+}
+.about-important-icon {
+    margin-top: 5%;
+    margin-left: 1.5%;
+    color: #000000;
+    cursor: pointer;
+}
+.about-important-icon:hover {
+    color: #48D6D2;
+}
+.about-important-button {
+    margin-left: 150px;
+    color: #000000;
+    background-color: #889AB5;
+    border: 2px solid #000000;
+    border-radius: 20px;
+    padding: 10px 20px;
+}

@@ -6,6 +6,7 @@ import Home from '../src/Home/Home';
 import History from './History/History';
 import SignUp from '../src/manifest/SignUp';
 import AboutModal from '../src/About/About';
+import About1 from '../src/About/About1';
 import GoalHome from '../src/Home/GoalHome';
 import Events from '../src/Home/Events';
 import Privacy from '../src/Home/Privacy';
@@ -28,6 +29,7 @@ function Nav(authLevel, isAuth) {
       <Route exact path="/history" component={History} />
       <Route exact path="/signup" component={SignUp} />
       <Route exact path="/about" component={AboutModal} />
+      <Route exact path="/about1" component={About1} />-
       <Route exact path="/aboutus" component={AboutUs} />
       <Route exact path="/privacy" component={Privacy} />
       <Route exact path="/addUser" component={UserSignUp} />

@@ -202,6 +202,7 @@ export default function AboutModal(props) {
         console.log(error);
       });
   }, [firstName, called, people]);
+  console.log("about userPhotoURL: ", userPhotoURL)
   //upload from computer for TA
   const uploadImageModal = () => {
     return (
