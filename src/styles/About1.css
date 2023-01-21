@@ -104,3 +104,37 @@
     border-radius: 20px;
     padding: 10px 20px;
 }
+.about-changes-container {
+    height: 100%;
+    width: 100%;
+    z-index: 101;
+    left: 0;
+    top: 0;
+    overflow: auto;
+    position: fixed;
+    display: grid;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+.about-changes-text-container {
+    position: relative;
+    justify-self: center;
+    align-self: center;
+    display: block;
+    background-color: #889AB5;
+    width: 400px;
+    color: #000000;
+    padding: 40px;
+}
+.about-changes-text {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.about-changes-button {
+    background-color: #889AB5;
+    color: #000000;
+    border: 2px solid;
+    border-radius: 25px;
+    width: 30%;
+    margin-left: 10%;
+    margin-right: 10%;
+}

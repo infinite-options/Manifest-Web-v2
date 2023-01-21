@@ -1661,7 +1661,7 @@ export default function AboutModal(props) {
       return null;
     }
   };
-
+console.log("about sair", aboutMeObject)
   return (
     <div
       style={{

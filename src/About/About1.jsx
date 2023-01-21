@@ -38,11 +38,14 @@ export default function About1(){
             timeZone: ""
         }
     })
+    const [importantPeople, setImportantPeople] = useState([])
     const [displayImageUploader, setDisplayImageUploader] = useState(false)
+    const [displayChangesSaved, setDisplayChangesSaved] = useState(false)
     const [uploadedImage, setUploadedImage] = useState({pic: "", url: ""})
     const [imageUploader, setImageUploader] = useState("")
+    const dayTimes = [["Morning", "Afternoon"], ["Evening", "Night"], ["Day Start", "Day End"]]
+    const medicationInfo = ["Current Medication", "Notes", "Medication Schedule"]
 
-    const [importantPeople, setImportantPeople] = useState([])
     useEffect(() => {
         async function getUser(){
             const userObjectInfo = await axios.get(BASE_URL + "aboutme/" + userID)
@@ -72,7 +75,6 @@ export default function About1(){
             }
             setUserObject(userObject)
         }
-
         async function getImportantPeople(){
             const importantPeople = await axios.get(BASE_URL + "listPeople/" + userID)
                 .then(response => response.data.result.result)
@@ -83,17 +85,13 @@ export default function About1(){
     }, [])
 
     function handleTimeChange(event){
-        if(imageUploader === "user"){
-            setUserObject({
-                ...userObject,
-                timeSettings: {
-                    ...userObject.timeSettings,
-                    morning: event.target.value
-                }})
-        }
-        else{
-
-        }
+        setUserObject({
+            ...userObject,
+            timeSettings: {
+                ...userObject.timeSettings,
+                [event.target.name]: event.target.value
+            }
+        })
     }
 
     function handlePhoneChange(event){
@@ -106,7 +104,7 @@ export default function About1(){
     function handleMedicationChange(event){
         setUserObject({
             ...userObject,
-            message_day: event.target.value,
+            [event.target.name]: event.target.value
         })
     }
 
@@ -125,14 +123,12 @@ export default function About1(){
             return
         }
         if(imageUploader === "user"){
-            const updatedUserObject = {
+            setUserObject({
                 ...userObject,
                 have_pic: true,
                 pic: uploadedImage.pic,
                 picURL: uploadedImage.url
-            }
-            setUserObject(updatedUserObject)
-            await updateUser(updatedUserObject)
+            })
         }
         else{
             for(let i = 0; i < importantPeople.length; i++){
@@ -174,6 +170,11 @@ export default function About1(){
         setImageUploader(ta_id)
     }
 
+    async function handleSaveChangesClick(){
+        await updateUser(userObject)
+        setDisplayChangesSaved(true)
+    }
+
     async function updateImportantPerson(importantPerson, uploadedImage){
         let formData = new FormData()
         formData.append("user_id", userID)
@@ -209,26 +210,36 @@ export default function About1(){
         await axios.post(BASE_URL + "updateAboutMe", formData)
     }
 
-    const dayTimes = [["Morning", "Afternoon"], ["Evening", "Night"], ["Day Start", "Day End"]]
     const dayTimesElement = dayTimes.map((times, index) => {
         return(
             <tr key={index}>
                 {times.map((time, index) => {
+                    let name = time
+                    if(time === "Day Start")
+                        name = "dayStart"
+                    else if(time === "Day End")
+                        name = "dayEnd"
                     return(
                         <Fragment key={index}>
                             <td><p className="about-time-text">{time}</p></td>
-                            <td><input className="about-time-input" value={userObject.timeSettings.morning || ''} onChange={event => handleTimeChange(event)} /></td>
+                            <td><input className="about-time-input" name={name} onChange={event => handleTimeChange(event)} /></td>
                         </Fragment>
                     )})}
             </tr>
-        )})
+    )})
 
-    const colTwoInfo = ["Current Medication", "Notes", "Medication Schedule"]
-    const colTwoElement = colTwoInfo.map((info, index) => {
+    const medicationElement = medicationInfo.map((info, index) => {
+        let name = info
+        if(info === "Current Medication")
+            name = "message_day"
+        if(info === "Notes")
+            name = "message_card"
+        if(info === "Medication Schedule")
+            name = "major_events"
         return(
             <Fragment key={index}>
                 <Form.Label><b>{info}</b></Form.Label>
-                <Form.Control className="about-column2-input" as="textarea" type="text"  rows="4" onChange={event => handleMedicationChange(event)}/>
+                <Form.Control className="about-column2-input" as="textarea" type="text" rows="4" name={name} onChange={event => handleMedicationChange(event)} />
                 <br/>
             </Fragment>
         )
@@ -248,8 +259,27 @@ export default function About1(){
         )
     })
 
+    //console.log("about1 userObject: ", userObject)
+
     return(
         <div>
+            {displayChangesSaved &&
+                <div className="about-changes-container">
+                    <div className="about-changes-text-container">
+                        <div className="about-changes-text">
+                            Changes saved
+                        </div>
+                        <div className="about-changes-text">
+                            User's about me changes have been saved.
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                            <button className="about-changes-button" onClick={() => setDisplayChangesSaved(false)}>
+                                Okay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
             <Modal show={displayImageUploader} onHide={() => setDisplayImageUploader(false)}>
                 <Modal.Header>
                     <Modal.Title>Upload Image</Modal.Title>
@@ -298,7 +328,7 @@ export default function About1(){
                     <Form.Control type="date" dateFormat="MMMM d, yyyy"/>
                     <br/>
                     <label className="about-input">Phone Number:</label>
-                    <PhoneInput class="form-control" placeholder="Enter phone number"/>
+                    <PhoneInput class="form-control" placeholder="Enter phone number" onChange={event => handlePhoneChange(event)}/>
                     <br/>
                     <b>Time Settings</b>
                     <br/>
@@ -312,7 +342,7 @@ export default function About1(){
                     <br/>
                 </div>
                 <div className="about-column2">
-                    {colTwoElement}
+                    {medicationElement}
                 </div>
                 <div className="about-column3">
                     <b>Important People In Life</b>
@@ -324,7 +354,7 @@ export default function About1(){
                 </div>
             </div>
             <div className="about-save-container">
-                <button className="about-save-button" type="submit" onClick={() => updateUser(userObject)}>
+                <button className="about-save-button" type="submit" onClick={handleSaveChangesClick}>
                     Save Changes
                 </button>
                 <button className="about-save-button" type="submit">
