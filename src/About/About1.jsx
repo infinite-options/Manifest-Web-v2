@@ -1,14 +1,14 @@
 import React, { useState, useEffect, Fragment, useContext } from "react"
-import MiniNavigation from '../manifest/miniNavigation'
 import LoginContext from "../LoginContext"
 import axios from "axios"
+import MiniNavigation from '../manifest/miniNavigation'
 import PhoneInput from "react-phone-number-input"
 import { Button, Form, FormLabel, Modal } from "react-bootstrap"
+import { FormControl, MenuItem, Select } from "@material-ui/core"
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import "react-phone-number-input/style.css"
 import "../styles/About1.css"
-import {FormControl, MenuItem, Select} from "@material-ui/core"
 
 export default function About1(){
     const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI
