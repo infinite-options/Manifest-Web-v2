@@ -28,8 +28,8 @@ function Nav(authLevel, isAuth) {
       <Route exact path="/goalhome" component={GoalHome} />
       <Route exact path="/history" component={History} />
       <Route exact path="/signup" component={SignUp} />
-      <Route exact path="/about" component={AboutModal} />
-      <Route exact path="/about1" component={About1} />-
+      {/*<Route exact path="/about" component={AboutModal} />*/}
+      <Route exact path="/about" component={About1} />
       <Route exact path="/aboutus" component={AboutUs} />
       <Route exact path="/privacy" component={Privacy} />
       <Route exact path="/addUser" component={UserSignUp} />

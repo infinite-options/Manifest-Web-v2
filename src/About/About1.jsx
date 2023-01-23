@@ -1,19 +1,26 @@
 import React, { useState, useEffect, Fragment, useContext } from "react"
+import MiniNavigation from '../manifest/miniNavigation'
 import LoginContext from "../LoginContext"
 import axios from "axios"
 import PhoneInput from "react-phone-number-input"
-import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons"
 import { Button, Form, FormLabel, Modal } from "react-bootstrap"
+import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import "react-phone-number-input/style.css"
 import "../styles/About1.css"
+import {FormControl, MenuItem, Select} from "@material-ui/core"
 
 export default function About1(){
     const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI
     const loginContext = useContext(LoginContext)
-    let userID = loginContext.loginState.curUser
-    userID = "100-000244"
-
+    let userID = ""
+    if(document.cookie.split(';').some(cookie => cookie.trim().startsWith('patient_uid='))){
+        userID = document.cookie.split('; ').find((row) => row.startsWith('patient_uid=')).split('=')[1]
+    }
+    else{
+        userID = loginContext.loginState.curUser
+        document.cookie = 'patient_uid=' + loginContext.loginState.curUser
+    }
     const [userObject, setUserObject] = useState({
         first_name: "",
         last_name: "",
@@ -45,6 +52,42 @@ export default function About1(){
     const [imageUploader, setImageUploader] = useState("")
     const dayTimes = [["Morning", "Afternoon"], ["Evening", "Night"], ["Day Start", "Day End"]]
     const medicationInfo = ["Current Medication", "Notes", "Medication Schedule"]
+    const timeZones = {
+        'Pacific/Samoa': '(GMT-11:00)',
+        'Pacific/Honolulu': '(GMT-10:00)',
+        'Pacific/Marquesas': '(GMT-09:30)',
+        'America/Juneau': '(GMT-09:00)',
+        'America/Los_Angeles': '(GMT-08:00)',
+        'America/Phoenix': '(GMT-07:00)',
+        'America/Chicago': '(GMT-06:00)',
+        'America/New_York': '(GMT-05:00)',
+        'America/Puerto_Rico': '(GMT-04:00)',
+        'Canada/Newfoundland': '(GMT-03:30)',
+        'America/Buenos_Aires': '(GMT-03:00)',
+        'America/Noronha': '(GMT-02:00)',
+        'Atlantic/Azores': '(GMT-01:00)',
+        'Europe/London': '(GMT+00:00)',
+        'Europe/Berlin': '(GMT+01:00)',
+        'Asia/Jerusalem': '(GMT+02:00)',
+        'Europe/Moscow': '(GMT+03:00)',
+        'Asia/Tehran': '(GMT+03:30)',
+        'Asia/Dubai': '(GMT+04:00)',
+        'Asia/Kabul': '(GMT+04:30)',
+        'Asia/Karachi': '(GMT+05:00)',
+        'Asia/Calcutta': '(GMT+05:30)',
+        'Asia/Almaty': '(GMT+06:00)',
+        'Indian/Cocos': '(GMT+06:30)',
+        'Asia/Bangkok': '(GMT+07:00)',
+        'Asia/Hong_Kong': '(GMT+08:00)',
+        'Asia/Tokyo': '(GMT+09:00)',
+        'Australia/Darwin': '(GMT+09:30)',
+        'Australia/Brisbane': '(GMT+10:00)',
+        'Australia/Lord_How': '(GMT+10:30)',
+        'Asia/Magadan': '(GMT+11:00)',
+        'Pacific/Fiji': '(GMT+12:00)',
+        'Pacific/Apia': '(GMT+13:00)',
+        'Pacific/Kiritimati': '(GMT+14:00)',
+    }
 
     useEffect(() => {
         async function getUser(){
@@ -90,6 +133,17 @@ export default function About1(){
             timeSettings: {
                 ...userObject.timeSettings,
                 [event.target.name]: event.target.value
+            }
+        })
+    }
+
+    function handleZoneChange(event){
+        event.stopPropagation();
+        setUserObject({
+            ...userObject,
+            timeSettings: {
+                ...userObject.timeSettings,
+                timeZone: event.target.value,
             }
         })
     }
@@ -226,7 +280,8 @@ export default function About1(){
                         </Fragment>
                     )})}
             </tr>
-    )})
+        )
+    })
 
     const medicationElement = medicationInfo.map((info, index) => {
         let name = info
@@ -258,8 +313,6 @@ export default function About1(){
             </Fragment>
         )
     })
-
-    //console.log("about1 userObject: ", userObject)
 
     return(
         <div>
@@ -299,58 +352,80 @@ export default function About1(){
                 </Modal.Footer>
             </Modal>
             <div className="about">
-                <div className="about-column1">
-                    <FormLabel className="about-input">First Name:</FormLabel>
-                    <Form.Control type="text" placeholder="First Name" />
-                    <br/>
-                    <FormLabel className="about-input">Last Name:</FormLabel>
-                    <Form.Control type="text" placeholder="Last Name" />
-                    <br/>
-                    <b>Email:</b>
-                    <br/><br/>
-                    testEmail@test.com
-                    <br/><br/>
-                    <b>User id:</b>
-                    <br/><br/>
-                    100-00222
-                    <br/><br/>
-                    <h4>Change Image</h4>
-                    <div className="about-image-container">
-                        <div className="about-image-text">
-                            <div onClick={handleImageUserClick}>Upload from Computer</div>
-                            <div>User's Library</div>
-                            <div>Upload from Google Photos</div>
+                <div className="about-nav">
+                    <MiniNavigation />
+                </div>
+                <div className="about-body">
+                    <div className="about-column1">
+                        <FormLabel className="about-input">First Name:</FormLabel>
+                        <Form.Control type="text" placeholder="First Name" />
+                        <br/>
+                        <FormLabel className="about-input">Last Name:</FormLabel>
+                        <Form.Control type="text" placeholder="Last Name" />
+                        <br/>
+                        <b>Email:</b>
+                        <br/>
+                        {userObject.email}
+                        <br/><br/>
+                        <b>User id:</b>
+                        <br/>
+                        {userID}
+                        <br/><br/>
+                        <h4>Change Image</h4>
+                        <div className="about-image-container">
+                            <div className="about-image-text">
+                                <div onClick={handleImageUserClick}>Upload from Computer</div>
+                                <div>User's Library</div>
+                                <div>Upload from Google Photos</div>
+                            </div>
+                            <img className="about-image" src={userObject.picURL || "UserNoImage.png"}/>
                         </div>
-                        <img className="about-image" src={userObject.picURL || "UserNoImage.png"}/>
+                        <br/>
+                        <label className="about-input">Birth Date:</label>
+                        <Form.Control type="date" dateFormat="MMMM d, yyyy"/>
+                        <br/>
+                        <label className="about-input">Phone Number:</label>
+                        <PhoneInput class="form-control" placeholder="Enter phone number" onChange={event => handlePhoneChange(event)}/>
+                        <br/>
+                        <b>Time Settings</b>
+                        <br/>
+                        <FormControl fullWidth>
+                            <Select
+                                value={userObject.timeSettings.timeZone.split('_').join(' ') || ''}
+                                style={{ backgroundColor: '#ffffff', paddingLeft: '15px' }}
+                                onChange={event => handleZoneChange(event)}
+                                renderValue={() => {
+                                    if (userObject.timeSettings.timeZone === '')
+                                        return <div>Enter a timezone</div>
+                                    return userObject.timeSettings.timeZone.split('_').join(' ')
+                                }}
+                            >
+                                {Object.keys(timeZones).map(zone => (
+                                    <MenuItem value={zone}>
+                                        {`${zone.split('_').join(' ')} ${timeZones[zone] }`}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <br/><br/>
+                        <table>
+                            <tbody>
+                            {dayTimesElement}
+                            </tbody>
+                        </table>
+                        <br/>
                     </div>
-                    <br/>
-                    <label className="about-input">Birth Date:</label>
-                    <Form.Control type="date" dateFormat="MMMM d, yyyy"/>
-                    <br/>
-                    <label className="about-input">Phone Number:</label>
-                    <PhoneInput class="form-control" placeholder="Enter phone number" onChange={event => handlePhoneChange(event)}/>
-                    <br/>
-                    <b>Time Settings</b>
-                    <br/>
-                    <input className="about-input" type="text" placeholder="Time Zone"/>
-                    <br/><br/>
-                    <table>
-                        <tbody>
-                        {dayTimesElement}
-                        </tbody>
-                    </table>
-                    <br/>
-                </div>
-                <div className="about-column2">
-                    {medicationElement}
-                </div>
-                <div className="about-column3">
-                    <b>Important People In Life</b>
-                    <br/><br/>
-                    {importantPeopleElement}
-                    <button className="about-important-button">
-                        Add Person +
-                    </button>
+                    <div className="about-column2">
+                        {medicationElement}
+                    </div>
+                    <div className="about-column3">
+                        <b>Important People In Life</b>
+                        <br/><br/>
+                        {importantPeopleElement}
+                        <button className="about-important-button">
+                            Add Person +
+                        </button>
+                    </div>
                 </div>
             </div>
             <div className="about-save-container">
