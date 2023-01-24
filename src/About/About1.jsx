@@ -262,6 +262,7 @@ export default function About1(){
         formData.append("photo_url", userObject.picURL)
         formData.append("picture", userObject.pic)
         await axios.post(BASE_URL + "updateAboutMe", formData)
+        document.cookie = 'patient_timeZone=' + userObject.timeSettings.timeZone
     }
 
     const dayTimesElement = dayTimes.map((times, index) => {

@@ -111,10 +111,13 @@ export default function MainPage(props) {
 
   const inRange = [];
 
-  const tz = {
+  let tz = {
     timeZone: userTime_zone,
   };
-  console.log('hgot tz', tz, userTime_zone);
+  console.log('history tz', tz, userTime_zone);
+  if(tz === ""){
+    tz = "America/Los_Angeles"
+  }
   var time = new Date().toLocaleString(tz, tz).replace(/,/g, '');
   var m = Moment(time).format('ddd MMM D YYYY HH:mm:ss [GMT]ZZ ');
   var m = new Date(m);
