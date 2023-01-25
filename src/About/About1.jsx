@@ -332,7 +332,7 @@ export default function About1(){
         return(
             <tr key={index}>
                 {times.map((time, index) => {
-                    let name = time
+                    let name = time.toLowerCase()
                     if(time === "Day Start")
                         name = "dayStart"
                     else if(time === "Day End")
@@ -340,7 +340,7 @@ export default function About1(){
                     return(
                         <Fragment key={index}>
                             <td><p className="about-time-text">{time}</p></td>
-                            <td><input className="about-time-input" name={name} onChange={event => handleTimeChange(event)} /></td>
+                            <td><input className="about-time-input" name={name} value={userObject.timeSettings[name]} onChange={event => handleTimeChange(event)} /></td>
                         </Fragment>
                     )})}
             </tr>
@@ -537,10 +537,10 @@ export default function About1(){
                 <div className="about-body">
                     <div className="about-column1">
                         <FormLabel className="about-input">First Name:</FormLabel>
-                        <Form.Control type="text" placeholder="First Name" onChange={event => FirstNameChange(event)}/>
+                        <Form.Control type="text" value={userObject.first_name} placeholder="First Name" onChange={event => FirstNameChange(event)}/>
                         <br/>
                         <FormLabel className="about-input">Last Name:</FormLabel>
-                        <Form.Control type="text" placeholder="Last Name" onChange={event => LastNameChange(event)}/>
+                        <Form.Control type="text" value={userObject.last_name} placeholder="Last Name" onChange={event => LastNameChange(event)}/>
                         <br/>
                         <b>Email:</b>
                         <br/>
@@ -561,14 +561,15 @@ export default function About1(){
                         </div>
                         <br/>
                         <label className="about-input">Birth Date:</label>
-                        <Form.Control type="date" dateFormat="MMMM d, yyyy" onChange={event => handleBirthChange(event)}/>
+                        <Form.Control type="date" dateFormat="MMMM d, yyyy" value={userObject.birth_date} onChange={event => handleBirthChange(event)}/>
                         <br/>
-                        <PhoneInput class="form-control" placeholder="Enter phone number" onChange={event => handlePhoneChange(event)}/>
+                        <PhoneInput class="form-control" value={userObject.phone_number} placeholder="Enter phone number" onChange={event => handlePhoneChange(event)}/>
                         <br/>
                         <b>Time Settings</b>
                         <br/>
                         <FormControl fullWidth>
                             <Select
+                                placeholder={userObject.timeSettings.timeZone}
                                 value={userObject.timeSettings.timeZone.split('_').join(' ') || ''}
                                 style={{ backgroundColor: '#ffffff', paddingLeft: '15px' }}
                                 onChange={event => handleZoneChange(event)}
