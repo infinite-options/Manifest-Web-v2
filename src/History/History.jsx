@@ -993,12 +993,14 @@ export default function MainPage(props) {
         >
           {/* <br></br> */}
           {/* <br></br> */}
-          <VerticalRoutine
-            onlyAllowed={onlyAllowed()}
-            userID={currentUser}
-            sendRoutineToParent={sendRoutineToParent}
-            allRows={rows}
-          />
+          <div style={{marginTop: "69px"}}>
+            <VerticalRoutine
+                onlyAllowed={onlyAllowed()}
+                userID={currentUser}
+                sendRoutineToParent={sendRoutineToParent}
+                allRows={rows}
+            />
+          </div>
           {/* <Container style={{padding:"0px"}}>{vertRou}</Container> */}
         </Col>
       </Row>
