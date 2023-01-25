@@ -142,7 +142,7 @@ export default function About1(){
     function LastNameChange(event){
         setUserObject({
             ...userObject,
-            first_name: event.target.value
+            last_name: event.target.value
         })
     }
 
@@ -308,6 +308,7 @@ export default function About1(){
     }
 
     async function updateUser(userObject){
+        console.log("about1 userObject: ", userObject)
         let formData = new FormData()
         formData.append("user_id", userID)
         formData.append("first_name", userObject.first_name)
