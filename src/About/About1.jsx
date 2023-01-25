@@ -3,12 +3,14 @@ import LoginContext from "../LoginContext"
 import axios from "axios"
 import MiniNavigation from '../manifest/miniNavigation'
 import PhoneInput from "react-phone-number-input"
-import { Button, Form, FormLabel, Modal } from "react-bootstrap"
+import {Button, Col, Form, FormLabel, Modal, Row} from "react-bootstrap"
 import { FormControl, MenuItem, Select } from "@material-ui/core"
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import "react-phone-number-input/style.css"
 import "../styles/About1.css"
+import TAUploadImage from "../Home/TAUploadImage";
+import TAGooglePhotos from "../Home/TAGooglePhotos";
 
 export default function About1(){
     const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI
@@ -45,9 +47,11 @@ export default function About1(){
             timeZone: ""
         }
     })
+    const [taObject, setTaObject] = useState({})
     const [importantPeople, setImportantPeople] = useState([])
     const [displayImageUploader, setDisplayImageUploader] = useState(false)
     const [displayChangesSaved, setDisplayChangesSaved] = useState(false)
+    const [displayEditImportantPerson, setDisplayEditImportantPerson] = useState(false)
     const [uploadedImage, setUploadedImage] = useState({pic: "", url: ""})
     const [imageUploader, setImageUploader] = useState("")
     const dayTimes = [["Morning", "Afternoon"], ["Evening", "Night"], ["Day Start", "Day End"]]
@@ -121,11 +125,26 @@ export default function About1(){
         async function getImportantPeople(){
             const importantPeople = await axios.get(BASE_URL + "listPeople/" + userID)
                 .then(response => response.data.result.result)
+            console.log("about1:", importantPeople)
             setImportantPeople(importantPeople)
         }
         getUser()
         getImportantPeople()
     }, [])
+
+    function FirstNameChange(event){
+        setUserObject({
+            ...userObject,
+            first_name: event.target.value
+        })
+    }
+
+    function LastNameChange(event){
+        setUserObject({
+            ...userObject,
+            first_name: event.target.value
+        })
+    }
 
     function handleTimeChange(event){
         setUserObject({
@@ -183,45 +202,51 @@ export default function About1(){
                 pic: uploadedImage.pic,
                 picURL: uploadedImage.url
             })
+            setUploadedImage({
+                ...uploadedImage,
+                pic: "",
+                url: ""
+            })
         }
         else{
-            for(let i = 0; i < importantPeople.length; i++){
-                if(importantPeople[i].ta_people_id === imageUploader){
-                    importantPeople[i].pic = uploadedImage.url
-                    await updateImportantPerson(importantPeople[i], uploadedImage)
-                }
-            }
+            setTaObject({
+                ...taObject,
+                have_pic: true,
+                photo: uploadedImage.pic,
+                pic: uploadedImage.url
+            })
         }
         setDisplayImageUploader(false)
-        setUploadedImage({
-            ...uploadedImage,
-            pic: "",
-            url: ""
-        })
     }
 
     function handleImageCancel(){
+        if(imageUploader === "user"){
+            setUploadedImage({
+                ...uploadedImage,
+                pic: "",
+                url: ""
+            })
+            setImageUploader("")
+        }
         setDisplayImageUploader(false)
-        setUploadedImage({
-            ...uploadedImage,
-            pic: "",
-            url: ""
-        })
-        setImageUploader("")
     }
 
-    function handleImageUserClick(){
+    function handleImageClick(id){
         setDisplayImageUploader(true)
-        setImageUploader("user")
+        setImageUploader(id)
     }
 
-    function editImportantPerson(ta_id){
-        setDisplayImageUploader(true)
-        setImageUploader(ta_id)
+    function editImportantPerson(id){
+        for(let i = 0; i < importantPeople.length; i++){
+            if(importantPeople[i].ta_people_id === id){
+                setTaObject(importantPeople[i])
+            }
+        }
+        setDisplayEditImportantPerson(true)
     }
 
-    function deleteImportantPerson(ta_id){
-        setImageUploader(ta_id)
+    function deleteImportantPerson(id){
+
     }
 
     async function handleSaveChangesClick(){
@@ -229,20 +254,48 @@ export default function About1(){
         setDisplayChangesSaved(true)
     }
 
-    async function updateImportantPerson(importantPerson, uploadedImage){
+    function handleEditImportantPersonCancel(){
+        setTaObject({})
+        setDisplayEditImportantPerson(false)
+        setUploadedImage({
+            ...uploadedImage,
+            pic: "",
+            url: ""
+        })
+    }
+
+    function handleEditImportantPersonConfirm(){
+        for(let i = 0; i < importantPeople.length; i++){
+            if(importantPeople[i].ta_people_id === taObject.ta_people_id){
+                importantPeople[i].pic = uploadedImage.url
+            }
+        }
+        setTaObject({})
+        updateImportantPerson(taObject)
+        setDisplayEditImportantPerson(false)
+        setDisplayChangesSaved(true)
+        setUploadedImage({
+            ...uploadedImage,
+            pic: "",
+            url: ""
+        })
+    }
+
+    async function updateImportantPerson(taObject){
+        console.log("about1:", taObject.pic)
         let formData = new FormData()
         formData.append("user_id", userID)
-        formData.append("ta_people_id", importantPerson.ta_people_id)
-        formData.append("people_name", importantPerson.name)
-        formData.append("people_email", importantPerson.email)
-        formData.append("people_employer", importantPerson.employer)
-        formData.append("people_relationship", importantPerson.relationship)
-        formData.append("people_phone_number", importantPerson.phone_number.replace(/\D/g, ''))
+        formData.append("ta_people_id", taObject.ta_people_id)
+        formData.append("people_name", taObject.name)
+        formData.append("people_email", taObject.email)
+        formData.append("people_employer", taObject.employer)
+        formData.append("people_relationship", taObject.relationship)
+        formData.append("people_phone_number", taObject.phone_number.replace(/\D/g, ''))
         formData.append("people_important", "True")
         formData.append("people_have_pic", "True")
-        formData.append("people_pic", uploadedImage.pic)
-        formData.append("photo_url", uploadedImage.url)
-        formData.append("ta_time_zone", importantPerson.time_zone)
+        formData.append("people_pic", taObject.photo)
+        formData.append("photo_url", taObject.pic)
+        formData.append("ta_time_zone", taObject.time_zone)
         await axios.post(BASE_URL + "updatePeople", formData)
     }
 
@@ -262,7 +315,8 @@ export default function About1(){
         formData.append("photo_url", userObject.picURL)
         formData.append("picture", userObject.pic)
         await axios.post(BASE_URL + "updateAboutMe", formData)
-        document.cookie = 'patient_timeZone=' + userObject.timeSettings.timeZone
+        document.cookie = "patient_pic=" + userObject.picURL
+        document.cookie = "patient_timeZone=" + userObject.timeSettings.timeZone
     }
 
     const dayTimesElement = dayTimes.map((times, index) => {
@@ -334,6 +388,121 @@ export default function About1(){
                     </div>
                 </div>
             }
+            <Modal show={displayEditImportantPerson} onHide={() => setDisplayEditImportantPerson(false)}>
+                <Modal.Header>
+                    <Modal.Title>Person Info</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <FormLabel>Full Name</FormLabel>
+                    <Form.Control type="text" placeholder={taObject.name || "Full Name"} />
+                    <br/>
+                    <FormLabel>Change Image</FormLabel>
+                    <div className="about-image-container">
+                        <div className="about-image-text">
+                            <div onClick={() => handleImageClick(taObject.ta_people_id)}>Upload from Computer</div>
+                            <div>User's Library</div>
+                            <div>Upload from Google Photos</div>
+                        </div>
+                        <img className="about-image" src={taObject.pic || "UserNoImage.png"}/>
+                    </div>
+                    <br/>
+                    <FormLabel>Relationship</FormLabel>
+                    <FormControl fullWidth>
+                        <Select
+                            value={taObject.relationship}
+                            style={{
+                                backgroundColor: '#ffffff',
+                                paddingLeft: '15px',
+                            }}
+                            renderValue={() => {
+                                if (taObject.relationship === '') {
+                                    return <div>Enter a relationship</div>;
+                                }
+                                return taObject.relationship;
+                            }}
+                            onChange={(e) => {
+                                setTaObject({
+                                    ...taObject,
+                                    relationship: e.target.value,
+                                });
+                            }}
+                        >
+                            <MenuItem value={'Advisor'}>{'Advisor'}</MenuItem>
+                            <MenuItem value={'Friend'}>{'Friend'}</MenuItem>
+                            <MenuItem value={'Relative'}>{'Relative'}</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <br/><br/>
+                    <FormControl fullWidth>
+                        <Select
+                            value={userObject.timeSettings.timeZone.split('_').join(' ') || ''}
+                            style={{ backgroundColor: '#ffffff', paddingLeft: '15px' }}
+                            onChange={event => handleZoneChange(event)}
+                            renderValue={() => {
+                                if (userObject.timeSettings.timeZone === '')
+                                    return <div>Enter a timezone</div>
+                                return userObject.timeSettings.timeZone.split('_').join(' ')
+                            }}
+                        >
+                            {Object.keys(timeZones).map(zone => (
+                                <MenuItem value={zone}>
+                                    {`${zone.split('_').join(' ')} ${timeZones[zone] }`}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <br/><br/>
+                    <label>Phone Number</label>
+                    <Form.Control
+                        type="phone"
+                        value={taObject.phone_number}
+                        placeholder="Enter phone number"
+                        onChange={(e) => {
+                            const re = /\D/g;
+                            const test = e.target.value.replace(re, '');
+                            if (test.length > 10) return;
+                            setTaObject({
+                                ...taObject,
+                                phone_number: e.target.value,
+                            });
+                        }}
+                    />
+                    <br/>
+                    <label>Email Address</label>
+                    <Form.Control
+                        type="email"
+                        placeholder="Email Address"
+                        value={taObject.email}
+                        onChange={(e) => {
+                            setTaObject({
+                                ...taObject,
+                                email: e.target.value,
+                            });
+                        }}
+                    />
+                    <br/>
+                    <label>Employer</label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Employer"
+                        value={taObject.employer}
+                        onChange={(e) => {
+                            setTaObject({
+                                ...taObject,
+                                employer: e.target.value,
+                            });
+                        }}
+                    />
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleEditImportantPersonCancel}>
+                        Cancel
+                    </Button>
+                    <Button variant="primary" onClick={handleEditImportantPersonConfirm}>
+                        Confirm
+                    </Button>
+                </Modal.Footer>
+            </Modal>
             <Modal show={displayImageUploader} onHide={() => setDisplayImageUploader(false)}>
                 <Modal.Header>
                     <Modal.Title>Upload Image</Modal.Title>
@@ -341,7 +510,7 @@ export default function About1(){
                 <Modal.Body>
                     <input type="file" onChange={event => handleImageChange(event)} />
                     <br/><br/>
-                    <img src={uploadedImage.url || "http://via.placeholder.com/400x300"} height="300" width="400" />
+                    <img src={uploadedImage.url || "https://via.placeholder.com/400x300"} />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => handleImageCancel()}>
@@ -359,10 +528,10 @@ export default function About1(){
                 <div className="about-body">
                     <div className="about-column1">
                         <FormLabel className="about-input">First Name:</FormLabel>
-                        <Form.Control type="text" placeholder="First Name" />
+                        <Form.Control type="text" placeholder="First Name" onChange={event => FirstNameChange(event)}/>
                         <br/>
                         <FormLabel className="about-input">Last Name:</FormLabel>
-                        <Form.Control type="text" placeholder="Last Name" />
+                        <Form.Control type="text" placeholder="Last Name" onChange={event => LastNameChange(event)}/>
                         <br/>
                         <b>Email:</b>
                         <br/>
@@ -375,7 +544,7 @@ export default function About1(){
                         <h4>Change Image</h4>
                         <div className="about-image-container">
                             <div className="about-image-text">
-                                <div onClick={handleImageUserClick}>Upload from Computer</div>
+                                <div onClick={() => handleImageClick("user")}>Upload from Computer</div>
                                 <div>User's Library</div>
                                 <div>Upload from Google Photos</div>
                             </div>
@@ -384,9 +553,6 @@ export default function About1(){
                         <br/>
                         <label className="about-input">Birth Date:</label>
                         <Form.Control type="date" dateFormat="MMMM d, yyyy"/>
-                        <br/>
-                        <label className="about-input">Phone Number:</label>
-                        <PhoneInput class="form-control" placeholder="Enter phone number" onChange={event => handlePhoneChange(event)}/>
                         <br/>
                         <b>Time Settings</b>
                         <br/>
