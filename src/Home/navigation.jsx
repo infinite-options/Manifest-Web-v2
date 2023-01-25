@@ -110,7 +110,7 @@ export function Navigation() {
   }, []);
   const getTAImage = () => {
     axios.get(BASE_URL + 'getPeopleImages/' + selectedUser).then((response) => {
-      console.log(response);
+      console.log("getPeopleImages: ", response);
       if (response.data.result.length == 0) {
         setTaImage('');
       } else {

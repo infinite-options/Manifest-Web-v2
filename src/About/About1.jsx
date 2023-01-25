@@ -167,6 +167,14 @@ export default function About1(){
         })
     }
 
+    function handleBirthChange(event){
+        setUserObject({
+            ...userObject,
+            birth_date: event.target.value,
+            birth_date_change: true
+        })
+    }
+
     function handlePhoneChange(event){
         setUserObject({
             ...userObject,
@@ -552,7 +560,9 @@ export default function About1(){
                         </div>
                         <br/>
                         <label className="about-input">Birth Date:</label>
-                        <Form.Control type="date" dateFormat="MMMM d, yyyy"/>
+                        <Form.Control type="date" dateFormat="MMMM d, yyyy" onChange={event => handleBirthChange(event)}/>
+                        <br/>
+                        <PhoneInput class="form-control" placeholder="Enter phone number" onChange={event => handlePhoneChange(event)}/>
                         <br/>
                         <b>Time Settings</b>
                         <br/>
