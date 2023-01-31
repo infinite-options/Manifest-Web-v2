@@ -115,6 +115,7 @@ export function Navigation() {
         setTaImage('');
       } else {
         setTaImage(response.data.result[0].url);
+        console.log("admin2: ", response.data.result[0].url)
       }
     });
   };

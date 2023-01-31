@@ -177,13 +177,13 @@ export default function MainPage(props) {
   const [childIn, setChildIn] = useState('');
 
   useEffect(() => {
-    console.log('history1');
     axios
       .get(BASE_URL + 'getHistory/' + currentUser)
       .then((response) => {
         console.log('getHistory response = ', response.data);
         let thisWeek = getThisWeek();
         for (var j = 0; j < thisWeek.length; j++) {
+          console.log("history jCounter: ", j)
           if (
             response.data.result.filter((e) => e.date_affected === thisWeek[j])
               .length > 0
@@ -205,7 +205,7 @@ export default function MainPage(props) {
             });
           }
         }
-
+        console.log("history temp1", historyGot)
         // for (var j = 0; j < thisWeek.length; j++) {
         //   for (var i = 0; i < response.data.result.length; i++) {
         //     // console.log(response.data.result[i].date_affected);
@@ -403,6 +403,7 @@ export default function MainPage(props) {
               currentR.days[d] = obj[r].status;
               bigList.push(currentR);
             }
+            console.log("history1 bigList: ", bigList)
 
             if (obj[r].actions != undefined) {
               var actions = obj[r].actions;

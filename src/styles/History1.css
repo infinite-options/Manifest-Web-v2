@@ -1,0 +1,59 @@
+.history {
+    background-color: #F2F7FC;
+}
+.history-nav {
+    width: 30%;
+}
+.history-body {
+    display: grid;
+    grid-template-columns: 80% 20%;
+    grid-template-areas:
+            "header header"
+            "week legend"
+            "week activities";
+    text-align: center;
+}
+.history-header {
+    grid-area: header;
+    padding: 0.5%;
+    color: white;
+    background-color: #889AB5;
+}
+.history-header-prev {
+    float: left;
+    cursor: pointer;
+}
+.history-header-next {
+    float: right;
+    cursor: pointer;
+}
+.history-legend {
+    grid-area: legend;
+    background-color: white;
+    padding: 5px 0;
+}
+.history-activities {
+    grid-area: activities;
+    background-color: white;
+}
+.history-activities table {
+    width: 100%;
+}
+.history-activities table tbody tr td {
+    border: 1px solid black;
+}
+.history-week {
+    grid-area: week;
+    background-color: white;
+}
+.history-week table{
+    width: 100%;
+    table-layout: fixed;
+}
+.history-week table thead tr td{
+    padding: 17px 0;
+}
+.history-week table tbody tr td{
+    border: 1px solid black;
+
+}

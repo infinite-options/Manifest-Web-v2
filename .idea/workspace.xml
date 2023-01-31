@@ -21,7 +21,12 @@
   <component name="ChangeListManager">
     <list default="true" id="c55e7531-7ba9-4fd4-83fe-ea55fbc88158" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/History/History.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/History/History.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Home/Admin.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Home/Admin.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Home/navigation.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Home/navigation.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Nav.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Nav.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +43,14 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -110,7 +123,14 @@
       <workItem from="1674583273452" duration="2080000" />
       <workItem from="1674596589863" duration="2278000" />
       <workItem from="1674612529087" duration="8781000" />
-      <workItem from="1674667675167" duration="7193000" />
+      <workItem from="1674667675167" duration="10216000" />
+      <workItem from="1674698381086" duration="17847000" />
+      <workItem from="1674754029618" duration="30768000" />
+      <workItem from="1674795876633" duration="905000" />
+      <workItem from="1674840037113" duration="10143000" />
+      <workItem from="1674861088368" duration="3928000" />
+      <workItem from="1675099376758" duration="657000" />
+      <workItem from="1675141753523" duration="2572000" />
     </task>
     <servers />
   </component>

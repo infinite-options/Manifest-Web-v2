@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
@@ -71,7 +71,7 @@ export function Admin() {
   const history = useHistory();
   const classes = useStyles();
   const loginContext = useContext(LoginContext);
-
+  //const selectedUser = loginContext.loginState.curUser;
   let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
   let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
 
@@ -87,7 +87,12 @@ export function Admin() {
       CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
       console.log(CLIENT_ID, CLIENT_SECRET);
     }
-  });
+    async function getNavBarPfp(){
+        const navBarPfp = await axios.get(BASE_URL + 'getPeopleImages/200-000116').then(response => response.data.result[0].url)
+        setNavBarPfp(navBarPfp)
+    }
+    getNavBarPfp()
+  }, []);
 
   const listOfUsers = loginContext.loginState.usersOfTA;
   var selectedTA = loginContext.loginState.ta.id;
@@ -140,6 +145,7 @@ export function Admin() {
   }
 
   console.log(selectedTA, usrID, userN);
+  const [navBarPfp, setNavBarPfp] = useState("")
   const [called, toggleCalled] = useState(false);
   const [showNewUser, toggleNewUser] = useState(false);
   const [showGiveAccess, toggleGiveAccess] = useState(false);
@@ -2132,7 +2138,6 @@ export function Admin() {
               </div>
             </div>
           </Col>
-
           <Col
             style={{
               display: 'flex',
@@ -2141,6 +2146,8 @@ export function Admin() {
               justifyContent: 'center',
             }}
           >
+              <img src={navBarPfp} style={{height: "10rem", width: "10rem", borderRadius: "10px"}} />
+              <br/>
             <div class="con">
               <button
                 class="duperr"
