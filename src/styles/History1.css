@@ -9,7 +9,7 @@
     grid-template-columns: 80% 20%;
     grid-template-areas:
             "header header"
-            "week legend"
+            "week activities"
             "week activities";
     text-align: center;
 }
@@ -27,20 +27,21 @@
     float: right;
     cursor: pointer;
 }
-.history-legend {
-    grid-area: legend;
-    background-color: white;
-    padding: 5px 0;
-}
 .history-activities {
     grid-area: activities;
     background-color: white;
 }
 .history-activities table {
     width: 100%;
+    table-layout: fixed;
+}
+.history-activities table thead tr td{
+    padding: 2.5px 0;
 }
 .history-activities table tbody tr td {
-    border: 1px solid black;
+    padding: 33.4px 0;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
 }
 .history-week {
     grid-area: week;
@@ -53,7 +54,22 @@
 .history-week table thead tr td{
     padding: 17px 0;
 }
+.history-week table tbody tr{
+    display: table-cell;
+}
 .history-week table tbody tr td{
-    border: 1px solid black;
-
+    padding: 30px 0;
+    display: block;
+    border-top: 1px solid black;
+}
+.cR {
+    margin: 0 auto;
+    border-radius: 50%;
+    border: solid 2px #ffb84d;
+    background-color: #ffb84d;
+}
+.nsR {
+    margin: 0 auto;
+    border-radius: 50%;
+    border: solid 2px #ffb84d;
 }

@@ -70,30 +70,30 @@ export default function MainPage(props) {
   var userPic = '';
   var userN = '';
   if (
-    document.cookie
-      .split(';')
-      .some((item) => item.trim().startsWith('patient_uid='))
+      document.cookie
+          .split(';')
+          .some((item) => item.trim().startsWith('patient_uid='))
   ) {
     userID = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('patient_uid='))
-      .split('=')[1];
+        .split('; ')
+        .find((row) => row.startsWith('patient_uid='))
+        .split('=')[1];
     userTime_zone = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('patient_timeZone='))
-      .split('=')[1];
+        .split('; ')
+        .find((row) => row.startsWith('patient_timeZone='))
+        .split('=')[1];
     userEmail = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('patient_email='))
-      .split('=')[1];
+        .split('; ')
+        .find((row) => row.startsWith('patient_email='))
+        .split('=')[1];
     userPic = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('patient_pic='))
-      .split('=')[1];
+        .split('; ')
+        .find((row) => row.startsWith('patient_pic='))
+        .split('=')[1];
     userN = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('patient_name='))
-      .split('=')[1];
+        .split('; ')
+        .find((row) => row.startsWith('patient_name='))
+        .split('=')[1];
   } else {
     userID = loginContext.loginState.curUser;
     userTime_zone = loginContext.loginState.curUserTimeZone;
@@ -111,13 +111,10 @@ export default function MainPage(props) {
 
   const inRange = [];
 
-  let tz = {
+  const tz = {
     timeZone: userTime_zone,
   };
-  console.log('history tz', tz, userTime_zone);
-  if(tz === ""){
-    tz = "America/Los_Angeles"
-  }
+  console.log('hgot tz', tz, userTime_zone);
   var time = new Date().toLocaleString(tz, tz).replace(/,/g, '');
   var m = Moment(time).format('ddd MMM D YYYY HH:mm:ss [GMT]ZZ ');
   var m = new Date(m);
@@ -133,23 +130,23 @@ export default function MainPage(props) {
   const classes = useStyles();
 
   function createData(
-    name,
-    number,
-    sun,
-    mon,
-    tue,
-    wed,
-    thurs,
-    fri,
-    sat,
-    show,
-    under,
-    photo,
-    startTime,
-    endTime,
-    is_sublist_available,
-    type,
-    is_available
+      name,
+      number,
+      sun,
+      mon,
+      tue,
+      wed,
+      thurs,
+      fri,
+      sat,
+      show,
+      under,
+      photo,
+      startTime,
+      endTime,
+      is_sublist_available,
+      type,
+      is_available
   ) {
     //rows structure
     return {
@@ -177,109 +174,109 @@ export default function MainPage(props) {
   const [childIn, setChildIn] = useState('');
 
   useEffect(() => {
+    console.log('history1');
     axios
-      .get(BASE_URL + 'getHistory/' + currentUser)
-      .then((response) => {
-        console.log('getHistory response = ', response.data);
-        let thisWeek = getThisWeek();
-        for (var j = 0; j < thisWeek.length; j++) {
-          console.log("history jCounter: ", j)
-          if (
-            response.data.result.filter((e) => e.date_affected === thisWeek[j])
-              .length > 0
-          ) {
-            response.data.result
-              .filter((e) => e.date_affected === thisWeek[j])
-              .map((x) => {
-                historyGot.push(x);
+        .get(BASE_URL + 'getHistory/' + currentUser)
+        .then((response) => {
+          console.log('getHistory response = ', response.data);
+          let thisWeek = getThisWeek();
+          for (var j = 0; j < thisWeek.length; j++) {
+            if (
+                response.data.result.filter((e) => e.date_affected === thisWeek[j])
+                    .length > 0
+            ) {
+              response.data.result
+                  .filter((e) => e.date_affected === thisWeek[j])
+                  .map((x) => {
+                    historyGot.push(x);
+                  });
+            } else {
+              historyGot.push({
+                id: '',
+                user_id: '',
+                date:
+                    Moment(thisWeek[j]).add('days', 1).format('YYYY-MM-DD') +
+                    ' 00:07:40',
+                date_affected: thisWeek[j],
+                details: '',
               });
-          } else {
-            historyGot.push({
-              id: '',
-              user_id: '',
-              date:
-                Moment(thisWeek[j]).add('days', 1).format('YYYY-MM-DD') +
-                ' 00:07:40',
-              date_affected: thisWeek[j],
-              details: '',
-            });
+            }
           }
-        }
-        console.log("history temp1", historyGot)
-        // for (var j = 0; j < thisWeek.length; j++) {
-        //   for (var i = 0; i < response.data.result.length; i++) {
-        //     // console.log(response.data.result[i].date_affected);
-        //     console.log(response.data.result[i].date_affected);
-        //     if (thisWeek[j] === response.data.result[i].date_affected) {
-        //       historyGot.push(response.data.result[i]);
-        //     } else {
-        //       historyGot.push({
-        //         id: '',
-        //         user_id: '',
-        //         date: '',
-        //         date_affected: '',
-        //         details: '',
-        //       });
-        //     }
-        //   }
-        //   // historyGot.push(response.data.result[i]);
-        // }
-        // setHG(historyGot);
-        console.log('hgot = ', historyGot);
-        setCurDate(m);
-        console.log(currentDate);
-        cleanData(historyGot, currentDate);
-        // console.log(response.data.result[1].details);
-        // cleanData(historyGot, currentDate);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+
+          // for (var j = 0; j < thisWeek.length; j++) {
+          //   for (var i = 0; i < response.data.result.length; i++) {
+          //     // console.log(response.data.result[i].date_affected);
+          //     console.log(response.data.result[i].date_affected);
+          //     if (thisWeek[j] === response.data.result[i].date_affected) {
+          //       historyGot.push(response.data.result[i]);
+          //     } else {
+          //       historyGot.push({
+          //         id: '',
+          //         user_id: '',
+          //         date: '',
+          //         date_affected: '',
+          //         details: '',
+          //       });
+          //     }
+          //   }
+          //   // historyGot.push(response.data.result[i]);
+          // }
+          // setHG(historyGot);
+          console.log('hgot = ', historyGot);
+          setCurDate(m);
+          console.log(currentDate);
+          cleanData(historyGot, currentDate);
+          // console.log(response.data.result[1].details);
+          // cleanData(historyGot, currentDate);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     axios
-      .get(
-        BASE_URL +
-          'usersOfTA/' +
-          document.cookie
-            .split('; ')
-            .find((row) => row.startsWith('ta_email='))
-            .split('=')[1]
-      )
-      .then((response) => {
-        console.log(response);
-        if (response.data.result.length > 0) {
-          const usersOfTA = response.data.result;
-          const curUserID = usersOfTA[0].user_unique_id;
-          const curUserTZ = usersOfTA[0].time_zone;
-          const curUserEI = usersOfTA[0].user_email_id;
-          const curUserN = usersOfTA[0].user_name;
-          loginContext.setLoginState({
-            ...loginContext.loginState,
-            usersOfTA: response.data.result,
-            curUser: curUserID,
-            curUserTimeZone: curUserTZ,
-            curUserEmail: curUserEI,
-            curUserName: curUserN,
-          });
-          console.log(curUserID);
-          // setUserID(curUserID);
-          // console.log(userID);
-          // GrabFireBaseRoutinesGoalsData();
-          // return userID;
-        } else {
-          loginContext.setLoginState({
-            ...loginContext.loginState,
-            usersOfTA: response.data.result,
-            curUser: '',
-            curUserTimeZone: '',
-            curUserEmail: '',
-            curUserName: '',
-          });
-          console.log('No User Found');
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+        .get(
+            BASE_URL +
+            'usersOfTA/' +
+            document.cookie
+                .split('; ')
+                .find((row) => row.startsWith('ta_email='))
+                .split('=')[1]
+        )
+        .then((response) => {
+          console.log(response);
+          if (response.data.result.length > 0) {
+            const usersOfTA = response.data.result;
+            const curUserID = usersOfTA[0].user_unique_id;
+            const curUserTZ = usersOfTA[0].time_zone;
+            const curUserEI = usersOfTA[0].user_email_id;
+            const curUserN = usersOfTA[0].user_name;
+            loginContext.setLoginState({
+              ...loginContext.loginState,
+              usersOfTA: response.data.result,
+              curUser: curUserID,
+              curUserTimeZone: curUserTZ,
+              curUserEmail: curUserEI,
+              curUserName: curUserN,
+            });
+            console.log(curUserID);
+            // setUserID(curUserID);
+            // console.log(userID);
+            // GrabFireBaseRoutinesGoalsData();
+            // return userID;
+          } else {
+            loginContext.setLoginState({
+              ...loginContext.loginState,
+              usersOfTA: response.data.result,
+              curUser: '',
+              curUserTimeZone: '',
+              curUserEmail: '',
+              curUserName: '',
+            });
+            console.log('No User Found');
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
   }, [
     loginContext.loginState.loggedIn,
     loginContext.loginState.reload,
@@ -303,17 +300,17 @@ export default function MainPage(props) {
     for (var i = historyGot.length - 1; i >= 0; i--) {
       console.log('hgot history date', i);
       console.log(
-        'hgot history date',
-        i,
-        historyGot[i],
-        historyGot[i].date_affected,
-        historyDate
+          'hgot history date',
+          i,
+          historyGot[i],
+          historyGot[i].date_affected,
+          historyDate
       );
       var historyDate = new Date(historyGot[i].date_affected);
 
       if (
-        historyDate.getTime() >= useDate.getTime() - 691200000 && //filter for within 7 datets
-        historyDate.getTime() <= useDate.getTime() - 86400000
+          historyDate.getTime() >= useDate.getTime() - 691200000 && //filter for within 7 datets
+          historyDate.getTime() <= useDate.getTime() - 86400000
       ) {
         // 7: 604800000    2: 172800000
         temp.push(historyGot[i]);
@@ -338,10 +335,10 @@ export default function MainPage(props) {
     console.log('inRange1 = ', inRange);
     function custom_sort(a, b) {
       return (
-        new Date(a.start_day_and_time).getHours() +
-        new Date(a.start_day_and_time).getMinutes() / 60 -
-        (new Date(b.start_day_and_time).getHours() +
-          new Date(b.start_day_and_time).getMinutes() / 60)
+          new Date(a.start_day_and_time).getHours() +
+          new Date(a.start_day_and_time).getMinutes() / 60 -
+          (new Date(b.start_day_and_time).getHours() +
+              new Date(b.start_day_and_time).getMinutes() / 60)
       );
     }
 
@@ -374,8 +371,8 @@ export default function MainPage(props) {
             for (var s = 0; s < bigList.length; s++) {
               //check through and see if this is a new routine
               if (
-                bigList[s].type == 'Routine' &&
-                bigList[s].number == obj[r].routine
+                  bigList[s].type == 'Routine' &&
+                  bigList[s].number == obj[r].routine
               ) {
                 if (obj[r].title === 'DP - Test routine 2 (repeats)') {
                   console.log(obj[r].days, ', d = ', d, 'start obj[r].days = ');
@@ -403,7 +400,6 @@ export default function MainPage(props) {
               currentR.days[d] = obj[r].status;
               bigList.push(currentR);
             }
-            console.log("history1 bigList: ", bigList)
 
             if (obj[r].actions != undefined) {
               var actions = obj[r].actions;
@@ -415,8 +411,8 @@ export default function MainPage(props) {
                   var isNewA = true;
                   for (var s = 0; s < bigList.length; s++) {
                     if (
-                      bigList[s].type == 'Action' &&
-                      bigList[s].number == actions[a].action
+                        bigList[s].type == 'Action' &&
+                        bigList[s].number == actions[a].action
                     ) {
                       bigList[s].days[d] = actions[a].status;
                       isNewA = false;
@@ -447,8 +443,8 @@ export default function MainPage(props) {
                         var isNewI = true;
                         for (var s = 0; s < bigList.length; s++) {
                           if (
-                            bigList[s].type == 'Instruction' &&
-                            bigList[s].number == insts[i].instruction
+                              bigList[s].type == 'Instruction' &&
+                              bigList[s].number == insts[i].instruction
                           ) {
                             bigList[s].days[d] = insts[i].status;
                             isNewI = false;
@@ -492,25 +488,25 @@ export default function MainPage(props) {
     var tempRows = [];
     for (var i = 0; i < bigList.length; i++) {
       tempRows.push(
-        createData(
-          bigList[i].title,
-          bigList[i].number,
-          bigList[i].days[6],
-          bigList[i].days[5],
-          bigList[i].days[4],
-          bigList[i].days[3],
-          bigList[i].days[2],
-          bigList[i].days[1],
-          bigList[i].days[0],
-          bigList[i].show,
-          bigList[i].under,
-          bigList[i].photo,
-          bigList[i].startTime,
-          bigList[i].endTime,
-          bigList[i].is_sublist_available,
-          bigList[i].type,
-          bigList[i].is_available
-        )
+          createData(
+              bigList[i].title,
+              bigList[i].number,
+              bigList[i].days[6],
+              bigList[i].days[5],
+              bigList[i].days[4],
+              bigList[i].days[3],
+              bigList[i].days[2],
+              bigList[i].days[1],
+              bigList[i].days[0],
+              bigList[i].show,
+              bigList[i].under,
+              bigList[i].photo,
+              bigList[i].startTime,
+              bigList[i].endTime,
+              bigList[i].is_sublist_available,
+              bigList[i].type,
+              bigList[i].is_available
+          )
       );
     }
     console.log(tempRows);
@@ -530,18 +526,18 @@ export default function MainPage(props) {
             bigList[i].days[d] = <div className="cR"></div>;
           } else if (bigList[i].days[d] == 'in_progress') {
             bigList[i].days[d] = (
-              <div className="ipR">
-                <div className="whiteHalfSide"></div>
-              </div>
+                <div className="ipR">
+                  <div className="whiteHalfSide"></div>
+                </div>
             );
           }
         } else if (bigList[i].type == 'Action') {
           if (bigList[i].days[d] == 'not started') {
             if (checkAbove(bigList[i].under, d, bigList[i])) {
               bigList[i].days[d] = (
-                <div className="ipA">
-                  <div className="whiteHalfTop"></div>
-                </div>
+                  <div className="ipA">
+                    <div className="whiteHalfTop"></div>
+                  </div>
               );
             } else {
               bigList[i].days[d] = <div className="nsA"></div>;
@@ -550,18 +546,18 @@ export default function MainPage(props) {
             bigList[i].days[d] = <div className="cA"></div>;
           } else if (bigList[i].days[d] == 'in_progress') {
             bigList[i].days[d] = (
-              <div className="ipA">
-                <div className="whiteHalfSide"></div>
-              </div>
+                <div className="ipA">
+                  <div className="whiteHalfSide"></div>
+                </div>
             );
           }
         } else {
           if (bigList[i].days[d] == 'not started') {
             if (checkAbove(bigList[i].under, d, bigList[i])) {
               bigList[i].days[d] = (
-                <div className="ipI">
-                  <div className="whiteHalfTop"></div>
-                </div>
+                  <div className="ipI">
+                    <div className="whiteHalfTop"></div>
+                  </div>
               );
             } else {
               bigList[i].days[d] = <div className="nsI"></div>;
@@ -587,8 +583,8 @@ export default function MainPage(props) {
           }
           if (checks.days[d] && checks.days[d].props != undefined) {
             if (
-              checks.days[d].props.className == 'cR' ||
-              checks.days[d].props.className == 'cA'
+                checks.days[d].props.className == 'cR' ||
+                checks.days[d].props.className == 'cA'
             ) {
               return true;
             }
@@ -651,10 +647,10 @@ export default function MainPage(props) {
     console.log(newRows);
     newRows.sort((a, b) => {
       if (
-        a.startTime != undefined &&
-        b.startTime != undefined &&
-        a.endTime != undefined &&
-        b.endTime != undefined
+          a.startTime != undefined &&
+          b.startTime != undefined &&
+          a.endTime != undefined &&
+          b.endTime != undefined
       ) {
         console.log('a = ', a, '\nb = ', b);
         const [a_start, b_start] = [a.startTime, b.startTime];
@@ -755,11 +751,11 @@ export default function MainPage(props) {
       //   '-' +
       //   newDate.getDate();
       x =
-        Moment(newDate).format('YYYY') +
-        '-' +
-        Moment(newDate).format('MM') +
-        '-' +
-        Moment(newDate).format('DD');
+          Moment(newDate).format('YYYY') +
+          '-' +
+          Moment(newDate).format('MM') +
+          '-' +
+          Moment(newDate).format('DD');
       return x;
       // newDate.getFullYear() +
       //   '-' +
@@ -813,21 +809,21 @@ export default function MainPage(props) {
     ];
     const [a_HMS, b_HMS] = [
       a_start_time
-        .substring(0, a_start_time.length - 3)
-        .replace(/\s{1,}/, '')
-        .split(':'),
+          .substring(0, a_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
       b_start_time
-        .substring(0, b_start_time.length - 3)
-        .replace(/\s{1,}/, '')
-        .split(':'),
+          .substring(0, b_start_time.length - 3)
+          .replace(/\s{1,}/, '')
+          .split(':'),
     ];
     const [a_parity, b_parity] = [
       a_start_time
-        .substring(a_start_time.length - 3, a_start_time.length)
-        .replace(/\s{1,}/, ''),
+          .substring(a_start_time.length - 3, a_start_time.length)
+          .replace(/\s{1,}/, ''),
       b_start_time
-        .substring(b_start_time.length - 3, b_start_time.length)
-        .replace(/\s{1,}/, ''),
+          .substring(b_start_time.length - 3, b_start_time.length)
+          .replace(/\s{1,}/, ''),
     ];
 
     let [a_time, b_time] = [0, 0];
@@ -851,160 +847,158 @@ export default function MainPage(props) {
   //-----------------------
   if (isLoading) {
     return (
-      <div>
-        <br></br>
-        <br></br>
-        <h1>Loading...</h1>
-      </div>
+        <div>
+          <br></br>
+          <br></br>
+          <h1>Loading...</h1>
+        </div>
     );
   }
   if (childIn != '') {
     clickHandle(childIn);
   }
   return (
-    <Container fluid padding="0px" backgroundColor="#F2F7FC">
-      <Row style={{ width: '30%' }}>
-        <MiniNavigation />
-      </Row>
-      <Row fluid padding={0} backgroundColor="#F2F7FC">
-        <Col width="10rem" style={{ padding: '0px', overflow: 'hidden' }}>
-          <div display="flex" flex-direction="row">
-            <div>
-              {/* <br></br> */}
-              <Box paddingTop={0.5} backgroundColor="#bbc8d7">
-                <div className={classes.buttonContainer}>
-                  <Box
-                    bgcolor="#889AB5"
-                    className={classes.dateContainer}
-                    style={{ width: '100%' }}
-                    // flex
-                  >
-                    <Container fluid>
-                      <Row style={{ marginTop: '10px', flex: '1' }}>
-                        <Col>
-                          <div>
-                            <FontAwesomeIcon
-                              style={{ marginTop: '10px' }}
-                              icon={faChevronLeft}
-                              size="2x"
-                              onClick={(e) => {
-                                prevWeek();
-                              }}
-                            />
-                          </div>
-                        </Col>
-                        <Col
-                          md="auto"
-                          style={{ textAlign: 'center', marginTop: '0px' }}
-                        >
-                          <p
-                            style={{
-                              textTransform: 'none',
-                              fontWeight: 'bold',
-                              margin: '0px',
-                            }}
+      <Container fluid padding="0px" backgroundColor="#F2F7FC">
+        <Row style={{ width: '30%' }}>
+          <MiniNavigation />
+        </Row>
+        <Row fluid padding={0} backgroundColor="#F2F7FC">
+          <Col width="10rem" style={{ padding: '0px', overflow: 'hidden' }}>
+            <div display="flex" flex-direction="row">
+              <div>
+                {/* <br></br> */}
+                <Box paddingTop={0.5} backgroundColor="#bbc8d7">
+                  <div className={classes.buttonContainer}>
+                    <Box
+                        bgcolor="#889AB5"
+                        className={classes.dateContainer}
+                        style={{ width: '100%' }}
+                        // flex
+                    >
+                      <Container fluid>
+                        <Row style={{ marginTop: '10px', flex: '1' }}>
+                          <Col>
+                            <div>
+                              <FontAwesomeIcon
+                                  style={{ marginTop: '10px' }}
+                                  icon={faChevronLeft}
+                                  size="2x"
+                                  onClick={(e) => {
+                                    prevWeek();
+                                  }}
+                              />
+                            </div>
+                          </Col>
+                          <Col
+                              md="auto"
+                              style={{ textAlign: 'center', marginTop: '0px' }}
                           >
-                            Week of{' '}
-                            {Moment(currentDate.getTime() - 604800000).format(
-                              'MMMM D'
+                            <p
+                                style={{
+                                  textTransform: 'none',
+                                  fontWeight: 'bold',
+                                  margin: '0px',
+                                }}
+                            >
+                              Week of{' '}
+                              {Moment(currentDate.getTime() - 604800000).format(
+                                  'MMMM D'
+                              )}
+                              -
+                              {Moment(currentDate.getTime() - 86400000).format(
+                                  'D, YYYY'
+                              )}
+                            </p>
+                            <p
+                                style={{ textTransform: 'none', height: '19.5px' }}
+                            >
+                              {userTime_zone}
+                            </p>
+                          </Col>
+                          <Col style={{ justifyContent: 'right' }}>
+                            {new Date(Date.now()).getDate() !=
+                            currentDate.getDate() ? (
+                                <FontAwesomeIcon
+                                    // style={{ marginLeft: "50%" }}
+                                    style={{ float: 'right' }}
+                                    icon={faChevronRight}
+                                    size="2x"
+                                    className="X"
+                                    onClick={(e) => {
+                                      nextWeek();
+                                    }}
+                                />
+                            ) : (
+                                <div></div>
                             )}
-                            -
-                            {Moment(currentDate.getTime() - 86400000).format(
-                              'D, YYYY'
-                            )}
-                          </p>
-                          <p
-                            style={{ textTransform: 'none', height: '19.5px' }}
-                          >
-                            {userTime_zone}
-                          </p>
-                        </Col>
-                        <Col style={{ justifyContent: 'right' }}>
-                          {new Date(Date.now()).getDate() !=
-                          currentDate.getDate() ? (
-                            <FontAwesomeIcon
-                              // style={{ marginLeft: "50%" }}
-                              style={{ float: 'right' }}
-                              icon={faChevronRight}
-                              size="2x"
-                              className="X"
-                              onClick={(e) => {
-                                nextWeek();
-                              }}
-                            />
-                          ) : (
-                            <div></div>
-                          )}
-                        </Col>
-                      </Row>
-                    </Container>
-                  </Box>
-                </div>
-              </Box>
-              <TableContainer component={Paper}>
-                <Table className={classes.table} aria-label="simple table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell align="left">{getDayName(7)}</TableCell>
-                      <TableCell align="left">{getDayName(6)}</TableCell>
-                      <TableCell align="left">{getDayName(5)}</TableCell>
-                      <TableCell align="left">{getDayName(4)}</TableCell>
-                      <TableCell align="left">{getDayName(3)}</TableCell>
-                      <TableCell align="left">{getDayName(2)}</TableCell>
-                      <TableCell align="left">{getDayName(1)}</TableCell>
-                      <TableCell align="right"></TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {onlyAllowed().map((row) => (
-                      <TableRow key={row.number}>
-                        <TableCell align="right" height="98px">
-                          {row.sun}
-                        </TableCell>
-                        <TableCell align="right">{row.mon}</TableCell>
-                        <TableCell align="right">{row.tue}</TableCell>
-                        <TableCell align="right">{row.wed}</TableCell>
-                        <TableCell align="right">{row.thurs}</TableCell>
-                        <TableCell align="right">{row.fri}</TableCell>
-                        <TableCell align="right">{row.sat}</TableCell>
-                        <TableCell
-                          align="right"
-                          component="th"
-                          scope="row"
-                          onClick={() => clickHandle(row.number)}
-                        ></TableCell>
+                          </Col>
+                        </Row>
+                      </Container>
+                    </Box>
+                  </div>
+                </Box>
+                <TableContainer component={Paper}>
+                  <Table className={classes.table} aria-label="simple table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell align="left">{getDayName(7)}</TableCell>
+                        <TableCell align="left">{getDayName(6)}</TableCell>
+                        <TableCell align="left">{getDayName(5)}</TableCell>
+                        <TableCell align="left">{getDayName(4)}</TableCell>
+                        <TableCell align="left">{getDayName(3)}</TableCell>
+                        <TableCell align="left">{getDayName(2)}</TableCell>
+                        <TableCell align="left">{getDayName(1)}</TableCell>
+                        <TableCell align="right"></TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                      {onlyAllowed().map((row) => (
+                          <TableRow key={row.number}>
+                            <TableCell align="right" height="98px">
+                              {row.sun}
+                            </TableCell>
+                            <TableCell align="right">{row.mon}</TableCell>
+                            <TableCell align="right">{row.tue}</TableCell>
+                            <TableCell align="right">{row.wed}</TableCell>
+                            <TableCell align="right">{row.thurs}</TableCell>
+                            <TableCell align="right">{row.fri}</TableCell>
+                            <TableCell align="right">{row.sat}</TableCell>
+                            <TableCell
+                                align="right"
+                                component="th"
+                                scope="row"
+                                onClick={() => clickHandle(row.number)}
+                            ></TableCell>
+                          </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </div>
             </div>
-          </div>
-        </Col>
-        <Col
-          overflow="hidden"
-          marginLeft="0px"
-          xs="auto"
-          style={{
-            paddingLeft: '0px',
-            overflow: 'hidden',
-            paddingRight: '0px',
-            paddingTop: '4px',
-          }}
-        >
-          {/* <br></br> */}
-          {/* <br></br> */}
-          <div style={{marginTop: "69px"}}>
+          </Col>
+          <Col
+              overflow="hidden"
+              marginLeft="0px"
+              xs="auto"
+              style={{
+                paddingLeft: '0px',
+                overflow: 'hidden',
+                paddingRight: '0px',
+                paddingTop: '4px',
+              }}
+          >
+            {/* <br></br> */}
+            {/* <br></br> */}
             <VerticalRoutine
                 onlyAllowed={onlyAllowed()}
                 userID={currentUser}
                 sendRoutineToParent={sendRoutineToParent}
                 allRows={rows}
             />
-          </div>
-          {/* <Container style={{padding:"0px"}}>{vertRou}</Container> */}
-        </Col>
-      </Row>
-    </Container>
+            {/* <Container style={{padding:"0px"}}>{vertRou}</Container> */}
+          </Col>
+        </Row>
+      </Container>
   );
 }

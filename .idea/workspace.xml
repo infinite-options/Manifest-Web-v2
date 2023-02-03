@@ -21,12 +21,9 @@
   <component name="ChangeListManager">
     <list default="true" id="c55e7531-7ba9-4fd4-83fe-ea55fbc88158" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/History/History.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/History/History.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Home/Admin.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Home/Admin.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Home/navigation.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Home/navigation.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Nav.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Nav.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/History/History1.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/History/History1.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/styles/History1.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/styles/History1.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -130,7 +127,14 @@
       <workItem from="1674840037113" duration="10143000" />
       <workItem from="1674861088368" duration="3928000" />
       <workItem from="1675099376758" duration="657000" />
-      <workItem from="1675141753523" duration="2572000" />
+      <workItem from="1675141753523" duration="4527000" />
+      <workItem from="1675152640301" duration="605000" />
+      <workItem from="1675185623719" duration="1574000" />
+      <workItem from="1675288217734" duration="6341000" />
+      <workItem from="1675310558468" duration="6455000" />
+      <workItem from="1675358481392" duration="1833000" />
+      <workItem from="1675393974235" duration="13077000" />
+      <workItem from="1675444813625" duration="10498000" />
     </task>
     <servers />
   </component>

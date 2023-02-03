@@ -13,7 +13,7 @@ export default function History1(){
     const loginContext = useContext(LoginContext)
     const [currentUser, setCurrentUser] = useState(loginContext.loginState.curUser)
     const [history, setHistory] = useState([])
-    const week = ["MON", "TUE", "WED", "THUR", "FRI", "SAT", "SUN"]
+    const [activities, setActivities] = useState([])
     let userTimeZone = ""
     if(document.cookie.split(';').some(cookie => cookie.trim().startsWith('patient_timeZone='))){
         userTimeZone = document.cookie.split('; ').find((row) => row.startsWith('patient_timeZone=')).split('=')[1]
@@ -33,54 +33,93 @@ export default function History1(){
             //const history = await axios.get(BASE_URL + 'getHistory/' + currentUser)
             const history = await axios.get(BASE_URL + "getHistory/100-000244").then(response => response.data.result)
             let thisWeek = getThisWeek()
-            let tempHistory = []
-            for(let i = 0; i < thisWeek.length; i++){
-                //Check if dates affected are of this week
-                if (history.filter(event => event.date_affected === thisWeek[i]).length > 0) {
-                    //Add dates affected of this week to temporary array
-                    history.filter(event => event.date_affected === thisWeek[i]).map(event => tempHistory.push(event))
-                }
-                else {
-                    const tempEvent = {
-                        id: '',
-                        user_id: '',
-                        date: Moment(thisWeek[i]).add('days', 1).format('YYYY-MM-DD') + ' 00:07:40',
-                        date_affected: thisWeek[i],
-                        details: ''
-                    }
-                    tempHistory.push(tempEvent)
-                }
-            }
-            setHistory(JSON.parse(tempHistory[tempHistory.length - 1].details))
+            const filteredHistory = filterHistory(thisWeek, history)
+            const sortedHistory = sortHistory(filteredHistory)
+            setHistory(sortedHistory)
         }
         getHistory()
-    }, [])
+    }, [currentDate])
 
     function getThisWeek() {
-        const day = Moment().format();
-        const x = Moment().date(day);
-        const temp = {
-            d: Moment().subtract(1, 'days').format('DD'),
-            m: Moment().format('MM'),
-            y: Moment().format('YYYY'),
+        let currDate = null
+        if(currentDate.getUTCDay() === 0){
+            currDate = new Date(currentDate.getTime() + (0 * 24 * 60 * 60 * 1000))
         }
-        const numDaysInMonth = Moment().daysInMonth();
-        return Array.from({ length: 15 }, (_) => {
-            if (temp.d > numDaysInMonth) {
-                temp.m += 1
-                temp.d = 1
+        else if(currentDate.getUTCDay() === 1){
+            currDate = new Date(currentDate.getTime() + (6 * 24 * 60 * 60 * 1000))
+        }
+        else if(currentDate.getUTCDay() === 2){
+            currDate = new Date(currentDate.getTime() + (5 * 24 * 60 * 60 * 1000))
+        }
+        else if(currentDate.getUTCDay() === 3){
+            currDate = new Date(currentDate.getTime() + (4 * 24 * 60 * 60 * 1000))
+        }
+        else if(currentDate.getUTCDay() === 4){
+            currDate = new Date(currentDate.getTime() + (3 * 24 * 60 * 60 * 1000))
+        }
+        else if(currentDate.getUTCDay() === 5){
+            currDate = new Date(currentDate.getTime() + (2 * 24 * 60 * 60 * 1000))
+        }
+        else if(currentDate.getUTCDay() === 6){
+            currDate = new Date(currentDate.getTime() + (1 * 24 * 60 * 60 * 1000))
+        }
+        let week = []
+        for(let i = 0; i < 7; i++){
+            const day = new Date(currDate.getTime() - (i * 24 * 60 * 60 * 1000))
+            week.push(day.toISOString().slice(0, 10))
+        }
+        return week
+    }
+
+    function filterHistory(thisWeek, history){
+        let filteredHistory = []
+        for(let i = 0; i < thisWeek.length; i++){
+            //Check if dates affected are of this week
+            if (history.filter(event => event.date_affected === thisWeek[i]).length > 0) {
+                //Add dates affected of this week to temporary array
+                history.filter(event => event.date_affected === thisWeek[i]).map(event => filteredHistory.push(event))
             }
-            const newDate = Moment().set({
-                year: temp.y,
-                month: temp.m - 1,
-                date: temp.d--,
-            })
-            let x =
-                Moment(newDate).format('YYYY') + '-' +
-                Moment(newDate).format('MM') + '-' +
-                Moment(newDate).format('DD');
-            return x
-        })
+            else {
+                const tempEvent = {
+                    id: '',
+                    user_id: '',
+                    date: Moment(thisWeek[i]).add('days', 1).format('YYYY-MM-DD') + ' 00:07:40',
+                    date_affected: thisWeek[i],
+                    details: "[]"
+                }
+                filteredHistory.push(tempEvent)
+            }
+        }
+        return filteredHistory
+    }
+
+    function sortHistory(history){
+        let sortedHistory = []
+        let tempActivities = []
+        let mostRecentDate = history.length - 1
+        for(let i = 0; i < history.length; i++){
+            if(JSON.parse(history[i].details).length > 0 && i < mostRecentDate ){
+                mostRecentDate = i
+                tempActivities = JSON.parse(history[i].details)
+            }
+            const date = new Date(history[i].date_affected)
+            if(date.getUTCDay() === 1)
+                sortedHistory[0] = JSON.parse(history[i].details)
+            else if(date.getUTCDay() === 2)
+                sortedHistory[1] = JSON.parse(history[i].details)
+            else if(date.getUTCDay() === 3)
+                sortedHistory[2] = JSON.parse(history[i].details)
+            else if(date.getUTCDay() === 4)
+                sortedHistory[3] = JSON.parse(history[i].details)
+            else if(date.getUTCDay() === 5)
+                sortedHistory[4] = JSON.parse(history[i].details)
+            else if(date.getUTCDay() === 6)
+                sortedHistory[5] = JSON.parse(history[i].details)
+            else if(date.getUTCDay() === 0)
+                sortedHistory[6] = JSON.parse(history[i].details)
+        }
+        setActivities(tempActivities)
+        return sortedHistory
     }
 
     function prevWeek(){
@@ -91,25 +130,34 @@ export default function History1(){
         setCurrentDate(new Date(currentDate.getTime() + 604800000))
     }
 
-    const activitiesElement = history.map((item, index) => {
+    const progressCircles = history.map((activities, index) => {
         return(
-            <Fragment>
-                <tr>
-                    <td>{item.title}</td>
-                </tr>
-            </Fragment>
+            <tr key={index}>
+                {activities.map((activity, index) => {
+                    let status = ""
+                    if(activity.status === "completed"){
+                        status = <div className="cR" />
+                    }
+                    else if(activity.status === "not started"){
+                        status = <div className="nsR" />
+                    }
+                    return(
+                        <td key={index}>
+                            {status}
+                        </td>
+                    )
+                })}
+            </tr>
         )
     })
 
-    const progressCircles = history.map((item, index) => {
+    const activitiesElement = activities.map((item, index) => {
         return(
             <Fragment key={index}>
                 <tr>
-                    {week.map(day => {
-                        return(
-                            <td> {item.title}</td>
-                        )
-                    })}
+                    <td>
+                        {item.title}
+                    </td>
                 </tr>
             </Fragment>
         )
@@ -124,8 +172,9 @@ export default function History1(){
                 <div className="history-header">
                     <FontAwesomeIcon className="history-header-prev" icon={faChevronLeft} size="2x" onClick={prevWeek} />
                     <b>
-                        {`Week of ${Moment(currentDate.getTime() - 604800000).format('MMMM D')} - 
-                        ${Moment(currentDate.getTime() - 86400000).format('D, YYYY')}`}
+                        {`Week of ${new Date(getThisWeek()[6]).toLocaleString('default', { month: 'long' })} 
+                        ${new Date(getThisWeek()[6]).toISOString().slice(8, 10)} - 
+                        ${new Date(getThisWeek()[0]).toISOString().slice(8, 10)}`}
                     </b>
                     {new Date(Date.now()).getDate() != currentDate.getDate() ?
                         <FontAwesomeIcon className="history-header-next" icon={faChevronRight} size="2x" onClick={nextWeek} /> :
@@ -134,15 +183,18 @@ export default function History1(){
                     <br/>
                     {userTimeZone}
                 </div>
-                <div className="history-legend">
-                    <span>Completed Autofilled</span>
-                    <br/>
-                    <span>Partially Done Not Started</span>
-                </div>
                 <div className="history-activities">
                     <table>
+                        <thead>
+                            <tr>
+                                <td>Completed Autofilled</td>
+                            </tr>
+                            <tr>
+                                <td>Partially Done Not Started</td>
+                            </tr>
+                        </thead>
                         <tbody>
-                        {activitiesElement}
+                            {activitiesElement}
                         </tbody>
                     </table>
                 </div>
@@ -169,5 +221,3 @@ export default function History1(){
 
     )
 }
-
-//yellow filled circle <div className="cR"></div>
