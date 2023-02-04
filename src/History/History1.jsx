@@ -152,11 +152,15 @@ export default function History1(){
     })
 
     const activitiesElement = activities.map((item, index) => {
+        console.log("history1 item", item)
         return(
             <Fragment key={index}>
                 <tr>
                     <td>
-                        {item.title}
+                        <div>
+                            {item.title + " "}
+                            {item.photo !== "undefined" && <img src={item.photo}/>}
+                        </div>
                     </td>
                 </tr>
             </Fragment>
