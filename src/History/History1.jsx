@@ -6,7 +6,7 @@ import LoginContext from "../LoginContext"
 import axios from "axios"
 import "../styles/History1.css"
 import Moment from "moment";
-import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import {faChevronLeft, faChevronRight, faList} from "@fortawesome/free-solid-svg-icons";
 
 export default function History1(){
     const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI
@@ -14,6 +14,7 @@ export default function History1(){
     const [currentUser, setCurrentUser] = useState(loginContext.loginState.curUser)
     const [history, setHistory] = useState([])
     const [activities, setActivities] = useState([])
+    const [displaySublist, setDisplaySublist] = useState([])
     let userTimeZone = ""
     if(document.cookie.split(';').some(cookie => cookie.trim().startsWith('patient_timeZone='))){
         userTimeZone = document.cookie.split('; ').find((row) => row.startsWith('patient_timeZone=')).split('=')[1]
@@ -96,11 +97,15 @@ export default function History1(){
     function sortHistory(history){
         let sortedHistory = []
         let tempActivities = []
+        let tempDisplaySublist = []
         let mostRecentDate = history.length - 1
         for(let i = 0; i < history.length; i++){
             if(JSON.parse(history[i].details).length > 0 && i < mostRecentDate ){
                 mostRecentDate = i
                 tempActivities = JSON.parse(history[i].details)
+                for(let i = 0; i < tempActivities.length; i++){
+                    tempDisplaySublist.push(false)
+                }
             }
             const date = new Date(history[i].date_affected)
             if(date.getUTCDay() === 1)
@@ -119,6 +124,7 @@ export default function History1(){
                 sortedHistory[6] = JSON.parse(history[i].details)
         }
         setActivities(tempActivities)
+        setDisplaySublist(tempDisplaySublist)
         return sortedHistory
     }
 
@@ -128,6 +134,12 @@ export default function History1(){
 
     function nextWeek(){
         setCurrentDate(new Date(currentDate.getTime() + 604800000))
+    }
+
+    function handleSublistClick(index){
+        let tempDisplaySublist = displaySublist
+        tempDisplaySublist[index] = !tempDisplaySublist[index]
+        setDisplaySublist(tempDisplaySublist)
     }
 
     const progressCircles = history.map((activities, index) => {
@@ -152,17 +164,40 @@ export default function History1(){
     })
 
     const activitiesElement = activities.map((item, index) => {
-        console.log("history1 item", item)
         return(
             <Fragment key={index}>
                 <tr>
-                    <td>
-                        <div>
+                    <td className={item.is_sublist_available === "True" ? "history-activities-has-sublist" : "history-activities-no-sublist"}>
+                        <div className={item.is_sublist_available === "True" ? "history-activities-has-sublist-div" : "history-activities-no-sublist-div"}>
                             {item.title + " "}
                             {item.photo !== "undefined" && <img src={item.photo}/>}
+                            <br/>
+                            {item.is_sublist_available === "True" &&
+                                <FontAwesomeIcon
+                                    icon={faList}
+                                    title="Sublist Available"
+                                    size="small"
+                                    className="history-sublist-icon"
+                                    onClick={() => handleSublistClick(index)}
+                                />
+                            }
                         </div>
                     </td>
                 </tr>
+                {displaySublist[index] &&
+                    item.actions.map(sublist => {
+                        return(
+                            <tr>
+                                <td className="history-activities-no-sublist">
+                                    <div className="history-activities-no-sublist-div">
+                                        {sublist.title + " "}
+                                        {sublist.photo !== "undefined" && <img src={sublist.photo}/>}
+                                    </div>
+                                </td>
+                            </tr>
+                        )
+                    })
+                }
             </Fragment>
         )
     })

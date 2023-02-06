@@ -35,20 +35,38 @@
     width: 100%;
     table-layout: fixed;
 }
-.history-activities table thead tr td{
+.history-activities table thead {
+    border-bottom: 1px solid lightgray;
+}
+.history-activities table thead tr td {
     padding: 2.5px 0;
 }
 .history-activities table tbody tr {
     background-color: #BBC7D7;
 }
-.history-activities table tbody tr td {
+.history-activities-no-sublist {
     padding: 9.9px 0;
     font-weight: bold;
     border-top: 1px solid white;
     border-bottom: 1px solid white;
     color: white;
 }
-.history-activities table tbody tr td div {
+.history-activities-no-sublist-div {
+    background-color: #ffb84d;
+    margin: 0 auto;
+    width: 80%;
+    padding: 6% 6%;
+    border-radius: 10px;
+    box-shadow: 0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.history-activities-has-sublist {
+    padding: 9.5px 0;
+    font-weight: bold;
+    border-top: 1px solid white;
+    border-bottom: 1px solid white;
+    color: white;
+}
+.history-activities-has-sublist-div {
     background-color: #ffb84d;
     margin: 0 auto;
     width: 80%;
@@ -79,6 +97,14 @@
     padding: 30px 0;
     display: block;
     border-bottom: 1px solid lightgray;
+}
+.history-sublist-icon {
+    color: #ffffff;
+    float: right;
+}
+.history-sublist-icon:hover {
+    color: #BBC7D7;
+    cursor: pointer;
 }
 .cR {
     margin: 0 auto;
