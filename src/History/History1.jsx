@@ -113,7 +113,6 @@ export default function History1(){
                 for(let i = 0; i < tempActivities.length; i++){
                     tempDisplaySublist.push(false)
                 }
-                console.log("history1 tempDisplaySublist", tempDisplaySublist)
             }
             const date = new Date(history[i].date_affected)
             if(date.getUTCDay() === 1)
@@ -156,7 +155,6 @@ export default function History1(){
     }
 
     const progressCircles = history.map((activities, index) => {
-        console.log("history1 activities", activities)
         return(
             <tr key={index}>
                 {activities.map((activity, index) => {
@@ -205,8 +203,6 @@ export default function History1(){
     })
 
     const activitiesElement = activities.map((item, index) => {
-        if(item.is_sublist_available === "True")
-            console.log("history1 index " + index + " activitiesElement")
         return(
             <Fragment key={index}>
                 <tr>
