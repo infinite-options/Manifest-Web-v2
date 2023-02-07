@@ -15,6 +15,7 @@ export default function History1(){
     const [history, setHistory] = useState([])
     const [activities, setActivities] = useState([])
     const [displaySublist, setDisplaySublist] = useState([])
+    const [initializedWeek, setInitializedWeek] = useState(false)
     let userTimeZone = ""
     if(document.cookie.split(';').some(cookie => cookie.trim().startsWith('patient_timeZone='))){
         userTimeZone = document.cookie.split('; ').find((row) => row.startsWith('patient_timeZone=')).split('=')[1]
@@ -74,6 +75,7 @@ export default function History1(){
 
     function filterHistory(thisWeek, history){
         let filteredHistory = []
+        let count = 0
         for(let i = 0; i < thisWeek.length; i++){
             //Check if dates affected are of this week
             if (history.filter(event => event.date_affected === thisWeek[i]).length > 0) {
@@ -81,6 +83,7 @@ export default function History1(){
                 history.filter(event => event.date_affected === thisWeek[i]).map(event => filteredHistory.push(event))
             }
             else {
+                count++
                 const tempEvent = {
                     id: '',
                     user_id: '',
@@ -90,6 +93,10 @@ export default function History1(){
                 }
                 filteredHistory.push(tempEvent)
             }
+        }
+        if(count === 7 && !initializedWeek){
+            setInitializedWeek(true)
+            prevWeek()
         }
         return filteredHistory
     }
@@ -137,33 +144,68 @@ export default function History1(){
     }
 
     function handleSublistClick(index){
-        let tempDisplaySublist = displaySublist
-        tempDisplaySublist[index] = !tempDisplaySublist[index]
+        let tempDisplaySublist = []
+        for(let i = 0; i < displaySublist.length; i++){
+            if(index === i)
+                tempDisplaySublist.push(!displaySublist[i])
+            else
+                tempDisplaySublist.push(displaySublist[i])
+        }
         setDisplaySublist(tempDisplaySublist)
     }
 
     const progressCircles = history.map((activities, index) => {
+        console.log("history1 activities", activities)
         return(
             <tr key={index}>
                 {activities.map((activity, index) => {
                     let status = ""
+                    let sublist = null
                     if(activity.status === "completed"){
                         status = <div className="cR" />
                     }
                     else if(activity.status === "not started"){
                         status = <div className="nsR" />
                     }
-                    return(
-                        <td key={index}>
-                            {status}
-                        </td>
-                    )
+                    if(displaySublist[index]){
+                        let sublist_status = ""
+                        sublist = activity.actions.map((item, index) => {
+                            if(item.status === "completed"){
+                                sublist_status = <div style={{border: "solid 2px #4D94FF", backgroundColor: "#ffb84d"}} className="cR" />
+                            }
+                            else if(item.status === "not started"){
+                                sublist_status = <div style={{border: "solid 2px #4D94FF"}} className="nsR" />
+                            }
+                            return(
+                                <td key={index}>
+                                    {sublist_status}
+                                </td>
+                            )
+                        })
+                        return(
+                            <Fragment key={index}>
+                                <td>
+                                    {status}
+                                </td>
+                                {sublist}
+                            </Fragment>
+                        )
+                    }
+                    else{
+                        return(
+                            <td key={index}>
+                                {status}
+                            </td>
+                        )
+                    }
                 })}
             </tr>
         )
     })
 
     const activitiesElement = activities.map((item, index) => {
+        if(item.is_sublist_available === "True")
+            console.log("history1 index " + index + " activitiesElement")
         return(
             <Fragment key={index}>
                 <tr>
@@ -188,8 +230,8 @@ export default function History1(){
                     item.actions.map(sublist => {
                         return(
                             <tr>
-                                <td className="history-activities-no-sublist">
-                                    <div className="history-activities-no-sublist-div">
+                                <td className="history-activities-sublist">
+                                    <div className="history-activities-sublist-div">
                                         {sublist.title + " "}
                                         {sublist.photo !== "undefined" && <img src={sublist.photo}/>}
                                     </div>
