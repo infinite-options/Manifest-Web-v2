@@ -105,7 +105,7 @@ export default function History1(){
         let sortedHistory = []
         let tempActivities = []
         let tempDisplaySublist = []
-        let mostRecentDate = history.length - 1
+        let mostRecentDate = history.length
         for(let i = 0; i < history.length; i++){
             if(JSON.parse(history[i].details).length > 0 && i < mostRecentDate ){
                 mostRecentDate = i
@@ -113,6 +113,7 @@ export default function History1(){
                 for(let i = 0; i < tempActivities.length; i++){
                     tempDisplaySublist.push(false)
                 }
+                console.log("history1 tempDisplaySublist", tempDisplaySublist)
             }
             const date = new Date(history[i].date_affected)
             if(date.getUTCDay() === 1)
