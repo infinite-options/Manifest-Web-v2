@@ -172,7 +172,7 @@ export default function History1(){
                         let sublist_status = ""
                         sublist = activity.actions.map((item, index) => {
                             if(item.status === "completed"){
-                                sublist_status = <div style={{border: "solid 2px #4D94FF", backgroundColor: "#ffb84d"}} className="cR" />
+                                sublist_status = <div style={{border: "solid 2px #4D94FF", backgroundColor: "#4D94FF"}} className="cR" />
                             }
                             else if(item.status === "not started"){
                                 sublist_status = <div style={{border: "solid 2px #4D94FF"}} className="nsR" />
