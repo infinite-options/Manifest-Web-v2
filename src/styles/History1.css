@@ -133,3 +133,10 @@
     border-radius: 50%;
     border: solid 2px #ffb84d;
 }
+.ipR {
+    border-radius: 50%;
+    border: solid 2px #ffb84d;
+    width: 30px;
+    height: 30px;
+    background-color: #ffb84d;
+}

@@ -155,10 +155,11 @@ export default function History1(){
     }
 
     const progressCircles = history.map((activities, index) => {
+        console.log("history1 activities", activities)
         return(
             <tr key={index}>
                 {activities.map((activity, index) => {
-                    let status = ""
+                    let status = null
                     let sublist = null
                     if(activity.status === "completed"){
                         status = <div className="cR" />
@@ -166,14 +167,26 @@ export default function History1(){
                     else if(activity.status === "not started"){
                         status = <div className="nsR" />
                     }
+                    else if(activity.status === "autofilled"){
+                        status = <div className="ipR"><div className="whiteHalfSide" /></div>
+                    }
+                    else if(activity.status === "partially done"){
+                        status = <div className="ipR"><div className="whiteHalfTop" /></div>
+                    }
                     if(displaySublist[index]){
-                        let sublist_status = ""
+                        let sublist_status = null
                         sublist = activity.actions.map((item, index) => {
                             if(item.status === "completed"){
                                 sublist_status = <div style={{border: "solid 2px #4D94FF", backgroundColor: "#4D94FF"}} className="cR" />
                             }
                             else if(item.status === "not started"){
                                 sublist_status = <div style={{border: "solid 2px #4D94FF"}} className="nsR" />
+                            }
+                            else if(activity.status === "autofilled"){
+                                sublist_status = <div className="ipR" style={{border: "solid 2px #4D94FF", backgroundColor: "#4D94FF"}}><div className="whiteHalfSide" /></div>
+                            }
+                            else if(activity.status === "partially done"){
+                                sublist_status = <div className="ipR" style={{border: "solid 2px #4D94FF", backgroundColor: "#4D94FF"}}><div className="whiteHalfTop" /></div>
                             }
                             return(
                                 <td key={index}>
@@ -265,10 +278,16 @@ export default function History1(){
                     <table>
                         <thead>
                             <tr>
-                                <td>Completed Autofilled</td>
+                                <td>
+                                    <div className="cR" style={{display: "inline-block", width: "18px", height: "18px"}}/> Completed {" "}
+                                    <div className="ipR" style={{display: "inline-block", width: "18px", height: "18px"}}><div className="whiteHalfTop" /></div> Autofilled
+                                </td>
                             </tr>
                             <tr>
-                                <td>Partially Done Not Started</td>
+                                <td>
+                                    <div className="ipR" style={{display: "inline-block", width: "18px", height: "18px"}}><div className="whiteHalfSide" /></div> Partially Done {" "}
+                                    <div className="nsR" style={{display: "inline-block", width: "18px", height: "18px"}}/> Not Started
+                                </td>
                             </tr>
                         </thead>
                         <tbody>

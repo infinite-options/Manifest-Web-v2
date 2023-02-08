@@ -49,7 +49,7 @@
   border-bottom-right-radius: 15px;
   height: 100%;
   width: 50%;
-  display: inline-flex;
+  margin-left: 7px;
   border-left: solid white 1px;
 }
 .whiteHalfTop {
