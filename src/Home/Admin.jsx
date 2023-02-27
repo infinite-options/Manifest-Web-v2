@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
+import { Col, Container, Form, Modal, Row, FormLabel } from 'react-bootstrap';
+import { TextField } from '@material-ui/core';
 import axios from 'axios';
 import Popover from '@material-ui/core/Popover';
 import moment from 'moment';
@@ -16,6 +17,9 @@ import TimezoneSelect from 'react-timezone-select';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import LoginContext from '../LoginContext';
+import UploadImage from '../Home/UploadImage';
+import GooglePhotos from '../Home/GooglePhotos';
+import ModalBody from 'rsuite/lib/Modal/ModalBody';
 import './Admin_style.css';
 
 import MiniNavigation from '../manifest/miniNavigation';
@@ -94,6 +98,7 @@ export function Admin() {
   // const currentUser = loginContext.loginState.curUser;
   // const curUserPic = loginContext.loginState.curUserPic;
   // const curUserName = loginContext.loginState.curUserName;
+  console.log("selectedTA is ", loginContext);
 
   var usrID = '';
   var tID = '';
@@ -101,6 +106,7 @@ export function Admin() {
   var userEmail = '';
   var userN = '';
   var userPic = '';
+  var taPic = '';
 
   if (
     document.cookie
@@ -131,6 +137,11 @@ export function Admin() {
       .split('; ')
       .find((row) => row.startsWith('patient_name='))
       .split('=')[1];
+    taPic = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('ta_pic='))
+    .split('=')[1];
+    // setTaPhoto(taPic)
   } else {
     usrID = loginContext.loginState.curUser;
     userTime_zone = loginContext.loginState.curUserTimeZone;
@@ -138,6 +149,7 @@ export function Admin() {
     userPic = loginContext.loginState.curUserPic;
     userN = loginContext.loginState.curUserName;
   }
+  
 
   console.log(selectedTA, usrID, userN);
   const [called, toggleCalled] = useState(false);
@@ -154,6 +166,14 @@ export function Admin() {
   const [refreshToken, setrefreshToken] = useState('');
   const [accessToken, setAccessToken] = useState('');
   const [accessExpiresIn, setaccessExpiresIn] = useState('');
+  const [taPhoto, setTaPhoto] = useState('');
+  const [taImage, setTaImage] = useState(null);
+  const [taPhotoURL, setTaPhotoURL] = useState('');
+  const [showUploadImage, toggleUploadImage] = useState(false);
+  const [taFirstName, setTaFirstName] = useState('');
+  const [taLastName, setTaLastName] = useState('');
+  const [taObject, setTaObject] = useState({});
+
 
   const [patientName, setPatientName] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -175,11 +195,53 @@ export function Admin() {
   const [access, setAccess] = useState(false);
   const [assign, setAssign] = useState(false);
   const [showAdvisors, setShowAdvisors] = useState(false);
+  const [listPeople, setListPeople] = useState([]);
+  const [listTaUser, setListTaUser] = useState([]);
   // const [advisorList, setAdvisorList] = useState([]);
   let redirecturi = 'https://manifestmy.space';
 
   console.log('taListUser', taListUser.length);
 
+  useEffect(() => {
+    console.log('in listPeople');
+    axios
+      .get(BASE_URL + 'listPeople/' + usrID)
+      .then((response) => {
+        console.log('listPeople', response.data.result.result);
+        setListPeople(response.data.result.result);
+        if (
+          document.cookie
+            .split(';')
+            .some((item) => item.trim().startsWith('ta_pic='))
+        ) {
+          setTaPhoto(document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('ta_pic='))
+            .split('=')[1]);
+          console.log("******** TA PHOTO FROM DOCUMENT COOKIES", document.cookie
+          .split('; ')
+          .find((row) => row.startsWith('ta_pic='))
+          .split('=')[1])
+      }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    
+      axios
+      .get(BASE_URL + 'ListAllTAUser/' + usrID)
+      .then((response) => {
+        console.log('ListAllTAUser',  response.data.result);
+        setListTaUser(response.data.result);
+        setTaFirstName(response.data.result[0].ta_first_name);
+        setTaLastName(response.data.result[0].ta_last_name);
+        console.log('in ListAllTAUser ta frist name', response.data.result[0].ta_unique_id);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+  
   const getUserOfTA = () => {
     axios
       .get(
@@ -220,12 +282,62 @@ export function Admin() {
       });
   };
 
+  const UpdatePerson = async(event)=> {
+    var phone_number;
+    if (listPeople[0] && listPeople[0].phone_number === 'undefined') {
+      phone_number = '';
+    }
+    else {
+      phone_number = listPeople[0].phone_number;
+    }
+    let body = {
+      // user_id: listPeople[0].user_uid,
+      ta_unique_id:listTaUser[0].ta_unique_id,
+      first_name: taFirstName,
+      last_name: taLastName,
+      phone_number: listPeople[0].phone_number,
+      employer: listPeople[0].employer,
+      ta_time_zone: listTaUser[0].ta_time_zone,
+      ta_photo_url: taPhoto,
+      ta_picture: taImage
+    };
+    console.log("updateTA body", body);
+    if (typeof body.ta_photo_url === 'string') {
+      // body.photo_url = body.people_pic;
+      // body.people_pic = '';
+    } else {
+      body.ta_photo_url = '';
+    }
+    let formData = new FormData();
+    Object.entries(body).forEach((entry) => {
+        formData.append(entry[0], entry[1]);
+    });
+    console.log("updateTA ta_picture in formdata = ", formData.getAll("ta_picture"));
+    
+      try {
+        const response = await axios({
+          method: "post",
+          url: BASE_URL + 'UpdateTA',
+          data: formData,
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        console.log("updateTA RESPONSE : ", response.data);
+        toggleConfirmed(true);
+        toggleCalled(!called);
+      } catch(error) {
+        console.log(error)
+      }
+  }
+
   const getTAofUser = () => {
     axios
       .get(BASE_URL + 'ListAllTAUser/' + usrID)
       .then((response) => {
         console.log('listAllTAUser', response.data.result);
         setTaListUser(response.data.result);
+        setTaFirstName(response.data.result[0].ta_first_name);
+        setTaLastName(response.data.result[0].ta_last_name);
+        console.log('in ListAllTAUser ta frist name getTAofUser', response.data.result[0].ta_first_name);
       })
       .catch((error) => {
         console.log(error);
@@ -234,6 +346,7 @@ export function Admin() {
   useEffect(() => {
     getUserOfTA();
     getTAofUser();
+    
   }, [usrID, loginContext.loginState.reload]);
 
   const taListRendered = () => {
@@ -277,6 +390,7 @@ export function Admin() {
                     {ta.ta_picture == '' ? (
                       <img
                         src={'/UserNoImage.png'}
+                        alt="Default Image"
                         style={{
                           borderRadius: '100%',
                           height: '47px',
@@ -287,6 +401,7 @@ export function Admin() {
                     ) : (
                       <img
                         src={ta.ta_picture}
+                        alt="Default Image"
                         style={{
                           borderRadius: '100%',
                           height: '47px',
@@ -413,6 +528,88 @@ export function Admin() {
         }
         console.log(err);
       });
+  };
+
+  //upload from computer for TA
+  const uploadImageModal = () => {
+    return (
+      <Modal
+        show={showUploadImage}
+        onHide={() => {
+          toggleUploadImage(false);
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Upload Image</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <div>Upload Image</div>
+          <input
+            type="file"
+            onChange={(e) => {
+              console.log('here: selecting image');
+              if (e.target.files[0]) {
+                const image1 = e.target.files[0];
+                // console.log(image1.name);
+                console.log('image1 = ', image1);
+                setTaImage(image1);
+              }
+            }}
+          />
+          <Button
+            variant="dark"
+            onClick={() => {
+              console.log('here: uploading image');
+              if (taImage === null) {
+                alert('Please select an image to upload');
+                return;
+              }
+              const salt = Math.floor(Math.random() * 9999999999);
+              let image_name = taImage.name;
+              image_name = image_name + salt.toString();
+              setTaPhotoURL(URL.createObjectURL(taImage));
+              // setTaPhoto(taPhotoURL);
+              console.log("upload URL:", taPhotoURL);
+            }}
+          >
+            Upload
+          </Button>
+          <img
+            src={taPhotoURL || 'http://via.placeholder.com/400x300'}
+            alt="Uploaded images"
+            height="300"
+            width="400"
+          />
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              toggleUploadImage(false);
+            }}
+          >
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              console.log('here: Confirming changes');
+              setTaPhoto(taPhotoURL);
+              toggleUploadImage(false);
+              console.log('confirm URL: ', taPhotoURL);
+              // if (taPhotoURL) {
+              //   document.cookie = 'ta_pic=' + taPhotoURL;
+              // }
+              // UpdatePerson();
+            }}
+          >
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
   };
 
   // modal which displays list of unassigned users
@@ -1187,7 +1384,6 @@ export function Admin() {
               display: 'block',
               backgroundColor: '#E6E6E6',
               width: '400px',
-              // height: "100px",
               color: '#000000',
               padding: '40px',
               font: 'normal normal bold 16px Quicksand-Bold',
@@ -1203,10 +1399,6 @@ export function Admin() {
               <button
                 className={classes.saveButtons}
                 onClick={() => {
-                  // let myObj = {
-                  //   ta_people_id: taID,
-                  //   user_id: selectedTA
-                  // }
                   console.log('TA', taID, usrID);
 
                   axios
@@ -1296,19 +1488,14 @@ export function Admin() {
               <button
                 className={classes.saveButtons}
                 onClick={() => {
-                  // let myObj = {
-                  //   ta_people_id: taID,
-                  //   user_id: selectedTA
-                  // }
-                  // console.log('TA', taID, usrID);
-
                   axios
                     .post(BASE_URL + 'AssociateUser', {
                       ta_people_id: tID,
                       user_id: userID,
                     })
                     .then((response) => {
-                      console.log(response);
+                      console.log("user", userID, "assigned to ta", tID);
+                      console.log("Assign User", response);
                     });
 
                   toggleAssignConfirmed(true);
@@ -1368,7 +1555,6 @@ export function Admin() {
               display: 'block',
               backgroundColor: '#E6E6E6',
               width: '400px',
-              // height: "100px",
               color: '#000000',
               padding: '40px',
               font: 'normal normal bold 16px Quicksand-Bold',
@@ -1433,7 +1619,6 @@ export function Admin() {
               display: 'block',
               backgroundColor: '#E6E6E6',
               width: '400px',
-              // height: "100px",
               color: '#000000',
               padding: '40px',
               font: 'normal normal bold 16px Quicksand-Bold',
@@ -1496,7 +1681,6 @@ export function Admin() {
               display: 'block',
               backgroundColor: '#E6E6E6',
               width: '400px',
-              // height: "100px",
               color: '#000000',
               padding: '40px',
               font: 'normal normal bold 16px Quicksand-Bold',
@@ -1551,7 +1735,6 @@ export function Admin() {
               display: 'block',
               backgroundColor: '#E6E6E6',
               width: '400px',
-              // height: "100px",
               color: '#000000',
               padding: '40px',
               font: 'normal normal bold 16px Quicksand-Bold',
@@ -1612,7 +1795,6 @@ export function Admin() {
               display: 'block',
               backgroundColor: '#E6E6E6',
               width: '400px',
-              // height: "100px",
               color: '#000000',
               padding: '40px',
               font: 'normal normal bold 16px Quicksand-Bold',
@@ -1989,6 +2171,7 @@ export function Admin() {
       {advisorLookupModal()}
       {anotherTAAccessModal()}
       {assignUserListModal()}
+      {uploadImageModal()}
       <div style={{ width: '30%' }}>
         <MiniNavigation />
       </div>
@@ -2153,6 +2336,214 @@ export function Admin() {
               justifyContent: 'center',
             }}
           >
+            <div>
+              <Row style={{
+                height: '300px'
+              }}>
+          <Col>
+          <Row style={{
+            width: '40%',
+            marginLeft: '30%',
+          }}>
+          {taPhoto == '' ? (
+                  <img
+                    style={{
+                      display: 'block',
+                      float: 'right',
+                      width: '5rem',
+                      height: '5rem',
+                      objectFit: 'cover',
+                      marginTop: '15px',
+                    }}
+                    src={'/UserNoImage.png'}
+                    alt="TA Profile"
+                  />
+                ) : (
+                  <img
+                    style={{
+                      display: 'block',
+                      float: 'right',
+                      width: '5rem',
+                      height: '5rem',
+                      objectFit: 'cover',
+                      marginTop: '15px',
+                    }}
+                    src={taPhoto}
+                    alt="TA Profile"
+                  />
+                )}
+          </Row>
+          <Row style={{
+            width: '40%',
+            marginLeft: '30%',
+          }}>
+          <h6>Change Image</h6>
+                
+                <div
+                  onClick={() => {
+                    toggleUploadImage(!showUploadImage);
+                  }}
+                  style={{
+                    marginLeft: '12px',
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Upload from Computer
+                </div>
+                <UploadImage
+                  photoUrl={taPhotoURL}
+                  setPhotoUrl={setTaPhoto}
+                  currentUserId={userID}
+                />
+                <GooglePhotos photoUrl={taPhotoURL} setPhotoUrl={setTaPhoto} />
+          </Row>
+          </Col>
+                <Col style={{
+                  marginTop: '50px'
+                }}>
+          <Form.Group>
+            <Row>
+                
+                  <label
+                  style={{
+                    marginTop: '5px',
+                    marginRight: '10px',
+                    fontWeight: 'bolder',
+                    color: '#000000',
+                  }}
+                >
+                  First Name:
+                </label>
+                
+                  <TextField
+                        id="taFirstName"
+                        placeholder="Loading"
+                        value={taFirstName}
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          console.log("first name update",e.target.value);
+                          setTaFirstName(e.target.value)
+                        }}
+                  >
+                  </TextField>
+            </Row>
+            <Row>
+                <label
+                  style={{
+                    marginTop: '5px',
+                    marginRight: '10px',
+                    fontWeight: 'bolder',
+                    color: '#000000',
+                  }}
+                >
+                  Last Name:
+                </label>
+                <TextField
+                        id="taLastName"
+                        placeholder="Loading"
+                        value={taLastName}
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          console.log("last name update",e.target.value);
+                          setTaLastName(e.target.value)
+                        }}
+                  >
+                </TextField>
+
+            </Row>
+            
+            <Row>
+                <label
+                  style={{
+                    marginTop: '5px',
+                    marginRight: '10px',
+                    fontWeight: 'bolder',
+                    color: '#000000',
+                  }}
+                >
+                  Email: 
+                </label>
+
+                <div
+                  style={{
+                    marginTop: '5px',
+                    marginRight: '10px',
+                    color: '#000000',
+                  }}
+                >
+                  {document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('ta_email='))
+                .split('=')[1]}
+                </div>
+            </Row>
+          <Row>
+                <label
+                  style={{
+                    marginTop: '5px',
+                    marginRight: '10px',
+                    fontWeight: 'bolder',
+                    color: '#000000',
+                  }}
+                >
+                  User ID:
+                </label>
+
+                <div
+                  style={{
+                    marginTop: '5px',
+                    marginRight: '10px',
+                    color: '#000000',
+                  }}
+                >
+                  {document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('ta_uid='))
+                .split('=')[1]}
+                </div>
+            </Row>
+            <br />
+            <br />
+            <Row>
+            <div>
+            <button
+                style={{
+                  color: '#000000',
+                  border: 'solid',
+                  borderWidth: '2px',
+                  borderRadius: '25px',
+                }}
+                onClick={() => {
+                  if (taPhotoURL) {
+                      setTaPhoto(taPhotoURL);
+                      document.cookie = 'ta_pic=' + taPhotoURL;
+                    }
+                  UpdatePerson();
+                }}
+              >
+                Save Changes
+              </button>
+              <button
+                style={{
+                  color: '#000000',
+                  border: 'solid',
+                  borderWidth: '2px',
+                  borderRadius: '25px',
+                  marginLeft: '20px',
+                }}
+                onClick={() => {
+                  
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+            </Row>
+            </Form.Group>
+            </Col>
+            </Row>
+            </div>
             <div class="con">
               <button
                 class="duperr"

@@ -342,7 +342,7 @@ export default function AboutModal(props) {
                 photo_url: '',
               });
               setUserPhoto(userPhotoURL);
-              console.log('URL: ', userPhotoURL);
+              console.log('URL: ', URL.createObjectURL(userImage));
             }}
           >
             Upload
@@ -1672,7 +1672,7 @@ export default function AboutModal(props) {
       {removeRoleModal()}
       <div style={{ height: '3px' }}></div>
       <div style={{ width: '30%' }}>
-        <MiniNavigation />
+        <MiniNavigation activeButtonSelection={"about"} />
       </div>
       <ModalBody
         style={{
@@ -2639,9 +2639,10 @@ export default function AboutModal(props) {
                         marginTop: '1rem',
                       }}
                     >
-                      <p style={{ color: '#000000', paddingTop: '10px' }}>
+                      <p style={{ color: '#000000', paddingTop: '5px' }}>
                         {lp.name}
                       </p>
+                      <small style={{ color: '#000000', paddingBottom: '20px' }}>{lp.relationship}</small>
                     </div>
                     <div
                       style={{
@@ -2871,6 +2872,12 @@ export default function AboutModal(props) {
                   e.stopPropagation();
                   newInputSubmit();
                   toggleConfirmed(true);
+                  if (userPhoto) {
+                    document.cookie = 'patient_pic=' + userPhoto;
+                    loginContext.setLoginState({
+                      ...loginContext.loginState,
+                      curUserPic: userPhoto
+                    });}
                 }}
               >
                 Save Changes

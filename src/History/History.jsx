@@ -114,7 +114,7 @@ export default function MainPage(props) {
   const tz = {
     timeZone: userTime_zone,
   };
-  console.log('hgot tz', tz, userTime_zone);
+  console.log('hgot tz', tz, "userTime_zone = ", userTime_zone);
   var time = new Date().toLocaleString(tz, tz).replace(/,/g, '');
   var m = Moment(time).format('ddd MMM D YYYY HH:mm:ss [GMT]ZZ ');
   var m = new Date(m);
@@ -232,6 +232,7 @@ export default function MainPage(props) {
       .catch((error) => {
         console.log(error);
       });
+    
     axios
       .get(
         BASE_URL +
@@ -242,7 +243,7 @@ export default function MainPage(props) {
             .split('=')[1]
       )
       .then((response) => {
-        console.log(response);
+        console.log("userOfTA response ", response);
         if (response.data.result.length > 0) {
           const usersOfTA = response.data.result;
           const curUserID = usersOfTA[0].user_unique_id;
@@ -348,7 +349,7 @@ export default function MainPage(props) {
     for (var d = 0; d < inRange.length; d++) {
       if (inRange[d].details.length > 0) {
         const obj = JSON.parse(inRange[d].details);
-        // console.log(obj);
+        console.log("inRange details object ",obj);
 
         //sort obj by time of day
         obj.sort(custom_sort);
@@ -361,7 +362,7 @@ export default function MainPage(props) {
       } */
         for (var r = 0; r < obj.length; r++) {
           //FOR ROUTINES
-          // console.log(r);
+          console.log("routines object ",r);
           if (obj[r].title === 'DP - Test routine 2 (repeats)') {
             console.log('start obj[r] = ', obj[r]);
           }
@@ -634,7 +635,7 @@ export default function MainPage(props) {
     var newRows = [];
     for (var r = 0; r < rows.length; r++) {
       if (rows[r].show) {
-        console.log('hgot here: ' + rows[r].name);
+        console.log('hgot here: ', r, "and", rows[r].name);
         newRows.push(rows[r]);
       }
     }
@@ -715,6 +716,7 @@ export default function MainPage(props) {
     }
   }
   function getThisWeek() {
+    console.log("in getThisWeek");
     var today = new Date(new Date() - 86400000);
     var day = Moment().format();
     var x = Moment().date(day);
@@ -860,7 +862,7 @@ export default function MainPage(props) {
   return (
     <Container fluid padding="0px" backgroundColor="#F2F7FC">
       <Row style={{ width: '30%' }}>
-        <MiniNavigation />
+        <MiniNavigation activeButtonSelection={"history"}/>
       </Row>
       <Row fluid padding={0} backgroundColor="#F2F7FC">
         <Col width="10rem" style={{ padding: '0px', overflow: 'hidden' }}>

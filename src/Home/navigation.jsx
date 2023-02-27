@@ -76,7 +76,7 @@ export function Navigation() {
   const classes = useStyles();
 
   const loginContext = useContext(LoginContext);
-  console.log(loginContext);
+  console.log("login context in navigation" ,loginContext);
   const listOfUsers = loginContext.loginState.usersOfTA;
   var selectedUser = loginContext.loginState.curUser;
   const currentUser = loginContext.loginState.curUser;
@@ -102,25 +102,21 @@ export function Navigation() {
       CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
       console.log(CLIENT_ID, CLIENT_SECRET);
     }
-    // axios.get(BASE_URL + 'getPeopleImages/' + selectedUser).then((response) => {
-    //   console.log(response);
-    //   setTaImage(response.data.result[0].url);
-    //   setUserImage(curUserPic);
-    // });
   }, []);
-  const getTAImage = () => {
-    axios.get(BASE_URL + 'getPeopleImages/' + selectedUser).then((response) => {
-      console.log(response.data.result[response.data.result.length - 1].url);
-      if (response.data.result.length == 0) {
-        setTaImage('');
-      } else {
-        setTaImage(response.data.result[response.data.result.length - 1].url);
-      }
-    });
-  };
+
+  
   useEffect(() => {
-    getTAImage();
     setUserImage(curUserPic);
+    if (
+      document.cookie
+        .split(';')
+        .some((item) => item.trim().startsWith('ta_pic='))
+    ) {
+      setTaImage( document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('ta_pic='))
+        .split('=')[1])
+  }
   }, []);
   // useEffect(() => {
   //   setUserImage(curUserPic);
@@ -462,6 +458,7 @@ export function Navigation() {
                     {taImage === '' ? (
                       <img
                         src={'/UserNoImage.png'}
+                        alt="Default Image"
                         style={{
                           width: '45px',
                           height: '45px',
@@ -473,6 +470,7 @@ export function Navigation() {
                     ) : (
                       <img
                         src={taImage}
+                        alt="Default Image"
                         style={{
                           width: '45px',
                           height: '45px',

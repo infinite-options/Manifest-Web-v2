@@ -243,7 +243,7 @@ export default function Login() {
   };
 
   const responseGoogle = (response) => {
-    console.log(response);
+    console.log("google login response", response);
     if (response.profileObj) {
       let email = response.profileObj.email;
       let ta_id = '';
@@ -262,6 +262,7 @@ export default function Login() {
         document.cookie = 'ta_uid=' + response['data']['ta_unique_id'];
         document.cookie = 'ta_email=' + email;
         document.cookie = 'patient_name=Loading';
+        document.cookie = 'ta_pic=' + response['data']['ta_picture'];
         loginContext.setLoginState({
           ...loginContext.loginState,
           reload: false,

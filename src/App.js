@@ -71,6 +71,7 @@ export default function App() {
           {/* </Switch> */}
         </div>
       </LoginContext.Provider>
+
     </Router>
     // <div>
     //   {/* <Home /> */}

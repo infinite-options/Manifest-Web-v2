@@ -2678,7 +2678,7 @@ export default function Events(props) {
                       minHeight: '1440px',
                     }}
                   >
-                    <MiniNavigation />
+                    <MiniNavigation activeButtonSelection={"calendar"} />
                     <Button
                       className={
                         pageURL[3] === 'events'

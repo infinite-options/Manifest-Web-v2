@@ -2747,7 +2747,7 @@ export default function GoalHome(props) {
                       minHeight: '1440px',
                     }}
                   >
-                    <MiniNavigation />
+                    <MiniNavigation activeButtonSelection={"calendar"} />
                     <Button
                       className={classes.buttonSelection}
                       onClick={() => {
