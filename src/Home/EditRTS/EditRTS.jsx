@@ -302,7 +302,30 @@ const EditRTS = (props) => {
     //   object.photo_url = null
     // }
 
-    console.log('obj', object);
+    console.log('obj ****************', object);
+    if (object.repeat == "True" && object.repeat_type == "") {
+      console.log('obj has no repeat type')
+      alert(
+        'Recurring routine must have Ends On information.'
+      );
+      return;
+    }
+    if (object.repeat_type == "Occur" && object.repeat_occurences == "")
+      {
+        console.log('obj has no repeat occurrences')
+        alert(
+          'Please mention the number of Ocurrences after which the Routine should end.'
+        );
+        return;
+      }
+    if (object.repeat_type == "On" && object.repeat_ends_on == "")
+      {
+        console.log('obj has no repeat_ends_on date')
+        alert(
+          'Please mention the date this Routine should end on.'
+        );
+        return;
+      }
     let formData = new FormData();
     Object.entries(object).forEach((entry) => {
       console.log('test-entry: ', entry);
@@ -1204,15 +1227,10 @@ const EditRTS = (props) => {
                         fontWeight: 'bold',
                       }}
                       type="number"
-                      // min="0"
-                      // oninput="validity.valid||(value='')"
-                      // value={
-                      //   editingRTSContext.editingRTS.newItem.repeat_occurences
-                      // }
                       value={
-                        editingRTSContext.editingRTS.newItem.repeat ===
-                          'False' ||
-                        editingRTSContext.editingRTS.newItem.repeat === false
+                        editingRTSContext.editingRTS.newItem.repeat ==='False' ||
+                        editingRTSContext.editingRTS.newItem.repeat === false 
+                        // || editingRTSContext.editingRTS.newItem.repeat === 'Occur'
                           ? 1
                           : editingRTSContext.editingRTS.newItem
                               .repeat_occurences
@@ -1224,7 +1242,7 @@ const EditRTS = (props) => {
                             'False' ||
                           editingRTSContext.editingRTS.newItem.repeat === false
                         )
-                          return;
+                        return;
 
                         editingRTSContext.setEditingRTS({
                           ...editingRTSContext.editingRTS,

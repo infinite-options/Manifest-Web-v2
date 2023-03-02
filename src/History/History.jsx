@@ -180,6 +180,7 @@ export default function MainPage(props) {
       .then((response) => {
         console.log('getHistory response = ', response.data);
         let thisWeek = getThisWeek();
+        console.log('thisWeek response = ', thisWeek, 'getHistory response = ', response.data);
         for (var j = 0; j < thisWeek.length; j++) {
           if (
             response.data.result.filter((e) => e.date_affected === thisWeek[j])
@@ -715,11 +716,39 @@ export default function MainPage(props) {
         return 'SAT';
     }
   }
+
+  function formatDate(date){
+    var dd = date.getDate();
+    var mm = date.getMonth()+1;
+    var yyyy = date.getFullYear();
+    if(dd<10) {dd='0'+dd}
+    if(mm<10) {mm='0'+mm}
+    date = yyyy+'-'+mm+'-'+dd;
+    return date
+  }
+  
   function getThisWeek() {
     console.log("in getThisWeek");
+    var result = [];
+    for (var i = 1; i < 15; i++) {
+      var d = new Date();
+      d.setDate(d.getDate() - i);
+      result.push(formatDate(d))
+    }
+    return result;
+  }
+
+  // Previous implementation of getThisWeek() function
+  function getThisWeek2() {
+    console.log("in getThisWeek2");
     var today = new Date(new Date() - 86400000);
     var day = Moment().format();
     var x = Moment().date(day);
+
+    console.log("getThisWeek* today =", today);
+    console.log("getThisWeek* day =", day);
+    console.log("getThisWeek* x =", x);
+    
     // const temp = {
     //   d: today.getDate(),
     //   m: today.getMonth() + 1,
@@ -733,17 +762,22 @@ export default function MainPage(props) {
 
     // const numDaysInMonth = new Date(temp.y, temp.m + 1, 0).getDate();
     const numDaysInMonth = Moment().daysInMonth();
+    console.log("getThisWeek* numDaysInMonth =", numDaysInMonth);
     return Array.from({ length: 15 }, (_) => {
+      console.log("getThisWeek* temp.d =", temp.d);
       if (temp.d > numDaysInMonth) {
         temp.m += 1;
         temp.d = 1;
+        console.log("getThisWeek* temp.d> numSaysInMonth =", true);
       }
 
       const newDate = Moment().set({
         year: temp.y,
-        month: temp.m - 1,
+        month: temp.m-1,
         date: temp.d--,
       });
+      console.log("getThisWeek* temp.m =", temp.m, " ", temp.m - 1);
+      console.log("getThisWeek* temp.new d =", temp.d);
       // const newDate = new Date(temp.y, temp.m, temp.d--); //.toUTCString()
       let x = '';
       // x =
@@ -758,6 +792,7 @@ export default function MainPage(props) {
         Moment(newDate).format('MM') +
         '-' +
         Moment(newDate).format('DD');
+      console.log("getThisWeek* x =", x);
       return x;
       // newDate.getFullYear() +
       //   '-' +
