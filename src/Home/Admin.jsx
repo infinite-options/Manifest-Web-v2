@@ -229,13 +229,13 @@ export function Admin() {
       });
     
       axios
-      .get(BASE_URL + 'ListAllTAUser/' + usrID)
+      .get(BASE_URL + 'TAProfile/' + tID)
       .then((response) => {
-        console.log('ListAllTAUser',  response.data.result);
-        setListTaUser(response.data.result);
+        console.log('TAProfile',  response.data.result[0]);
+        setListTaUser(response.data.result[0]);
         setTaFirstName(response.data.result[0].ta_first_name);
         setTaLastName(response.data.result[0].ta_last_name);
-        console.log('in ListAllTAUser ta frist name', response.data.result[0].ta_unique_id);
+        console.log('in TAProfile ta first name', response.data.result[0].ta_first_name);
       })
       .catch((error) => {
         console.log(error);
@@ -335,9 +335,9 @@ export function Admin() {
       .then((response) => {
         console.log('listAllTAUser', response.data.result);
         setTaListUser(response.data.result);
-        setTaFirstName(response.data.result[0].ta_first_name);
-        setTaLastName(response.data.result[0].ta_last_name);
-        console.log('in ListAllTAUser ta frist name getTAofUser', response.data.result[0].ta_first_name);
+        // setTaFirstName(response.data.result[0].ta_first_name);
+        // setTaLastName(response.data.result[0].ta_last_name);
+        // console.log('in ListAllTAUser ta frist name getTAofUser', response.data.result[0].ta_first_name);
       })
       .catch((error) => {
         console.log(error);
