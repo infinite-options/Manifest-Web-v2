@@ -1504,7 +1504,7 @@ export default function GoalLHS(props) {
     var tempRows = [];
     var tempID = [];
     var tempIsID = [];
-    console.log('only 0.1.0', tempRows, tempID);
+    console.log('only 0.1.0', tempRows, tempID, props.getGoalsEndPoint);
     const uniqueObjects = [
       ...new Map(
         props.getGoalsEndPoint.map((item) => [item.gr_unique_id, item])

@@ -243,43 +243,91 @@ export function Admin() {
   }, []);
   
   const getUserOfTA = () => {
-    axios
-      .get(
-        BASE_URL +
+    if (document.cookie
+      .split(';')
+      .some((item) => item.trim().startsWith('usersOfTA='))) {
+      console.log("got usersOfTA from document.cookie")
+
+      var usersOfTA_result = JSON.parse(document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('usersOfTA='))
+        .split('=')[1]);
+      
+      if (usersOfTA_result.length > 0) {
+        const usersOfTA = usersOfTA_result;
+        const curUserID = usersOfTA[0].user_unique_id;
+        const curUserTZ = usersOfTA[0].time_zone;
+        const curUserEI = usersOfTA[0].user_email_id;
+        const curUserN = usersOfTA[0].user_name;
+        if (loginContext.loginState.curUser == '') {
+          loginContext.setLoginState({
+            ...loginContext.loginState,
+            usersOfTA: usersOfTA_result,
+            curUser: curUserID,
+            curUserTimeZone: curUserTZ,
+            curUserEmail: curUserEI,
+            curUserName: curUserN,
+          });
+        } else {
+          loginContext.setLoginState({
+            ...loginContext.loginState,
+            usersOfTA: usersOfTA_result,
+          });
+        }
+        console.log(curUserID);
+      } else {
+        loginContext.setLoginState({
+          ...loginContext.loginState,
+          usersOfTA: usersOfTA_result,
+          curUser: '',
+          curUserTimeZone: '',
+          curUserEmail: '',
+          curUserName: '',
+        });
+        console.log('No User Found');
+      }
+      // ***********
+    }
+    else {
+      console.log("got usersOfTA from usersOfTA/ API call")
+      axios
+        .get(
+          BASE_URL +
           'usersOfTA/' +
           document.cookie
             .split('; ')
             .find((row) => row.startsWith('ta_email='))
             .split('=')[1]
-      )
-      .then((response) => {
-        console.log('list of users home', response.data.result);
-        if (response.data.result.length > 0) {
-          const usersOfTA = response.data.result;
-          const curUserID = usersOfTA[0].user_unique_id;
-          const curUserTZ = usersOfTA[0].time_zone;
-          const curUserEI = usersOfTA[0].user_email_id;
-          const curUserP = usersOfTA[0].user_picture;
-          const curUserN = usersOfTA[0].user_name;
-          console.log('timezone', curUserTZ);
-          loginContext.setLoginState({
-            ...loginContext.loginState,
-            usersOfTA: response.data.result,
-            curUser: curUserID,
-            curUserTimeZone: curUserTZ,
-            curUserEmail: curUserEI,
-            curUserPic: curUserP,
-            curUserName: curUserN,
-          });
-          console.log(curUserID);
-          console.log('timezone', curUserTZ);
-        } else {
-          console.log('No User Found');
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+        )
+        .then((response) => {
+          console.log('list of users home', response.data.result);
+          if (response.data.result.length > 0) {
+            const usersOfTA = response.data.result;
+            const curUserID = usersOfTA[0].user_unique_id;
+            const curUserTZ = usersOfTA[0].time_zone;
+            const curUserEI = usersOfTA[0].user_email_id;
+            const curUserP = usersOfTA[0].user_picture;
+            const curUserN = usersOfTA[0].user_name;
+            console.log('timezone', curUserTZ);
+            loginContext.setLoginState({
+              ...loginContext.loginState,
+              usersOfTA: response.data.result,
+              curUser: curUserID,
+              curUserTimeZone: curUserTZ,
+              curUserEmail: curUserEI,
+              curUserPic: curUserP,
+              curUserName: curUserN,
+            });
+            console.log(curUserID);
+            console.log('timezone', curUserTZ);
+          } else {
+            console.log('No User Found');
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   const UpdatePerson = async(event)=> {

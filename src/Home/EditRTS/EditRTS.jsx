@@ -655,8 +655,8 @@ const EditRTS = (props) => {
       >
         <Col style={{ float: 'left', width: '30%' }}>
           <div style={{ fontWeight: 'bold', fontSize: '20px' }}>
-            {editingRTSContext.editingRTS.newItem.is_persistent === 'True' ||
-            editingRTSContext.editingRTS.newItem.is_persistent === true
+            {editingRTSContext.editingRTS.is_persistent === 'True' ||
+            editingRTSContext.editingRTS.is_persistent === true
               ? 'Routine'
               : 'Goal'}{' '}
             &nbsp;Name

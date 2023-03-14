@@ -415,29 +415,26 @@ export default function AboutModal(props) {
 
     grabFireBaseAboutMeData();
 
-    axios
-      .get(
-        BASE_URL +
-          'usersOfTA/' +
-          document.cookie
-            .split('; ')
-            .find((row) => row.startsWith('ta_email='))
-            .split('=')[1]
-      )
-      .then((response) => {
-        console.log(response);
-        if (response.data.result.length > 0) {
-          const usersOfTA = response.data.result;
+    if (document.cookie
+      .split(';')
+      .some((item) => item.trim().startsWith('usersOfTA='))) {
+      console.log("got usersOfTA from document.cookie")
+
+      var usersOfTA_result = JSON.parse(document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('usersOfTA='))
+        .split('=')[1]);
+      
+        if (usersOfTA_result.length > 0) {
+          const usersOfTA = usersOfTA_result;
           const curUserID = usersOfTA[0].user_unique_id;
           const curUserTZ = usersOfTA[0].time_zone;
           const curUserEI = usersOfTA[0].user_email_id;
           const curUserN = usersOfTA[0].user_name;
-          // console.log('pog', loginContext.loginState.curUser)
           if (loginContext.loginState.curUser == '') {
-            // edge case on refresh
             loginContext.setLoginState({
               ...loginContext.loginState,
-              usersOfTA: response.data.result,
+              usersOfTA: usersOfTA_result,
               curUser: curUserID,
               curUserTimeZone: curUserTZ,
               curUserEmail: curUserEI,
@@ -446,20 +443,14 @@ export default function AboutModal(props) {
           } else {
             loginContext.setLoginState({
               ...loginContext.loginState,
-              usersOfTA: response.data.result,
-              //curUser: curUserID
+              usersOfTA: usersOfTA_result,
             });
           }
-
           console.log(curUserID);
-          // setUserID(curUserID);
-          // console.log(userID);
-          //GrabFireBaseRoutinesGoalsData();
-          // return userID;
         } else {
           loginContext.setLoginState({
             ...loginContext.loginState,
-            usersOfTA: response.data.result,
+            usersOfTA: usersOfTA_result,
             curUser: '',
             curUserTimeZone: '',
             curUserEmail: '',
@@ -467,10 +458,67 @@ export default function AboutModal(props) {
           });
           console.log('No User Found');
         }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      // ***********
+    }
+    else {
+      console.log("got usersOfTA from usersOfTA/ API call")
+      axios
+        .get(
+          BASE_URL +
+          'usersOfTA/' +
+          document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('ta_email='))
+            .split('=')[1]
+        )
+        .then((response) => {
+          console.log(response);
+          if (response.data.result.length > 0) {
+            const usersOfTA = response.data.result;
+            const curUserID = usersOfTA[0].user_unique_id;
+            const curUserTZ = usersOfTA[0].time_zone;
+            const curUserEI = usersOfTA[0].user_email_id;
+            const curUserN = usersOfTA[0].user_name;
+            // console.log('pog', loginContext.loginState.curUser)
+            if (loginContext.loginState.curUser == '') {
+              // edge case on refresh
+              loginContext.setLoginState({
+                ...loginContext.loginState,
+                usersOfTA: response.data.result,
+                curUser: curUserID,
+                curUserTimeZone: curUserTZ,
+                curUserEmail: curUserEI,
+                curUserName: curUserN,
+              });
+            } else {
+              loginContext.setLoginState({
+                ...loginContext.loginState,
+                usersOfTA: response.data.result,
+                //curUser: curUserID
+              });
+            }
+
+            console.log(curUserID);
+            // setUserID(curUserID);
+            // console.log(userID);
+            //GrabFireBaseRoutinesGoalsData();
+            // return userID;
+          } else {
+            loginContext.setLoginState({
+              ...loginContext.loginState,
+              usersOfTA: response.data.result,
+              curUser: '',
+              curUserTimeZone: '',
+              curUserEmail: '',
+              curUserName: '',
+            });
+            console.log('No User Found');
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   }, [loginContext.loginState.reload, userID]);
 
   useEffect(() => {
@@ -522,8 +570,95 @@ export default function AboutModal(props) {
           setLastName(details.user_last_name);
           setUserPhoto(details.user_picture);
           setEmail(details.user_email_id);
-        } else {
-          console.log('No user details');
+
+          // populating 'what motivates you' field 
+          if (JSON.parse(details.motivation) != null) {
+            for (
+              let i = 0;
+              i < JSON.parse(details.motivation).length;
+              i++
+            ) {
+              switch (i) {
+                case 0:
+                  setMotivation0(JSON.parse(details.motivation)[i]);
+                  break;
+                case 1:
+                  setMotivation1(JSON.parse(details.motivation)[i]);
+                  break;
+                case 2:
+                  setMotivation2(JSON.parse(details.motivation)[i]);
+                  break;
+                case 3:
+                  setMotivation3(JSON.parse(details.motivation)[i]);
+                  break;
+                case 4:
+                  setMotivation4(JSON.parse(details.motivation)[i]);
+                  break;
+              }
+            }
+          } else {
+            console.log('No user details for motivation');
+          }
+
+          // populating 'what's important to you' field 
+          if (JSON.parse(details.what_is_important) != null) {
+            for (
+              let i = 0;
+              i < JSON.parse(details.what_is_important).length;
+              i++
+            ) {
+              switch (i) {
+                case 0:
+                  setFeelings0(JSON.parse(details.what_is_important)[i]);
+                  break;
+                case 1:
+                  setFeelings1(JSON.parse(details.what_is_important)[i]);
+                  break;
+                case 2:
+                  setFeelings2(JSON.parse(details.what_is_important)[i]);
+                  break;
+                case 3:
+                  setFeelings3(JSON.parse(details.what_is_important)[i]);
+                  break;
+                case 4:
+                  setFeelings4(JSON.parse(details.what_is_important)[i]);
+                  break;
+              }
+            }
+          }
+          else {
+            console.log('No user details for what_is_important');
+          }
+
+          // populating 'what makes you happy' field 
+          if (JSON.parse(details.happy) != null) {
+            for (
+              let i = 0;
+              i < JSON.parse(details.happy).length;
+              i++
+            ) {
+              switch (i) {
+                case 0:
+                  setHappy0(JSON.parse(details.happy)[i]);
+                  break;
+                case 1:
+                  setHappy1(JSON.parse(details.happy)[i]);
+                  break;
+                case 2:
+                  setHappy2(JSON.parse(details.happy)[i]);
+                  break;
+                case 3:
+                  setHappy3(JSON.parse(details.happy)[i]);
+                  break;
+                case 4:
+                  setHappy4(JSON.parse(details.happy)[i]);
+                  break;
+              }
+            }
+          }
+          else {
+            console.log('No user details for happy');
+          }
         }
       })
       .catch((err) => {
@@ -531,111 +666,113 @@ export default function AboutModal(props) {
       });
     console.log('check userID');
     console.log(userID);
-    axios
-      .get(BASE_URL + 'motivation/' + userID)
-      .then((response) => {
-        console.log('motivation');
-        console.log(JSON.parse(response.data.result[0].options));
-        //var temp = ["", "", "", "", ""]
-        if (JSON.parse(response.data.result[0].options) != null) {
-          for (
-            let i = 0;
-            i < JSON.parse(response.data.result[0].options).length;
-            i++
-          ) {
-            switch (i) {
-              case 0:
-                setMotivation0(JSON.parse(response.data.result[0].options)[i]);
-                break;
-              case 1:
-                setMotivation1(JSON.parse(response.data.result[0].options)[i]);
-                break;
-              case 2:
-                setMotivation2(JSON.parse(response.data.result[0].options)[i]);
-                break;
-              case 3:
-                setMotivation3(JSON.parse(response.data.result[0].options)[i]);
-                break;
-              case 4:
-                setMotivation4(JSON.parse(response.data.result[0].options)[i]);
-                break;
-            }
-          }
-        }
-      })
-      .catch((err) => {
-        console.log('Error getting user details', err);
-      });
-    axios
-      .get(BASE_URL + 'important/' + userID)
-      .then((response) => {
-        console.log('feelings');
-        //console.log(JSON.parse(response.data.result[0].options))
-        //var temp = ["", "", "", "", ""]
-        if (JSON.parse(response.data.result[0].options) != null) {
-          for (
-            let i = 0;
-            i < JSON.parse(response.data.result[0].options).length;
-            i++
-          ) {
-            switch (i) {
-              case 0:
-                setFeelings0(JSON.parse(response.data.result[0].options)[i]);
-                break;
-              case 1:
-                setFeelings1(JSON.parse(response.data.result[0].options)[i]);
-                break;
-              case 2:
-                setFeelings2(JSON.parse(response.data.result[0].options)[i]);
-                break;
-              case 3:
-                setFeelings3(JSON.parse(response.data.result[0].options)[i]);
-                break;
-              case 4:
-                setFeelings4(JSON.parse(response.data.result[0].options)[i]);
-                break;
-            }
-          }
-        }
-      })
-      .catch((err) => {
-        console.log('Error getting user details', err);
-      });
-    axios
-      .get(BASE_URL + 'happy/' + userID)
-      .then((response) => {
-        console.log('motivation');
-        console.log(JSON.parse(response.data.result[0].options));
-        //var temp = ["", "", "", "", ""]
-        if (JSON.parse(response.data.result[0].options) != null) {
-          for (
-            let i = 0;
-            i < JSON.parse(response.data.result[0].options).length;
-            i++
-          ) {
-            switch (i) {
-              case 0:
-                setHappy0(JSON.parse(response.data.result[0].options)[i]);
-                break;
-              case 1:
-                setHappy1(JSON.parse(response.data.result[0].options)[i]);
-                break;
-              case 2:
-                setHappy2(JSON.parse(response.data.result[0].options)[i]);
-                break;
-              case 3:
-                setHappy3(JSON.parse(response.data.result[0].options)[i]);
-                break;
-              case 4:
-                setHappy4(JSON.parse(response.data.result[0].options)[i]);
-                break;
-            }
-          }
-        }
-      })
-      .catch((err) => {
-        console.log('Error getting user details', err);
-      });
+    // axios
+    //   .get(BASE_URL + 'motivation/' + userID)
+    //   .then((response) => {
+    //     console.log('motivation');
+    //     console.log(JSON.parse(response.data.result[0].options));
+    //     //var temp = ["", "", "", "", ""]
+    //     if (JSON.parse(response.data.result[0].options) != null) {
+    //       for (
+    //         let i = 0;
+    //         i < JSON.parse(response.data.result[0].options).length;
+    //         i++
+    //       ) {
+    //         switch (i) {
+    //           case 0:
+    //             setMotivation0(JSON.parse(response.data.result[0].options)[i]);
+    //             break;
+    //           case 1:
+    //             setMotivation1(JSON.parse(response.data.result[0].options)[i]);
+    //             break;
+    //           case 2:
+    //             setMotivation2(JSON.parse(response.data.result[0].options)[i]);
+    //             break;
+    //           case 3:
+    //             setMotivation3(JSON.parse(response.data.result[0].options)[i]);
+    //             break;
+    //           case 4:
+    //             setMotivation4(JSON.parse(response.data.result[0].options)[i]);
+    //             break;
+    //         }
+    //       }
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log('Error getting user details', err);
+    //   });
+
+    // axios
+    //   .get(BASE_URL + 'important/' + userID)
+    //   .then((response) => {
+    //     console.log('feelings');
+    //     //console.log(JSON.parse(response.data.result[0].options))
+    //     //var temp = ["", "", "", "", ""]
+    //     if (JSON.parse(response.data.result[0].options) != null) {
+    //       for (
+    //         let i = 0;
+    //         i < JSON.parse(response.data.result[0].options).length;
+    //         i++
+    //       ) {
+    //         switch (i) {
+    //           case 0:
+    //             setFeelings0(JSON.parse(response.data.result[0].options)[i]);
+    //             break;
+    //           case 1:
+    //             setFeelings1(JSON.parse(response.data.result[0].options)[i]);
+    //             break;
+    //           case 2:
+    //             setFeelings2(JSON.parse(response.data.result[0].options)[i]);
+    //             break;
+    //           case 3:
+    //             setFeelings3(JSON.parse(response.data.result[0].options)[i]);
+    //             break;
+    //           case 4:
+    //             setFeelings4(JSON.parse(response.data.result[0].options)[i]);
+    //             break;
+    //         }
+    //       }
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log('Error getting user details', err);
+    //   });
+
+    // axios
+    //   .get(BASE_URL + 'happy/' + userID)
+    //   .then((response) => {
+    //     console.log('motivation');
+    //     console.log(JSON.parse(response.data.result[0].options));
+    //     //var temp = ["", "", "", "", ""]
+    //     if (JSON.parse(response.data.result[0].options) != null) {
+    //       for (
+    //         let i = 0;
+    //         i < JSON.parse(response.data.result[0].options).length;
+    //         i++
+    //       ) {
+    //         switch (i) {
+    //           case 0:
+    //             setHappy0(JSON.parse(response.data.result[0].options)[i]);
+    //             break;
+    //           case 1:
+    //             setHappy1(JSON.parse(response.data.result[0].options)[i]);
+    //             break;
+    //           case 2:
+    //             setHappy2(JSON.parse(response.data.result[0].options)[i]);
+    //             break;
+    //           case 3:
+    //             setHappy3(JSON.parse(response.data.result[0].options)[i]);
+    //             break;
+    //           case 4:
+    //             setHappy4(JSON.parse(response.data.result[0].options)[i]);
+    //             break;
+    //         }
+    //       }
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log('Error getting user details', err);
+    //   });
   }
 
   useEffect(() => console.log('taObject = ', taObject), [taObject]);

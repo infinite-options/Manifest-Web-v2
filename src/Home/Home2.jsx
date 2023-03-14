@@ -136,9 +136,10 @@ export default function Home(props) {
   const history = useHistory();
   let pageURL = window.location.href.split('/');
   //console.log('curUser timezone', userTime_zone);
-  /* useEffect() is used to render API calls as minimumly
+  /* useEffect() is used to render API calls as minimumly 
   as possible based on past experience, if not included 
   causes alarms and excessive rendering */
+
   const getUserOfTA = () => {
     axios
       .get(
@@ -226,7 +227,6 @@ export default function Home(props) {
   const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
   const [events, setEvents] = useState({});
   const [hightlight, setHightlight] = useState('');
-  const [GREButtonSelection, setGREButtonSelection] = useState('Routines');
   const [stateValue, setStateValue] = useState({
     itemToEdit: {
       title: '',
@@ -547,7 +547,7 @@ export default function Home(props) {
       },
       location: '',
       is_available: true,
-    //   is_persistent: true,
+      is_persistent: true,
       is_complete: false,
       is_in_progress: false,
       is_displayed_today: true,
@@ -555,7 +555,7 @@ export default function Home(props) {
       is_sublist_available: true,
       photo: '',
       photo_url: '',
-    //   notifications: '',
+      notifications: '',
       ta_notifications: {
         before: {
           is_enabled: false,
@@ -598,17 +598,6 @@ export default function Home(props) {
       },
     },
   };
-    
-  const newRTSStateRoutines = {
-    ...newRTSState,
-    is_persistent: true,
-    notifications: ''
-  }
-    
-  const newRTSStateGoals = {
-    ...newRTSState,
-    is_persistent: false
-  }
   const initialEditingEventState = {
     editing: false,
     user_id: userID,
@@ -753,16 +742,6 @@ export default function Home(props) {
       photo_url: '',
     },
   };
-    
-  const newEditingATSStateRoutines = {
-    ...newEditingATSState,
-    is_persistent: true
-  }
-  const newEditingATSStateGoals = {
-    ...newEditingATSState,
-    is_persistent: false
-  }
-  
 
   const initialEditingATSState = {
     editing: false,
@@ -1036,24 +1015,10 @@ export default function Home(props) {
     return stateValue.showRoutineModal;
   }
 
-//   function toggleShowGoal() {
-//     history.push('/goalhome');
-//   }
-
-function toggleShowGoal(props) {
-    setStateValue((prevState) => {
-      return {
-        ...prevState,
-        showRoutineModal: false,
-        showEventModal: false,
-        showGoalModal: !stateValue.showGoalModal,
-        showRoutineGoalModal: false,
-      };
-    });
-
-    return stateValue.showGoalModal;
+  function toggleShowGoal() {
+    history.push('/goalhome');
   }
-  
+
   function toggleShowEvents() {
     history.push('/events');
   }
@@ -1309,7 +1274,7 @@ function toggleShowGoal(props) {
             BASE_URL={stateValue.BASE_URL}
             highLight={hightlight}
           /> */}
-          {GREButtonSelection== 'Routines' && <WeekRoutines
+          <WeekRoutines
             theCurrentUserID={userID}
             timeZone={userTime_zone}
             getGoalsEndPoint={getRoutinesEndPoint}
@@ -1318,17 +1283,7 @@ function toggleShowGoal(props) {
             dateContext={stateValue.dateContext}
             BASE_URL={stateValue.BASE_URL}
             highLight={hightlight}
-          />}
-          {GREButtonSelection== 'Goals' && <WeekRoutines
-            theCurrentUserID={userID}
-            timeZone={userTime_zone}
-            getGoalsEndPoint={getRoutinesEndPoint}
-            setGetGoalsEndPoint={setGetRoutinesEndPoint}
-            routines={stateValue.goals}
-            dateContext={stateValue.dateContext}
-            BASE_URL={stateValue.BASE_URL}
-            highLight={hightlight}
-          />}
+          />
         </Row>
       </div>
     );
@@ -1344,7 +1299,7 @@ function toggleShowGoal(props) {
   /* useEffect() is used to render API calls as minimumly 
   as possible based on past experience, if not included 
   causes alarms and excessive rendering */
-  
+
   function GrabFireBaseRoutinesGoalsData() {
     let url = BASE_URL + 'getgoalsandroutines/';
     let routine = [];
@@ -2224,32 +2179,8 @@ function toggleShowGoal(props) {
   //       });
   //   }, [userID, stateValue.dateContext, stateValue.todayDateObject]);
   // }
-    useEffect(() => {
-        if (userID == '') return;
-        console.log(
-            'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-            [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
-        );
-        let url = BASE_URL + 'getroutines/';
-        if(GREButtonSelection == "Goals"){
-            url = BASE_URL + 'getgoals/';
-        }
-
-        axios
-            .get(url + userID)
-            .then((response) => {
-                console.log(
-                    'here: Obtained user information with res = ',
-                    response.data.result
-                );
-                GrabFireBaseRoutinesData(response);
-            })
-    }, [GREButtonSelection,userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
-  function GrabFireBaseRoutinesData(response) {
-    // let url = BASE_URL + 'getroutines/';
-    // if(GREButtonSelection == "Goals"){
-    //     url = BASE_URL + 'getgoals/';
-    // }
+  function GrabFireBaseRoutinesData() {
+    let url = BASE_URL + 'getroutines/';
     let routine = [];
     let routine_ids = [];
     let goal = [];
@@ -2297,21 +2228,21 @@ function toggleShowGoal(props) {
       return [a_time, b_time];
     };
 
-    // useEffect(() => {
-    //   if (userID == '') return;
-    //   console.log(
-    //     'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-    //     [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
-    //   );
+    useEffect(() => {
+      if (userID == '') return;
+      console.log(
+        'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
+        [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
+      );
 
-    //   axios
-    //     .get(url + userID)
-    //     .then((response) => {
-    //       console.log(
-    //         'here: Obtained user information with res = ',
-    //         response.data.result
-    //       );
-           const temp = [];
+      axios
+        .get(url + userID)
+        .then((response) => {
+          console.log(
+            'here: Obtained user information with res = ',
+            response.data.result
+          );
+          const temp = [];
 
           for (let i = 0; i < response.data.result.length; i++) {
             temp.push(response.data.result[i]);
@@ -2756,11 +2687,11 @@ function toggleShowGoal(props) {
               };
             });
           }
-    //     })
-    //     .catch((error) => {
-    //       console.log('Error in getting goals and routines ' + error);
-    //     });
-    // }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
+        })
+        .catch((error) => {
+          console.log('Error in getting goals and routines ' + error);
+        });
+    }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
   useEffect(() => console.log('here: 4'), [editingRTS.editing.item]);
 
@@ -2830,7 +2761,7 @@ function toggleShowGoal(props) {
               <userContext.Provider
                 value={
                   (stateValue.itemToEdit,
-                  stateValue.goals,
+                  stateValue.routines,
                   stateValue.originalGoalsAndRoutineArr,
                   stateValue.showRoutineModal,
                   stateValue.itemToEdit.is_available,
@@ -2839,8 +2770,8 @@ function toggleShowGoal(props) {
                   stateValue.addNewGRModalShow,
                   stateValue.dateContext,
                   stateValue.closeRoutine,
-                //   GrabFireBaseRoutinesGoalsData(),
-                //   GrabFireBaseRoutinesData(),
+                  GrabFireBaseRoutinesGoalsData(),
+                  GrabFireBaseRoutinesData(),
                   GetUserAcessToken(),
                   // GoogleEvents(),
                   stateValue.BASE_URL)
@@ -2900,111 +2831,24 @@ function toggleShowGoal(props) {
                       }
                       id="one"
                       onClick={() => {
+                        // e.stopPropagation()
                         console.log('Clicked add RTS');
+                        //console.log(editingRTS)
                         setEditingRTS(newRTSState);
+                        //console.log(editingRTS)
                       }}
                     >
                       Add Routine +
                     </Button>
-                    {/* &&&&&&&&&&&&&&&&&&&&&& PRIYANKA*/}
-                    <Button
-                      className={classes.buttonSelection}
-                      onClick={() => {
-                        toggleShowEvents();
-                        // getAccessToken();
-                        // setSignedIn(true);
-                        setGREButtonSelection("Events")
-                      }}
-                      id="Events"
-                    >
-                      Events
-                    </Button>
-                    <Button
-                      className={classes.buttonSelection}
-                      onClick={()=>{
-                        toggleShowGoal()
-                        setGREButtonSelection("Goals")
-                      }}
-                      id="Goals"
-                    >
-                      Goals
-                    </Button>
-                    <Button
-                      className={
-                        pageURL[3] === 'home'
-                          ? classes.buttonSelected
-                          : classes.buttonSelection
-                      }
-                      onClick={()=>{
-                        toggleShowRoutine()
-                        setGREButtonSelection("Routines")
-                      }}
-                      id="Routines"
-                    >
-                      Routines
-                    </Button>
-                    <Button
-                      className={
-                        editingRTS.editing === true
-                          ? classes.addActiveButton
-                          : classes.addButton
-                      }
-                      id="one"
-                      onClick={() => {
-                        console.log('Clicked add RTS');
-                        var RTSstate = {};
-                        if(GREButtonSelection=='Routines'){
-                            RTSstate = newRTSStateRoutines;
-                        }
-                        else if(GREButtonSelection=='Goals'){
-                            RTSstate = newRTSStateGoals;
-                        }
-                        else {
-                            RTSstate = newRTSStateRoutines;
-                        }
-                        setEditingRTS(RTSstate);
-                        console.log("new RTS state", RTSstate );
-                      }}
-                    >
-                      Add {`${GREButtonSelection}`} +
-                    </Button>
-                    {/* &&&&&&&&&&&&&&&&&&&&&& */}
 
                     <div style={{ flex: '1' }}>
-                      {userID != '' && GREButtonSelection=='Routines' && (
+                      {userID != '' && (
                         <RoutineLHS
                           theCurrentUserID={userID}
                           sethighLight={setHightlight}
                           highLight={hightlight}
                           setATS={setEditingATS}
-                          newATS={newEditingATSStateRoutines}
-                          rID={routineID}
-                          setrID={setRoutineID}
-                          newIS={newEditingISState}
-                          setIS={setEditingIS}
-                          aID={actionID}
-                          setaID={setActionID}
-                          editRTS={editingRTS.editing}
-                          editATS={editingATS.editing}
-                          editIS={editingIS.editing}
-                          getGoalsEndPoint={getRoutinesEndPoint}
-                          setGetGoalsEndPoint={setGetRoutinesEndPoint}
-                          getActionsEndPoint={getActionsEndPoint}
-                          setGetActionsEndPoint={setGetActionsEndPoint}
-                          getStepsEndPoint={getStepsEndPoint}
-                          setGetStepsEndPoint={setGetStepsEndPoint}
-                          stateValue={stateValue}
-                          setStateValue={setStateValue}
-                        />
-                      )}
-                     
-                      {userID != '' && GREButtonSelection=='Goals' && (
-                        <GoalLHS
-                          theCurrentUserID={userID}
-                          sethighLight={setHightlight}
-                          highLight={hightlight}
-                          setATS={setEditingATS}
-                          newATS={newEditingATSStateGoals}
+                          newATS={newEditingATSState}
                           rID={routineID}
                           setrID={setRoutineID}
                           newIS={newEditingISState}

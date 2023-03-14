@@ -234,51 +234,99 @@ export default function MainPage(props) {
         console.log(error);
       });
     
-    axios
-      .get(
-        BASE_URL +
-          'usersOfTA/' +
-          document.cookie
-            .split('; ')
-            .find((row) => row.startsWith('ta_email='))
-            .split('=')[1]
-      )
-      .then((response) => {
-        console.log("userOfTA response ", response);
-        if (response.data.result.length > 0) {
-          const usersOfTA = response.data.result;
-          const curUserID = usersOfTA[0].user_unique_id;
-          const curUserTZ = usersOfTA[0].time_zone;
-          const curUserEI = usersOfTA[0].user_email_id;
-          const curUserN = usersOfTA[0].user_name;
+    if (document.cookie
+      .split(';')
+      .some((item) => item.trim().startsWith('usersOfTA='))) {
+      console.log("got usersOfTA from document.cookie")
+  
+      var usersOfTA_result = JSON.parse(document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('usersOfTA='))
+        .split('=')[1]);
+        
+      if (usersOfTA_result.length > 0) {
+        const usersOfTA = usersOfTA_result;
+        const curUserID = usersOfTA[0].user_unique_id;
+        const curUserTZ = usersOfTA[0].time_zone;
+        const curUserEI = usersOfTA[0].user_email_id;
+        const curUserN = usersOfTA[0].user_name;
+        if (loginContext.loginState.curUser == '') {
           loginContext.setLoginState({
             ...loginContext.loginState,
-            usersOfTA: response.data.result,
+            usersOfTA: usersOfTA_result,
             curUser: curUserID,
             curUserTimeZone: curUserTZ,
             curUserEmail: curUserEI,
             curUserName: curUserN,
           });
-          console.log(curUserID);
-          // setUserID(curUserID);
-          // console.log(userID);
-          // GrabFireBaseRoutinesGoalsData();
-          // return userID;
         } else {
           loginContext.setLoginState({
             ...loginContext.loginState,
-            usersOfTA: response.data.result,
-            curUser: '',
-            curUserTimeZone: '',
-            curUserEmail: '',
-            curUserName: '',
+            usersOfTA: usersOfTA_result,
           });
-          console.log('No User Found');
         }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+        console.log(curUserID);
+      } else {
+        loginContext.setLoginState({
+          ...loginContext.loginState,
+          usersOfTA: usersOfTA_result,
+          curUser: '',
+          curUserTimeZone: '',
+          curUserEmail: '',
+          curUserName: '',
+        });
+        console.log('No User Found');
+      }
+      // ***********
+    }
+    else {
+      console.log("got usersOfTA from usersOfTA/ API call")
+      axios
+        .get(
+          BASE_URL +
+          'usersOfTA/' +
+          document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('ta_email='))
+            .split('=')[1]
+        )
+        .then((response) => {
+          console.log("userOfTA response ", response);
+          if (response.data.result.length > 0) {
+            const usersOfTA = response.data.result;
+            const curUserID = usersOfTA[0].user_unique_id;
+            const curUserTZ = usersOfTA[0].time_zone;
+            const curUserEI = usersOfTA[0].user_email_id;
+            const curUserN = usersOfTA[0].user_name;
+            loginContext.setLoginState({
+              ...loginContext.loginState,
+              usersOfTA: response.data.result,
+              curUser: curUserID,
+              curUserTimeZone: curUserTZ,
+              curUserEmail: curUserEI,
+              curUserName: curUserN,
+            });
+            console.log(curUserID);
+            // setUserID(curUserID);
+            // console.log(userID);
+            // GrabFireBaseRoutinesGoalsData();
+            // return userID;
+          } else {
+            loginContext.setLoginState({
+              ...loginContext.loginState,
+              usersOfTA: response.data.result,
+              curUser: '',
+              curUserTimeZone: '',
+              curUserEmail: '',
+              curUserName: '',
+            });
+            console.log('No User Found');
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   }, [
     loginContext.loginState.loggedIn,
     loginContext.loginState.reload,
