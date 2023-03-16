@@ -298,7 +298,7 @@ export default function EventLHS(props) {
         }
       }
     }
-    console.log('tempRows', tempRows, tempID);
+    console.log('tempRows EVENT', tempRows, tempID);
     setlistOfBlocks(tempRows);
   }
   //makes listOfBlocks with list of displays routines and such

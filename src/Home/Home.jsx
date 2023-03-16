@@ -19,11 +19,16 @@ import {
 import 'react-datepicker/dist/react-datepicker.css';
 import RoutineLHS from './RoutineLHS';
 import GoalLHS from './GoalLHS';
+import EventLHS from './EventLHS';
 import DayEvents from './DayEvents';
 import DayRoutines from './DayRoutines.jsx';
 import DayGoals from './DayGoals.jsx';
 import WeekRoutines from './WeekRoutines.jsx';
 import userContext from './userContext';
+
+import DeleteEventModal from './DeleteEventModal';
+import EditEventModal from './EditEventModal';
+import WeekEvents from './WeekEvents.jsx';
 
 import EditRTSContext from './EditRTS/EditRTSContext';
 import EditRTS from './EditRTS/EditRTS';
@@ -224,7 +229,7 @@ export default function Home(props) {
   const [getRoutinesEndPoint, setGetRoutinesEndPoint] = useState([]);
   const [getActionsEndPoint, setGetActionsEndPoint] = useState({});
   const [getStepsEndPoint, setGetStepsEndPoint] = useState([]);
-  const [events, setEvents] = useState({});
+  const [events, setEvents] = useState([]);
   const [hightlight, setHightlight] = useState('');
   const [GREButtonSelection, setGREButtonSelection] = useState('Routines');
   const [stateValue, setStateValue] = useState({
@@ -313,7 +318,7 @@ export default function Home(props) {
     createUserParam: false,
     loaded: false,
     loggedIn: false,
-    originalEvents: [], //holds the google events data in it's original JSON form
+    originalEvents: '', //holds the google events data in it's original JSON form
     dayEvents: [], //holds google events data for a single day
     weekEvents: [], //holds google events data for a week
     originalGoalsAndRoutineArr: [], //Hold goals and routines so day and week view can access it
@@ -396,6 +401,7 @@ export default function Home(props) {
     eventNotifications: {},
     showDeleteRecurringModal: false,
     deleteRecurringOption: 'This event',
+    showEditModal: false,
     showEditRecurringModal: false,
     editRecurringOption: '',
 
@@ -547,7 +553,6 @@ export default function Home(props) {
       },
       location: '',
       is_available: true,
-    //   is_persistent: true,
       is_complete: false,
       is_in_progress: false,
       is_displayed_today: true,
@@ -601,13 +606,12 @@ export default function Home(props) {
     
   const newRTSStateRoutines = {
     ...newRTSState,
-    is_persistent: true,
-    notifications: ''
+    newItem : {...newRTSState.newItem, is_persistent:true, notifications:''}
   }
     
   const newRTSStateGoals = {
     ...newRTSState,
-    is_persistent: false
+    newItem : {...newRTSState.newItem, is_persistent:false},
   }
   const initialEditingEventState = {
     editing: false,
@@ -1054,13 +1058,25 @@ function toggleShowGoal(props) {
     return stateValue.showGoalModal;
   }
   
-  function toggleShowEvents() {
-    history.push('/events');
+//   function toggleShowEvents() {
+//     history.push('/events');
+//   }
+function toggleShowEvents(props) {
+    setStateValue((prevState) => {
+      return {
+        ...prevState,
+        showEventModal: !stateValue.showEventModal,
+        showRoutineModal: false,
+        showGoalModal: false,
+        showRoutineGoalModal: false,
+      };
+    });
+
+    return stateValue.showEventModal;
   }
 
   /*-----------------------------updateEventsArray:-----------------------------*/
   /*updates the array if the month view changes to a different month.*/
-
   const updateEventsArray = () => {
     if (stateValue.calendarView === 'Month') {
       //The month view has transferred to a different month
@@ -1101,6 +1117,78 @@ function toggleShowGoal(props) {
     }
   };
 
+  const handleWeekEventClick = (A) => {
+    var guestList = '';
+    if (A.attendees) {
+      guestList = A.attendees.reduce((guestList, nextGuest) => {
+        return guestList + ' ' + nextGuest.email;
+      }, '');
+      console.log('Guest List:', A.attendees, guestList);
+    }
+    setStateValue({
+      newEventID: A.id,
+      newEventStart0: A.start.dateTime
+        ? new Date(A.start.dateTime)
+        : new Date(A.start.date),
+      newEventEnd0: A.end.dateTime
+        ? new Date(A.end.dateTime)
+        : new Date(A.end.date),
+      newEventName: A.summary,
+      newEventGuests: guestList,
+      newEventLocation: A.location ? A.location : '',
+      newEventNotification: A.reminders.overrides
+        ? A.reminders.overrides[0].minutes
+        : '',
+      newEventDescription: A.description ? A.description : '',
+      dayEventSelected: true,
+      isEvent: true,
+      showNoTitleError: '',
+      showDateError: '',
+      showRepeatModal: false,
+      showAboutModal: false,
+      noteToFuture: false,
+      showPeopleModal: false,
+      repeatOption: false,
+      repeatOptionDropDown: 'Does not repeat',
+      repeatDropDown: 'DAY',
+      repeatDropDown_temp: 'DAY',
+      repeatMonthlyDropDown: 'Monthly on day 13',
+      repeatInputValue: '1',
+      repeatInputValue_temp: '1',
+      repeatOccurrence: '1',
+      repeatOccurrence_temp: '1',
+      repeatRadio: 'Never',
+      repeatRadio_temp: 'Never',
+      repeatEndDate: '',
+      repeatEndDate_temp: '',
+      byDay: {
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
+      },
+      byDay_temp: {
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
+      },
+      repeatSummary: '',
+      recurrenceRule: '',
+      showDeleteRecurringModal: false,
+      deleteRecurringOption: 'This event',
+      showEditModal: false,
+      showEditRecurringModal: false,
+      editRecurringOption: '',
+    });
+  };
+    
   const nextDay = () => {
     let dateContext = Object.assign({}, stateValue.todayDateObject);
     console.log(dateContext);
@@ -1238,7 +1326,7 @@ function toggleShowGoal(props) {
     return stateValue.dateContext.format('MMMM');
   };
 
-  const getDay = () => {
+    const getDay = () => {
     return stateValue.dateContext.format('D');
   };
 
@@ -1328,6 +1416,13 @@ function toggleShowGoal(props) {
             dateContext={stateValue.dateContext}
             BASE_URL={stateValue.BASE_URL}
             highLight={hightlight}
+                />}
+          {GREButtonSelection== 'Events' && <WeekEvents
+            weekEvents={events}
+            dateContext={stateValue.dateContext}
+            eventClick={handleWeekEventClick}
+            //onDayClick={handleDateClickOnWeekView}
+            timeZone={userTime_zone}
           />}
         </Row>
       </div>
@@ -1846,61 +1941,112 @@ function toggleShowGoal(props) {
     }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
 
-  function GetUserAcessToken() {
-    let url = BASE_URL + 'usersToken/';
-    let user_id = userID;
-    let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
-    let endofWeek = moment(stateValue.dateContext).add(6, 'days');
-    let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
+//   function GetUserAcessToken() {
+//     let url = BASE_URL + 'usersToken/';
+//     let user_id = userID;
+//     let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+//     let endofWeek = moment(stateValue.dateContext).add(6, 'days');
+//     let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
 
-    const getTimes = (a_day_time, b_day_time) => {
-      const [a_start_time, b_start_time] = [
-        a_day_time.substring(10, a_day_time.length),
-        b_day_time.substring(10, b_day_time.length),
-      ];
-      const [a_HMS, b_HMS] = [
-        a_start_time
-          .substring(0, a_start_time.length - 3)
-          .replace(/\s{1,}/, '')
-          .split(':'),
-        b_start_time
-          .substring(0, b_start_time.length - 3)
-          .replace(/\s{1,}/, '')
-          .split(':'),
-      ];
-      const [a_parity, b_parity] = [
-        a_start_time
-          .substring(a_start_time.length - 3, a_start_time.length)
-          .replace(/\s{1,}/, ''),
-        b_start_time
-          .substring(b_start_time.length - 3, b_start_time.length)
-          .replace(/\s{1,}/, ''),
-      ];
+//     const getTimes = (a_day_time, b_day_time) => {
+//       const [a_start_time, b_start_time] = [
+//         a_day_time.substring(10, a_day_time.length),
+//         b_day_time.substring(10, b_day_time.length),
+//       ];
+//       const [a_HMS, b_HMS] = [
+//         a_start_time
+//           .substring(0, a_start_time.length - 3)
+//           .replace(/\s{1,}/, '')
+//           .split(':'),
+//         b_start_time
+//           .substring(0, b_start_time.length - 3)
+//           .replace(/\s{1,}/, '')
+//           .split(':'),
+//       ];
+//       const [a_parity, b_parity] = [
+//         a_start_time
+//           .substring(a_start_time.length - 3, a_start_time.length)
+//           .replace(/\s{1,}/, ''),
+//         b_start_time
+//           .substring(b_start_time.length - 3, b_start_time.length)
+//           .replace(/\s{1,}/, ''),
+//       ];
 
-      let [a_time, b_time] = [0, 0];
-      if (a_parity === 'PM' && a_HMS[0] !== '12') {
-        const hoursInt = parseInt(a_HMS[0]) + 12;
-        a_HMS[0] = `${hoursInt}`;
-      } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+//       let [a_time, b_time] = [0, 0];
+//       if (a_parity === 'PM' && a_HMS[0] !== '12') {
+//         const hoursInt = parseInt(a_HMS[0]) + 12;
+//         a_HMS[0] = `${hoursInt}`;
+//       } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
 
-      if (b_parity === 'PM' && b_HMS[0] !== '12') {
-        const hoursInt = parseInt(b_HMS[0]) + 12;
-        b_HMS[0] = `${hoursInt}`;
-      } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+//       if (b_parity === 'PM' && b_HMS[0] !== '12') {
+//         const hoursInt = parseInt(b_HMS[0]) + 12;
+//         b_HMS[0] = `${hoursInt}`;
+//       } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
 
-      for (let i = 0; i < a_HMS.length; i++) {
-        a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
-        b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+//       for (let i = 0; i < a_HMS.length; i++) {
+//         a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+//         b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+//       }
+
+//       return [a_time, b_time];
+//     };
+      
+      const getTimes = (a_day_time, b_day_time) => {
+          const [a_start_time, b_start_time] = [
+              a_day_time.substring(10, a_day_time.length),
+              b_day_time.substring(10, b_day_time.length),
+          ];
+          const [a_HMS, b_HMS] = [
+              a_start_time
+                  .substring(0, a_start_time.length - 3)
+                  .replace(/\s{1,}/, '')
+                  .split(':'),
+              b_start_time
+                  .substring(0, b_start_time.length - 3)
+                  .replace(/\s{1,}/, '')
+                  .split(':'),
+          ];
+          const [a_parity, b_parity] = [
+              a_start_time
+                  .substring(a_start_time.length - 3, a_start_time.length)
+                  .replace(/\s{1,}/, ''),
+              b_start_time
+                  .substring(b_start_time.length - 3, b_start_time.length)
+                  .replace(/\s{1,}/, ''),
+          ];
+  
+          let [a_time, b_time] = [0, 0];
+          if (a_parity === 'PM' && a_HMS[0] !== '12') {
+              const hoursInt = parseInt(a_HMS[0]) + 12;
+              a_HMS[0] = `${hoursInt}`;
+          } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
+  
+          if (b_parity === 'PM' && b_HMS[0] !== '12') {
+              const hoursInt = parseInt(b_HMS[0]) + 12;
+              b_HMS[0] = `${hoursInt}`;
+          } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
+  
+          for (let i = 0; i < a_HMS.length; i++) {
+              a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
+              b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
+          }
+  
+          return [a_time, b_time];
       }
-
-      return [a_time, b_time];
-    };
+    
     useEffect(() => {
       if (userID == '') return;
+      if (GREButtonSelection != "Events") return;
       console.log(
         'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
         [userID, editingEvent.editing]
       );
+        
+      let url = BASE_URL + 'usersToken/';
+      let user_id = userID;
+      let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
+      let endofWeek = moment(stateValue.dateContext).add(6, 'days');
+      let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
 
       axios
         .get(url + user_id)
@@ -1982,7 +2128,19 @@ function toggleShowGoal(props) {
                 console.log('in events if');
                 let authorization_url =
                   'https://accounts.google.com/o/oauth2/token';
-
+                //   if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+                //     console.log('base_url', BASE_URL.substring(8, 18));
+                //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+                //     CLIENT_SECRET =
+                //       process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+                //     console.log(CLIENT_ID, CLIENT_SECRET);
+                //   } else {
+                //     console.log('base_url', BASE_URL.substring(8, 18));
+                //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+                //     CLIENT_SECRET =
+                //       process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+                //     console.log(CLIENT_ID, CLIENT_SECRET);
+                //   }
                 var details = {
                   refresh_token: refreshToken,
                   client_id: CLIENT_ID,
@@ -2110,8 +2268,8 @@ function toggleShowGoal(props) {
         .catch((error) => {
           console.log('Error in events' + error);
         });
-    }, [userID, stateValue.dateContext, editingEvent.editing]);
-  }
+    }, [GREButtonSelection, userID, stateValue.dateContext, editingEvent.editing]);
+//   }
 
   // function GoogleEvents() {
   //   let url = BASE_URL + 'calenderEvents/';
@@ -2226,24 +2384,30 @@ function toggleShowGoal(props) {
   // }
     useEffect(() => {
         if (userID == '') return;
+        if (GREButtonSelection == "Events") return;
         console.log(
             'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
             [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
         );
-        let url = BASE_URL + 'getroutines/';
-        if(GREButtonSelection == "Goals"){
-            url = BASE_URL + 'getgoals/';
-        }
-
-        axios
-            .get(url + userID)
-            .then((response) => {
-                console.log(
-                    'here: Obtained user information with res = ',
-                    response.data.result
-                );
-                GrabFireBaseRoutinesData(response);
-            })
+        // if (GREButtonSelection == "Events") {
+        //     GetUserAcessToken();
+        // }
+        // else {
+             let url = BASE_URL + 'getroutines/';
+            if(GREButtonSelection == "Goals"){
+                url = BASE_URL + 'getgoals/';
+            }
+            axios
+                .get(url + userID)
+                .then((response) => {
+                    console.log(
+                        'here: Obtained user information with res = ',
+                        response.data.result
+                    );
+                        GrabFireBaseRoutinesData(response);
+                })
+        // }
+       
     }, [GREButtonSelection,userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   function GrabFireBaseRoutinesData(response) {
     // let url = BASE_URL + 'getroutines/';
@@ -2762,7 +2926,7 @@ function toggleShowGoal(props) {
     //     });
     // }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
-  useEffect(() => console.log('here: 4'), [editingRTS.editing.item]);
+  useEffect(() => console.log('here: 4'), [editingRTS.editing]);
 
   function ToggleShowAbout() {
     history.push('/about');
@@ -2841,7 +3005,7 @@ function toggleShowGoal(props) {
                   stateValue.closeRoutine,
                 //   GrabFireBaseRoutinesGoalsData(),
                 //   GrabFireBaseRoutinesData(),
-                  GetUserAcessToken(),
+                //   GetUserAcessToken(),
                   // GoogleEvents(),
                   stateValue.BASE_URL)
                 }
@@ -2863,7 +3027,7 @@ function toggleShowGoal(props) {
                     }}
                   >
                     <MiniNavigation activeButtonSelection={"calendar"} />
-                    <Button
+                    {/* <Button
                       className={classes.buttonSelection}
                       onClick={() => {
                         toggleShowEvents();
@@ -2905,14 +3069,13 @@ function toggleShowGoal(props) {
                       }}
                     >
                       Add Routine +
-                    </Button>
-                    {/* &&&&&&&&&&&&&&&&&&&&&& PRIYANKA*/}
+                    </Button> */}
                     <Button
                       className={classes.buttonSelection}
                       onClick={() => {
                         toggleShowEvents();
-                        // getAccessToken();
-                        // setSignedIn(true);
+                        getAccessToken();
+                        setSignedIn(true);
                         setGREButtonSelection("Events")
                       }}
                       id="Events"
@@ -2955,12 +3118,18 @@ function toggleShowGoal(props) {
                         var RTSstate = {};
                         if(GREButtonSelection=='Routines'){
                             RTSstate = newRTSStateRoutines;
+                            console.log("SET EDITING RTS STATE ***", RTSstate);
                         }
                         else if(GREButtonSelection=='Goals'){
                             RTSstate = newRTSStateGoals;
+                            console.log("SET EDITING RTS STATE ***", RTSstate);
                         }
-                        else {
-                            RTSstate = newRTSStateRoutines;
+                        else if(GREButtonSelection=='Events'){
+                            getAccessToken();
+                            console.log('after get access token');
+                            setEditingEvent(newEditingEventState);
+                            console.log('after setEditingEvent');
+                            setSignedIn(true);
                         }
                         setEditingRTS(RTSstate);
                         console.log("new RTS state", RTSstate );
@@ -2968,7 +3137,6 @@ function toggleShowGoal(props) {
                     >
                       Add {`${GREButtonSelection}`} +
                     </Button>
-                    {/* &&&&&&&&&&&&&&&&&&&&&& */}
 
                     <div style={{ flex: '1' }}>
                       {userID != '' && GREButtonSelection=='Routines' && (
@@ -3022,6 +3190,45 @@ function toggleShowGoal(props) {
                           setGetStepsEndPoint={setGetStepsEndPoint}
                           stateValue={stateValue}
                           setStateValue={setStateValue}
+                        />
+                      )}
+                      
+                      {userID != '' && GREButtonSelection=='Events' && (
+                        <EventLHS
+                          theCurrentUserID={userID}
+                          sethighLight={setHightlight}
+                          highLight={hightlight}
+                          events={events}
+                          setEvents={setEvents}
+                          timeZone={userTime_zone}
+                          //setEvent={setEditingEvent}
+                          //newEvent={newEditingEventState}
+                          // rID={routineID}
+                          // setrID={setRoutineID}
+                          // newIS={newEditingISState}
+                          // setIS={setEditingIS}
+                          // aID={actionID}
+                          // setaID={setActionID}
+                          editEvent={editingEvent.editing}
+                          // editATS={editingATS.editing}
+                          // editIS={editingIS.editing}
+                          // getGoalsEndPoint={events}
+                          // setGetGoalsEndPoint={setEvents}
+                          // getActionsEndPoint={getActionsEndPoint}
+                          // setGetActionsEndPoint={setGetActionsEndPoint}
+                          // getStepsEndPoint={getStepsEndPoint}
+                          // setGetStepsEndPoint={setGetStepsEndPoint}
+                          showDeleteRecurringModal={
+                            stateValue.showDeleteRecurringModal
+                          }
+                          showEditModal={stateValue.showEditModal}
+                          showEditRecurringModal={
+                            stateValue.showEditRecurringModal
+                          }
+                          stateValue={stateValue}
+                          setStateValue={setStateValue}
+                          userAccessToken={userAccessToken}
+                          taAccessToken={taAccessToken}
                         />
                       )}
                     </div>
@@ -3451,7 +3658,31 @@ function toggleShowGoal(props) {
                         <GoogleEventComponent
                           signedin={signedin}
                           setSignedIn={setSignedIn}
+                          organizerEmail={email}
                           currentEmail={userEmail}
+                          stateValue={stateValue}
+                          setStateValue={setStateValue}
+                          userAccessToken={userAccessToken}
+                          taAccessToken={taAccessToken}
+                          events={events}
+                          setEvents={setEvents}
+                        />
+                      ) : stateValue.showDeleteRecurringModal ? (
+                        <DeleteEventModal
+                          event={stateValue.originalEvents}
+                          stateValue={stateValue}
+                          setStateValue={setStateValue}
+                          userAccessToken={userAccessToken}
+                          taAccessToken={taAccessToken}
+                          events={events}
+                          setEvents={setEvents}
+                        />
+                      ) : stateValue.showEditModal ? (
+                        <EditEventModal
+                          signedin={signedin}
+                          setSignedIn={setSignedIn}
+                          organizerEmail={email}
+                          event={stateValue.originalEvents}
                           stateValue={stateValue}
                           setStateValue={setStateValue}
                           userAccessToken={userAccessToken}
