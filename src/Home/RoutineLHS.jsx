@@ -203,7 +203,32 @@ export default function RoutineLHS(props) {
     [props.getStepsEndPoint]
   );
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   setHG([]);
+  //   setTAData([]);
+  //   setPatientData([]);
+
+  //   axios
+  //     .get(BASE_URL + 'listAllTAForCopy')
+  //     .then((response) => {
+  //       console.log('res.data.res = ', response.data.result);
+  //       setTAData(response.data.result);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+
+  //   axios
+  //     .get(BASE_URL + 'listAllUsersForCopy')
+  //     .then((response) => {
+  //       setPatientData(response.data.result);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }, [props.currentUser]);
+
+  const listAllTAandUsersForCopy = () => {
     setHG([]);
     setTAData([]);
     setPatientData([]);
@@ -226,7 +251,7 @@ export default function RoutineLHS(props) {
       .catch((error) => {
         console.log(error);
       });
-  }, [props.currentUser]);
+  }
 
   const copyPicker = () => {
     // console.log('in FireBase, showCopyModal', showCopyModal)
@@ -1963,6 +1988,7 @@ export default function RoutineLHS(props) {
                     e.stopPropagation();
                     // console.log("On click1");
                     console.log(r.gr_unique_id, r.name);
+                    listAllTAandUsersForCopy();
                     setCRN(r.gr_title);
                     setCRID(r.gr_unique_id);
                     setTAToCopyTo({});
