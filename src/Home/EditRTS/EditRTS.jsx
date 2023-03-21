@@ -348,13 +348,13 @@ const EditRTS = (props) => {
     }
     console.log('object.id');
     console.log(object.gr_unique_id);
-    let url = '';
+    let getGoalOrRoutineUrl = '';
     if (object.is_persistent == 'True') {
-      url = 'getroutines/';
+      getGoalOrRoutineUrl = 'getroutines/';
     } else {
-      url = 'getgoals/';
+      getGoalOrRoutineUrl = 'getgoals/';
     }
-    console.log('url', url, object.is_persistent);
+    console.log('url', getGoalOrRoutineUrl, object.is_persistent);
     console.log(object.gr_unique_id);
     if (object.gr_unique_id != '' && object.gr_unique_id != undefined) {
       console.log('updateGR');
@@ -384,9 +384,9 @@ const EditRTS = (props) => {
             }
             console.log(err);
           });
-
+          
         await axios
-          .get(BASE_URL + url + props.CurrentId)
+          .get(BASE_URL + getGoalOrRoutineUrl + props.CurrentId)
           .then((response) => {
             const temp = [];
 
@@ -439,12 +439,13 @@ const EditRTS = (props) => {
       updateDB();
     } else {
       console.log('addGR');
+      let getGoalOrRoutineUrl = '';
       if (object.is_persistent) {
-        url = 'getroutines/';
+        getGoalOrRoutineUrl = 'getroutines/';
       } else {
-        url = 'getgoals/';
+        getGoalOrRoutineUrl = 'getgoals/';
       }
-      console.log('url', url, typeof object.is_persistent);
+      console.log('url', getGoalOrRoutineUrl, typeof object.is_persistent);
       const addToDB = async () => {
         await axios
           .post(BASE_URL + 'addGR', formData)
@@ -470,7 +471,7 @@ const EditRTS = (props) => {
           });
 
         await axios
-          .get(BASE_URL + url + props.CurrentId)
+          .get(BASE_URL + getGoalOrRoutineUrl + props.CurrentId)
           .then((response) => {
             const temp = [];
 

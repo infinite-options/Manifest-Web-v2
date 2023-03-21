@@ -5,21 +5,35 @@ import moment from 'moment';
 import {
   faUser,
   faUserAltSlash,
+  faTrophy,
+  faRunning,
   faBookmark,
+  faEdit,
   faList,
   faCopy,
+  faAlignCenter,
 } from '@fortawesome/free-solid-svg-icons';
-import { useHistory } from 'react-router-dom';
-import { ListGroup, Row, Col } from 'react-bootstrap';
+import { useHistory, Redirect } from 'react-router-dom';
+import {
+  ListGroup,
+  Row,
+  Col,
+  Modal,
+  InputGroup,
+  FormControl,
+  Table,
+} from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import EditIcon from './EditRTS/EditIcon.jsx';
 import EditActionIcon from './EditATS/EditIcon.jsx';
 import EditStepsIcon from './EditIS/EditIcon.jsx';
+import Button from '@material-ui/core/Button';
+import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
-
 import greenTick from '../manifest/LoginAssets/GreenTick.svg';
 import yelloTick from '../manifest/LoginAssets/YellowTick.svg';
+import { Footer } from 'rsuite';
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const useStyles = makeStyles({
@@ -51,11 +65,12 @@ const useStyles = makeStyles({
   },
 });
 
-export default function RoutineLHS(props) {
-  console.log('curdate today firebase props ', props);
+export default function HomeLHS(props) {
+  console.log('curdate today firebase props in HomeLHS ', props);
   const history = useHistory();
   const inRange = [];
   const currentUser = props.theCurrentUserID;
+  const goalOrRoutineFlag = props.goalOrRoutineFlag;
   //var currentUser = ''
 
   // if (
@@ -95,8 +110,6 @@ export default function RoutineLHS(props) {
   const [patientToCopyTo, setPatientToCopyTo] = useState({});
   const [copiedRoutineName, setCRN] = useState('');
   const [copiedRoutineID, setCRID] = useState('');
-
-  const [showProgress, setShowProgress] = useState(false);
 
   // var copiedRoutineName = ''
   function createData(
@@ -203,7 +216,32 @@ export default function RoutineLHS(props) {
     [props.getStepsEndPoint]
   );
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   setHG([]);
+  //   setTAData([]);
+  //   setPatientData([]);
+
+  //   axios
+  //     .get(BASE_URL + 'listAllTAForCopy')
+  //     .then((response) => {
+  //       console.log('res.data.res = ', response.data.result);
+  //       setTAData(response.data.result);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+
+  //   axios
+  //     .get(BASE_URL + 'listAllUsersForCopy')
+  //     .then((response) => {
+  //       setPatientData(response.data.result);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }, [props.currentUser]);
+
+  const listAllTAandUsersForCopy = () => {
     setHG([]);
     setTAData([]);
     setPatientData([]);
@@ -226,7 +264,7 @@ export default function RoutineLHS(props) {
       .catch((error) => {
         console.log(error);
       });
-  }, [props.currentUser]);
+  }
 
   const copyPicker = () => {
     // console.log('in FireBase, showCopyModal', showCopyModal)
@@ -259,7 +297,7 @@ export default function RoutineLHS(props) {
               backgroundColor: '#889AB5',
               width: '400px',
               // height: "100px",
-              color: '#000000',
+              color: 'white',
               padding: '40px',
               textAlign: 'center',
             }}
@@ -273,7 +311,7 @@ export default function RoutineLHS(props) {
               <button
                 style={{
                   backgroundColor: 'red',
-                  color: '#000000',
+                  color: 'white',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -291,7 +329,7 @@ export default function RoutineLHS(props) {
               <button
                 style={{
                   backgroundColor: 'green',
-                  color: '#000000',
+                  color: 'white',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -348,7 +386,7 @@ export default function RoutineLHS(props) {
               backgroundColor: '#889AB5',
               width: '400px',
               // height: "100px",
-              color: '#000000',
+              color: 'white',
               padding: '40px',
               textAlign: 'center',
               fontWeight: 'bold',
@@ -395,7 +433,7 @@ export default function RoutineLHS(props) {
               <button
                 style={{
                   backgroundColor: 'red',
-                  color: '#000000',
+                  color: 'white',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -412,7 +450,7 @@ export default function RoutineLHS(props) {
               <button
                 style={{
                   backgroundColor: 'green',
-                  color: '#000000',
+                  color: 'white',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -438,13 +476,17 @@ export default function RoutineLHS(props) {
                     };
 
                     console.log('myObj = ', myObj);
+                    let getGoalOrRoutineUrl = 'getroutines/';
+                    if (goalOrRoutineFlag == 'Goals') {
+                      getGoalOrRoutineUrl = 'getgoals/';
+                    }
 
                     axios
                       .post(BASE_URL + 'copyGR', myObj)
                       .then((response) => {
                         toggleCopyModalConfirm(false);
                         axios
-                          .get(BASE_URL + 'getroutines/' + currentUser)
+                          .get(BASE_URL + getGoalOrRoutineUrl + currentUser)
                           .then((response) => {
                             const temp = [];
                             for (
@@ -543,8 +585,14 @@ export default function RoutineLHS(props) {
                                 'true';
                               gr.is_in_progress =
                                 x[i].is_in_progress.toLowerCase() === 'true';
-                              gr.is_persistent =
-                                x[i].is_persistent.toLowerCase() === 'true';
+                              if (goalOrRoutineFlag == 'Goals') {
+                                gr.is_persistent =
+                                  x[i].is_persistent.toLowerCase() === 'false';
+                              }
+                              else{
+                                gr.is_persistent =
+                                  x[i].is_persistent.toLowerCase() === 'true';
+                              }
                               gr.is_sublist_available =
                                 x[i].is_sublist_available.toLowerCase() ===
                                 'true';
@@ -780,7 +828,8 @@ export default function RoutineLHS(props) {
                                 gr_array.push(gr);
                               }
                               if (
-                                x[i]['is_persistent'].toLowerCase() === 'true'
+                                (goalOrRoutineFlag == 'Goals' && (x[i]['is_persistent'].toLowerCase() === 'false')) ||
+                                (goalOrRoutineFlag == 'Routine' && (x[i]['is_persistent'].toLowerCase() === 'true'))
                               ) {
                                 if (
                                   props.stateValue.calendarView === 'Day' &&
@@ -973,7 +1022,7 @@ export default function RoutineLHS(props) {
               backgroundColor: '#889AB5',
               width: '400px',
               // height: "100px",
-              color: '#000000',
+              color: 'white',
               padding: '40px',
               textAlign: 'center',
               fontWeight: 'bold',
@@ -1016,7 +1065,7 @@ export default function RoutineLHS(props) {
               <button
                 style={{
                   backgroundColor: 'red',
-                  color: '#000000',
+                  color: 'white',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1033,7 +1082,7 @@ export default function RoutineLHS(props) {
               <button
                 style={{
                   backgroundColor: 'green',
-                  color: '#000000',
+                  color: 'white',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1095,7 +1144,7 @@ export default function RoutineLHS(props) {
               backgroundColor: '#889AB5',
               width: '400px',
               // height: "100px",
-              color: '#000000',
+              color: 'white',
               padding: '40px',
             }}
           >
@@ -1133,7 +1182,7 @@ export default function RoutineLHS(props) {
               <button
                 style={{
                   backgroundColor: 'red',
-                  color: '#000000',
+                  color: 'white',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1150,7 +1199,7 @@ export default function RoutineLHS(props) {
               <button
                 style={{
                   backgroundColor: 'green',
-                  color: '#000000',
+                  color: 'white',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1209,7 +1258,7 @@ export default function RoutineLHS(props) {
               backgroundColor: '#889AB5',
               width: '400px',
               // height: "100px",
-              color: '#000000',
+              color: 'white',
               padding: '40px',
             }}
           >
@@ -1248,7 +1297,7 @@ export default function RoutineLHS(props) {
               <button
                 style={{
                   backgroundColor: 'red',
-                  color: '#000000',
+                  color: 'white',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1265,7 +1314,7 @@ export default function RoutineLHS(props) {
               <button
                 style={{
                   backgroundColor: 'green',
-                  color: '#000000',
+                  color: 'white',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1324,7 +1373,7 @@ export default function RoutineLHS(props) {
               backgroundColor: '#889AB5',
               width: '400px',
               // height: "100px",
-              color: '#000000',
+              color: 'white',
               padding: '40px',
             }}
           >
@@ -1352,7 +1401,7 @@ export default function RoutineLHS(props) {
               <button
                 style={{
                   backgroundColor: 'red',
-                  color: '#000000',
+                  color: 'white',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1369,7 +1418,7 @@ export default function RoutineLHS(props) {
               <button
                 style={{
                   backgroundColor: 'green',
-                  color: '#000000',
+                  color: 'white',
                   border: 'solid',
                   borderWidth: '2px',
                   borderRadius: '25px',
@@ -1492,7 +1541,7 @@ export default function RoutineLHS(props) {
     var tempRows = [];
     var tempID = [];
     var tempIsID = [];
-    console.log('only 0.1.0', tempRows, tempID);
+    console.log('only 0.1.0', tempRows, tempID, props.getGoalsEndPoint);
     const uniqueObjects = [
       ...new Map(
         props.getGoalsEndPoint.map((item) => [item.gr_unique_id, item])
@@ -1502,11 +1551,6 @@ export default function RoutineLHS(props) {
     for (var i = 0; i < uniqueObjects.length; i++) {
       tempRows.push(displayRoutines(props.getGoalsEndPoint[i]));
       console.log('p.ggep[i] = ', props.getGoalsEndPoint[i].gr_unique_id);
-      console.log(
-        'p.ggep[i] = ',
-        props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id]
-      );
-      console.log('p.ggep[i] = ', props.getActionsEndPoint);
       if (props.getActionsEndPoint[props.getGoalsEndPoint[i].gr_unique_id]) {
         for (
           var j = 0;
@@ -1527,14 +1571,6 @@ export default function RoutineLHS(props) {
                 ][j].at_unique_id
               ) === false
             ) {
-              console.log(
-                'in if3 ggep',
-                j,
-                tempID,
-                props.getActionsEndPoint[
-                  props.getGoalsEndPoint[i].gr_unique_id
-                ][j].at_unique_id
-              );
               tempRows.push(
                 displayActions(
                   props.getActionsEndPoint[
@@ -1548,7 +1584,7 @@ export default function RoutineLHS(props) {
                   props.getGoalsEndPoint[i].gr_unique_id
                 ][j].at_unique_id
               );
-              console.log('only ggep', tempID);
+              console.log('only', tempID);
 
               const currStepArr =
                 props.getStepsEndPoint[
@@ -1658,7 +1694,7 @@ export default function RoutineLHS(props) {
     console.log('titles', temp);
     console.log('titles2', temp2);
 
-    console.log('current name', r.gr_title, temp.indexOf(r.name));
+    console.log('current name', r.name, temp.indexOf(r.name));
     console.log(
       'current gr_unique_id',
       r.gr_unique_id,
@@ -1718,38 +1754,6 @@ export default function RoutineLHS(props) {
 
   function displayRoutines(r) {
     const ret = getIsAvailableFromGR(r);
-    // let startObject = props.stateValue.dateContext.clone();
-    // let startDay = startObject.startOf('week');
-    // let curDate2 = startDay.clone();
-
-    // const tz = {
-    //   timeZone: props.timeZone,
-    //   // add more here
-    // };
-    // let dateNew = new Date().toLocaleString(tz, tz);
-    // let today = moment(dateNew);
-    // for (let day = 0; day < 7; day++) {
-    //   curDate2.add(day, 'days');
-    //   const [todayYear, todayMonth, todayDay] = [
-    //     parseInt(today.format('Y')),
-    //     parseInt(today.format('M')),
-    //     parseInt(today.format('D')),
-    //   ];
-
-    //   const [curr_year, curr_month, curr_day] = [
-    //     parseInt(curDate2.format('Y')),
-    //     parseInt(curDate2.format('M')),
-    //     parseInt(curDate2.format('D')),
-    //   ];
-    //   if (
-    //     curr_year === todayYear &&
-    //     curr_month === todayMonth &&
-    //     curr_day === todayDay
-    //   ) {
-    //     setShowProgress(true);
-    //   }
-    // }
-
     const start_time = r.gr_start_day_and_time.substring(11).split(/[:\s+]/);
     // Need to strip trailing zeros because the data in the database
     // is inconsistent about this
@@ -1772,14 +1776,20 @@ export default function RoutineLHS(props) {
           console.log('ListGroup', r['gr_title']);
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            backgroundColor: '#EBEBEB',
+          }}
+        >
           <div
             flex="1"
             style={{
               marginLeft: '1rem',
               height: '4.5rem',
               borderRadius: '10px',
-              width: '65%',
+              width: '75%',
               display: 'flex',
               justifyContent: 'space-between',
               backgroundColor: (() => {
@@ -1787,17 +1797,15 @@ export default function RoutineLHS(props) {
                   r.is_persistent == 'True' &&
                   JSON.stringify(start_time) !== JSON.stringify(end_time)
                 ) {
+                  console.log('this has to be block');
                   return '#FFB84D';
                 } else if (r.is_persistent == 'False') {
+                  console.log('this has to be none');
                   return '#00BC00';
                 } else {
                   return '#9b4aff';
                 }
               })(),
-              // backgroundColor:
-              //       JSON.stringify(start_time) !== JSON.stringify(end_time)
-              //     ? '#FFB84D'
-              //     : '#9b4aff',
               // boxShadow:
               //   '0 16px 28px 0 rgba(0, 0, 0, 0.2), 0 16px 20px 0 rgba(0, 0, 0, 0.09)',
               zIndex: '50%',
@@ -1812,15 +1820,6 @@ export default function RoutineLHS(props) {
                 justifyContent: 'flex-start',
               }}
             >
-              <div
-                style={{
-                  color: '#000000',
-                  font: 'normal normal bold 18px Quicksand-Bold',
-                  marginLeft: '10px',
-                }}
-              >
-                {r['gr_title']}
-              </div>
               <div style={{ marginLeft: '1rem' }}>
                 {r.gr_start_day_and_time && r.gr_end_day_and_time ? (
                   <div
@@ -1837,6 +1836,16 @@ export default function RoutineLHS(props) {
                   <Col> </Col>
                 )}
               </div>
+              <div
+                style={{
+                  color: '#000000',
+                  font: 'normal normal bold 16px Quicksand-Bold',
+                  marginLeft: '10px',
+                }}
+              >
+                {r['gr_title']}
+              </div>
+
               {/* ({date}) */}
             </div>
 
@@ -1963,6 +1972,7 @@ export default function RoutineLHS(props) {
                     e.stopPropagation();
                     // console.log("On click1");
                     console.log(r.gr_unique_id, r.name);
+                    listAllTAandUsersForCopy();
                     setCRN(r.gr_title);
                     setCRID(r.gr_unique_id);
                     setTAToCopyTo({});
@@ -2048,8 +2058,12 @@ export default function RoutineLHS(props) {
                     const updateDB = async () => {
                       await axios.post(BASE_URL + 'deleteGR', body);
 
+                      let getGoalOrRoutineUrl = 'getroutines/';
+                      if (goalOrRoutineFlag == 'Goals') {
+                        getGoalOrRoutineUrl = 'getgoals/';
+                      }
                       await axios
-                        .get(BASE_URL + 'getroutines/' + currentUser)
+                        .get(BASE_URL + getGoalOrRoutineUrl + currentUser)
                         .then((response) => {
                           const temp = [];
                           for (
@@ -2146,8 +2160,14 @@ export default function RoutineLHS(props) {
                               x[i].is_displayed_today.toLowerCase() === 'true';
                             gr.is_in_progress =
                               x[i].is_in_progress.toLowerCase() === 'true';
-                            gr.is_persistent =
-                              x[i].is_persistent.toLowerCase() === 'true';
+                            if (goalOrRoutineFlag == 'Goals') {
+                                gr.is_persistent =
+                                  x[i].is_persistent.toLowerCase() === 'false';
+                              }
+                              else{
+                                gr.is_persistent =
+                                  x[i].is_persistent.toLowerCase() === 'true';
+                              }
                             gr.is_sublist_available =
                               x[i].is_sublist_available.toLowerCase() ===
                               'true';
@@ -2379,7 +2399,8 @@ export default function RoutineLHS(props) {
                               gr_array.push(gr);
                             }
                             if (
-                              x[i]['is_persistent'].toLowerCase() === 'true'
+                              (goalOrRoutineFlag == 'Goals' && (x[i]['is_persistent'].toLowerCase() === 'false')) ||
+                              (goalOrRoutineFlag == 'Routine' && (x[i]['is_persistent'].toLowerCase() === 'true'))
                             ) {
                               if (
                                 props.stateValue.calendarView === 'Day' &&
@@ -2435,6 +2456,7 @@ export default function RoutineLHS(props) {
                   step={currentUser}
                   getGoalsEndPoint={props.getGoalsEndPoint}
                   ta_id={props.stateValue.ta_people_id}
+                  //  id={currentUser}
                 />
               </div>
               {/* working on this thing */}

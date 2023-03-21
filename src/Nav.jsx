@@ -8,7 +8,7 @@ import SignUp from '../src/manifest/SignUp';
 import AppleSignUp from '../src/manifest/AppleSignUp';
 import AboutModal from '../src/About/About';
 import GoalHome from '../src/Home/GoalHome';
-import Events from '../src/Home/Events';
+// import Events from '../src/Home/Events';
 import Privacy from '../src/Home/Privacy';
 import GoogleEventComponent from './Home/GoogleEventComponent';
 import AboutUs from '../src/manifest/AboutUs';
@@ -23,9 +23,9 @@ function Nav(authLevel, isAuth) {
       <Route exact path="/" component={Landing} />
       <Route exact path="/login" component={Login} />
       <Route exact path="/home" component={Home} />
-      <Route exact path="/events" component={Events} />
+      {/* <Route exact path="/events" component={Events} /> */}
       <Route exact path="/eventcomponent" component={GoogleEventComponent} />
-      <Route exact path="/goalhome" component={GoalHome} />
+      {/* <Route exact path="/goalhome" component={GoalHome} /> */}
       <Route exact path="/history" component={History} />
       <Route exact path="/applesignup/:uid" component={AppleSignUp} />
       <Route exact path="/signup" component={SignUp} />

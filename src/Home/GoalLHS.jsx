@@ -215,32 +215,7 @@ export default function GoalLHS(props) {
     [props.getStepsEndPoint]
   );
 
-  // useEffect(() => {
-  //   setHG([]);
-  //   setTAData([]);
-  //   setPatientData([]);
-
-  //   axios
-  //     .get(BASE_URL + 'listAllTAForCopy')
-  //     .then((response) => {
-  //       console.log('res.data.res = ', response.data.result);
-  //       setTAData(response.data.result);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-
-  //   axios
-  //     .get(BASE_URL + 'listAllUsersForCopy')
-  //     .then((response) => {
-  //       setPatientData(response.data.result);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // }, [props.currentUser]);
-
-  const listAllTAandUsersForCopy = () => {
+  useEffect(() => {
     setHG([]);
     setTAData([]);
     setPatientData([]);
@@ -263,7 +238,7 @@ export default function GoalLHS(props) {
       .catch((error) => {
         console.log(error);
       });
-  }
+  }, [props.currentUser]);
 
   const copyPicker = () => {
     // console.log('in FireBase, showCopyModal', showCopyModal)
@@ -1529,7 +1504,7 @@ export default function GoalLHS(props) {
     var tempRows = [];
     var tempID = [];
     var tempIsID = [];
-    console.log('only 0.1.0', tempRows, tempID, props.getGoalsEndPoint);
+    console.log('only 0.1.0', tempRows, tempID);
     const uniqueObjects = [
       ...new Map(
         props.getGoalsEndPoint.map((item) => [item.gr_unique_id, item])
@@ -1960,7 +1935,6 @@ export default function GoalLHS(props) {
                     e.stopPropagation();
                     // console.log("On click1");
                     console.log(r.gr_unique_id, r.name);
-                    listAllTAandUsersForCopy();
                     setCRN(r.gr_title);
                     setCRID(r.gr_unique_id);
                     setTAToCopyTo({});

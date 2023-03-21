@@ -2655,7 +2655,7 @@ export default function Events(props) {
                   stateValue.addNewGRModalShow,
                   stateValue.dateContext,
                   stateValue.closeRoutine,
-                  // GrabFireBaseRoutinesGoalsData(),
+                  GrabFireBaseRoutinesGoalsData(),
                   //GrabFireBaseRoutinesData(),
                   // GoogleEvents(),
                   GetUserAcessToken(),
@@ -2753,7 +2753,7 @@ export default function Events(props) {
                     ></div>
                   )} */}
                     {console.log(userAccessToken)}
-                    {/* <div style={{ flex: '1' }}>
+                    <div style={{ flex: '1' }}>
                       {userID != '' && (
                         <EventLHS
                           theCurrentUserID={userID}
@@ -2792,7 +2792,7 @@ export default function Events(props) {
                           taAccessToken={taAccessToken}
                         />
                       )}
-                    </div> */}
+                    </div>
                     {/* <div style={{flex:'2'}}
               >
                {editingIS.editing ? <EditIS/> : editingATS.editing ? <EditATS/> : editingRTS.editing ? <EditRTS /> : showCalendarView()}

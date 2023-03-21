@@ -17,8 +17,7 @@ import {
   faCalendarWeek,
 } from '@fortawesome/free-solid-svg-icons';
 import 'react-datepicker/dist/react-datepicker.css';
-import RoutineLHS from './RoutineLHS';
-import GoalLHS from './GoalLHS';
+import HomeLHS from './GoalsRoutinesLHS';
 import EventLHS from './EventLHS';
 import DayEvents from './DayEvents';
 import DayRoutines from './DayRoutines.jsx';
@@ -1441,7 +1440,7 @@ function toggleShowEvents(props) {
   causes alarms and excessive rendering */
   
   function GrabFireBaseRoutinesGoalsData() {
-    let url = BASE_URL + 'getgoalsandroutines/';
+    let url2 = BASE_URL + 'getgoalsandroutines/';
     let routine = [];
     let routine_ids = [];
     let goal = [];
@@ -1490,455 +1489,455 @@ function toggleShowEvents(props) {
       return [a_time, b_time];
     };
 
-    useEffect(() => {
-      if (userID == '') return;
-      console.log(
-        'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-        [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
-      );
+    // useEffect(() => {
+    //   if (userID == '') return;
+    //   console.log(
+    //     'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
+    //     [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
+    //   );
 
-      axios
-        .get(url + userID)
-        .then((response) => {
-          console.log(
-            'here: Obtained user information with res = ',
-            response.data.result
-          );
-          const temp = [];
+    //   axios
+    //     .get(url + userID)
+    //     .then((response) => {
+    //       console.log(
+    //         'here: Obtained user information with res = ',
+    //         response.data.result
+    //       );
+    //       const temp = [];
 
-          for (let i = 0; i < response.data.result.length; i++) {
-            temp.push(response.data.result[i]);
-          }
-          temp.sort((a, b) => {
-            const [a_start, b_start] = [
-              a.gr_start_day_and_time,
-              b.gr_start_day_and_time,
-            ];
-            const [a_end, b_end] = [
-              a.gr_end_day_and_time,
-              b.gr_end_day_and_time,
-            ];
-            const [a_start_time, b_start_time] = getTimes(
-              a.gr_start_day_and_time,
-              b.gr_start_day_and_time
-            );
-            const [a_end_time, b_end_time] = getTimes(
-              a.gr_end_day_and_time,
-              b.gr_end_day_and_time
-            );
+    //       for (let i = 0; i < response.data.result.length; i++) {
+    //         temp.push(response.data.result[i]);
+    //       }
+    //       temp.sort((a, b) => {
+    //         const [a_start, b_start] = [
+    //           a.gr_start_day_and_time,
+    //           b.gr_start_day_and_time,
+    //         ];
+    //         const [a_end, b_end] = [
+    //           a.gr_end_day_and_time,
+    //           b.gr_end_day_and_time,
+    //         ];
+    //         const [a_start_time, b_start_time] = getTimes(
+    //           a.gr_start_day_and_time,
+    //           b.gr_start_day_and_time
+    //         );
+    //         const [a_end_time, b_end_time] = getTimes(
+    //           a.gr_end_day_and_time,
+    //           b.gr_end_day_and_time
+    //         );
 
-            if (a_start_time < b_start_time) return -1;
-            else if (a_start_time > b_start_time) return 1;
-            else {
-              if (a_end_time < b_end_time) return -1;
-              else if (a_end_time > b_end_time) return 1;
-              else {
-                if (a_start < b_start) return -1;
-                else if (a_start > b_start) return 1;
-                else {
-                  if (a_end < b_end) return -1;
-                  else if (a_end > b_end) return 1;
-                }
-              }
-            }
+    //         if (a_start_time < b_start_time) return -1;
+    //         else if (a_start_time > b_start_time) return 1;
+    //         else {
+    //           if (a_end_time < b_end_time) return -1;
+    //           else if (a_end_time > b_end_time) return 1;
+    //           else {
+    //             if (a_start < b_start) return -1;
+    //             else if (a_start > b_start) return 1;
+    //             else {
+    //               if (a_end < b_end) return -1;
+    //               else if (a_end > b_end) return 1;
+    //             }
+    //           }
+    //         }
 
-            return 0;
-          });
+    //         return 0;
+    //       });
 
-          console.log('homeTemp = ', temp);
+    //       console.log('homeTemp = ', temp);
 
-          setGetGoalsEndPoint(temp);
-          if (response.data.result && response.data.result.length !== 0) {
-            let x = response.data.result;
-            console.log('response', x);
-            x.sort((a, b) => {
-              let datetimeA = new Date(
-                a['gr_start_day_and_time'].replace(/-/g, '/')
-              );
+    //       setGetGoalsEndPoint(temp);
+    //       if (response.data.result && response.data.result.length !== 0) {
+    //         let x = response.data.result;
+    //         console.log('response', x);
+    //         x.sort((a, b) => {
+    //           let datetimeA = new Date(
+    //             a['gr_start_day_and_time'].replace(/-/g, '/')
+    //           );
 
-              let datetimeB = new Date(
-                b['gr_start_day_and_time'].replace(/-/g, '/')
-              );
+    //           let datetimeB = new Date(
+    //             b['gr_start_day_and_time'].replace(/-/g, '/')
+    //           );
 
-              let timeA =
-                new Date(datetimeA).getHours() * 60 +
-                new Date(datetimeA).getMinutes();
+    //           let timeA =
+    //             new Date(datetimeA).getHours() * 60 +
+    //             new Date(datetimeA).getMinutes();
 
-              let timeB =
-                new Date(datetimeB).getHours() * 60 +
-                new Date(datetimeB).getMinutes();
+    //           let timeB =
+    //             new Date(datetimeB).getHours() * 60 +
+    //             new Date(datetimeB).getMinutes();
 
-              return timeA - timeB;
-            });
+    //           return timeA - timeB;
+    //         });
 
-            let gr_array = [];
+    //         let gr_array = [];
 
-            for (let i = 0; i < x.length; ++i) {
-              let gr = {};
-              gr.audio = '';
-              gr.datetime_completed = x[i].gr_datetime_completed;
-              gr.datetime_started = x[i].gr_datetime_started;
-              gr.end_day_and_time = x[i].gr_end_day_and_time;
-              gr.expected_completion_time = x[i].expected_completion_time;
-              gr.gr_unique_id = x[i].gr_unique_id;
+    //         for (let i = 0; i < x.length; ++i) {
+    //           let gr = {};
+    //           gr.audio = '';
+    //           gr.datetime_completed = x[i].gr_datetime_completed;
+    //           gr.datetime_started = x[i].gr_datetime_started;
+    //           gr.end_day_and_time = x[i].gr_end_day_and_time;
+    //           gr.expected_completion_time = x[i].expected_completion_time;
+    //           gr.gr_unique_id = x[i].gr_unique_id;
 
-              gr.is_available = x[i].is_available.toLowerCase() === 'true';
+    //           gr.is_available = x[i].is_available.toLowerCase() === 'true';
 
-              gr.is_complete = x[i].is_complete.toLowerCase() === 'true';
-              gr.is_displayed_today =
-                x[i].is_displayed_today.toLowerCase() === 'true';
-              gr.is_in_progress = x[i].is_in_progress.toLowerCase() === 'true';
-              gr.is_persistent = x[i].is_persistent.toLowerCase() === 'true';
-              gr.is_sublist_available =
-                x[i].is_sublist_available.toLowerCase() === 'true';
-              gr.is_timed = x[i].is_timed.toLowerCase() === 'true';
+    //           gr.is_complete = x[i].is_complete.toLowerCase() === 'true';
+    //           gr.is_displayed_today =
+    //             x[i].is_displayed_today.toLowerCase() === 'true';
+    //           gr.is_in_progress = x[i].is_in_progress.toLowerCase() === 'true';
+    //           gr.is_persistent = x[i].is_persistent.toLowerCase() === 'true';
+    //           gr.is_sublist_available =
+    //             x[i].is_sublist_available.toLowerCase() === 'true';
+    //           gr.is_timed = x[i].is_timed.toLowerCase() === 'true';
 
-              gr.photo = x[i].photo;
-              gr.repeat = x[i].repeat.toLowerCase() === 'true';
-              gr.repeat_type = x[i].repeat_type || 'Never';
-              gr.repeat_ends_on = x[i].repeat_ends_on;
-              gr.repeat_every = x[i].repeat_every;
-              gr.repeat_frequency = x[i].repeat_frequency;
-              gr.repeat_occurences = x[i].repeat_occurences;
+    //           gr.photo = x[i].photo;
+    //           gr.repeat = x[i].repeat.toLowerCase() === 'true';
+    //           gr.repeat_type = x[i].repeat_type || 'Never';
+    //           gr.repeat_ends_on = x[i].repeat_ends_on;
+    //           gr.repeat_every = x[i].repeat_every;
+    //           gr.repeat_frequency = x[i].repeat_frequency;
+    //           gr.repeat_occurences = x[i].repeat_occurences;
 
-              const repeat_week_days_json = JSON.parse(x[i].repeat_week_days);
+    //           const repeat_week_days_json = JSON.parse(x[i].repeat_week_days);
 
-              if (repeat_week_days_json) {
-                gr.repeat_week_days = {
-                  0:
-                    repeat_week_days_json.Sunday &&
-                    repeat_week_days_json.Sunday.toLowerCase() === 'true'
-                      ? 'Sunday'
-                      : '',
-                  1:
-                    repeat_week_days_json.Monday &&
-                    repeat_week_days_json.Monday.toLowerCase() === 'true'
-                      ? 'Monday'
-                      : '',
-                  2:
-                    repeat_week_days_json.Tuesday &&
-                    repeat_week_days_json.Tuesday.toLowerCase() === 'true'
-                      ? 'Tuesday'
-                      : '',
-                  3:
-                    repeat_week_days_json.Wednesday &&
-                    repeat_week_days_json.Wednesday.toLowerCase() === 'true'
-                      ? 'Wednesday'
-                      : '',
-                  4:
-                    repeat_week_days_json.Thursday &&
-                    repeat_week_days_json.Thursday.toLowerCase() === 'true'
-                      ? 'Thursday'
-                      : '',
-                  5:
-                    repeat_week_days_json.Friday &&
-                    repeat_week_days_json.Friday.toLowerCase() === 'true'
-                      ? 'Friday'
-                      : '',
-                  6:
-                    repeat_week_days_json.Saturday &&
-                    repeat_week_days_json.Saturday.toLowerCase() === 'true'
-                      ? 'Saturday'
-                      : '',
-                };
-              } else {
-                gr.repeat_week_days = {
-                  0: '',
-                  1: '',
-                  2: '',
-                  3: '',
-                  4: '',
-                  5: '',
-                  6: '',
-                };
-              }
+    //           if (repeat_week_days_json) {
+    //             gr.repeat_week_days = {
+    //               0:
+    //                 repeat_week_days_json.Sunday &&
+    //                 repeat_week_days_json.Sunday.toLowerCase() === 'true'
+    //                   ? 'Sunday'
+    //                   : '',
+    //               1:
+    //                 repeat_week_days_json.Monday &&
+    //                 repeat_week_days_json.Monday.toLowerCase() === 'true'
+    //                   ? 'Monday'
+    //                   : '',
+    //               2:
+    //                 repeat_week_days_json.Tuesday &&
+    //                 repeat_week_days_json.Tuesday.toLowerCase() === 'true'
+    //                   ? 'Tuesday'
+    //                   : '',
+    //               3:
+    //                 repeat_week_days_json.Wednesday &&
+    //                 repeat_week_days_json.Wednesday.toLowerCase() === 'true'
+    //                   ? 'Wednesday'
+    //                   : '',
+    //               4:
+    //                 repeat_week_days_json.Thursday &&
+    //                 repeat_week_days_json.Thursday.toLowerCase() === 'true'
+    //                   ? 'Thursday'
+    //                   : '',
+    //               5:
+    //                 repeat_week_days_json.Friday &&
+    //                 repeat_week_days_json.Friday.toLowerCase() === 'true'
+    //                   ? 'Friday'
+    //                   : '',
+    //               6:
+    //                 repeat_week_days_json.Saturday &&
+    //                 repeat_week_days_json.Saturday.toLowerCase() === 'true'
+    //                   ? 'Saturday'
+    //                   : '',
+    //             };
+    //           } else {
+    //             gr.repeat_week_days = {
+    //               0: '',
+    //               1: '',
+    //               2: '',
+    //               3: '',
+    //               4: '',
+    //               5: '',
+    //               6: '',
+    //             };
+    //           }
 
-              gr.start_day_and_time = x[i].gr_start_day_and_time;
+    //           gr.start_day_and_time = x[i].gr_start_day_and_time;
 
-              for (let k = 0; k < x[i].notifications.length; ++k) {
-                const first_notifications = x[i].notifications[k];
-                if (first_notifications) {
-                  if (first_notifications.user_ta_id.charAt(0) === '1') {
-                    gr.user_notifications = {
-                      before: {
-                        is_enabled:
-                          first_notifications.before_is_enable.toLowerCase() ===
-                          'true',
-                        is_set:
-                          first_notifications.before_is_set.toLowerCase() ===
-                          'true',
-                        message: first_notifications.before_message,
-                        time: first_notifications.before_time,
-                      },
-                      during: {
-                        is_enabled:
-                          first_notifications.during_is_enable.toLowerCase() ===
-                          'true',
-                        is_set:
-                          first_notifications.during_is_set.toLowerCase() ===
-                          'true',
-                        message: first_notifications.during_message,
-                        time: first_notifications.during_time,
-                      },
-                      after: {
-                        is_enabled:
-                          first_notifications.after_is_enable.toLowerCase() ===
-                          'true',
-                        is_set: first_notifications.after_is_set.toLowerCase(),
-                        message: first_notifications.after_message,
-                        time: first_notifications.after_time,
-                      },
-                    };
-                  } else if (
-                    first_notifications.user_ta_id.charAt(0) === '2' &&
-                    first_notifications.user_ta_id === stateValue.ta_people_id
-                  ) {
-                    gr.ta_notifications = {
-                      before: {
-                        is_enabled:
-                          first_notifications.before_is_enable.toLowerCase() ===
-                          'true',
-                        is_set:
-                          first_notifications.before_is_set.toLowerCase() ===
-                          'true',
-                        message: first_notifications.before_message,
-                        time: first_notifications.before_time,
-                      },
-                      during: {
-                        is_enabled:
-                          first_notifications.during_is_enable.toLowerCase() ===
-                          'true',
-                        is_set: first_notifications.during_is_set.toLowerCase(),
-                        message: first_notifications.during_message,
-                        time: first_notifications.during_time,
-                      },
-                      after: {
-                        is_enabled:
-                          first_notifications.after_is_enable.toLowerCase() ===
-                          'true',
-                        is_set:
-                          first_notifications.after_is_set.toLowerCase() ===
-                          'true',
-                        message: first_notifications.after_message,
-                        time: first_notifications.after_time,
-                      },
-                    };
-                  }
-                }
-              }
-              let filtered_notifications = [];
-              for (let k = 0; k < x[i].notifications.length; ++k) {
-                const first_notifications = x[i].notifications[k];
-                if (first_notifications) {
-                  if (first_notifications.user_ta_id.charAt(0) === '1') {
-                    filtered_notifications.push(first_notifications);
-                  } else if (
-                    first_notifications.user_ta_id.charAt(0) === '2' &&
-                    first_notifications.user_ta_id === stateValue.ta_people_id
-                  ) {
-                    filtered_notifications.push(first_notifications);
-                  }
-                }
-              }
-              gr.notifications = filtered_notifications;
-              // if (!gr.ta_notifications) {
-              //   gr.ta_notifications = {
-              //     before: {
-              //       is_enabled: false,
-              //       is_set: false,
-              //       message: "",
-              //       time: gr.user_notifications.before.time,
-              //     },
-              //     during: {
-              //       is_enabled: false,
-              //       is_set: false,
-              //       message: "",
-              //       time: gr.user_notifications.during.time,
-              //     },
-              //     after: {
-              //       is_enabled: false,
-              //       is_set: false,
-              //       message: "",
-              //       time: gr.user_notifications.after.time,
-              //     },
-              //   };
-              // }
+    //           for (let k = 0; k < x[i].notifications.length; ++k) {
+    //             const first_notifications = x[i].notifications[k];
+    //             if (first_notifications) {
+    //               if (first_notifications.user_ta_id.charAt(0) === '1') {
+    //                 gr.user_notifications = {
+    //                   before: {
+    //                     is_enabled:
+    //                       first_notifications.before_is_enable.toLowerCase() ===
+    //                       'true',
+    //                     is_set:
+    //                       first_notifications.before_is_set.toLowerCase() ===
+    //                       'true',
+    //                     message: first_notifications.before_message,
+    //                     time: first_notifications.before_time,
+    //                   },
+    //                   during: {
+    //                     is_enabled:
+    //                       first_notifications.during_is_enable.toLowerCase() ===
+    //                       'true',
+    //                     is_set:
+    //                       first_notifications.during_is_set.toLowerCase() ===
+    //                       'true',
+    //                     message: first_notifications.during_message,
+    //                     time: first_notifications.during_time,
+    //                   },
+    //                   after: {
+    //                     is_enabled:
+    //                       first_notifications.after_is_enable.toLowerCase() ===
+    //                       'true',
+    //                     is_set: first_notifications.after_is_set.toLowerCase(),
+    //                     message: first_notifications.after_message,
+    //                     time: first_notifications.after_time,
+    //                   },
+    //                 };
+    //               } else if (
+    //                 first_notifications.user_ta_id.charAt(0) === '2' &&
+    //                 first_notifications.user_ta_id === stateValue.ta_people_id
+    //               ) {
+    //                 gr.ta_notifications = {
+    //                   before: {
+    //                     is_enabled:
+    //                       first_notifications.before_is_enable.toLowerCase() ===
+    //                       'true',
+    //                     is_set:
+    //                       first_notifications.before_is_set.toLowerCase() ===
+    //                       'true',
+    //                     message: first_notifications.before_message,
+    //                     time: first_notifications.before_time,
+    //                   },
+    //                   during: {
+    //                     is_enabled:
+    //                       first_notifications.during_is_enable.toLowerCase() ===
+    //                       'true',
+    //                     is_set: first_notifications.during_is_set.toLowerCase(),
+    //                     message: first_notifications.during_message,
+    //                     time: first_notifications.during_time,
+    //                   },
+    //                   after: {
+    //                     is_enabled:
+    //                       first_notifications.after_is_enable.toLowerCase() ===
+    //                       'true',
+    //                     is_set:
+    //                       first_notifications.after_is_set.toLowerCase() ===
+    //                       'true',
+    //                     message: first_notifications.after_message,
+    //                     time: first_notifications.after_time,
+    //                   },
+    //                 };
+    //               }
+    //             }
+    //           }
+    //           let filtered_notifications = [];
+    //           for (let k = 0; k < x[i].notifications.length; ++k) {
+    //             const first_notifications = x[i].notifications[k];
+    //             if (first_notifications) {
+    //               if (first_notifications.user_ta_id.charAt(0) === '1') {
+    //                 filtered_notifications.push(first_notifications);
+    //               } else if (
+    //                 first_notifications.user_ta_id.charAt(0) === '2' &&
+    //                 first_notifications.user_ta_id === stateValue.ta_people_id
+    //               ) {
+    //                 filtered_notifications.push(first_notifications);
+    //               }
+    //             }
+    //           }
+    //           gr.notifications = filtered_notifications;
+    //           // if (!gr.ta_notifications) {
+    //           //   gr.ta_notifications = {
+    //           //     before: {
+    //           //       is_enabled: false,
+    //           //       is_set: false,
+    //           //       message: "",
+    //           //       time: gr.user_notifications.before.time,
+    //           //     },
+    //           //     during: {
+    //           //       is_enabled: false,
+    //           //       is_set: false,
+    //           //       message: "",
+    //           //       time: gr.user_notifications.during.time,
+    //           //     },
+    //           //     after: {
+    //           //       is_enabled: false,
+    //           //       is_set: false,
+    //           //       message: "",
+    //           //       time: gr.user_notifications.after.time,
+    //           //     },
+    //           //   };
+    //           // }
 
-              // console.log(gr);
-              gr.title = x[i].gr_title;
-              // console.log('X', x);
-              // console.log(gr.title, gr.is_sublist_available);
-              var goalDate = new Date(gr.end_day_and_time.replace(/-/g, '/'));
-              console.log(goalDate);
-              //For Today Goals and Routines
-              let startOfDay = moment(goalDate);
-              let endOfDay = moment(goalDate);
-              let begOfTheDay = startOfDay.startOf('day');
-              let endOfTheDay = endOfDay.endOf('day');
-              // console.log(begOfTheDay);
-              // console.log(endOfTheDay);
-              let todayStartDate = new Date(begOfTheDay.format('MM/DD/YYYY'));
-              let todayEndDate = new Date(endOfTheDay.format('MM/DD/YYYY'));
-              todayStartDate.setHours(0, 0, 0);
-              todayEndDate.setHours(23, 59, 59);
-              // console.log(todayStartDate);
-              // console.log(todayEndDate);
-              // console.log(goalDate);
+    //           // console.log(gr);
+    //           gr.title = x[i].gr_title;
+    //           // console.log('X', x);
+    //           // console.log(gr.title, gr.is_sublist_available);
+    //           var goalDate = new Date(gr.end_day_and_time.replace(/-/g, '/'));
+    //           console.log(goalDate);
+    //           //For Today Goals and Routines
+    //           let startOfDay = moment(goalDate);
+    //           let endOfDay = moment(goalDate);
+    //           let begOfTheDay = startOfDay.startOf('day');
+    //           let endOfTheDay = endOfDay.endOf('day');
+    //           // console.log(begOfTheDay);
+    //           // console.log(endOfTheDay);
+    //           let todayStartDate = new Date(begOfTheDay.format('MM/DD/YYYY'));
+    //           let todayEndDate = new Date(endOfTheDay.format('MM/DD/YYYY'));
+    //           todayStartDate.setHours(0, 0, 0);
+    //           todayEndDate.setHours(23, 59, 59);
+    //           // console.log(todayStartDate);
+    //           // console.log(todayEndDate);
+    //           // console.log(goalDate);
 
-              //For Week Goals and Routines
-              let startWeek = moment(goalDate);
-              let endWeek = moment(goalDate);
-              let startDay = startWeek.startOf('week');
-              let endDay = endWeek.endOf('week');
-              // console.log(startDay);
-              // console.log(endDay);
-              let startDate = new Date(startDay.format('MM/DD/YYYY'));
-              let endDate = new Date(endDay.format('MM/DD/YYYY'));
-              startDate.setHours(0, 0, 0);
-              endDate.setHours(23, 59, 59);
-              //console.log(startDate);
-              //console.log(endDate);
+    //           //For Week Goals and Routines
+    //           let startWeek = moment(goalDate);
+    //           let endWeek = moment(goalDate);
+    //           let startDay = startWeek.startOf('week');
+    //           let endDay = endWeek.endOf('week');
+    //           // console.log(startDay);
+    //           // console.log(endDay);
+    //           let startDate = new Date(startDay.format('MM/DD/YYYY'));
+    //           let endDate = new Date(endDay.format('MM/DD/YYYY'));
+    //           startDate.setHours(0, 0, 0);
+    //           endDate.setHours(23, 59, 59);
+    //           //console.log(startDate);
+    //           //console.log(endDate);
 
-              //For Months Goals and Routines
-              let startMonth = moment(goalDate);
-              let endMonth = moment(goalDate);
-              let startDayMonth = startMonth.startOf('month');
-              let endDayMonth = endMonth.endOf('month');
-              // console.log(startDayMonth);
-              // console.log(endDayMonth);
-              let monthStartDate = new Date(startDayMonth.format('MM/DD/YYYY'));
-              let monthEndDate = new Date(endDayMonth.format('MM/DD/YYYY'));
-              monthStartDate.setHours(0, 0, 0);
-              monthEndDate.setHours(23, 59, 59);
-              // console.log(monthStartDate);
-              // console.log(monthEndDate);
+    //           //For Months Goals and Routines
+    //           let startMonth = moment(goalDate);
+    //           let endMonth = moment(goalDate);
+    //           let startDayMonth = startMonth.startOf('month');
+    //           let endDayMonth = endMonth.endOf('month');
+    //           // console.log(startDayMonth);
+    //           // console.log(endDayMonth);
+    //           let monthStartDate = new Date(startDayMonth.format('MM/DD/YYYY'));
+    //           let monthEndDate = new Date(endDayMonth.format('MM/DD/YYYY'));
+    //           monthStartDate.setHours(0, 0, 0);
+    //           monthEndDate.setHours(23, 59, 59);
+    //           // console.log(monthStartDate);
+    //           // console.log(monthEndDate);
 
-              if (
-                stateValue.calendarView === 'Day' &&
-                goalDate.getTime() > todayStartDate.getTime() &&
-                goalDate.getTime() < todayEndDate.getTime()
-              ) {
-                gr_array.push(gr);
-              }
-              if (
-                stateValue.calendarView === 'Week' &&
-                goalDate.getTime() > startDate.getTime() &&
-                goalDate.getTime() < endDate.getTime()
-              ) {
-                gr_array.push(gr);
-              }
-              // if (
-              //   this.state.calendarView === "Month" &&
-              //   goalDate.getTime() > monthStartDate.getTime() &&
-              //   goalDate.getTime() < monthEndDate.getTime()
-              // ) {
-              //   gr_array.push(gr);
-              // }
-              // console.log(gr_array);
-              if (x[i]['is_persistent'].toLowerCase() === 'true') {
-                // routine_ids.push(i);
+    //           if (
+    //             stateValue.calendarView === 'Day' &&
+    //             goalDate.getTime() > todayStartDate.getTime() &&
+    //             goalDate.getTime() < todayEndDate.getTime()
+    //           ) {
+    //             gr_array.push(gr);
+    //           }
+    //           if (
+    //             stateValue.calendarView === 'Week' &&
+    //             goalDate.getTime() > startDate.getTime() &&
+    //             goalDate.getTime() < endDate.getTime()
+    //           ) {
+    //             gr_array.push(gr);
+    //           }
+    //           // if (
+    //           //   this.state.calendarView === "Month" &&
+    //           //   goalDate.getTime() > monthStartDate.getTime() &&
+    //           //   goalDate.getTime() < monthEndDate.getTime()
+    //           // ) {
+    //           //   gr_array.push(gr);
+    //           // }
+    //           // console.log(gr_array);
+    //           if (x[i]['is_persistent'].toLowerCase() === 'true') {
+    //             // routine_ids.push(i);
 
-                // routine_ids.push(x[i]["gr_unique_id"]);
-                // routine.push(x[i]);
+    //             // routine_ids.push(x[i]["gr_unique_id"]);
+    //             // routine.push(x[i]);
 
-                if (
-                  stateValue.calendarView === 'Day' &&
-                  goalDate.getTime() > todayStartDate.getTime() &&
-                  goalDate.getTime() < todayEndDate.getTime()
-                ) {
-                  routine_ids.push(gr['gr_unique_id']);
-                  routine.push(gr);
-                }
-                if (
-                  stateValue.calendarView === 'Week' &&
-                  goalDate.getTime() > todayStartDate.getTime() &&
-                  goalDate.getTime() < todayEndDate.getTime()
-                ) {
-                  routine_ids.push(gr['gr_unique_id']);
-                  routine.push(gr);
-                }
-                // if (
-                //   this.state.calendarView === "Month" &&
-                //   goalDate.getTime() > monthStartDate.getTime() &&
-                //   goalDate.getTime() < monthEndDate.getTime()
-                // ) {
-                //   routine_ids.push(gr["gr_unique_id"]);
-                //   routine.push(gr);
-                // }
-              }
-              if (x[i]['is_persistent'].toLowerCase() === 'false') {
-                // goal_ids.push(i);
+    //             if (
+    //               stateValue.calendarView === 'Day' &&
+    //               goalDate.getTime() > todayStartDate.getTime() &&
+    //               goalDate.getTime() < todayEndDate.getTime()
+    //             ) {
+    //               routine_ids.push(gr['gr_unique_id']);
+    //               routine.push(gr);
+    //             }
+    //             if (
+    //               stateValue.calendarView === 'Week' &&
+    //               goalDate.getTime() > todayStartDate.getTime() &&
+    //               goalDate.getTime() < todayEndDate.getTime()
+    //             ) {
+    //               routine_ids.push(gr['gr_unique_id']);
+    //               routine.push(gr);
+    //             }
+    //             // if (
+    //             //   this.state.calendarView === "Month" &&
+    //             //   goalDate.getTime() > monthStartDate.getTime() &&
+    //             //   goalDate.getTime() < monthEndDate.getTime()
+    //             // ) {
+    //             //   routine_ids.push(gr["gr_unique_id"]);
+    //             //   routine.push(gr);
+    //             // }
+    //           }
+    //           if (x[i]['is_persistent'].toLowerCase() === 'false') {
+    //             // goal_ids.push(i);
 
-                // goal_ids.push(x[i]["gr_unique_id"]);
-                // goal.push(x[i]);
+    //             // goal_ids.push(x[i]["gr_unique_id"]);
+    //             // goal.push(x[i]);
 
-                if (
-                  stateValue.calendarView === 'Day' &&
-                  goalDate.getTime() > todayStartDate.getTime() &&
-                  goalDate.getTime() < todayEndDate.getTime()
-                ) {
-                  goal_ids.push(gr['gr_unique_id']);
-                  goal.push(gr);
-                }
-                if (
-                  stateValue.calendarView === 'Week' &&
-                  goalDate.getTime() > startDate.getTime() &&
-                  goalDate.getTime() < endDate.getTime()
-                ) {
-                  goal_ids.push(gr['gr_unique_id']);
-                  goal.push(gr);
-                }
-                // if (
-                //   this.state.calendarView === "Month" &&
-                //   goalDate.getTime() > monthStartDate.getTime() &&
-                //   goalDate.getTime() < monthEndDate.getTime()
-                // ) {
-                //   goal_ids.push(gr["gr_unique_id"]);
-                //   goal.push(gr);
-                // }
-              }
-            }
+    //             if (
+    //               stateValue.calendarView === 'Day' &&
+    //               goalDate.getTime() > todayStartDate.getTime() &&
+    //               goalDate.getTime() < todayEndDate.getTime()
+    //             ) {
+    //               goal_ids.push(gr['gr_unique_id']);
+    //               goal.push(gr);
+    //             }
+    //             if (
+    //               stateValue.calendarView === 'Week' &&
+    //               goalDate.getTime() > startDate.getTime() &&
+    //               goalDate.getTime() < endDate.getTime()
+    //             ) {
+    //               goal_ids.push(gr['gr_unique_id']);
+    //               goal.push(gr);
+    //             }
+    //             // if (
+    //             //   this.state.calendarView === "Month" &&
+    //             //   goalDate.getTime() > monthStartDate.getTime() &&
+    //             //   goalDate.getTime() < monthEndDate.getTime()
+    //             // ) {
+    //             //   goal_ids.push(gr["gr_unique_id"]);
+    //             //   goal.push(gr);
+    //             // }
+    //           }
+    //         }
 
-            setStateValue((prevState) => {
-              return {
-                ...prevState,
-                originalGoalsAndRoutineArr: gr_array,
-                goals: goal,
-                addNewGRModalShow: false,
-                routine_ids: routine_ids,
-                goal_ids: goal_ids,
-                routines: routine,
-              };
-            });
-            setEditingRTS({
-              ...editingRTS,
-              gr_array: gr_array,
-            });
-            setEditingATS({
-              ...editingATS,
-              gr_array: gr_array,
-            });
-          } else {
-            setStateValue((prevState) => {
-              return {
-                ...prevState,
-                originalGoalsAndRoutineArr: [],
-                goals: goal,
-                addNewGRModalShow: false,
-                routine_ids: routine_ids,
-                goal_ids: goal_ids,
-                routines: routine,
-              };
-            });
-          }
+    //         setStateValue((prevState) => {
+    //           return {
+    //             ...prevState,
+    //             originalGoalsAndRoutineArr: gr_array,
+    //             goals: goal,
+    //             addNewGRModalShow: false,
+    //             routine_ids: routine_ids,
+    //             goal_ids: goal_ids,
+    //             routines: routine,
+    //           };
+    //         });
+    //         setEditingRTS({
+    //           ...editingRTS,
+    //           gr_array: gr_array,
+    //         });
+    //         setEditingATS({
+    //           ...editingATS,
+    //           gr_array: gr_array,
+    //         });
+    //       } else {
+    //         setStateValue((prevState) => {
+    //           return {
+    //             ...prevState,
+    //             originalGoalsAndRoutineArr: [],
+    //             goals: goal,
+    //             addNewGRModalShow: false,
+    //             routine_ids: routine_ids,
+    //             goal_ids: goal_ids,
+    //             routines: routine,
+    //           };
+    //         });
+    //       }
 
-          // console.log(this.state.goals);
-          // console.log(stateValue);
-        })
-        .catch((error) => {
-          console.log('Error in getting goals and routines ' + error);
-        });
-    }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
+    //       // console.log(this.state.goals);
+    //       // console.log(stateValue);
+    //     })
+    //     .catch((error) => {
+    //       console.log('Error in getting goals and routines ' + error);
+    //     });
+    // }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
 
 //   function GetUserAcessToken() {
@@ -2382,33 +2381,34 @@ function toggleShowEvents(props) {
   //       });
   //   }, [userID, stateValue.dateContext, stateValue.todayDateObject]);
   // }
-    useEffect(() => {
-        if (userID == '') return;
-        if (GREButtonSelection == "Events") return;
+  useEffect(() => {
+    if (userID == '') return;
+    if (GREButtonSelection == "Events") return;
+    console.log(
+      'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
+      [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
+    );
+    // if (GREButtonSelection == "Events") {
+    //     GetUserAcessToken();
+    // }
+    // else {
+    let getGoalOrRoutineUrl = BASE_URL + 'getroutines/';
+    if (GREButtonSelection == "Goals") {
+      getGoalOrRoutineUrl = BASE_URL + 'getgoals/';
+    }
+    axios
+      .get(getGoalOrRoutineUrl + userID)
+      .then((response) => {
         console.log(
-            'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-            [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
+          'here: Obtained user information with res = ',
+          response.data.result
         );
-        // if (GREButtonSelection == "Events") {
-        //     GetUserAcessToken();
-        // }
-        // else {
-             let url = BASE_URL + 'getroutines/';
-            if(GREButtonSelection == "Goals"){
-                url = BASE_URL + 'getgoals/';
-            }
-            axios
-                .get(url + userID)
-                .then((response) => {
-                    console.log(
-                        'here: Obtained user information with res = ',
-                        response.data.result
-                    );
-                        GrabFireBaseRoutinesData(response);
-                })
-        // }
+        GrabFireBaseRoutinesData(response);
+      })
+    // }
        
-    }, [GREButtonSelection,userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
+  }, [GREButtonSelection, userID]);
+      // [GREButtonSelection, userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   function GrabFireBaseRoutinesData(response) {
     // let url = BASE_URL + 'getroutines/';
     // if(GREButtonSelection == "Goals"){
@@ -3140,7 +3140,7 @@ function toggleShowEvents(props) {
 
                     <div style={{ flex: '1' }}>
                       {userID != '' && GREButtonSelection=='Routines' && (
-                        <RoutineLHS
+                        <HomeLHS
                           theCurrentUserID={userID}
                           sethighLight={setHightlight}
                           highLight={hightlight}
@@ -3163,11 +3163,12 @@ function toggleShowEvents(props) {
                           setGetStepsEndPoint={setGetStepsEndPoint}
                           stateValue={stateValue}
                           setStateValue={setStateValue}
+                          goalOrRoutineFlag = {GREButtonSelection}
                         />
                       )}
                      
                       {userID != '' && GREButtonSelection=='Goals' && (
-                        <GoalLHS
+                        <HomeLHS
                           theCurrentUserID={userID}
                           sethighLight={setHightlight}
                           highLight={hightlight}
@@ -3190,6 +3191,7 @@ function toggleShowEvents(props) {
                           setGetStepsEndPoint={setGetStepsEndPoint}
                           stateValue={stateValue}
                           setStateValue={setStateValue}
+                          goalOrRoutineFlag = {GREButtonSelection}
                         />
                       )}
                       
