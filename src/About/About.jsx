@@ -201,7 +201,7 @@ export default function AboutModal(props) {
       .catch((error) => {
         console.log(error);
       });
-  }, [firstName, called, people]);
+  }, [called, people]);
   //upload from computer for TA
   const uploadImageModal = () => {
     return (
@@ -532,7 +532,7 @@ export default function AboutModal(props) {
       .catch((error) => {
         console.log(error);
       });
-  }, [firstName, called, people]);
+  }, [called, people]);
 
   function grabFireBaseAboutMeData() {
     let url = BASE_URL + 'aboutme/';
