@@ -247,7 +247,7 @@ export default function TAGooglePhotos(props) {
                     })
                     .catch((error) => console.log(error));
 
-                  console.log('in events', at);
+                  console.log('in events UpdateAccessToken TAGooglePhoto', at);
                   let updateURL = BASE_URL + 'UpdateAccessToken/';
                   axios
                     .post(updateURL + user_id, {

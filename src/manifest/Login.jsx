@@ -187,49 +187,49 @@ export default function Login() {
   let uid = window.location.href.split('=')[1];
   console.log(uid);
 
-  useEffect(() => {
-    axios
-      .get(BASE_URL + 'loginSocialTA/' + uid)
-      .then((res) => {
-        console.log('loginSocialTA in events', res.data.result);
-        if (res.data.result !== false) {
-          // setTaID(res.data.result[0]);
-          document.cookie = 'ta_uid=' + res.data.result[0];
-          document.cookie = 'ta_email=' + uid;
-          document.cookie = 'patient_name=Loading';
-          setAccessToken(res.data.result[1]);
-          setLoggedIn(true);
-          loginContext.setLoginState({
-            ...loginContext.loginState,
-            reload: false,
-            loggedIn: true,
-            ta: {
-              ...loginContext.loginState.ta,
-              id: res.data.result,
-              email: uid.toString(),
-            },
-            usersOfTA: [],
-            curUser: '',
-            curUserTimeZone: '',
-            curUserEmail: '',
-            curUserName: '',
-          });
-          console.log('Login successful');
-          history.push({
-            pathname: '/home',
-            state: uid,
-          });
-          // Successful log in, Try to update tokens, then continue to next page based on role
-        } else {
-        }
-      })
-      .catch((err) => {
-        if (err.response) {
-          console.log(err.response);
-        }
-        console.log(err);
-      });
-  }, [loginContext.loginState.reload]);
+  // useEffect(() => {
+  //   axios
+  //     .get(BASE_URL + 'loginSocialTA/' + uid)
+  //     .then((res) => {
+  //       console.log('loginSocialTA in events', res.data.result);
+  //       if (res.data.result !== false) {
+  //         // setTaID(res.data.result[0]);
+  //         document.cookie = 'ta_uid=' + res.data.result[0];
+  //         document.cookie = 'ta_email=' + uid;
+  //         document.cookie = 'patient_name=Loading';
+  //         setAccessToken(res.data.result[1]);
+  //         setLoggedIn(true);
+  //         loginContext.setLoginState({
+  //           ...loginContext.loginState,
+  //           reload: false,
+  //           loggedIn: true,
+  //           ta: {
+  //             ...loginContext.loginState.ta,
+  //             id: res.data.result,
+  //             email: uid.toString(),
+  //           },
+  //           usersOfTA: [],
+  //           curUser: '',
+  //           curUserTimeZone: '',
+  //           curUserEmail: '',
+  //           curUserName: '',
+  //         });
+  //         console.log('Login successful');
+  //         history.push({
+  //           pathname: '/home',
+  //           state: uid,
+  //         });
+  //         // Successful log in, Try to update tokens, then continue to next page based on role
+  //       } else {
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       if (err.response) {
+  //         console.log(err.response);
+  //       }
+  //       console.log(err);
+  //     });
+  // }, [loginContext.loginState.reload]);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -252,24 +252,24 @@ export default function Login() {
       axios.get(BASE_URL + `taTokenEmail/${email}`).then((response) => {
         console.log(
           'in events',
-          response['data']['ta_unique_id'],
-          response['data']['ta_google_auth_token']
+          response.data.result.ta_unique_id,
+          response.data.result.ta_google_auth_token
         );
         console.log('in events', response);
-        setAccessToken(response['data']['ta_google_auth_token']);
+        setAccessToken(response.data.result.ta_google_auth_token);
         let url =
           'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
-        document.cookie = 'ta_uid=' + response['data']['ta_unique_id'];
+        document.cookie = 'ta_uid=' + response.data.result.ta_unique_id;
         document.cookie = 'ta_email=' + email;
         document.cookie = 'patient_name=Loading';
-        document.cookie = 'ta_pic=' + response['data']['ta_picture'];
+        document.cookie = 'ta_pic=' + response.data.result.ta_picture;
         loginContext.setLoginState({
           ...loginContext.loginState,
           reload: false,
           loggedIn: true,
           ta: {
             ...loginContext.loginState.ta,
-            id: response['data']['ta_unique_id'],
+            id: response.data.result.ta_unique_id,
             email: email.toString(),
           },
           usersOfTA: [],
@@ -284,11 +284,11 @@ export default function Login() {
           pathname: '/home',
           state: email,
         });
-        setTaID(response['data']['ta_unique_id']);
-        ta_id = response['data']['ta_unique_id'];
-        var old_at = response['data']['ta_google_auth_token'];
+        setTaID(response.data.result.ta_unique_id);
+        ta_id = response.data.result.ta_unique_id;
+        var old_at = response.data.result.ta_google_auth_token;
         console.log('in events', old_at);
-        var refreshToken = response['data']['ta_google_refresh_token'];
+        var refreshToken = response.data.result.ta_google_refresh_token;
 
         let checkExp_url = url + old_at;
         console.log('in events', checkExp_url);
@@ -319,7 +319,8 @@ export default function Login() {
                 formBody.push(encodedKey + '=' + encodedValue);
               }
               formBody = formBody.join('&');
-
+              console.log("Checking login formdata", formBody)
+              
               fetch(authorization_url, {
                 method: 'POST',
                 headers: {
@@ -329,6 +330,7 @@ export default function Login() {
                 body: formBody,
               })
                 .then((response) => {
+                  console.log("Checking login authorization_url result", response)
                   return response.json();
                 })
                 .then((responseData) => {
@@ -341,11 +343,11 @@ export default function Login() {
                   var id_token = data['id_token'];
                   setAccessToken(at);
                   setIdToken(id_token);
-                  console.log('in events', at);
+                  console.log('in events UpdateAccessToken Login1', at);
                   let url = BASE_URL + `UpdateAccessToken/${ta_id}`;
                   axios
                     .post(url, {
-                      google_auth_token: at,
+                      ta_google_auth_token: at,
                     })
                     .then((response) => {})
                     .catch((err) => {
@@ -367,7 +369,7 @@ export default function Login() {
         console.log('in events', refreshToken, accessToken);
       });
 
-      _socialLoginAttempt(email, accessToken, socialId, 'GOOGLE');
+      // _socialLoginAttempt(email, accessToken, socialId, 'GOOGLE');
     }
   };
 

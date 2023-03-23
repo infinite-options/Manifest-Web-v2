@@ -197,7 +197,7 @@ export default function Home(props) {
   };
   useEffect(() => {
     getUserOfTA();
-  }, [userID, loginContext.loginState.reload]);
+  }, [loginContext.loginState.reload]);
   // useEffect(() => {
   //   getUserOfTA();
   // }, []);
@@ -917,6 +917,7 @@ export default function Home(props) {
     axios
       .get(url + ta_id)
       .then((response) => {
+        console.log("Checking UserAccessToken in axios get response=", response)
         console.log('in events', response);
         let url =
           'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
@@ -943,8 +944,10 @@ export default function Home(props) {
         )
           .then((response) => {
             console.log('in events', response);
+            console.log("Checking UserAccessToken fetch expiry url=", response)
             if (response['status'] === 400) {
               console.log('in events if');
+              console.log("Checking UserAccessToken status is 400");
               let authorization_url =
                 'https://accounts.google.com/o/oauth2/token';
               if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
@@ -983,19 +986,21 @@ export default function Home(props) {
                 body: formBody,
               })
                 .then((response) => {
+                  console.log("Checking UserAccessToken authorization url fetch1", response);
                   return response.json();
                 })
                 .then((responseData) => {
+                  console.log("Checking UserAccessToken authorization url fetch2", responseData);
                   console.log(responseData);
                   return responseData;
                 })
                 .then((data) => {
-                  console.log(data);
+                  console.log("Checking UserAccessToken authorization url fetch3", data);
                   let at = data['access_token'];
                   var id_token = data['id_token'];
                   setTaAccessToken(at);
                   setIdToken(id_token);
-                  console.log('in events', at);
+                  console.log('in events UpdateAccessToken Home', data);
                   let url = BASE_URL + 'UpdateAccessToken/';
                   axios
                     .post(url + ta_id, {
@@ -1011,15 +1016,18 @@ export default function Home(props) {
                   console.log(err);
                 });
             } else {
+              console.log("Checking UserAccessToken access token is = ", old_at)
               setTaAccessToken(old_at);
             }
           })
           .catch((err) => {
+            console.log("Checking UserAccessToken catch error1 ", err)
             console.log(err);
           });
         console.log('in events', refreshToken);
       })
       .catch((error) => {
+        console.log("Checking UserAccessToken catch error2 ", error)
         console.log('Error in events' + error);
       });
   };
