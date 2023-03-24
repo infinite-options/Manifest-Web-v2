@@ -76,22 +76,22 @@ export function Admin() {
   const classes = useStyles();
   const loginContext = useContext(LoginContext);
 
-  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
 
-  useEffect(() => {
-    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-      console.log(CLIENT_ID, CLIENT_SECRET);
-    } else {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-      console.log(CLIENT_ID, CLIENT_SECRET);
-    }
-  });
+  // useEffect(() => {
+  //   if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+  //     console.log('base_url', BASE_URL.substring(8, 18));
+  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+  //     console.log(CLIENT_ID, CLIENT_SECRET);
+  //   } else {
+  //     console.log('base_url', BASE_URL.substring(8, 18));
+  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+  //     console.log(CLIENT_ID, CLIENT_SECRET);
+  //   }
+  // });
 
   const listOfUsers = loginContext.loginState.usersOfTA;
   var selectedTA = loginContext.loginState.ta.id;
@@ -1926,33 +1926,33 @@ export function Admin() {
 
     console.log('auth_code', auth_code);
 
-    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+    // if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+    //   console.log('base_url', BASE_URL.substring(8, 18));
+    //   CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+    //   CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
 
-      console.log(CLIENT_ID, CLIENT_SECRET);
-    } else {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+    //   console.log(CLIENT_ID, CLIENT_SECRET);
+    // } else {
+    //   console.log('base_url', BASE_URL.substring(8, 18));
+    //   CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+    //   CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
 
-      console.log(CLIENT_ID, CLIENT_SECRET);
-    }
-    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      redirecturi = 'https://manifestmy.space';
-    } else {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      redirecturi = 'https://manifestmy.life';
-    }
+    //   console.log(CLIENT_ID, CLIENT_SECRET);
+    // }
+    // if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+    //   console.log('base_url', BASE_URL.substring(8, 18));
+    //   redirecturi = 'https://manifestmy.space';
+    // } else {
+    //   console.log('base_url', BASE_URL.substring(8, 18));
+    //   redirecturi = 'https://manifestmy.life';
+    // }
 
     var details = {
       code: auth_code,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
-      // redirect_uri: redirecturi,
-      redirect_uri: 'http://localhost:3000',
+      redirect_uri: 'https://manifestmy.life',
+      // redirect_uri: 'http://localhost:3000',
       grant_type: 'authorization_code',
     };
 
@@ -2255,12 +2255,13 @@ export function Admin() {
                   <Col xs={3}>
                     <GoogleLogin
                       //clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
-                      clientId={
-                        BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
-                          ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
-                          : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
-                      }
+                      // clientId={
+                      //   BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
+                      //     ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
+                      //     : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
+                      // }
                       //clientId={ID}
+                      clientId={CLIENT_ID}
                       render={(renderProps) => (
                         <button
                           class="buttonadd"

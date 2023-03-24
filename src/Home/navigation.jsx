@@ -85,24 +85,25 @@ export function Navigation() {
   var curUserID = '';
   var curUserTZ = '';
 
-  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
   const [taImage, setTaImage] = useState('');
   const [userImage, setUserImage] = useState('');
   console.log(currentUser, curUserPic);
-  useEffect(() => {
-    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-      console.log(CLIENT_ID, CLIENT_SECRET);
-    } else {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-      console.log(CLIENT_ID, CLIENT_SECRET);
-    }
-  }, []);
+  
+  // useEffect(() => {
+  //   if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+  //     console.log('base_url', BASE_URL.substring(8, 18));
+  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+  //     console.log(CLIENT_ID, CLIENT_SECRET);
+  //   } else {
+  //     console.log('base_url', BASE_URL.substring(8, 18));
+  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+  //     console.log(CLIENT_ID, CLIENT_SECRET);
+  //   }
+  // }, []);
 
   
   useEffect(() => {
@@ -115,9 +116,10 @@ export function Navigation() {
       setTaImage( document.cookie
         .split('; ')
         .find((row) => row.startsWith('ta_pic='))
-        .split('=')[1])
-  }
-  }, []);
+        .split('=')[1]) 
+    }
+    console.log("hiiiiiiiiii", taImage.toString());
+  });
   // useEffect(() => {
   //   setUserImage(curUserPic);
   // }, [currentUser]);

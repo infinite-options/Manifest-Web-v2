@@ -94,21 +94,21 @@ export default function GooglePhotos(props) {
     // console.log('curUser', userEmail);
   }
 
-  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
-  useEffect(() => {
-    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-      // console.log('base_url', BASE_URL.substring(8, 18));
-      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-      // console.log(CLIENT_ID, CLIENT_SECRET);
-    } else {
-      // console.log('base_url', BASE_URL.substring(8, 18));
-      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-      // console.log(CLIENT_ID, CLIENT_SECRET);
-    }
-  });
+  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+  // useEffect(() => {
+  //   if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+  //     // console.log('base_url', BASE_URL.substring(8, 18));
+  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+  //     // console.log(CLIENT_ID, CLIENT_SECRET);
+  //   } else {
+  //     // console.log('base_url', BASE_URL.substring(8, 18));
+  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+  //     // console.log(CLIENT_ID, CLIENT_SECRET);
+  //   }
+  // });
   // console.log(CLIENT_ID, CLIENT_SECRET);
 
   const [id, setID] = useState([]);

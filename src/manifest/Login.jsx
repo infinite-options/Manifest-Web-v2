@@ -153,8 +153,8 @@ export default function Login() {
   const classes = useStyles();
   const history = useHistory();
 
-  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -171,19 +171,19 @@ export default function Login() {
     password: '',
     showPassword: false,
   });
-  useEffect(() => {
-    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-      console.log(CLIENT_ID, CLIENT_SECRET);
-    } else {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-      console.log(CLIENT_ID, CLIENT_SECRET);
-    }
-  }, [loginContext.loginState.reload]);
+  // useEffect(() => {
+  //   if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+  //     console.log('base_url', BASE_URL.substring(8, 18));
+  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+  //     console.log(CLIENT_ID, CLIENT_SECRET);
+  //   } else {
+  //     console.log('base_url', BASE_URL.substring(8, 18));
+  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+  //     console.log(CLIENT_ID, CLIENT_SECRET);
+  //   }
+  // }, [loginContext.loginState.reload]);
   let uid = window.location.href.split('=')[1];
   console.log(uid);
 
@@ -368,7 +368,6 @@ export default function Login() {
           });
         console.log('in events', refreshToken, accessToken);
       });
-
       // _socialLoginAttempt(email, accessToken, socialId, 'GOOGLE');
     }
   };

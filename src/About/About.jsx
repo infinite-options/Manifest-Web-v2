@@ -1012,20 +1012,18 @@ export default function AboutModal(props) {
       people_name: taObject.name,
       people_relationship: taObject.relationship,
       people_important: 'TRUE',
-      people_pic: taPhoto,
+      // people_pic: taPhoto,
       //photo_url: userPhoto,,
       photo_url: '',
       ta_time_zone: taObject.time_zone,
       people_email: taObject.email,
       people_employer: taObject.employer,
-      people_phone_number: taObject.phone_number.replace(/\D/g, ''),
+      people_phone_number: taObject.phone_number!= undefined ? taObject.phone_number.replace(/\D/g, '') : '',
     };
     console.log('addPerson.body = ', body);
-    if (typeof body.people_pic === 'string') {
-      body.photo_url = body.people_pic;
-      body.people_pic = '';
-    } else {
-      body.photo_url = '';
+    if (typeof taPhoto === 'string') {
+      body.photo_url = taPhoto;
+      // body.people_pic = '';
     }
 
     let formData = new FormData();

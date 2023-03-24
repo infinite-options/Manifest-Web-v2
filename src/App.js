@@ -35,16 +35,17 @@ export default function App() {
   console.log('base_url', BASE_URL);
   useEffect(() => {
     const favicon = getFaviconEl();
-    console.log('base_url', favicon.href);
-    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      favicon.href = 'favicon.ico';
-      console.log('base_url', favicon.href);
-    } else {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      favicon.href = 'favicon-life.ico';
-      console.log('base_url', favicon.href);
-    }
+    favicon.href = 'favicon-life.ico';
+    // console.log('base_url', favicon.href);
+    // if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+    //   console.log('base_url', BASE_URL.substring(8, 18));
+    //   favicon.href = 'favicon.ico';
+    //   console.log('base_url', favicon.href);
+    // } else {
+    //   console.log('base_url', BASE_URL.substring(8, 18));
+    //   favicon.href = 'favicon-life.ico';
+    //   console.log('base_url', favicon.href);
+    // }
   }, []);
 
   return (

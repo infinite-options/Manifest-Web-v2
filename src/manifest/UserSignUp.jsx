@@ -22,8 +22,10 @@ import LoginContext from 'LoginContext';
 import Footer from './Footer';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
-let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+let redirecturi = 'https://manifestmy.life';
+// let redirectUri="http://localhost:3000"
 
 /* Custom Hook to make styles */
 const useStyles = makeStyles({
@@ -169,20 +171,20 @@ export default function UserSignUp() {
   const [accessExpiresIn, setaccessExpiresIn] = useState('');
   const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
   const [alreadyExists, setAlreadyExists] = useState(false);
-  let redirecturi = 'https://manifestmy.space';
-  useEffect(() => {
-    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-      console.log(CLIENT_ID, CLIENT_SECRET);
-    } else {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-      console.log(CLIENT_ID, CLIENT_SECRET);
-    }
-  }, [loginContext.loginState.reload]);
+  
+  // useEffect(() => {
+  //   if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+  //     console.log('base_url', BASE_URL.substring(8, 18));
+  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+  //     console.log(CLIENT_ID, CLIENT_SECRET);
+  //   } else {
+  //     console.log('base_url', BASE_URL.substring(8, 18));
+  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+  //     console.log(CLIENT_ID, CLIENT_SECRET);
+  //   }
+  // }, [loginContext.loginState.reload]);
 
   const responseGoogle = (response) => {
     console.log('response', response);
@@ -190,26 +192,26 @@ export default function UserSignUp() {
     let auth_code = response.code;
     let authorization_url = 'https://accounts.google.com/o/oauth2/token';
 
-    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+    // if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+    //   console.log('base_url', BASE_URL.substring(8, 18));
+    //   CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+    //   CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
 
-      console.log(CLIENT_ID, CLIENT_SECRET);
-    } else {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+    //   console.log(CLIENT_ID, CLIENT_SECRET);
+    // } else {
+    //   console.log('base_url', BASE_URL.substring(8, 18));
+    //   CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+    //   CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
 
-      console.log(CLIENT_ID, CLIENT_SECRET);
-    }
-    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      redirecturi = 'https://manifestmy.space';
-    } else {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      redirecturi = 'https://manifestmy.life';
-    }
+    //   console.log(CLIENT_ID, CLIENT_SECRET);
+    // }
+    // if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+    //   console.log('base_url', BASE_URL.substring(8, 18));
+    //   redirecturi = 'https://manifestmy.space';
+    // } else {
+    //   console.log('base_url', BASE_URL.substring(8, 18));
+    //   redirecturi = 'https://manifestmy.life';
+    // }
 
     console.log('auth_code', auth_code);
     var details = {
@@ -706,12 +708,12 @@ export default function UserSignUp() {
                     <Button>
                       <GoogleLogin
                         //clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-                        //clientId={CLIENT_ID}
-                        clientId={
-                          BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
-                            ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
-                            : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
-                        }
+                        clientId={CLIENT_ID}
+                        // clientId={
+                        //   BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
+                        //     ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
+                        //     : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
+                        // }
                         accessType="offline"
                         prompt="consent"
                         responseType="code"
@@ -720,13 +722,13 @@ export default function UserSignUp() {
                         isSignedIn={false}
                         disable={true}
                         cookiePolicy={'single_host_origin'}
-                        redirectUri={
-                          BASE_URL.substring(8, 18) == '3s3sftsr90'
-                            ? 'https://manifestmy.space'
-                            : 'https://manifestmy.life'
-                        }
+                        // redirectUri={
+                        //   BASE_URL.substring(8, 18) == '3s3sftsr90'
+                        //     ? 'https://manifestmy.space'
+                        //     : 'https://manifestmy.life'
+                        // }
+                        redirectUri={redirecturi}
                         scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
-                        // redirectUri="http://localhost:3000"
                         onSuccess={responseGoogle}
                         onFailure={responseGoogle}
                         render={(renderProps) => (

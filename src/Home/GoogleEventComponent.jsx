@@ -969,16 +969,16 @@ export default function GoogleEventComponent(props) {
       ...editingEventContext.editingEvent,
       editing: true,
     });
-    let organizer = 'calendar@manifestmy.space';
-    if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      organizer = 'calendar@manifestmy.space';
-      console.log(organizer);
-    } else {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      organizer = 'calendar@manifestmy.life';
-      console.log(organizer);
-    }
+    let organizer = 'calendar@manifestmy.life';
+    // if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
+    //   console.log('base_url', BASE_URL.substring(8, 18));
+    //   organizer = 'calendar@manifestmy.space';
+    //   console.log(organizer);
+    // } else {
+    //   console.log('base_url', BASE_URL.substring(8, 18));
+    //   organizer = 'calendar@manifestmy.life';
+    //   console.log(organizer);
+    // }
 
     var event = {
       summary,

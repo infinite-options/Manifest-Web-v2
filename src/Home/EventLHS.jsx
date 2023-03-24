@@ -46,8 +46,8 @@ export default function EventLHS(props) {
   console.log('curdate today firebase props ', props.editEvent);
   console.log('curdate today firebase props ', document.cookie);
 
-  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
   const history = useHistory();
   const inRange = [];
   const loginContext = useContext(LoginContext);
@@ -63,19 +63,19 @@ export default function EventLHS(props) {
   //   } else {
   //     currentUser = props.theCurrentUserID;
   //   }
-  useEffect(() => {
-    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-      console.log(CLIENT_ID, CLIENT_SECRET);
-    } else {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-      console.log(CLIENT_ID, CLIENT_SECRET);
-    }
-  }, [loginContext.loginState.reload]);
+  // useEffect(() => {
+  //   if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+  //     console.log('base_url', BASE_URL.substring(8, 18));
+  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+  //     console.log(CLIENT_ID, CLIENT_SECRET);
+  //   } else {
+  //     console.log('base_url', BASE_URL.substring(8, 18));
+  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+  //     console.log(CLIENT_ID, CLIENT_SECRET);
+  //   }
+  // }, [loginContext.loginState.reload]);
   const [listOfBlocks, setlistOfBlocks] = useState([]);
   const [recList, setRecList] = useState({});
   const [historyGot, setHG] = useState([]);

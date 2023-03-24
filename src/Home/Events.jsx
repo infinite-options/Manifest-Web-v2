@@ -45,8 +45,8 @@ const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
 export default function Events(props) {
-  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
   console.log('In events');
   const loginContext = useContext(LoginContext);
   var selectedUser = loginContext.loginState.curUser;
@@ -207,19 +207,19 @@ export default function Events(props) {
     getUserOfTA();
   }, [userID, loginContext.loginState.reload]);
 
-  useEffect(() => {
-    if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-      console.log(CLIENT_ID, CLIENT_SECRET);
-    } else {
-      console.log('base_url', BASE_URL.substring(8, 18));
-      CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-      CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-      console.log(CLIENT_ID, CLIENT_SECRET);
-    }
-  }, [loginContext.loginState.reload]);
+  // useEffect(() => {
+  //   if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+  //     console.log('base_url', BASE_URL.substring(8, 18));
+  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+  //     console.log(CLIENT_ID, CLIENT_SECRET);
+  //   } else {
+  //     console.log('base_url', BASE_URL.substring(8, 18));
+  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+  //     console.log(CLIENT_ID, CLIENT_SECRET);
+  //   }
+  // }, [loginContext.loginState.reload]);
   // }
   /*----------------------------Use states to define variables----------------------------*/
 
@@ -1220,18 +1220,18 @@ export default function Events(props) {
               console.log('in events if');
               let authorization_url =
                 'https://accounts.google.com/o/oauth2/token';
-              if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-                console.log('base_url', BASE_URL.substring(8, 18));
-                CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-                CLIENT_SECRET =
-                  process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-                console.log(CLIENT_ID, CLIENT_SECRET);
-              } else {
-                console.log('base_url', BASE_URL.substring(8, 18));
-                CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-                CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-                console.log(CLIENT_ID, CLIENT_SECRET);
-              }
+              // if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+              //   console.log('base_url', BASE_URL.substring(8, 18));
+              //   CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+              //   CLIENT_SECRET =
+              //     process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+              //   console.log(CLIENT_ID, CLIENT_SECRET);
+              // } else {
+              //   console.log('base_url', BASE_URL.substring(8, 18));
+              //   CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+              //   CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+              //   console.log(CLIENT_ID, CLIENT_SECRET);
+              // }
               var details = {
                 refresh_token: refreshToken,
                 client_id: CLIENT_ID,
@@ -2321,19 +2321,19 @@ export default function Events(props) {
                 console.log('in events if');
                 let authorization_url =
                   'https://accounts.google.com/o/oauth2/token';
-                if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-                  console.log('base_url', BASE_URL.substring(8, 18));
-                  CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-                  CLIENT_SECRET =
-                    process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-                  console.log(CLIENT_ID, CLIENT_SECRET);
-                } else {
-                  console.log('base_url', BASE_URL.substring(8, 18));
-                  CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-                  CLIENT_SECRET =
-                    process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-                  console.log(CLIENT_ID, CLIENT_SECRET);
-                }
+                // if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
+                //   console.log('base_url', BASE_URL.substring(8, 18));
+                //   CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+                //   CLIENT_SECRET =
+                //     process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+                //   console.log(CLIENT_ID, CLIENT_SECRET);
+                // } else {
+                //   console.log('base_url', BASE_URL.substring(8, 18));
+                //   CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
+                //   CLIENT_SECRET =
+                //     process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+                //   console.log(CLIENT_ID, CLIENT_SECRET);
+                // }
                 var details = {
                   refresh_token: refreshToken,
                   client_id: CLIENT_ID,
