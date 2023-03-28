@@ -310,7 +310,6 @@ export default function Login() {
                       setAccessToken(at);
                       setIdToken(id_token);
                       console.log('in events UpdateAccessToken Login1', at);
-                      ta_id = document.cookie
                       let url = BASE_URL + `UpdateAccessToken/${ta_id}`;
                       axios
                         .post(url, {
