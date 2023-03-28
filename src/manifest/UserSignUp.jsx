@@ -671,13 +671,8 @@ export default function UserSignUp() {
                   <Col xs={8} className={classes.loginbuttons}>
                     <Button>
                       <GoogleLogin
-                        //clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
                         clientId={CLIENT_ID}
-                        // clientId={
-                        //   BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
-                        //     ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
-                        //     : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
-                        // }
+                       
                         accessType="offline"
                         prompt="consent"
                         responseType="code"
@@ -686,11 +681,7 @@ export default function UserSignUp() {
                         isSignedIn={false}
                         disable={true}
                         cookiePolicy={'single_host_origin'}
-                        // redirectUri={
-                        //   BASE_URL.substring(8, 18) == '3s3sftsr90'
-                        //     ? 'https://manifestmy.space'
-                        //     : 'https://manifestmy.life'
-                        // }
+                       
                         redirectUri={redirecturi}
                         scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
                         onSuccess={responseGoogle}

@@ -175,8 +175,8 @@ export default function Login() {
   let uid = window.location.href.split('=')[1];
   console.log(uid);
 
-  // let redirecturi = 'https://manifestmy.life';
-  let redirecturi = 'http://localhost:3000';
+  let redirecturi = 'https://manifestmy.life';
+  // let redirecturi = 'http://localhost:3000';
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
