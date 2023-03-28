@@ -167,69 +167,16 @@ export default function Login() {
   const [socialId, setSocialId] = useState('');
   const [taID, setTaID] = useState('');
   const [emailLogin, setEmailLogin] = useState(false);
+  const [signUpRequired, setSignUpRequired] = useState(false);
   const [passVisible, setPassvisble] = React.useState({
     password: '',
     showPassword: false,
   });
-  // useEffect(() => {
-  //   if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-  //     console.log('base_url', BASE_URL.substring(8, 18));
-  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-  //     console.log(CLIENT_ID, CLIENT_SECRET);
-  //   } else {
-  //     console.log('base_url', BASE_URL.substring(8, 18));
-  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-  //     console.log(CLIENT_ID, CLIENT_SECRET);
-  //   }
-  // }, [loginContext.loginState.reload]);
   let uid = window.location.href.split('=')[1];
   console.log(uid);
 
-  // useEffect(() => {
-  //   axios
-  //     .get(BASE_URL + 'loginSocialTA/' + uid)
-  //     .then((res) => {
-  //       console.log('loginSocialTA in events', res.data.result);
-  //       if (res.data.result !== false) {
-  //         // setTaID(res.data.result[0]);
-  //         document.cookie = 'ta_uid=' + res.data.result[0];
-  //         document.cookie = 'ta_email=' + uid;
-  //         document.cookie = 'patient_name=Loading';
-  //         setAccessToken(res.data.result[1]);
-  //         setLoggedIn(true);
-  //         loginContext.setLoginState({
-  //           ...loginContext.loginState,
-  //           reload: false,
-  //           loggedIn: true,
-  //           ta: {
-  //             ...loginContext.loginState.ta,
-  //             id: res.data.result,
-  //             email: uid.toString(),
-  //           },
-  //           usersOfTA: [],
-  //           curUser: '',
-  //           curUserTimeZone: '',
-  //           curUserEmail: '',
-  //           curUserName: '',
-  //         });
-  //         console.log('Login successful');
-  //         history.push({
-  //           pathname: '/home',
-  //           state: uid,
-  //         });
-  //         // Successful log in, Try to update tokens, then continue to next page based on role
-  //       } else {
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       if (err.response) {
-  //         console.log(err.response);
-  //       }
-  //       console.log(err);
-  //     });
-  // }, [loginContext.loginState.reload]);
+  // let redirecturi = 'https://manifestmy.life';
+  let redirecturi = 'http://localhost:3000';
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -242,7 +189,7 @@ export default function Login() {
     setPassvisble({ ...passVisible, showPassword: !passVisible.showPassword });
   };
 
-  const responseGoogle = (response) => {
+  const responseGoogleLogin = (response) => {
     console.log("google login response", response);
     if (response.profileObj) {
       let email = response.profileObj.email;
@@ -256,129 +203,216 @@ export default function Login() {
           response.data.result.ta_google_auth_token
         );
         console.log('in events', response);
-        setAccessToken(response.data.result.ta_google_auth_token);
-        let url =
-          'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
-        document.cookie = 'ta_uid=' + response.data.result.ta_unique_id;
-        document.cookie = 'ta_email=' + email;
-        document.cookie = 'patient_name=Loading';
-        document.cookie = 'ta_pic=' + response.data.result.ta_picture;
-        loginContext.setLoginState({
-          ...loginContext.loginState,
-          reload: false,
-          loggedIn: true,
-          ta: {
-            ...loginContext.loginState.ta,
-            id: response.data.result.ta_unique_id,
-            email: email.toString(),
-          },
-          usersOfTA: [],
-          curUser: '',
-          curUserTimeZone: '',
-          curUserEmail: '',
-          curUserName: '',
-        });
-        console.log('Login successful');
-        console.log(email);
-        history.push({
-          pathname: '/home',
-          state: email,
-        });
-        setTaID(response.data.result.ta_unique_id);
-        ta_id = response.data.result.ta_unique_id;
-        var old_at = response.data.result.ta_google_auth_token;
-        console.log('in events', old_at);
-        var refreshToken = response.data.result.ta_google_refresh_token;
 
-        let checkExp_url = url + old_at;
-        console.log('in events', checkExp_url);
-        fetch(
-          `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`,
-          {
-            method: 'GET',
-          }
-        )
-          .then((response) => {
-            console.log('in events', response);
-            if (response['status'] === 400) {
-              console.log('in events if');
-              let authorization_url =
-                'https://accounts.google.com/o/oauth2/token';
-
-              var details = {
-                refresh_token: refreshToken,
-                client_id: CLIENT_ID,
-                client_secret: CLIENT_SECRET,
-                grant_type: 'refresh_token',
-              };
-
-              var formBody = [];
-              for (var property in details) {
-                var encodedKey = encodeURIComponent(property);
-                var encodedValue = encodeURIComponent(details[property]);
-                formBody.push(encodedKey + '=' + encodedValue);
-              }
-              formBody = formBody.join('&');
-              console.log("Checking login formdata", formBody)
-              
-              fetch(authorization_url, {
-                method: 'POST',
-                headers: {
-                  'Content-Type':
-                    'application/x-www-form-urlencoded;charset=UTF-8',
-                },
-                body: formBody,
-              })
-                .then((response) => {
-                  console.log("Checking login authorization_url result", response)
-                  return response.json();
-                })
-                .then((responseData) => {
-                  console.log(responseData);
-                  return responseData;
-                })
-                .then((data) => {
-                  console.log(data);
-                  let at = data['access_token'];
-                  var id_token = data['id_token'];
-                  setAccessToken(at);
-                  setIdToken(id_token);
-                  console.log('in events UpdateAccessToken Login1', at);
-                  let url = BASE_URL + `UpdateAccessToken/${ta_id}`;
-                  axios
-                    .post(url, {
-                      ta_google_auth_token: at,
-                    })
-                    .then((response) => {})
-                    .catch((err) => {
-                      console.log(err);
-                    });
-                  return accessToken;
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-            } else {
-              setAccessToken(old_at);
-              console.log(old_at);
-            }
-          })
-          .catch((err) => {
-            console.log(err);
+        console.log("ta_google_auth_token = ", response.data.result.ta_google_auth_token === null)
+        console.log("ta_google_refresh_token = ", response.data.result.ta_google_refresh_token === null)
+        
+        if (response.data.result.ta_google_auth_token === null || response.data.result.ta_google_refresh_token === null) {
+          console.log("Auth token is null. Displaying SignUp");
+          setSignUpRequired(true);
+        }
+        else {
+          setAccessToken(response.data.result.ta_google_auth_token);
+          let url =
+            'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
+          document.cookie = 'ta_uid=' + response.data.result.ta_unique_id;
+          document.cookie = 'ta_email=' + email;
+          document.cookie = 'patient_name=Loading';
+          document.cookie = 'ta_pic=' + response.data.result.ta_picture;
+          loginContext.setLoginState({
+            ...loginContext.loginState,
+            reload: false,
+            loggedIn: true,
+            ta: {
+              ...loginContext.loginState.ta,
+              id: response.data.result.ta_unique_id,
+              email: email.toString(),
+            },
+            usersOfTA: [],
+            curUser: '',
+            curUserTimeZone: '',
+            curUserEmail: '',
+            curUserName: '',
           });
-        console.log('in events', refreshToken, accessToken);
+          console.log('Login successful');
+          console.log(email);
+          setTaID(response.data.result.ta_unique_id);
+          ta_id = response.data.result.ta_unique_id;
+          var old_at = response.data.result.ta_google_auth_token;
+          console.log('in events', old_at);
+          var refreshToken = response.data.result.ta_google_refresh_token;
+
+          let checkExp_url = url + old_at;
+          console.log('in events', checkExp_url);
+          fetch(
+            `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${old_at}`,
+            {
+              method: 'GET',
+            }
+          )
+            .then((response) => {
+              console.log('in events', response);
+              if (response['status'] === 400) {
+                console.log('in events if');
+                let authorization_url =
+                  'https://accounts.google.com/o/oauth2/token';
+
+                var details = {
+                  refresh_token: refreshToken,
+                  client_id: CLIENT_ID,
+                  client_secret: CLIENT_SECRET,
+                  grant_type: 'refresh_token',
+                };
+
+                var formBody = [];
+                for (var property in details) {
+                  var encodedKey = encodeURIComponent(property);
+                  var encodedValue = encodeURIComponent(details[property]);
+                  formBody.push(encodedKey + '=' + encodedValue);
+                }
+                formBody = formBody.join('&');
+                console.log("Checking login formdata", formBody)
+              
+                fetch(authorization_url, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type':
+                      'application/x-www-form-urlencoded;charset=UTF-8',
+                  },
+                  body: formBody,
+                })
+                  .then((response) => {
+                    console.log("Displaying login token API response", response)
+                    return response.json();
+                  })
+                  .then((responseData) => {
+                    console.log("Displaying login token API responseData", responseData.error);
+                    if (responseData.error === 'invalid_grant' || responseData.error === 'unauthorized_client') {
+                      console.log("Error : invalid_grant. Displaying SignUp");
+                      setSignUpRequired(true);
+                      return;
+                    }
+                    else {
+                      console.log("Displaying else block", responseData);
+                      return responseData;
+                    }
+                  })
+                  .then((data) => {
+                    console.log("Displaying login token API data", data.error);
+                    if (data.error === 'invalid_grant' || data.error === 'unauthorized_client') {
+                      console.log("Error : invalid_grant. Displaying SignUp");
+                      setSignUpRequired(true);
+                      return;
+                    }
+                    else {
+                      let at = data['access_token'];
+                      var id_token = data['id_token'];
+                      setAccessToken(at);
+                      setIdToken(id_token);
+                      console.log('in events UpdateAccessToken Login1', at);
+                      ta_id = document.cookie
+                      let url = BASE_URL + `UpdateAccessToken/${ta_id}`;
+                      axios
+                        .post(url, {
+                          ta_google_auth_token: at,
+                        })
+                        .then((response) => { })
+                        .catch((err) => {
+                          console.log(err);
+                        });
+                      history.push({
+                        pathname: '/home',
+                        state: email,
+                      });
+                      return accessToken;
+                    }
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              } else {
+                setAccessToken(old_at);
+                console.log(old_at);
+                history.push({
+                  pathname: '/home',
+                  state: email,
+                });
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+          console.log('in events', refreshToken, accessToken);
+        }
       });
       // _socialLoginAttempt(email, accessToken, socialId, 'GOOGLE');
     }
   };
 
+  const responseGoogleSignUp = (response) => {
+    console.log('responseGoogleSignUp', response);
+
+    let auth_code = response.code;
+    let authorization_url = 'https://accounts.google.com/o/oauth2/token';
+
+    console.log('responseGoogleSignUp auth_code', auth_code);
+    var details = {
+      code: auth_code,
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      redirect_uri: redirecturi,
+      grant_type: 'authorization_code',
+    };
+
+    var formBody = [];
+    for (var property in details) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(details[property]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    formBody = formBody.join('&');
+
+    fetch(authorization_url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+      body: formBody,
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        return responseData;
+      })
+      .then((data) => {
+        console.log("Displaying access token data", data);
+        let at = data['access_token'];
+        let rt = data['refresh_token'];
+        let ax = data['expires_in'];
+        let url = BASE_URL + `UpdateAccessAndRefreshToken/${taID}`;
+        axios
+          .post(url, {
+            ta_google_auth_token: at,
+            ta_google_refresh_token: rt,
+          })
+          .then((response) => { })
+          .catch((err) => {
+            console.log(err);
+          });
+        history.push({
+          pathname: '/home',
+          state: email,
+        });
+
+      });
+  }
   const _socialLoginAttempt = (email, at, socialId, platform) => {
     axios
       .get(BASE_URL + 'loginSocialTA/' + email)
       .then((res) => {
         console.log('loginSocialTA in events', res.data.result);
         if (res.data.result !== false) {
-          // setTaID(res.data.result[0]);
           document.cookie = 'ta_uid=' + res.data.result[0];
           document.cookie = 'ta_email=' + email;
           document.cookie = 'patient_name=Loading';
@@ -657,16 +691,78 @@ export default function Login() {
     history.push('/');
   };
 
-  if (
-    document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
-  ) {
-    console.log('we are here');
-    console.log(document.cookie);
-    //console.log(ta_uid);
-    history.push('/home');
-  } else {
-    //document.cookie = 'ta_uid=' + taID;
+  function GoogleSignUpComponent() {
+    console.log("Displaying GoogleSignUp");
+    return (
+      <Button>
+        <GoogleLogin
+          clientId={CLIENT_ID}
+          accessType="offline"
+          prompt="consent"
+          responseType="code"
+          buttonText="Log In"
+          ux_mode="redirect"
+          isSignedIn={false}
+          disable={true}
+          cookiePolicy={'single_host_origin'}
+          scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
+          redirectUri={redirecturi}
+          onSuccess={responseGoogleSignUp}
+          onFailure={responseGoogleSignUp}
+          // render={(renderProps) => (
+          //   <img
+          //     src={Google}
+          //     onClick={renderProps.onClick}
+          //     disabled={renderProps.disabled}
+          //     alt={''}
+          //     style={{
+          //       minWidth: '70%',
+          //       maxWidth: '70%',
+          //       padding: '0',
+          //       margin: 0,
+          //     }}
+          //   ></img>
+          // )}
+        >
+          <span> Sign up with Google </span>
+          </GoogleLogin>
+      </Button>
+    )
   }
+
+  function GoogleLoginComponent() {
+    console.log("Displaying GoogleLogin");
+    return (
+      <Button>
+        <GoogleLogin
+          clientId={CLIENT_ID}
+          // render={(renderProps) => (
+          //   <img
+          //     src={Google}
+          //     onClick={renderProps.onClick}
+          //     disabled={renderProps.disabled}
+          //     alt={''}
+          //     style={{
+          //       minWidth: '70%',
+          //       maxWidth: '70%',
+          //       padding: '0',
+          //       margin: 0,
+          //     }}
+          //   ></img>
+          // )}
+          
+          buttonText="Log In"
+          onSuccess={responseGoogleLogin}
+          onFailure={responseGoogleLogin}
+          isSignedIn={false}
+          disable={false}
+          cookiePolicy={'single_host_origin'}>
+          <span> Login with Google</span>
+          </GoogleLogin>
+      </Button>
+    )
+  }
+
   return (
     <div
       style={{
@@ -726,7 +822,7 @@ export default function Login() {
                 <Row xs={12} className={classes.buttonLayout}>
                   <Col></Col>
                   <Col xs={8} className={classes.loginbuttons}>
-                    <Button>
+                    {/* <Button>
                       <GoogleLogin
                         clientId={CLIENT_ID}
                         render={(renderProps) => (
@@ -744,13 +840,14 @@ export default function Login() {
                           ></img>
                         )}
                         buttonText="Log In"
-                        onSuccess={responseGoogle}
-                        onFailure={responseGoogle}
+                        onSuccess={responseGoogleLogin}
+                        onFailure={responseGoogleLogin}
                         isSignedIn={false}
                         disable={false}
                         cookiePolicy={'single_host_origin'}
                       />
-                    </Button>
+                    </Button> */}
+                    {signUpRequired ? GoogleSignUpComponent() : GoogleLoginComponent()}
                   </Col>
                   <Col></Col>
                 </Row>

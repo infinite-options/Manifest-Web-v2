@@ -109,7 +109,7 @@ function SocialLogin(props) {
     //   redirecturi = 'https://manifestmy.life';
     // }
 
-    console.log('auth_code', auth_code);
+    console.log('auth_code ***', auth_code);
     var details = {
       code: auth_code,
       client_id: CLIENT_ID,
