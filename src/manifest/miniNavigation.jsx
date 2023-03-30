@@ -51,56 +51,7 @@ export default function MiniNavigation(props) {
   const classes = useStyles();
   const [ activeButton, setActiveButton ] = useState(props.activeButtonSelection);
 
-  // function homeNavigation() {
-  //   history.push('/home');
-  // }
-
-  // function aboutNavigation() {
-  //   history.push('/about');
-  // }
-
-  // function historyNavigation() {
-  //   history.push('/history');
-  // }
-
-  // return document.cookie
-  //   .split(';')
-  //   .some((item) => item.trim().startsWith('ta_uid=')) ? (
-  //   <div
-  //     className={classes.buttonContainer}
-  //     style={{ width: '100%', paddingTop: '0.5rem' }}
-  //   >
-  //     <Button
-  //       id="calendar"
-  //       className={activeButton === this.id ? `${classes.activeButton}` : classes.buttonSelection}
-  //       onClick={homeNavigation}
-  //     >
-  //       Calendar
-  //     </Button>
-  //     <Button
-  //       id="history"
-  //       className={activeButton === this.id ? `${classes.activeButton}` : classes.buttonSelection}
-  //       onClick={historyNavigation}
-  //     >
-  //       History
-  //     </Button>
-  //     <Button
-  //       id="about"
-  //       className={activeButton === this.id ? `${classes.activeButton}` : classes.buttonSelection}
-  //       onClick={aboutNavigation}
-  //     >
-  //       About
-  //     </Button>
-
-  //     <div style={{ width: '25%' }}></div>
-  //   </div>
-  // ) : (
-  //   ''
-  // );
-
-
   const clickedButtonHandler = (name) => {
-    // setActiveButton(name);
     if (name == "calendar") history.push('/home');
     else history.push('/' + name);
     setActiveButton(name);

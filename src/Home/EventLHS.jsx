@@ -54,28 +54,8 @@ export default function EventLHS(props) {
   const currentUser = props.theCurrentUserID;
   //var currentUser = ''
 
-  // if (
-  //     document.cookie
-  //       .split(";")
-  //       .some(item => item.trim().startsWith("patient_uid="))
-  //   ) {
-  //     currentUser = document.cookie.split('; ').find(row => row.startsWith('patient_uid=')).split('=')[1]
-  //   } else {
-  //     currentUser = props.theCurrentUserID;
-  //   }
-  // useEffect(() => {
-  //   if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-  //     console.log('base_url', BASE_URL.substring(8, 18));
-  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-  //     console.log(CLIENT_ID, CLIENT_SECRET);
-  //   } else {
-  //     console.log('base_url', BASE_URL.substring(8, 18));
-  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-  //     console.log(CLIENT_ID, CLIENT_SECRET);
-  //   }
-  // }, [loginContext.loginState.reload]);
+ 
+  
   const [listOfBlocks, setlistOfBlocks] = useState([]);
   const [recList, setRecList] = useState({});
   const [historyGot, setHG] = useState([]);

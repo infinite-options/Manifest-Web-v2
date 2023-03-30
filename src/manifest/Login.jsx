@@ -203,7 +203,7 @@ export default function Login() {
           response.data.result.ta_google_auth_token
         );
         console.log('in events', response);
-
+        setTaID(response.data.result.ta_unique_id);
         console.log("ta_google_auth_token = ", response.data.result.ta_google_auth_token === null)
         console.log("ta_google_refresh_token = ", response.data.result.ta_google_refresh_token === null)
         
@@ -236,7 +236,7 @@ export default function Login() {
           });
           console.log('Login successful');
           console.log(email);
-          setTaID(response.data.result.ta_unique_id);
+          // setTaID(response.data.result.ta_unique_id);
           ta_id = response.data.result.ta_unique_id;
           var old_at = response.data.result.ta_google_auth_token;
           console.log('in events', old_at);

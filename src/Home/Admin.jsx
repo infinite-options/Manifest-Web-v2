@@ -79,20 +79,6 @@ export function Admin() {
   let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
   let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
 
-  // useEffect(() => {
-  //   if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-  //     console.log('base_url', BASE_URL.substring(8, 18));
-  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-  //     console.log(CLIENT_ID, CLIENT_SECRET);
-  //   } else {
-  //     console.log('base_url', BASE_URL.substring(8, 18));
-  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-  //     console.log(CLIENT_ID, CLIENT_SECRET);
-  //   }
-  // });
-
   const listOfUsers = loginContext.loginState.usersOfTA;
   var selectedTA = loginContext.loginState.ta.id;
   // const currentUser = loginContext.loginState.curUser;
@@ -197,6 +183,10 @@ export function Admin() {
   const [showAdvisors, setShowAdvisors] = useState(false);
   const [listPeople, setListPeople] = useState([]);
   const [listTaUser, setListTaUser] = useState([]);
+  const [currentTaID, setCurrentTaID] = useState('');
+  const [currentTaTimeZone, setCurrentTaTimeZone] = useState('');
+  const [currentTaPhoto, setCurrentTaPhoto] = useState('');
+
   // const [advisorList, setAdvisorList] = useState([]);
   let redirecturi = 'https://manifestmy.space';
 
@@ -235,6 +225,9 @@ export function Admin() {
         setListTaUser(response.data.result[0]);
         setTaFirstName(response.data.result[0].ta_first_name);
         setTaLastName(response.data.result[0].ta_last_name);
+        setCurrentTaID(response.data.result[0].ta_unique_id);
+        setCurrentTaTimeZone(response.data.result[0].ta_time_zone);
+        setCurrentTaPhoto(response.data.result[0].ta_picture);
         console.log('in TAProfile ta first name', response.data.result[0].ta_first_name);
       })
       .catch((error) => {
@@ -332,20 +325,25 @@ export function Admin() {
 
   const UpdatePerson = async(event)=> {
     var phone_number;
+    var employer;
     if (listPeople[0] && listPeople[0].phone_number === 'undefined') {
       phone_number = '';
+      employer = ''
     }
     else {
       phone_number = listPeople[0].phone_number;
+      employer = listPeople[0].employer;
     }
     let body = {
       // user_id: listPeople[0].user_uid,
-      ta_unique_id:listTaUser[0].ta_unique_id,
+      // ta_unique_id: listTaUser[0].ta_unique_id,
+      ta_unique_id: currentTaID,
       first_name: taFirstName,
       last_name: taLastName,
       phone_number: listPeople[0].phone_number,
       employer: listPeople[0].employer,
-      ta_time_zone: listTaUser[0].ta_time_zone,
+      // ta_time_zone: listTaUser[0].ta_time_zone,
+      ta_time_zone:currentTaTimeZone,
       ta_photo_url: taPhoto,
       ta_picture: taImage
     };
@@ -360,6 +358,21 @@ export function Admin() {
     Object.entries(body).forEach((entry) => {
         formData.append(entry[0], entry[1]);
     });
+    // Object.entries(body).forEach((entry) => {
+    //   if (entry[0] === 'ta_picture') {
+    //     if (entry[1].name !== undefined) {
+    //       if (typeof entry[1].name == 'string') {
+    //         formData.append(entry[0], entry[1]);
+    //       }
+    //     }
+    //   } else if (entry[1] instanceof Object) {
+    //     entry[1] = JSON.stringify(entry[1]);
+    //     formData.append(entry[0], entry[1]);
+    //   } else {
+    //     formData.append(entry[0], entry[1]);
+    //   }
+    // });
+    // formData.append('ta_picture', taImage);
     console.log("updateTA ta_picture in formdata = ", formData.getAll("ta_picture"));
     
       try {
@@ -370,8 +383,8 @@ export function Admin() {
           headers: { "Content-Type": "multipart/form-data" },
         });
         console.log("updateTA RESPONSE : ", response.data);
-        toggleConfirmed(true);
-        toggleCalled(!called);
+        // toggleConfirmed(true);
+        // toggleCalled(!called);
       } catch(error) {
         console.log(error)
       }
@@ -2254,13 +2267,6 @@ export function Admin() {
                   <Col> Your Users ({listOfUsers.length})</Col>
                   <Col xs={3}>
                     <GoogleLogin
-                      //clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
-                      // clientId={
-                      //   BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
-                      //     ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
-                      //     : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
-                      // }
-                      //clientId={ID}
                       clientId={CLIENT_ID}
                       render={(renderProps) => (
                         <button
@@ -2417,7 +2423,7 @@ export function Admin() {
                       objectFit: 'cover',
                       marginTop: '15px',
                     }}
-                    src={taPhoto}
+                    src={currentTaPhoto}
                     alt="TA Profile"
                   />
                 )}

@@ -2008,97 +2008,7 @@ export default function AboutModal(props) {
                     alt="Profile"
                   />
                 )}
-
-                {/* )} */}
-              </Col>
-              {/* <Col style={{ float: 'right' }} xs={4}>
-                <img alt="icon" src={photo} style={{ width: '100%' }} />
-              </Col> */}
-              {/*  <Col style={{ color: '#000000' }}>
-                <h1
-                  style={{
-                    fontSize: '24px',
-                    font: 'SF-Compact-Text-Semibold',
-                  }}
-                >
-                  Change Image
-                </h1>
-                <div
-                  style={{
-                    fontSize: '16px',
-                    textDecoration: 'underline',
-                  }}
-                >
-                  User's library
-                </div>
-              </Col>
-              <Col>
-                {aboutMeObject.have_pic === false ? (
-                  <FontAwesomeIcon icon={faImage} size="6x" />
-                ) : aboutMeObject.pic === '' ? (
-                  // <img
-                  //   style={{
-                  //     display: 'block',
-                  //     marginLeft: 'auto',
-                  //     marginRight: 'auto',
-                  //     width: '100%',
-                  //     height: '70px',
-                  //     marginTop: '50px',
-                  //     marginBottom: '50px',
-                  //   }}
-                  //   src={this.state.aboutMeObject.pic}
-                  //   alt="Profile"
-                  // />
-                  <div
-                    style={{
-                      display: 'block',
-                      float: 'right',
-                      width: '5rem',
-                      height: '5rem',
-                      objectFit: 'fill',
-                      // width: '100px',
-                      // height: '100px',
-                      border: 'none',
-                      borderRadius: '10px',
-                      backgroundColor: '#000000',
-                      marginBottom: '15px',
-                    }}
-                  ></div>
-                ) : (
-                  <img
-                    style={{
-                      display: 'block',
-                      float: 'right',
-                      marginLeft: 'auto',
-                      marginRight: 'auto',
-                      width: '5rem',
-                      height: '5rem',
-                      objectFit: 'cover',
-                      marginBottom: '15px',
-                    }}
-                    src={aboutMeObject.pic}
-                    alt="Profile"
-                  />
-                )}
-              </Col>
-              <Col xs={8}>
-                <label
-                  style={{
-                    marginBottom: '15px',
-                    color: '#000000',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Upload A New Image
-                </label>
-                <input
-                  style={{ color: 'transparent' }}
-                  accept="image/*"
-                  type="file"
-                  onChange={handleFileSelected}
-                  id="ProfileImage"
-                />
-              </Col> */}
+                </Col>
             </Row>
             <br />
             <Row>
@@ -2116,7 +2026,6 @@ export default function AboutModal(props) {
                 <Form.Control
                   type="date"
                   value={aboutMeObject.birth_date}
-                  // selected={aboutMeObject.birth_date}
                   onChange={(date) => {
                     console.log(date.target.value);
                     setAboutMeObject({
@@ -2171,21 +2080,6 @@ export default function AboutModal(props) {
                     }));
                   }}
                 />
-                {/* <input
-            class= "form-control"
-            type="text"
-            placeholder="Enter phone number"
-            value={this.state.aboutMeObject.phone_number}
-            // value={this.state.aboutMeObject.phone_number}
-            // onChange={(e) => {
-            //   let temp = this.state.aboutMeObject
-            //   temp.phone_number = e
-            //   this.setState(
-            //     {
-            //       aboutMeObject: temp,
-            //     });
-            // }}
-            /> */}
               </Col>
             </Row>
           </Form.Group>
