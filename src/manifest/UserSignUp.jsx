@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { GoogleLogin } from 'react-google-login';
 import AppleLogin from 'react-apple-login';
 import { useHistory, Link } from 'react-router-dom';
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -13,13 +12,13 @@ import Events from '../images/Events.png';
 import Routines from '../images/Routines.png';
 import Goals from '../images/Goals.png';
 import Email from '../manifest/LoginAssets/Email.svg';
-import Google from '../manifest/LoginAssets/Google.svg';
 import Apple from '../manifest/LoginAssets/AppleSignUp.svg';
 import GooglePlayStore from '../manifest/LoginAssets/GooglePlayStore.png';
 import AppleAppStore from '../manifest/LoginAssets/AppleAppStore.png';
 import BackArrow from '../manifest/LoginAssets/Back_arrow.svg';
 import LoginContext from 'LoginContext';
 import Footer from './Footer';
+import GoogleSignUpUser from 'Google/GoogleSignUpUser';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
@@ -166,108 +165,12 @@ export default function UserSignUp() {
   const [newLName, setNewLName] = useState('');
   const [selectedTimezone, setSelectedTimezone] = useState({});
   const [socialId, setSocialId] = useState('');
-  const [refreshToken, setrefreshToken] = useState('');
+  const [refreshToken, setRefreshToken] = useState('');
   const [accessToken, setAccessToken] = useState('');
-  const [accessExpiresIn, setaccessExpiresIn] = useState('');
+  const [accessExpiresIn, setAccessExpiresIn] = useState('');
   const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
   const [alreadyExists, setAlreadyExists] = useState(false);
 
-  const responseGoogle = (response) => {
-    console.log('response', response);
-
-    let auth_code = response.code;
-    let authorization_url = 'https://accounts.google.com/o/oauth2/token';
-
-    console.log('auth_code', auth_code);
-    var details = {
-      code: auth_code,
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
-      redirect_uri: redirecturi,
-      grant_type: 'authorization_code',
-    };
-
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + '=' + encodedValue);
-    }
-    formBody = formBody.join('&');
-
-    fetch(authorization_url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-      },
-      body: formBody,
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((responseData) => {
-        console.log(responseData);
-        return responseData;
-      })
-      .then((data) => {
-        console.log(data);
-        let at = data['access_token'];
-        let rt = data['refresh_token'];
-        let ax = data['expires_in'];
-        setAccessToken(at);
-        setrefreshToken(rt);
-        setaccessExpiresIn(ax);
-        console.log('res', at, rt);
-
-        axios
-          .get(
-            'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' +
-              at
-          )
-          .then((response) => {
-            console.log(response.data);
-
-            let data = response.data;
-            //setUserInfo(data);
-            let e = data['email'];
-            let fn = data['given_name'];
-            let ln = data['family_name'];
-            let si = data['id'];
-
-            setNewEmail(e);
-            setNewFName(fn);
-            setNewLName(ln);
-            setSocialId(si);
-            axios.get(BASE_URL + 'GetUserEmailId/' + e).then((response) => {
-              console.log(response.data);
-              if (response.data.message === 'User ID doesnt exist') {
-                setSocialSignUpModalShow(!socialSignUpModalShow);
-              } else {
-                setAlreadyExists(!alreadyExists);
-              }
-            });
-          })
-          .catch((error) => {
-            console.log('its in landing page');
-            console.log(error);
-          });
-
-        // setSocialSignUpModalShow(!socialSignUpModalShow);
-
-        return (
-          accessToken,
-          refreshToken,
-          accessExpiresIn,
-          newEmail,
-          newFName,
-          newLName,
-          socialId
-        );
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
   const alreadyExistsModal = () => {
     const modalStyle = {
       position: 'absolute',
@@ -669,8 +572,8 @@ export default function UserSignUp() {
                 <Row xs={12} className={classes.buttonLayout}>
                   <Col></Col>
                   <Col xs={8} className={classes.loginbuttons}>
-                    <Button>
-                      <GoogleLogin
+                    {/*<Button>
+                       <GoogleLogin
                         clientId={CLIENT_ID}
                        
                         accessType="offline"
@@ -701,7 +604,29 @@ export default function UserSignUp() {
                           ></img>
                         )}
                       />
-                    </Button>
+                    </Button> */}
+                    <GoogleSignUpUser
+                      signupSuccessful={signupSuccessful}
+                      setSignupSuccessful={setSignupSuccessful}
+                      newFName={newFName}
+                      setNewFName={setNewFName}
+                      newLName={newLName}
+                      setNewLName={setNewLName}
+                      newEmail={newEmail}
+                      setNewEmail={setNewEmail}
+                      socialId={socialId}
+                      setSocialId={setSocialId}
+                      refreshToken={refreshToken}
+                      setRefreshToken={setRefreshToken}
+                      accessToken={accessToken}
+                      setAccessToken={setAccessToken}
+                      accessExpiresIn={accessExpiresIn}
+                      setAccessExpiresIn={setAccessExpiresIn}
+                      socialSignUpModalShow={socialSignUpModalShow}
+                      setSocialSignUpModalShow={setSocialSignUpModalShow}
+                      alreadyExists={alreadyExists}
+                      setAlreadyExists={setAlreadyExists}
+                    />
                   </Col>
                   <Col></Col>
                 </Row>

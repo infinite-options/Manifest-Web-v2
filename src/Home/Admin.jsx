@@ -23,6 +23,7 @@ import ModalBody from 'rsuite/lib/Modal/ModalBody';
 import './Admin_style.css';
 
 import MiniNavigation from '../manifest/miniNavigation';
+import GoogleSignUpUser from 'Google/GoogleSignUpUser';
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 const useStyles = makeStyles({
@@ -98,7 +99,7 @@ export function Admin() {
   // const currentUser = loginContext.loginState.curUser;
   // const curUserPic = loginContext.loginState.curUserPic;
   // const curUserName = loginContext.loginState.curUserName;
-  console.log("selectedTA is ", loginContext);
+  console.log('selectedTA is ', loginContext);
 
   var usrID = '';
   var tID = '';
@@ -138,9 +139,9 @@ export function Admin() {
       .find((row) => row.startsWith('patient_name='))
       .split('=')[1];
     taPic = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith('ta_pic='))
-    .split('=')[1];
+      .split('; ')
+      .find((row) => row.startsWith('ta_pic='))
+      .split('=')[1];
     // setTaPhoto(taPic)
   } else {
     usrID = loginContext.loginState.curUser;
@@ -149,7 +150,6 @@ export function Admin() {
     userPic = loginContext.loginState.curUserPic;
     userN = loginContext.loginState.curUserName;
   }
-  
 
   console.log(selectedTA, usrID, userN);
   const [called, toggleCalled] = useState(false);
@@ -163,9 +163,10 @@ export function Admin() {
   const [allUsers, setAllUsers] = useState([]);
   const [emailUser, setEmailUser] = useState('');
   const [socialId, setSocialId] = useState('');
-  const [refreshToken, setrefreshToken] = useState('');
+  const [refreshToken, setRefreshToken] = useState('');
   const [accessToken, setAccessToken] = useState('');
-  const [accessExpiresIn, setaccessExpiresIn] = useState('');
+  const [accessExpiresIn, setAccessExpiresIn] = useState('');
+  const [signupSuccessful, setSignupSuccessful] = useState(false);
   const [taPhoto, setTaPhoto] = useState('');
   const [taImage, setTaImage] = useState(null);
   const [taPhotoURL, setTaPhotoURL] = useState('');
@@ -174,7 +175,8 @@ export function Admin() {
   const [taLastName, setTaLastName] = useState('');
   const [taObject, setTaObject] = useState({});
 
-
+  const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
+  const [alreadyExists, setAlreadyExists] = useState(false);
   const [patientName, setPatientName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -214,45 +216,57 @@ export function Admin() {
             .split(';')
             .some((item) => item.trim().startsWith('ta_pic='))
         ) {
-          setTaPhoto(document.cookie
-            .split('; ')
-            .find((row) => row.startsWith('ta_pic='))
-            .split('=')[1]);
-          console.log("******** TA PHOTO FROM DOCUMENT COOKIES", document.cookie
-          .split('; ')
-          .find((row) => row.startsWith('ta_pic='))
-          .split('=')[1])
-      }
+          setTaPhoto(
+            document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('ta_pic='))
+              .split('=')[1]
+          );
+          console.log(
+            '******** TA PHOTO FROM DOCUMENT COOKIES',
+            document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('ta_pic='))
+              .split('=')[1]
+          );
+        }
       })
       .catch((error) => {
         console.log(error);
       });
-    
-      axios
+
+    axios
       .get(BASE_URL + 'TAProfile/' + tID)
       .then((response) => {
-        console.log('TAProfile',  response.data.result[0]);
+        console.log('TAProfile', response.data.result[0]);
         setListTaUser(response.data.result[0]);
         setTaFirstName(response.data.result[0].ta_first_name);
         setTaLastName(response.data.result[0].ta_last_name);
-        console.log('in TAProfile ta first name', response.data.result[0].ta_first_name);
+        console.log(
+          'in TAProfile ta first name',
+          response.data.result[0].ta_first_name
+        );
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
-  
-  const getUserOfTA = () => {
-    if (document.cookie
-      .split(';')
-      .some((item) => item.trim().startsWith('usersOfTA='))) {
-      console.log("got usersOfTA from document.cookie")
 
-      var usersOfTA_result = JSON.parse(document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('usersOfTA='))
-        .split('=')[1]);
-      
+  const getUserOfTA = () => {
+    if (
+      document.cookie
+        .split(';')
+        .some((item) => item.trim().startsWith('usersOfTA='))
+    ) {
+      console.log('got usersOfTA from document.cookie');
+
+      var usersOfTA_result = JSON.parse(
+        document.cookie
+          .split('; ')
+          .find((row) => row.startsWith('usersOfTA='))
+          .split('=')[1]
+      );
+
       if (usersOfTA_result.length > 0) {
         const usersOfTA = usersOfTA_result;
         const curUserID = usersOfTA[0].user_unique_id;
@@ -287,17 +301,16 @@ export function Admin() {
         console.log('No User Found');
       }
       // ***********
-    }
-    else {
-      console.log("got usersOfTA from usersOfTA/ API call")
+    } else {
+      console.log('got usersOfTA from usersOfTA/ API call');
       axios
         .get(
           BASE_URL +
-          'usersOfTA/' +
-          document.cookie
-            .split('; ')
-            .find((row) => row.startsWith('ta_email='))
-            .split('=')[1]
+            'usersOfTA/' +
+            document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('ta_email='))
+              .split('=')[1]
         )
         .then((response) => {
           console.log('list of users home', response.data.result);
@@ -330,26 +343,25 @@ export function Admin() {
     }
   };
 
-  const UpdatePerson = async(event)=> {
+  const UpdatePerson = async (event) => {
     var phone_number;
     if (listPeople[0] && listPeople[0].phone_number === 'undefined') {
       phone_number = '';
-    }
-    else {
+    } else {
       phone_number = listPeople[0].phone_number;
     }
     let body = {
       // user_id: listPeople[0].user_uid,
-      ta_unique_id:listTaUser[0].ta_unique_id,
+      ta_unique_id: listTaUser[0].ta_unique_id,
       first_name: taFirstName,
       last_name: taLastName,
       phone_number: listPeople[0].phone_number,
       employer: listPeople[0].employer,
       ta_time_zone: listTaUser[0].ta_time_zone,
       ta_photo_url: taPhoto,
-      ta_picture: taImage
+      ta_picture: taImage,
     };
-    console.log("updateTA body", body);
+    console.log('updateTA body', body);
     if (typeof body.ta_photo_url === 'string') {
       // body.photo_url = body.people_pic;
       // body.people_pic = '';
@@ -358,24 +370,27 @@ export function Admin() {
     }
     let formData = new FormData();
     Object.entries(body).forEach((entry) => {
-        formData.append(entry[0], entry[1]);
+      formData.append(entry[0], entry[1]);
     });
-    console.log("updateTA ta_picture in formdata = ", formData.getAll("ta_picture"));
-    
-      try {
-        const response = await axios({
-          method: "post",
-          url: BASE_URL + 'UpdateTA',
-          data: formData,
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-        console.log("updateTA RESPONSE : ", response.data);
-        toggleConfirmed(true);
-        toggleCalled(!called);
-      } catch(error) {
-        console.log(error)
-      }
-  }
+    console.log(
+      'updateTA ta_picture in formdata = ',
+      formData.getAll('ta_picture')
+    );
+
+    try {
+      const response = await axios({
+        method: 'post',
+        url: BASE_URL + 'UpdateTA',
+        data: formData,
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      console.log('updateTA RESPONSE : ', response.data);
+      toggleConfirmed(true);
+      toggleCalled(!called);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const getTAofUser = () => {
     axios
@@ -394,8 +409,7 @@ export function Admin() {
   useEffect(() => {
     getUserOfTA();
     getTAofUser();
-    
-  }, [usrID, loginContext.loginState.reload]);
+  }, [usrID, loginContext.loginState.reload, socialSignUpModalShow]);
 
   const taListRendered = () => {
     taList.sort((a, b) => a.ta_name.localeCompare(b.ta_name));
@@ -618,7 +632,7 @@ export function Admin() {
               image_name = image_name + salt.toString();
               setTaPhotoURL(URL.createObjectURL(taImage));
               // setTaPhoto(taPhotoURL);
-              console.log("upload URL:", taPhotoURL);
+              console.log('upload URL:', taPhotoURL);
             }}
           >
             Upload
@@ -1542,8 +1556,8 @@ export function Admin() {
                       user_id: userID,
                     })
                     .then((response) => {
-                      console.log("user", userID, "assigned to ta", tID);
-                      console.log("Assign User", response);
+                      console.log('user', userID, 'assigned to ta', tID);
+                      console.log('Assign User', response);
                     });
 
                   toggleAssignConfirmed(true);
@@ -1918,117 +1932,96 @@ export function Admin() {
     //document.cookie = 'patient_name=Loading';
   };
 
-  const responseGoogle = (response) => {
-    console.log('response', response);
+  // const responseGoogle = (response) => {
+  //   console.log('response', response);
 
-    let auth_code = response.code;
-    let authorization_url = 'https://oauth2.googleapis.com/token';
+  //   let auth_code = response.code;
+  //   let authorization_url = 'https://oauth2.googleapis.com/token';
 
-    console.log('auth_code', auth_code);
+  //   console.log('auth_code', auth_code);
 
-    // if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-    //   console.log('base_url', BASE_URL.substring(8, 18));
-    //   CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-    //   CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
+  //   var details = {
+  //     code: auth_code,
+  //     client_id: CLIENT_ID,
+  //     client_secret: CLIENT_SECRET,
+  //     redirect_uri: 'https://manifestmy.life',
+  //     // redirect_uri: 'http://localhost:3000',
+  //     grant_type: 'authorization_code',
+  //   };
 
-    //   console.log(CLIENT_ID, CLIENT_SECRET);
-    // } else {
-    //   console.log('base_url', BASE_URL.substring(8, 18));
-    //   CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-    //   CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+  //   var formBody = [];
+  //   for (var property in details) {
+  //     var encodedKey = encodeURIComponent(property);
+  //     var encodedValue = encodeURIComponent(details[property]);
+  //     formBody.push(encodedKey + '=' + encodedValue);
+  //   }
+  //   formBody = formBody.join('&');
 
-    //   console.log(CLIENT_ID, CLIENT_SECRET);
-    // }
-    // if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
-    //   console.log('base_url', BASE_URL.substring(8, 18));
-    //   redirecturi = 'https://manifestmy.space';
-    // } else {
-    //   console.log('base_url', BASE_URL.substring(8, 18));
-    //   redirecturi = 'https://manifestmy.life';
-    // }
+  //   fetch(authorization_url, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+  //     },
+  //     body: formBody,
+  //   })
+  //     .then((response) => {
+  //       return response.json();
+  //     })
+  //     .then((responseData) => {
+  //       console.log(responseData);
+  //       return responseData;
+  //     })
+  //     .then((data) => {
+  //       console.log(data);
+  //       let at = data['access_token'];
+  //       let rt = data['refresh_token'];
+  //       let ax = data['expires_in'].toString();
+  //       setAccessToken(at);
+  //       setrefreshToken(rt);
+  //       setaccessExpiresIn(ax);
+  //       console.log('res', at, rt);
 
-    var details = {
-      code: auth_code,
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
-      redirect_uri: 'https://manifestmy.life',
-      // redirect_uri: 'http://localhost:3000',
-      grant_type: 'authorization_code',
-    };
+  //       axios
+  //         .get(
+  //           'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' +
+  //             at
+  //         )
+  //         .then((response) => {
+  //           console.log(response.data);
 
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + '=' + encodedValue);
-    }
-    formBody = formBody.join('&');
+  //           let data = response.data;
+  //           //setUserInfo(data);
+  //           let e = data['email'];
+  //           let fn = data['given_name'];
+  //           let ln = data['family_name'];
+  //           let si = data['id'];
 
-    fetch(authorization_url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-      },
-      body: formBody,
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((responseData) => {
-        console.log(responseData);
-        return responseData;
-      })
-      .then((data) => {
-        console.log(data);
-        let at = data['access_token'];
-        let rt = data['refresh_token'];
-        let ax = data['expires_in'].toString();
-        setAccessToken(at);
-        setrefreshToken(rt);
-        setaccessExpiresIn(ax);
-        console.log('res', at, rt);
+  //           setEmailUser(e);
+  //           setFirstName(fn);
+  //           setLastName(ln);
+  //           setSocialId(si);
+  //         })
+  //         .catch((error) => {
+  //           console.log('its in landing page');
+  //           console.log(error);
+  //         });
 
-        axios
-          .get(
-            'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' +
-              at
-          )
-          .then((response) => {
-            console.log(response.data);
+  //       toggleNewUser(!showNewUser);
 
-            let data = response.data;
-            //setUserInfo(data);
-            let e = data['email'];
-            let fn = data['given_name'];
-            let ln = data['family_name'];
-            let si = data['id'];
-
-            setEmailUser(e);
-            setFirstName(fn);
-            setLastName(ln);
-            setSocialId(si);
-          })
-          .catch((error) => {
-            console.log('its in landing page');
-            console.log(error);
-          });
-
-        toggleNewUser(!showNewUser);
-
-        return (
-          accessToken,
-          refreshToken,
-          accessExpiresIn,
-          emailUser,
-          firstName,
-          lastName,
-          socialId
-        );
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  //       return (
+  //         accessToken,
+  //         refreshToken,
+  //         accessExpiresIn,
+  //         emailUser,
+  //         firstName,
+  //         lastName,
+  //         socialId
+  //       );
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
 
   // remove advisor role
   function removeRoleFunc() {
@@ -2081,13 +2074,13 @@ export function Admin() {
     let body = {
       email_id: emailUser,
       password: '',
-      google_auth_token: accessToken,
-      google_refresh_token: refreshToken,
-      social_id: socialId,
-      access_expires_in: accessExpiresIn,
       first_name: firstName,
       last_name: lastName,
       time_zone: selectedTimezone.value,
+      google_auth_token: accessToken,
+      google_refresh_token: refreshToken,
+      social_id: socialId,
+      access_expires_in: accessExpiresIn.toString(),
       ta_people_id: tID,
     };
     console.log('body', body);
@@ -2095,16 +2088,280 @@ export function Admin() {
       .post(BASE_URL + 'addNewUser', body)
       .then((response) => {
         console.log(response.data);
-        loginContext.setLoginState({
-          ...loginContext.loginState,
-          reload: !loginContext.loginState.reload,
-        });
+        axios
+          .get(
+            BASE_URL +
+              'usersOfTA/' +
+              document.cookie
+                .split('; ')
+                .find((row) => row.startsWith('ta_email='))
+                .split('=')[1]
+          )
+          .then((resUTA) => {
+            console.log('list of users home', resUTA.data.result);
+            if (resUTA.data.result.length > 0) {
+              const usersOfTA = resUTA.data.result;
+              const curUserID = usersOfTA[0].user_unique_id;
+              const curUserTZ = usersOfTA[0].time_zone;
+              const curUserEI = usersOfTA[0].user_email_id;
+              const curUserP = usersOfTA[0].user_picture;
+              const curUserN = usersOfTA[0].user_name;
+              console.log('timezone', curUserTZ);
+              loginContext.setLoginState({
+                ...loginContext.loginState,
+                usersOfTA: resUTA.data.result,
+                curUser: curUserID,
+                curUserTimeZone: curUserTZ,
+                curUserEmail: curUserEI,
+                curUserPic: curUserP,
+                curUserName: curUserN,
+              });
+              console.log(curUserID);
+              console.log('timezone', curUserTZ);
+            } else {
+              console.log('No User Found');
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        setSocialSignUpModalShow(!socialSignUpModalShow);
+
+        // loginContext.setLoginState({
+        //   ...loginContext.loginState,
+        //   reload: !loginContext.loginState.reload,
+        // });
       })
       .catch((error) => {
         console.log('its in landing page');
         console.log(error);
       });
   }
+  console.log(socialSignUpModalShow);
+  const alreadyExistsModal = () => {
+    const modalStyle = {
+      position: 'absolute',
+      top: '30%',
+      left: '2%',
+      width: '400px',
+    };
+    const headerStyle = {
+      border: 'none',
+      textAlign: 'center',
+      display: 'flex',
+      alignItems: 'center',
+      font: 'normal normal 600 20px Quicksand-Book',
+      textTransform: 'uppercase',
+      backgroundColor: ' #F2F7FC',
+      padding: '1rem',
+    };
+    const footerStyle = {
+      border: 'none',
+      backgroundColor: ' #F2F7FC',
+    };
+    const bodyStyle = {
+      backgroundColor: ' #F2F7FC',
+    };
+    return (
+      <Modal
+        show={alreadyExists}
+        onHide={hideAlreadyExists}
+        style={{ marginTop: '70px', padding: 0 }}
+      >
+        <Form>
+          <Modal.Header style={headerStyle} closeButton>
+            <Modal.Title>User Account Exists</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body style={bodyStyle}>
+            <div>
+              The User with email: {emailUser} exists! Please contact your TA
+              for further details!
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer style={footerStyle}>
+            <Row
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: '1rem',
+              }}
+            >
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              ></Col>
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Button
+                  type="submit"
+                  onClick={hideAlreadyExists}
+                  className={classes.signupbuttons}
+                >
+                  Okay
+                </Button>
+              </Col>
+            </Row>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+    );
+  };
+  const socialSignUpModal = () => {
+    const modalStyle = {
+      position: 'absolute',
+      top: '30%',
+      left: '2%',
+      width: '400px',
+    };
+    const headerStyle = {
+      border: 'none',
+      textAlign: 'center',
+      display: 'flex',
+      alignItems: 'center',
+      font: 'normal normal 600 20px Quicksand-Book',
+      textTransform: 'uppercase',
+      backgroundColor: ' #F2F7FC',
+      padding: '1rem',
+    };
+    const footerStyle = {
+      border: 'none',
+      backgroundColor: ' #F2F7FC',
+    };
+    const bodyStyle = {
+      backgroundColor: ' #F2F7FC',
+      font: 'normal normal 600 16px Quicksand-Regular',
+    };
+    return (
+      <Modal
+        show={socialSignUpModalShow}
+        onHide={hideSignUp}
+        style={{ marginTop: '70px', padding: 0 }}
+      >
+        <Form>
+          <Modal.Header style={headerStyle} closeButton>
+            <Modal.Title>Sign Up with social media</Modal.Title>
+          </Modal.Header>
+          <Modal.Body style={bodyStyle}>
+            <Form.Group>
+              <Form.Group>
+                <Col>
+                  <Form.Control
+                    type="text"
+                    placeholder="First Name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className={classes.textfield}
+                  />
+                </Col>
+                <Col>
+                  <Form.Control
+                    type="text"
+                    placeholder="Last Name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className={classes.textfield}
+                  />
+                </Col>
+              </Form.Group>
+
+              <Col>
+                <Form.Group>
+                  <Form.Control
+                    plaintext
+                    readOnly
+                    value={emailUser}
+                    className={classes.textfield}
+                  />
+                </Form.Group>
+              </Col>
+            </Form.Group>
+            <Col>
+              <TimezoneSelect
+                value={selectedTimezone}
+                onChange={setSelectedTimezone}
+              />
+            </Col>
+          </Modal.Body>
+          <Modal.Footer style={footerStyle}>
+            <Row
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: '1rem',
+                width: '100%',
+              }}
+            >
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Button onClick={onSubmitUser} className={classes.loginbutton}>
+                  Sign Up
+                </Button>
+              </Col>
+              <Col
+                xs={6}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Button onClick={hideSignUp} className={classes.signupbuttons}>
+                  Cancel
+                </Button>
+              </Col>
+            </Row>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+    );
+  };
+  const hideSignUp = () => {
+    setSocialSignUpModalShow(false);
+    setEmailUser('');
+    setFirstName('');
+    setLastName('');
+    setSelectedTimezone('');
+  };
+
+  const hideAlreadyExists = () => {
+    //setSignUpModalShow(false);
+    setAlreadyExists(!alreadyExists);
+    history.push('/');
+  };
+
+  const signupSuccess = () => {
+    setSocialSignUpModalShow(false);
+    setSignupSuccessful(true);
+    setEmailUser('');
+    setFirstName('');
+    setLastName('');
+  };
 
   return (
     <div
@@ -2220,6 +2477,9 @@ export function Admin() {
       {anotherTAAccessModal()}
       {assignUserListModal()}
       {uploadImageModal()}
+
+      {socialSignUpModal()}
+      {alreadyExistsModal()}
       <div style={{ width: '30%' }}>
         <MiniNavigation />
       </div>
@@ -2252,50 +2512,8 @@ export function Admin() {
                 <Row>
                   <Col xs={3}></Col>
                   <Col> Your Users ({listOfUsers.length})</Col>
-                  <Col xs={3}>
-                    <GoogleLogin
-                      //clientId="1009120542229-9nq0m80rcnldegcpi716140tcrfl0vbt.apps.googleusercontent.com"
-                      // clientId={
-                      //   BASE_URL.substring(8, 18) == 'gyn3vgy3fb'
-                      //     ? process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE
-                      //     : process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE
-                      // }
-                      //clientId={ID}
-                      clientId={CLIENT_ID}
-                      render={(renderProps) => (
-                        <button
-                          class="buttonadd"
-                          onClick={renderProps.onClick}
-                          disabled={renderProps.disabled}
-                        >
-                          +
-                        </button>
-                      )}
-                      // accessType="offline"
-                      // prompt="consent"
-                      // responseType="code"
-                      // buttonText="Log In"
-                      accessType="offline"
-                      prompt="consent"
-                      responseType="code"
-                      buttonText="Log In"
-                      ux_mode="redirect"
-                      // redirectUri={
-                      //   BASE_URL.substring(8, 18) == '3s3sftsr90'
-                      //     ? 'https://manifestmy.space'
-                      //     : 'https://manifestmy.life'
-                      // }
-                      redirectUri="http://localhost:3000"
-                      scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
-                      onSuccess={responseGoogle}
-                      onFailure={responseGoogle}
-                      isSignedIn={false}
-                      disable={true}
-                      cookiePolicy={'single_host_origin'}
-                    />
-                  </Col>
+                  <Col xs={3}></Col>
                 </Row>
-
                 <div class="listofusers">
                   {listOfUsers.map((users) => {
                     return (
@@ -2373,6 +2591,31 @@ export function Admin() {
                     );
                   })}
                 </div>
+                <div style={{ marginTop: '1rem' }}>
+                  Sign Up a New User
+                  <GoogleSignUpUser
+                    signupSuccessful={signupSuccessful}
+                    setSignupSuccessful={setSignupSuccessful}
+                    newFName={firstName}
+                    setNewFName={setFirstName}
+                    newLName={lastName}
+                    setNewLName={setLastName}
+                    newEmail={emailUser}
+                    setNewEmail={setEmailUser}
+                    socialId={socialId}
+                    setSocialId={setSocialId}
+                    refreshToken={refreshToken}
+                    setRefreshToken={setRefreshToken}
+                    accessToken={accessToken}
+                    setAccessToken={setAccessToken}
+                    accessExpiresIn={accessExpiresIn}
+                    setAccessExpiresIn={setAccessExpiresIn}
+                    socialSignUpModalShow={socialSignUpModalShow}
+                    setSocialSignUpModalShow={setSocialSignUpModalShow}
+                    alreadyExists={alreadyExists}
+                    setAlreadyExists={setAlreadyExists}
+                  />
+                </div>
               </div>
             </div>
           </Col>
@@ -2386,212 +2629,221 @@ export function Admin() {
             }}
           >
             <div>
-              <Row style={{
-                height: '300px'
-              }}>
-          <Col>
-          <Row style={{
-            width: '40%',
-            marginLeft: '30%',
-          }}>
-          {taPhoto == '' ? (
-                  <img
+              <Row
+                style={{
+                  height: '300px',
+                }}
+              >
+                <Col>
+                  <Row
                     style={{
-                      display: 'block',
-                      float: 'right',
-                      width: '5rem',
-                      height: '5rem',
-                      objectFit: 'cover',
-                      marginTop: '15px',
+                      width: '40%',
+                      marginLeft: '30%',
                     }}
-                    src={'/UserNoImage.png'}
-                    alt="TA Profile"
-                  />
-                ) : (
-                  <img
+                  >
+                    {taPhoto == '' ? (
+                      <img
+                        style={{
+                          display: 'block',
+                          float: 'right',
+                          width: '5rem',
+                          height: '5rem',
+                          objectFit: 'cover',
+                          marginTop: '15px',
+                        }}
+                        src={'/UserNoImage.png'}
+                        alt="TA Profile"
+                      />
+                    ) : (
+                      <img
+                        style={{
+                          display: 'block',
+                          float: 'right',
+                          width: '5rem',
+                          height: '5rem',
+                          objectFit: 'cover',
+                          marginTop: '15px',
+                        }}
+                        src={taPhoto}
+                        alt="TA Profile"
+                      />
+                    )}
+                  </Row>
+                  <Row
                     style={{
-                      display: 'block',
-                      float: 'right',
-                      width: '5rem',
-                      height: '5rem',
-                      objectFit: 'cover',
-                      marginTop: '15px',
+                      width: '40%',
+                      marginLeft: '30%',
                     }}
-                    src={taPhoto}
-                    alt="TA Profile"
-                  />
-                )}
-          </Row>
-          <Row style={{
-            width: '40%',
-            marginLeft: '30%',
-          }}>
-          <h6>Change Image</h6>
-                
-                <div
-                  onClick={() => {
-                    toggleUploadImage(!showUploadImage);
-                  }}
+                  >
+                    <h6>Change Image</h6>
+
+                    <div
+                      onClick={() => {
+                        toggleUploadImage(!showUploadImage);
+                      }}
+                      style={{
+                        marginLeft: '12px',
+                        textDecoration: 'underline',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Upload from Computer
+                    </div>
+                    <UploadImage
+                      photoUrl={taPhotoURL}
+                      setPhotoUrl={setTaPhoto}
+                      currentUserId={userID}
+                    />
+                    <GooglePhotos
+                      photoUrl={taPhotoURL}
+                      setPhotoUrl={setTaPhoto}
+                    />
+                  </Row>
+                </Col>
+                <Col
                   style={{
-                    marginLeft: '12px',
-                    textDecoration: 'underline',
-                    cursor: 'pointer',
+                    marginTop: '50px',
                   }}
                 >
-                  Upload from Computer
-                </div>
-                <UploadImage
-                  photoUrl={taPhotoURL}
-                  setPhotoUrl={setTaPhoto}
-                  currentUserId={userID}
-                />
-                <GooglePhotos photoUrl={taPhotoURL} setPhotoUrl={setTaPhoto} />
-          </Row>
-          </Col>
-                <Col style={{
-                  marginTop: '50px'
-                }}>
-          <Form.Group>
-            <Row>
-                
-                  <label
-                  style={{
-                    marginTop: '5px',
-                    marginRight: '10px',
-                    fontWeight: 'bolder',
-                    color: '#000000',
-                  }}
-                >
-                  First Name:
-                </label>
-                
-                  <TextField
+                  <Form.Group>
+                    <Row>
+                      <label
+                        style={{
+                          marginTop: '5px',
+                          marginRight: '10px',
+                          fontWeight: 'bolder',
+                          color: '#000000',
+                        }}
+                      >
+                        First Name:
+                      </label>
+
+                      <TextField
                         id="taFirstName"
                         placeholder="Loading"
                         value={taFirstName}
                         onChange={(e) => {
                           e.stopPropagation();
-                          console.log("first name update",e.target.value);
-                          setTaFirstName(e.target.value)
+                          console.log('first name update', e.target.value);
+                          setTaFirstName(e.target.value);
                         }}
-                  >
-                  </TextField>
-            </Row>
-            <Row>
-                <label
-                  style={{
-                    marginTop: '5px',
-                    marginRight: '10px',
-                    fontWeight: 'bolder',
-                    color: '#000000',
-                  }}
-                >
-                  Last Name:
-                </label>
-                <TextField
+                      ></TextField>
+                    </Row>
+                    <Row>
+                      <label
+                        style={{
+                          marginTop: '5px',
+                          marginRight: '10px',
+                          fontWeight: 'bolder',
+                          color: '#000000',
+                        }}
+                      >
+                        Last Name:
+                      </label>
+                      <TextField
                         id="taLastName"
                         placeholder="Loading"
                         value={taLastName}
                         onChange={(e) => {
                           e.stopPropagation();
-                          console.log("last name update",e.target.value);
-                          setTaLastName(e.target.value)
+                          console.log('last name update', e.target.value);
+                          setTaLastName(e.target.value);
                         }}
-                  >
-                </TextField>
+                      ></TextField>
+                    </Row>
 
-            </Row>
-            
-            <Row>
-                <label
-                  style={{
-                    marginTop: '5px',
-                    marginRight: '10px',
-                    fontWeight: 'bolder',
-                    color: '#000000',
-                  }}
-                >
-                  Email: 
-                </label>
+                    <Row>
+                      <label
+                        style={{
+                          marginTop: '5px',
+                          marginRight: '10px',
+                          fontWeight: 'bolder',
+                          color: '#000000',
+                        }}
+                      >
+                        Email:
+                      </label>
 
-                <div
-                  style={{
-                    marginTop: '5px',
-                    marginRight: '10px',
-                    color: '#000000',
-                  }}
-                >
-                  {document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('ta_email='))
-                .split('=')[1]}
-                </div>
-            </Row>
-          <Row>
-                <label
-                  style={{
-                    marginTop: '5px',
-                    marginRight: '10px',
-                    fontWeight: 'bolder',
-                    color: '#000000',
-                  }}
-                >
-                  User ID:
-                </label>
+                      <div
+                        style={{
+                          marginTop: '5px',
+                          marginRight: '10px',
+                          color: '#000000',
+                        }}
+                      >
+                        {
+                          document.cookie
+                            .split('; ')
+                            .find((row) => row.startsWith('ta_email='))
+                            .split('=')[1]
+                        }
+                      </div>
+                    </Row>
+                    <Row>
+                      <label
+                        style={{
+                          marginTop: '5px',
+                          marginRight: '10px',
+                          fontWeight: 'bolder',
+                          color: '#000000',
+                        }}
+                      >
+                        User ID:
+                      </label>
 
-                <div
-                  style={{
-                    marginTop: '5px',
-                    marginRight: '10px',
-                    color: '#000000',
-                  }}
-                >
-                  {document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('ta_uid='))
-                .split('=')[1]}
-                </div>
-            </Row>
-            <br />
-            <br />
-            <Row>
-            <div>
-            <button
-                style={{
-                  color: '#000000',
-                  border: 'solid',
-                  borderWidth: '2px',
-                  borderRadius: '25px',
-                }}
-                onClick={() => {
-                  if (taPhotoURL) {
-                      setTaPhoto(taPhotoURL);
-                      document.cookie = 'ta_pic=' + taPhotoURL;
-                    }
-                  UpdatePerson();
-                }}
-              >
-                Save Changes
-              </button>
-              <button
-                style={{
-                  color: '#000000',
-                  border: 'solid',
-                  borderWidth: '2px',
-                  borderRadius: '25px',
-                  marginLeft: '20px',
-                }}
-                onClick={() => {
-                  
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-            </Row>
-            </Form.Group>
-            </Col>
-            </Row>
+                      <div
+                        style={{
+                          marginTop: '5px',
+                          marginRight: '10px',
+                          color: '#000000',
+                        }}
+                      >
+                        {
+                          document.cookie
+                            .split('; ')
+                            .find((row) => row.startsWith('ta_uid='))
+                            .split('=')[1]
+                        }
+                      </div>
+                    </Row>
+                    <br />
+                    <br />
+                    <Row>
+                      <div>
+                        <button
+                          style={{
+                            color: '#000000',
+                            border: 'solid',
+                            borderWidth: '2px',
+                            borderRadius: '25px',
+                          }}
+                          onClick={() => {
+                            if (taPhotoURL) {
+                              setTaPhoto(taPhotoURL);
+                              document.cookie = 'ta_pic=' + taPhotoURL;
+                            }
+                            UpdatePerson();
+                          }}
+                        >
+                          Save Changes
+                        </button>
+                        <button
+                          style={{
+                            color: '#000000',
+                            border: 'solid',
+                            borderWidth: '2px',
+                            borderRadius: '25px',
+                            marginLeft: '20px',
+                          }}
+                          onClick={() => {}}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </Row>
+                  </Form.Group>
+                </Col>
+              </Row>
             </div>
             <div class="con">
               <button
