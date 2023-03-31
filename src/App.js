@@ -36,16 +36,6 @@ export default function App() {
   useEffect(() => {
     const favicon = getFaviconEl();
     favicon.href = 'favicon-life.ico';
-    // console.log('base_url', favicon.href);
-    // if (BASE_URL.substring(8, 18) == '3s3sftsr90') {
-    //   console.log('base_url', BASE_URL.substring(8, 18));
-    //   favicon.href = 'favicon.ico';
-    //   console.log('base_url', favicon.href);
-    // } else {
-    //   console.log('base_url', BASE_URL.substring(8, 18));
-    //   favicon.href = 'favicon-life.ico';
-    //   console.log('base_url', favicon.href);
-    // }
   }, []);
 
   return (
@@ -57,36 +47,11 @@ export default function App() {
         }}
       >
         <div>
-          {/* <Link to="/login">Login </Link> */}
-          {/* <Link to="/">Home</Link> */}
-
           <Navigation />
-          {/* <MiniNavigation /> */}
-          {/* <Switch>
-          <Route path="/"> */}
           <Nav />
-          {/* </Route> */}
-          {/* <Route path="/login">
-            <Login />
-          </Route> */}
-          {/* </Switch> */}
         </div>
       </LoginContext.Provider>
 
     </Router>
-    // <div>
-    //   {/* <Home /> */}
-    //   <Container>
-    //     <Row>
-    //       <Col>1 of 2</Col>
-    //       <Col>2 of 2</Col>
-    //     </Row>
-    //     <Row>
-    //       <Col>1 of 3</Col>
-    //       <Col>2 of 3</Col>
-    //       <Col>3 of 3</Col>
-    //     </Row>
-    //   </Container>
-    // </div>
   );
 }

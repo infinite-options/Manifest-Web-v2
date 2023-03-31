@@ -175,8 +175,8 @@ export default function Login() {
   let uid = window.location.href.split('=')[1];
   console.log(uid);
 
-  let redirecturi = 'https://manifestmy.life';
-  // let redirecturi = 'http://localhost:3000';
+  // let redirecturi = 'https://manifestmy.life';
+  let redirecturi = 'http://localhost:3000';
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -204,8 +204,26 @@ export default function Login() {
         );
         console.log('in events', response);
         setTaID(response.data.result.ta_unique_id);
-        console.log("ta_google_auth_token = ", response.data.result.ta_google_auth_token === null)
-        console.log("ta_google_refresh_token = ", response.data.result.ta_google_refresh_token === null)
+        document.cookie = 'ta_uid=' + response.data.result.ta_unique_id;
+        document.cookie = 'ta_email=' + email;
+        document.cookie = 'patient_name=Loading';
+        document.cookie = 'ta_pic=' + response.data.result.ta_picture;
+        loginContext.setLoginState({
+          ...loginContext.loginState,
+          reload: false,
+          loggedIn: true,
+          ta: {
+            ...loginContext.loginState.ta,
+            id: response.data.result.ta_unique_id,
+            email: email.toString(),
+            picture: response.data.result.ta_picture
+          },
+          usersOfTA: [],
+          curUser: '',
+          curUserTimeZone: '',
+          curUserEmail: '',
+          curUserName: '',
+        });
         
         if (response.data.result.ta_google_auth_token === null || response.data.result.ta_google_refresh_token === null) {
           console.log("Auth token is null. Displaying SignUp");
@@ -215,25 +233,6 @@ export default function Login() {
           setAccessToken(response.data.result.ta_google_auth_token);
           let url =
             'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
-          document.cookie = 'ta_uid=' + response.data.result.ta_unique_id;
-          document.cookie = 'ta_email=' + email;
-          document.cookie = 'patient_name=Loading';
-          document.cookie = 'ta_pic=' + response.data.result.ta_picture;
-          loginContext.setLoginState({
-            ...loginContext.loginState,
-            reload: false,
-            loggedIn: true,
-            ta: {
-              ...loginContext.loginState.ta,
-              id: response.data.result.ta_unique_id,
-              email: email.toString(),
-            },
-            usersOfTA: [],
-            curUser: '',
-            curUserTimeZone: '',
-            curUserEmail: '',
-            curUserName: '',
-          });
           console.log('Login successful');
           console.log(email);
           // setTaID(response.data.result.ta_unique_id);
@@ -353,7 +352,6 @@ export default function Login() {
 
     let auth_code = response.code;
     let authorization_url = 'https://accounts.google.com/o/oauth2/token';
-
     console.log('responseGoogleSignUp auth_code', auth_code);
     var details = {
       code: auth_code,
@@ -390,6 +388,7 @@ export default function Login() {
         let rt = data['refresh_token'];
         let ax = data['expires_in'];
         let url = BASE_URL + `UpdateAccessAndRefreshToken/${taID}`;
+        setAccessToken(at);
         axios
           .post(url, {
             ta_google_auth_token: at,
@@ -403,8 +402,11 @@ export default function Login() {
           pathname: '/home',
           state: email,
         });
-
-      });
+        return accessToken;
+      })
+    .catch((err) => {
+      console.log(err);
+    });
   }
   const _socialLoginAttempt = (email, at, socialId, platform) => {
     axios

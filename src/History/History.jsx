@@ -107,6 +107,17 @@ export default function MainPage(props) {
     setCU(userID);
     setTZ(userTime_zone);
   }
+  var currentTaPicture = loginContext.loginState.ta.picture;
+  if (
+    document.cookie
+      .split(';')
+      .some((item) => item.trim().startsWith('ta_pic='))
+  ) {
+    currentTaPicture = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('ta_pic='))
+      .split('=')[1];
+  }
   console.log('currentUser: ' + currentUser);
 
   const inRange = [];
@@ -258,11 +269,19 @@ export default function MainPage(props) {
             curUserTimeZone: curUserTZ,
             curUserEmail: curUserEI,
             curUserName: curUserN,
+            ta: {
+              ...loginContext.loginState.ta,
+              picture: currentTaPicture
+            }
           });
         } else {
           loginContext.setLoginState({
             ...loginContext.loginState,
             usersOfTA: usersOfTA_result,
+            ta: {
+              ...loginContext.loginState.ta,
+              picture: currentTaPicture
+            }
           });
         }
         console.log(curUserID);
@@ -274,6 +293,10 @@ export default function MainPage(props) {
           curUserTimeZone: '',
           curUserEmail: '',
           curUserName: '',
+          ta: {
+            ...loginContext.loginState.ta,
+            picture: currentTaPicture
+          }
         });
         console.log('No User Found');
       }
@@ -305,6 +328,10 @@ export default function MainPage(props) {
               curUserTimeZone: curUserTZ,
               curUserEmail: curUserEI,
               curUserName: curUserN,
+              ta: {
+                ...loginContext.loginState.ta,
+                picture: currentTaPicture
+              }
             });
             console.log(curUserID);
             // setUserID(curUserID);
@@ -319,6 +346,10 @@ export default function MainPage(props) {
               curUserTimeZone: '',
               curUserEmail: '',
               curUserName: '',
+              ta: {
+                ...loginContext.loginState.ta,
+                picture: currentTaPicture
+              }
             });
             console.log('No User Found');
           }

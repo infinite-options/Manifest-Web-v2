@@ -135,7 +135,17 @@ export function Admin() {
     userPic = loginContext.loginState.curUserPic;
     userN = loginContext.loginState.curUserName;
   }
-  
+  var currentTaPicture = loginContext.loginState.ta.picture;
+  if (
+    document.cookie
+      .split(';')
+      .some((item) => item.trim().startsWith('ta_pic='))
+  ) {
+    currentTaPicture = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('ta_pic='))
+      .split('=')[1];
+  }
 
   console.log(selectedTA, usrID, userN);
   const [called, toggleCalled] = useState(false);
@@ -260,11 +270,19 @@ export function Admin() {
             curUserTimeZone: curUserTZ,
             curUserEmail: curUserEI,
             curUserName: curUserN,
+            ta: {
+              ...loginContext.loginState.ta,
+              picture: currentTaPicture
+            }
           });
         } else {
           loginContext.setLoginState({
             ...loginContext.loginState,
             usersOfTA: usersOfTA_result,
+            ta: {
+              ...loginContext.loginState.ta,
+              picture: currentTaPicture
+            }
           });
         }
         console.log(curUserID);
@@ -276,6 +294,10 @@ export function Admin() {
           curUserTimeZone: '',
           curUserEmail: '',
           curUserName: '',
+          ta: {
+            ...loginContext.loginState.ta,
+            picture: currentTaPicture
+          }
         });
         console.log('No User Found');
       }
@@ -310,6 +332,10 @@ export function Admin() {
               curUserEmail: curUserEI,
               curUserPic: curUserP,
               curUserName: curUserN,
+              ta: {
+                ...loginContext.loginState.ta,
+                picture: currentTaPicture
+              }
             });
             console.log(curUserID);
             console.log('timezone', curUserTZ);
@@ -1082,6 +1108,10 @@ export function Admin() {
                             curUserEmail: users.user_email_id,
                             curUserPic: users.user_picture,
                             curUserName: users.user_name,
+                            ta: {
+                              ...loginContext.loginState.ta,
+                              picture: currentTaPicture
+                            }
                           });
                         }}
                       >
@@ -1815,6 +1845,10 @@ export function Admin() {
                   loginContext.setLoginState({
                     ...loginContext.loginState,
                     reload: !loginContext.loginState.reload,
+                    ta: {
+                      ...loginContext.loginState.ta,
+                      picture: currentTaPicture
+                    }
                   });
                 }}
               >
@@ -1875,6 +1909,10 @@ export function Admin() {
                   loginContext.setLoginState({
                     ...loginContext.loginState,
                     reload: !loginContext.loginState.reload,
+                    ta: {
+                      ...loginContext.loginState.ta,
+                      picture: currentTaPicture
+                    }
                   });
                 }}
               >
@@ -2062,6 +2100,10 @@ export function Admin() {
       loginContext.setLoginState({
         ...loginContext.loginState,
         reload: !loginContext.loginState.reload,
+        ta: {
+          ...loginContext.loginState.ta,
+          picture: currentTaPicture
+        }
       });
       history.push('/home');
     });
@@ -2084,6 +2126,10 @@ export function Admin() {
       loginContext.setLoginState({
         ...loginContext.loginState,
         reload: !loginContext.loginState.reload,
+        ta: {
+          ...loginContext.loginState.ta,
+          picture: currentTaPicture
+        }
       });
       history.push('/home');
     });
@@ -2111,6 +2157,10 @@ export function Admin() {
         loginContext.setLoginState({
           ...loginContext.loginState,
           reload: !loginContext.loginState.reload,
+          ta: {
+            ...loginContext.loginState.ta,
+            picture: currentTaPicture
+          }
         });
       })
       .catch((error) => {
@@ -2324,6 +2374,10 @@ export function Admin() {
                             curUserEmail: users.user_email_id,
                             curUserPic: users.user_picture,
                             curUserName: users.user_name,
+                            ta: {
+                              ...loginContext.loginState.ta,
+                              picture: currentTaPicture
+                            }
                           });
                         }}
                       >
@@ -2683,6 +2737,7 @@ export function Admin() {
                     ...loginContext.loginState.ta,
                     id: '',
                     email: '',
+                    picture: ''
                   },
                   usersOfTA: [],
                   curUser: '',

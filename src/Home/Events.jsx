@@ -181,6 +181,10 @@ export default function Events(props) {
             curUserEmail: curUserEI,
             curUserPic: curUserP,
             curUserName: curUserN,
+            ta: {
+              ...loginContext.loginState.ta,
+              picture: currentTaPicture
+            }
           });
           console.log(curUserID);
           console.log('timezone', curUserTZ);
@@ -1193,13 +1197,13 @@ export default function Events(props) {
         console.log('in events', response);
         let url =
           'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
-        loginContext.setLoginState({
-          ...loginContext.loginState,
-          ta: {
-            id: '200-000002',
-            email: response['data']['ta_email_id'],
-          },
-        });
+        // loginContext.setLoginState({
+        //   ...loginContext.loginState,
+        //   ta: {
+        //     id: '200-000002',
+        //     email: response['data']['ta_email_id'],
+        //   },
+        // });
         setEmail(response['data']['ta_email_id']);
         setSignedIn(true);
         var old_at = response['data']['ta_google_auth_token'];

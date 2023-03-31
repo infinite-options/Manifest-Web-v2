@@ -7,7 +7,7 @@ import History from './History/History';
 import SignUp from '../src/manifest/SignUp';
 import AppleSignUp from '../src/manifest/AppleSignUp';
 import AboutModal from '../src/About/About';
-import GoalHome from '../src/Home/GoalHome';
+// import GoalHome from '../src/Home/GoalHome';
 // import Events from '../src/Home/Events';
 import Privacy from '../src/Home/Privacy';
 import GoogleEventComponent from './Home/GoogleEventComponent';

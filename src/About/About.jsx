@@ -97,6 +97,17 @@ export default function AboutModal(props) {
     userPic = loginContext.loginState.curUserPic;
     userN = loginContext.loginState.curUserName;
   }
+  var currentTaPicture = loginContext.loginState.ta.picture;
+  if (
+    document.cookie
+      .split(';')
+      .some((item) => item.trim().startsWith('ta_pic='))
+  ) {
+    currentTaPicture = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('ta_pic='))
+      .split('=')[1];
+  }
   console.log(taID);
   const [imageChanged, setImageChanged] = useState(false);
   const [firstName, setFirstName] = useState('');
@@ -173,23 +184,8 @@ export default function AboutModal(props) {
   //const userID = loginContext.loginState.curUser;
 
   console.log('currentUser: ' + currentUser);
-  //const userID = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1];
 
-  // const getTAList = () => {
-  //   console.log('in getTAList: ' + currentUser);
-  //   axios
-  //     .get(BASE_URL + 'listAllTAUser/' + currentUser)
-  //     .then((response) => {
-  //       console.log(response.data);
-  //       setTaList(response.data.result);
-  //     })
-  //     .catch((err) => {
-  //       if (err.response) {
-  //         console.log(err.response);
-  //       }
-  //       console.log(err);
-  //     });
-  // };
+  
   useEffect(() => {
     console.log('yayayayayay');
     axios
@@ -439,11 +435,19 @@ export default function AboutModal(props) {
               curUserTimeZone: curUserTZ,
               curUserEmail: curUserEI,
               curUserName: curUserN,
+              ta: {
+                ...loginContext.loginState.ta,
+                picture: currentTaPicture
+              }
             });
           } else {
             loginContext.setLoginState({
               ...loginContext.loginState,
               usersOfTA: usersOfTA_result,
+              ta: {
+                ...loginContext.loginState.ta,
+                picture: currentTaPicture
+              }
             });
           }
           console.log(curUserID);
@@ -455,6 +459,10 @@ export default function AboutModal(props) {
             curUserTimeZone: '',
             curUserEmail: '',
             curUserName: '',
+            ta: {
+              ...loginContext.loginState.ta,
+              picture: currentTaPicture
+            }
           });
           console.log('No User Found');
         }
@@ -489,11 +497,19 @@ export default function AboutModal(props) {
                 curUserTimeZone: curUserTZ,
                 curUserEmail: curUserEI,
                 curUserName: curUserN,
+                ta: {
+                  ...loginContext.loginState.ta,
+                  picture: currentTaPicture
+                }
               });
             } else {
               loginContext.setLoginState({
                 ...loginContext.loginState,
                 usersOfTA: response.data.result,
+                ta: {
+                  ...loginContext.loginState.ta,
+                  picture: currentTaPicture
+                }
                 //curUser: curUserID
               });
             }
@@ -511,6 +527,10 @@ export default function AboutModal(props) {
               curUserTimeZone: '',
               curUserEmail: '',
               curUserName: '',
+              ta: {
+                ...loginContext.loginState.ta,
+                picture: currentTaPicture
+              }
             });
             console.log('No User Found');
           }
@@ -1535,6 +1555,10 @@ export default function AboutModal(props) {
                     loginContext.setLoginState({
                       ...loginContext.loginState,
                       reload: !loginContext.loginState.reload,
+                      ta: {
+                        ...loginContext.loginState.ta,
+                        picture: currentTaPicture
+                      }
                     });
                     setDeleteUser(!deleteUser);
                     toggleCalled(!called);
@@ -1637,6 +1661,10 @@ export default function AboutModal(props) {
                       loginContext.setLoginState({
                         ...loginContext.loginState,
                         reload: true,
+                        ta: {
+                          ...loginContext.loginState.ta,
+                          picture: currentTaPicture
+                        }
                       });
                       history.push('/home');
                     });
@@ -2905,7 +2933,11 @@ export default function AboutModal(props) {
                     document.cookie = 'patient_pic=' + userPhoto;
                     loginContext.setLoginState({
                       ...loginContext.loginState,
-                      curUserPic: userPhoto
+                      curUserPic: userPhoto,
+                      ta: {
+                        ...loginContext.loginState.ta,
+                        picture: currentTaPicture
+                      }
                     });}
                 }}
               >
