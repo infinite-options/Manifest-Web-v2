@@ -261,6 +261,7 @@ export default function Home(props) {
   const [events, setEvents] = useState([]);
   const [hightlight, setHightlight] = useState('');
   const [GREButtonSelection, setGREButtonSelection] = useState('Routines');
+  const [isLoading, setLoading] = useState(true);
   const [stateValue, setStateValue] = useState({
     itemToEdit: {
       title: '',
@@ -1797,6 +1798,7 @@ function toggleShowEvents(props) {
     axios
       .get(getGoalOrRoutineUrl + userID)
       .then((response) => {
+        setLoading(false);
         console.log(
           'here: Obtained user information with res = ',
           response.data.result
@@ -2411,6 +2413,15 @@ function toggleShowEvents(props) {
                     </Button>
 
                     <div style={{ flex: '1' }}>
+                    {isLoading ?
+                      (
+                        <div>
+                          <br></br>
+                          <br></br>
+                          <h1>Loading...</h1>
+                        </div>
+                      ): ""
+                    }
                       {userID != '' && GREButtonSelection=='Routines' && (
                         <HomeLHS
                           theCurrentUserID={userID}
