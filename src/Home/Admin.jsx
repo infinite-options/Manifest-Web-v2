@@ -139,16 +139,13 @@ export function Admin() {
 
   var currentTaPicture = loginContext.loginState.ta.picture;
   if (
-    document.cookie
-      .split(';')
-      .some((item) => item.trim().startsWith('ta_pic='))
+    document.cookie.split(';').some((item) => item.trim().startsWith('ta_pic='))
   ) {
     currentTaPicture = document.cookie
       .split('; ')
       .find((row) => row.startsWith('ta_pic='))
       .split('=')[1];
   }
-
 
   console.log(selectedTA, usrID, userN);
   const [called, toggleCalled] = useState(false);
@@ -248,8 +245,10 @@ export function Admin() {
         setCurrentTaID(response.data.result[0].ta_unique_id);
         setCurrentTaTimeZone(response.data.result[0].ta_time_zone);
         setCurrentTaPhoto(response.data.result[0].ta_picture);
-        console.log('in TAProfile ta first name', response.data.result[0].ta_first_name);
-
+        console.log(
+          'in TAProfile ta first name',
+          response.data.result[0].ta_first_name
+        );
       })
       .catch((error) => {
         console.log(error);
@@ -257,17 +256,20 @@ export function Admin() {
   }, []);
 
   const getUserOfTA = () => {
+    if (
+      document.cookie
+        .split(';')
+        .some((item) => item.trim().startsWith('usersOfTA='))
+    ) {
+      console.log('got usersOfTA from document.cookie');
 
-    if (document.cookie
-      .split(';')
-      .some((item) => item.trim().startsWith('usersOfTA='))) {
-      console.log("got usersOfTA from document.cookie")
-  
-      var usersOfTA_result = JSON.parse(document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('usersOfTA='))
-        .split('=')[1]);
-       
+      var usersOfTA_result = JSON.parse(
+        document.cookie
+          .split('; ')
+          .find((row) => row.startsWith('usersOfTA='))
+          .split('=')[1]
+      );
+
       if (usersOfTA_result.length > 0) {
         const usersOfTA = usersOfTA_result;
         var curUserID = usersOfTA[0].user_unique_id;
@@ -301,14 +303,13 @@ export function Admin() {
             .split('; ')
             .find((row) => row.startsWith('patient_name='))
             .split('=')[1];
-    
+
           curUserID = uID;
           curUserTZ = uTime_zone;
           curUserEI = uEmail;
           curUserP = uPic;
           curUserN = uName;
-        }
-        else {
+        } else {
           document.cookie = 'patient_name=' + curUserN;
           document.cookie = 'patient_timeZone=' + curUserTZ;
           document.cookie = 'patient_uid=' + curUserID;
@@ -325,11 +326,10 @@ export function Admin() {
           curUserName: curUserN,
           ta: {
             ...loginContext.loginState.ta,
-            picture: currentTaPicture
-          }
+            picture: currentTaPicture,
+          },
         });
-      }
-      else {
+      } else {
         loginContext.setLoginState({
           ...loginContext.loginState,
           usersOfTA: usersOfTA_result,
@@ -340,8 +340,8 @@ export function Admin() {
           curUserName: '',
           ta: {
             ...loginContext.loginState.ta,
-            picture: currentTaPicture
-          }
+            picture: currentTaPicture,
+          },
         });
         console.log('No User Found');
       }
@@ -352,59 +352,56 @@ export function Admin() {
       axios
         .get(
           BASE_URL +
-
             'usersOfTA/' +
             document.cookie
               .split('; ')
               .find((row) => row.startsWith('ta_email='))
               .split('=')[1]
-
-          )
-          .then((response) => {
-            console.log("userOfTA response ", response);
-            if (response.data.result.length > 0) {
-              const usersOfTA = response.data.result;
-              const curUserID = usersOfTA[0].user_unique_id;
-              const curUserTZ = usersOfTA[0].time_zone;
-              const curUserEI = usersOfTA[0].user_email_id;
-              const curUserP = usersOfTA[0].user_picture;
-              const curUserN = usersOfTA[0].user_name;
-              loginContext.setLoginState({
-                ...loginContext.loginState,
-                usersOfTA: response.data.result,
-                curUser: curUserID,
-                curUserTimeZone: curUserTZ,
-                curUserEmail: curUserEI,
-                curUserPic: curUserP,
-                curUserName: curUserN,
-                ta: {
-                  ...loginContext.loginState.ta,
-                  picture: currentTaPicture
-                }
-              });
-              console.log(curUserID);
-            } else {
-              loginContext.setLoginState({
-                ...loginContext.loginState,
-                usersOfTA: response.data.result,
-                curUser: '',
-                curUserTimeZone: '',
-                curUserEmail: '',
-                curUserPic: '',
-                curUserName: '',
-                ta: {
-                  ...loginContext.loginState.ta,
-                  picture: currentTaPicture
-                }
-              });
-              console.log('No User Found');
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-
+        )
+        .then((response) => {
+          console.log('userOfTA response ', response);
+          if (response.data.result.length > 0) {
+            const usersOfTA = response.data.result;
+            const curUserID = usersOfTA[0].user_unique_id;
+            const curUserTZ = usersOfTA[0].time_zone;
+            const curUserEI = usersOfTA[0].user_email_id;
+            const curUserP = usersOfTA[0].user_picture;
+            const curUserN = usersOfTA[0].user_name;
+            loginContext.setLoginState({
+              ...loginContext.loginState,
+              usersOfTA: response.data.result,
+              curUser: curUserID,
+              curUserTimeZone: curUserTZ,
+              curUserEmail: curUserEI,
+              curUserPic: curUserP,
+              curUserName: curUserN,
+              ta: {
+                ...loginContext.loginState.ta,
+                picture: currentTaPicture,
+              },
+            });
+            console.log(curUserID);
+          } else {
+            loginContext.setLoginState({
+              ...loginContext.loginState,
+              usersOfTA: response.data.result,
+              curUser: '',
+              curUserTimeZone: '',
+              curUserEmail: '',
+              curUserPic: '',
+              curUserName: '',
+              ta: {
+                ...loginContext.loginState.ta,
+                picture: currentTaPicture,
+              },
+            });
+            console.log('No User Found');
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   const UpdatePerson = async (event) => {
@@ -413,9 +410,8 @@ export function Admin() {
     if (listPeople[0] && listPeople[0].phone_number === 'undefined') {
       phone_number = '';
 
-      employer = ''
-    }
-    else {
+      employer = '';
+    } else {
       phone_number = listPeople[0].phone_number;
       employer = listPeople[0].employer;
     }
@@ -430,7 +426,7 @@ export function Admin() {
       phone_number: listPeople[0].phone_number,
       employer: listPeople[0].employer,
       // ta_time_zone: listTaUser[0].ta_time_zone,
-      ta_time_zone:currentTaTimeZone,
+      ta_time_zone: currentTaTimeZone,
       ta_photo_url: taPhoto,
       ta_picture: taImage,
     };
@@ -461,23 +457,25 @@ export function Admin() {
     //   }
     // });
     // formData.append('ta_picture', taImage);
-    console.log("updateTA ta_picture in formdata = ", formData.getAll("ta_picture"));
-    
-      try {
-        const response = await axios({
-          method: "post",
-          url: BASE_URL + 'UpdateTA',
-          data: formData,
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-        console.log("updateTA RESPONSE : ", response.data);
-        // toggleConfirmed(true);
-        // toggleCalled(!called);
-      } catch(error) {
-        console.log(error)
-      }
-  }
+    console.log(
+      'updateTA ta_picture in formdata = ',
+      formData.getAll('ta_picture')
+    );
 
+    try {
+      const response = await axios({
+        method: 'post',
+        url: BASE_URL + 'UpdateTA',
+        data: formData,
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      console.log('updateTA RESPONSE : ', response.data);
+      // toggleConfirmed(true);
+      // toggleCalled(!called);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const getTAofUser = () => {
     axios
@@ -1172,8 +1170,8 @@ export function Admin() {
                             curUserName: users.user_name,
                             ta: {
                               ...loginContext.loginState.ta,
-                              picture: currentTaPicture
-                            }
+                              picture: currentTaPicture,
+                            },
                           });
                         }}
                       >
@@ -1909,8 +1907,8 @@ export function Admin() {
                     reload: !loginContext.loginState.reload,
                     ta: {
                       ...loginContext.loginState.ta,
-                      picture: currentTaPicture
-                    }
+                      picture: currentTaPicture,
+                    },
                   });
                 }}
               >
@@ -1973,8 +1971,8 @@ export function Admin() {
                     reload: !loginContext.loginState.reload,
                     ta: {
                       ...loginContext.loginState.ta,
-                      picture: currentTaPicture
-                    }
+                      picture: currentTaPicture,
+                    },
                   });
                 }}
               >
@@ -2143,8 +2141,8 @@ export function Admin() {
         reload: !loginContext.loginState.reload,
         ta: {
           ...loginContext.loginState.ta,
-          picture: currentTaPicture
-        }
+          picture: currentTaPicture,
+        },
       });
       history.push('/home');
     });
@@ -2169,8 +2167,8 @@ export function Admin() {
         reload: !loginContext.loginState.reload,
         ta: {
           ...loginContext.loginState.ta,
-          picture: currentTaPicture
-        }
+          picture: currentTaPicture,
+        },
       });
       history.push('/home');
     });
@@ -2245,10 +2243,9 @@ export function Admin() {
           reload: !loginContext.loginState.reload,
           ta: {
             ...loginContext.loginState.ta,
-            picture: currentTaPicture
-          }
+            picture: currentTaPicture,
+          },
         });
-
       })
       .catch((error) => {
         console.log('its in landing page');
@@ -2632,7 +2629,6 @@ export function Admin() {
                   <Col> Your Users ({listOfUsers.length})</Col>
 
                   <Col xs={3}></Col>
-
                 </Row>
                 <div class="listofusers">
                   {listOfUsers.map((users) => {
@@ -2658,8 +2654,8 @@ export function Admin() {
                             curUserName: users.user_name,
                             ta: {
                               ...loginContext.loginState.ta,
-                              picture: currentTaPicture
-                            }
+                              picture: currentTaPicture,
+                            },
                           });
                         }}
                       >
@@ -2752,235 +2748,229 @@ export function Admin() {
               justifyContent: 'center',
             }}
           >
-            <div>
+            <Row
+              style={{
+                height: '300px',
+              }}
+            >
               <Row
                 style={{
-                  height: '300px',
+                  width: '40%',
+                  marginLeft: '30%',
                 }}
               >
-                <Col>
-                  <Row
+                {taPhoto == '' ? (
+                  <img
                     style={{
-                      width: '40%',
-                      marginLeft: '30%',
+                      display: 'block',
+                      float: 'right',
+                      width: '5rem',
+                      height: '5rem',
+                      objectFit: 'cover',
+                      marginTop: '15px',
                     }}
-                  >
-                    {taPhoto == '' ? (
-                      <img
-                        style={{
-                          display: 'block',
-                          float: 'right',
-                          width: '5rem',
-                          height: '5rem',
-                          objectFit: 'cover',
-                          marginTop: '15px',
-                        }}
-                        src={'/UserNoImage.png'}
-                        alt="TA Profile"
-                      />
-                    ) : (
-                      <img
-                        style={{
-                          display: 'block',
-                          float: 'right',
-                          width: '5rem',
-                          height: '5rem',
-                          objectFit: 'cover',
-                          marginTop: '15px',
-                        }}
-                        src={taPhoto}
-                        alt="TA Profile"
-                      />
-                    )}
-                  </Row>
-                  <Row
+                    src={'/UserNoImage.png'}
+                    alt="TA Profile"
+                  />
+                ) : (
+                  <img
                     style={{
-                      width: '40%',
-                      marginLeft: '30%',
+                      display: 'block',
+                      float: 'right',
+                      width: '5rem',
+                      height: '5rem',
+                      objectFit: 'cover',
+                      marginTop: '15px',
                     }}
-
-                    src={currentTaPhoto}
+                    src={taPhoto}
                     alt="TA Profile"
                   />
                 )}
-          </Row>
-          <Row style={{
-            width: '40%',
-            marginLeft: '30%',
-          }}>
-          <h6>Change Image</h6>
-                
-                <div
-                  onClick={() => {
-                    toggleUploadImage(!showUploadImage);
-                  }}
-                  style={{
-                    marginLeft: '12px',
-                    textDecoration: 'underline',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Upload from Computer
-                </div>
-                <UploadImage
-                  photoUrl={taPhotoURL}
-                  setPhotoUrl={setTaPhoto}
-                  currentUserId={userID}
-                />
-                <GooglePhotos photoUrl={taPhotoURL} setPhotoUrl={setTaPhoto} />
-          </Row>
-          </Col>
-                <Col style={{
-                  marginTop: '50px'
-                }}>
-          <Form.Group>
-            <Row>
-                
-                  <label
-                  style={{
-                    marginTop: '50px',
-                  }}
-                >
-                  <Form.Group>
-                    <Row>
-                      <label
-                        style={{
-                          marginTop: '5px',
-                          marginRight: '10px',
-                          fontWeight: 'bolder',
-                          color: '#000000',
-                        }}
-                      >
-                        First Name:
-                      </label>
-
-                      <TextField
-                        id="taFirstName"
-                        placeholder="Loading"
-                        value={taFirstName}
-                        onChange={(e) => {
-                          e.stopPropagation();
-                          console.log('first name update', e.target.value);
-                          setTaFirstName(e.target.value);
-                        }}
-                      ></TextField>
-                    </Row>
-                    <Row>
-                      <label
-                        style={{
-                          marginTop: '5px',
-                          marginRight: '10px',
-                          fontWeight: 'bolder',
-                          color: '#000000',
-                        }}
-                      >
-                        Last Name:
-                      </label>
-                      <TextField
-                        id="taLastName"
-                        placeholder="Loading"
-                        value={taLastName}
-                        onChange={(e) => {
-                          e.stopPropagation();
-                          console.log('last name update', e.target.value);
-                          setTaLastName(e.target.value);
-                        }}
-                      ></TextField>
-                    </Row>
-
-                    <Row>
-                      <label
-                        style={{
-                          marginTop: '5px',
-                          marginRight: '10px',
-                          fontWeight: 'bolder',
-                          color: '#000000',
-                        }}
-                      >
-                        Email:
-                      </label>
-
-                      <div
-                        style={{
-                          marginTop: '5px',
-                          marginRight: '10px',
-                          color: '#000000',
-                        }}
-                      >
-                        {
-                          document.cookie
-                            .split('; ')
-                            .find((row) => row.startsWith('ta_email='))
-                            .split('=')[1]
-                        }
-                      </div>
-                    </Row>
-                    <Row>
-                      <label
-                        style={{
-                          marginTop: '5px',
-                          marginRight: '10px',
-                          fontWeight: 'bolder',
-                          color: '#000000',
-                        }}
-                      >
-                        User ID:
-                      </label>
-
-                      <div
-                        style={{
-                          marginTop: '5px',
-                          marginRight: '10px',
-                          color: '#000000',
-                        }}
-                      >
-                        {
-                          document.cookie
-                            .split('; ')
-                            .find((row) => row.startsWith('ta_uid='))
-                            .split('=')[1]
-                        }
-                      </div>
-                    </Row>
-                    <br />
-                    <br />
-                    <Row>
-                      <div>
-                        <button
-                          style={{
-                            color: '#000000',
-                            border: 'solid',
-                            borderWidth: '2px',
-                            borderRadius: '25px',
-                          }}
-                          onClick={() => {
-                            if (taPhotoURL) {
-                              setTaPhoto(taPhotoURL);
-                              document.cookie = 'ta_pic=' + taPhotoURL;
-                            }
-                            UpdatePerson();
-                          }}
-                        >
-                          Save Changes
-                        </button>
-                        <button
-                          style={{
-                            color: '#000000',
-                            border: 'solid',
-                            borderWidth: '2px',
-                            borderRadius: '25px',
-                            marginLeft: '20px',
-                          }}
-                          onClick={() => {}}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </Row>
-                  </Form.Group>
-                </Col>
               </Row>
-            </div>
+              <Row
+                style={{
+                  width: '40%',
+                  marginLeft: '30%',
+                }}
+                src={currentTaPhoto}
+                alt="TA Profile"
+              />
+            </Row>
+            <Row
+              style={{
+                width: '40%',
+                marginLeft: '30%',
+              }}
+            >
+              <h6>Change Image</h6>
+
+              <div
+                onClick={() => {
+                  toggleUploadImage(!showUploadImage);
+                }}
+                style={{
+                  marginLeft: '12px',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                }}
+              >
+                Upload from Computer
+              </div>
+              <UploadImage
+                photoUrl={taPhotoURL}
+                setPhotoUrl={setTaPhoto}
+                currentUserId={userID}
+              />
+              <GooglePhotos photoUrl={taPhotoURL} setPhotoUrl={setTaPhoto} />
+            </Row>
+          </Col>
+          <Col
+            style={{
+              marginTop: '50px',
+            }}
+          >
+            <Row>
+              <Col>
+                <Form.Group>
+                  <Row>
+                    <label
+                      style={{
+                        marginTop: '5px',
+                        marginRight: '10px',
+                        fontWeight: 'bolder',
+                        color: '#000000',
+                      }}
+                    >
+                      First Name:
+                    </label>
+
+                    <TextField
+                      id="taFirstName"
+                      placeholder="Loading"
+                      value={taFirstName}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        console.log('first name update', e.target.value);
+                        setTaFirstName(e.target.value);
+                      }}
+                    ></TextField>
+                  </Row>
+                  <Row>
+                    <label
+                      style={{
+                        marginTop: '5px',
+                        marginRight: '10px',
+                        fontWeight: 'bolder',
+                        color: '#000000',
+                      }}
+                    >
+                      Last Name:
+                    </label>
+                    <TextField
+                      id="taLastName"
+                      placeholder="Loading"
+                      value={taLastName}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        console.log('last name update', e.target.value);
+                        setTaLastName(e.target.value);
+                      }}
+                    ></TextField>
+                  </Row>
+
+                  <Row>
+                    <label
+                      style={{
+                        marginTop: '5px',
+                        marginRight: '10px',
+                        fontWeight: 'bolder',
+                        color: '#000000',
+                      }}
+                    >
+                      Email:
+                    </label>
+
+                    <div
+                      style={{
+                        marginTop: '5px',
+                        marginRight: '10px',
+                        color: '#000000',
+                      }}
+                    >
+                      {
+                        document.cookie
+                          .split('; ')
+                          .find((row) => row.startsWith('ta_email='))
+                          .split('=')[1]
+                      }
+                    </div>
+                  </Row>
+                  <Row>
+                    <label
+                      style={{
+                        marginTop: '5px',
+                        marginRight: '10px',
+                        fontWeight: 'bolder',
+                        color: '#000000',
+                      }}
+                    >
+                      User ID:
+                    </label>
+
+                    <div
+                      style={{
+                        marginTop: '5px',
+                        marginRight: '10px',
+                        color: '#000000',
+                      }}
+                    >
+                      {
+                        document.cookie
+                          .split('; ')
+                          .find((row) => row.startsWith('ta_uid='))
+                          .split('=')[1]
+                      }
+                    </div>
+                  </Row>
+                  <br />
+                  <br />
+                  <Row>
+                    <div>
+                      <button
+                        style={{
+                          color: '#000000',
+                          border: 'solid',
+                          borderWidth: '2px',
+                          borderRadius: '25px',
+                        }}
+                        onClick={() => {
+                          if (taPhotoURL) {
+                            setTaPhoto(taPhotoURL);
+                            document.cookie = 'ta_pic=' + taPhotoURL;
+                          }
+                          UpdatePerson();
+                        }}
+                      >
+                        Save Changes
+                      </button>
+                      <button
+                        style={{
+                          color: '#000000',
+                          border: 'solid',
+                          borderWidth: '2px',
+                          borderRadius: '25px',
+                          marginLeft: '20px',
+                        }}
+                        onClick={() => {}}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </Row>
+                </Form.Group>
+              </Col>
+            </Row>
+
             <div class="con">
               <button
                 class="duperr"
@@ -3065,7 +3055,7 @@ export function Admin() {
                     ...loginContext.loginState.ta,
                     id: '',
                     email: '',
-                    picture: ''
+                    picture: '',
                   },
                   usersOfTA: [],
                   curUser: '',
