@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react';
-import GoogleLogin from 'react-google-login';
 import AppleLogin from 'react-apple-login';
 import axios from 'axios';
 import { Box, Button } from '@material-ui/core';
@@ -8,9 +7,9 @@ import { useHistory } from 'react-router-dom';
 import TimezoneSelect from 'react-timezone-select';
 import { Col, Container, Form, Modal, Row } from 'react-bootstrap';
 import { withRouter } from 'react-router';
-import Google from '../manifest/LoginAssets/Google.svg';
 import Apple from '../manifest/LoginAssets/AppleSignUp.svg';
 import LoginContext from 'LoginContext';
+import GoogleSignUpTA from 'Google/GoogleSignUpTA';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
@@ -51,6 +50,7 @@ const useStyles = makeStyles({
 function SocialLogin(props) {
   // const Auth = useContext(AuthContext);
   const loginContext = useContext(LoginContext);
+  const { signupSuccessful, setSignupSuccessful } = props;
   const classes = useStyles();
   const history = useHistory();
   const [socialSignUpModalShow, setSocialSignUpModalShow] = useState(false);
@@ -62,111 +62,11 @@ function SocialLogin(props) {
   const [newEmployer, setNewEmployer] = useState('');
   const [selectedTimezone, setSelectedTimezone] = useState({});
   const [socialId, setSocialId] = useState('');
-  const [refreshToken, setrefreshToken] = useState('');
+  const [refreshToken, setRefreshToken] = useState('');
   const [accessToken, setAccessToken] = useState('');
-  const [accessExpiresIn, setaccessExpiresIn] = useState('');
+  const [accessExpiresIn, setAccessExpiresIn] = useState('');
   const [alreadyExists, setAlreadyExists] = useState(false);
 
-  let redirecturi = 'https://manifestmy.life';
-
-  const responseGoogle = (response) => {
-    console.log('response', response);
-
-    let auth_code = response.code;
-    let authorization_url = 'https://accounts.google.com/o/oauth2/token';
-
-    console.log('auth_code ***', auth_code);
-    var details = {
-      code: auth_code,
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
-      // redirect_uri: 'http://localhost:3000',
-      redirect_uri: redirecturi,
-      grant_type: 'authorization_code',
-    };
-
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + '=' + encodedValue);
-    }
-    formBody = formBody.join('&');
-
-    fetch(authorization_url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-      },
-      body: formBody,
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((responseData) => {
-        console.log(responseData);
-        return responseData;
-      })
-      .then((data) => {
-        console.log(data);
-        let at = data['access_token'];
-        let rt = data['refresh_token'];
-        let ax = data['expires_in'];
-        setAccessToken(at);
-        setrefreshToken(rt);
-        setaccessExpiresIn(ax);
-        console.log('res', at, rt);
-
-        axios
-          .get(
-            'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' +
-              at
-          )
-          .then((response) => {
-            console.log(response.data);
-
-            let data = response.data;
-            //setUserInfo(data);
-            let e = data['email'];
-            let fn = data['given_name'];
-            let ln = data['family_name'];
-            let si = data['id'];
-
-            setNewEmail(e);
-            setNewFName(fn);
-            setNewLName(ln);
-            setSocialId(si);
-            axios.get(BASE_URL + 'GetTAEmailId/' + e).then((response) => {
-              console.log(response.data);
-              if (response.data.message === 'User ID doesnt exist') {
-                setSocialSignUpModalShow(!socialSignUpModalShow);
-              } else {
-                setAlreadyExists(!alreadyExists);
-              }
-            });
-          })
-          .catch((error) => {
-            console.log('its in landing page');
-            console.log(error);
-          });
-
-        // setSocialSignUpModalShow(!socialSignUpModalShow);
-
-        return (
-          accessToken,
-          refreshToken,
-          accessExpiresIn,
-          newEmail,
-          newFName,
-          newLName,
-          socialId
-        );
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  console.log(newEmail);
 
   const alreadyExistsModal = () => {
     const headerStyle = {
@@ -262,7 +162,7 @@ function SocialLogin(props) {
   const hideSignUp = () => {
     //setSignUpModalShow(false);
     setSocialSignUpModalShow(false);
-    props.setSignupSuccessful(true);
+    setSignupSuccessful(true);
     // setLoginSuccessful(true);
     // history.push('/aboutus');
     setNewPhoneNumber('');
@@ -495,62 +395,36 @@ function SocialLogin(props) {
     <Row xs={12} className={classes.buttonLayout}>
       <Row xs={12} className={classes.buttonLayout}>
         <Col></Col>
-        <Col xs={8} className={classes.loginbuttons}>
-          <Button>
-            <GoogleLogin
-              clientId={CLIENT_ID}
-              accessType="offline"
-              prompt="consent"
-              responseType="code"
-              buttonText="Log In"
-              ux_mode="redirect"
-              isSignedIn={false}
-              disable={true}
-              cookiePolicy={'single_host_origin'}
-              redirectUri={'https://manifestmy.life'}
-              scope="https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/photoslibrary.readonly"
-              // redirectUri="http://localhost:3000"
-              onSuccess={responseGoogle}
-              onFailure={responseGoogle}
-              render={(renderProps) => (
-                <img
-                  src={Google}
-                  onClick={renderProps.onClick}
-                  disabled={renderProps.disabled}
-                  alt={''}
-                  style={{
-                    minWidth: '70%',
-                    maxWidth: '70%',
-                    padding: '0',
-                    margin: 0,
-                  }}
-                ></img>
-              )}
-            />
-          </Button>
+        <Col xs={8}>
+          <GoogleSignUpTA
+            signupSuccessful={signupSuccessful}
+            setSignupSuccessful={setSignupSuccessful}
+            newFName={newFName}
+            setNewFName={setNewFName}
+            newLName={newLName}
+            setNewLName={setNewLName}
+            newEmail={newEmail}
+            setNewEmail={setNewEmail}
+            socialId={socialId}
+            setSocialId={setSocialId}
+            refreshToken={refreshToken}
+            setRefreshToken={setRefreshToken}
+            accessToken={accessToken}
+            setAccessToken={setAccessToken}
+            accessExpiresIn={accessExpiresIn}
+            setAccessExpiresIn={setAccessExpiresIn}
+            socialSignUpModalShow={socialSignUpModalShow}
+            setSocialSignUpModalShow={setSocialSignUpModalShow}
+            alreadyExists={alreadyExists}
+            setAlreadyExists={setAlreadyExists}
+          />
+
         </Col>
         <Col></Col>
       </Row>
       <Row xs={12} className={classes.buttonLayout}>
         <Col></Col>
         <Col xs={8} className={classes.loginbuttons}>
-          {/* <Button>
-            <img
-              src={Apple}
-              alt={''}
-              style={{
-                minWidth: '70%',
-                maxWidth: '70%',
-                padding: '0',
-                margin: 0,
-              }}
-              className={classes.buttonLayout}
-              // onClick={() => {
-              //   window.AppleID.auth.signIn();
-              // }}
-              onClick={() => responseApple()}
-            ></img>
-          </Button> */}
           <AppleLogin
             clientId={process.env.REACT_APP_APPLE_CLIENT_ID}
             onSuccess={(res) => {
