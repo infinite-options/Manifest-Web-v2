@@ -168,15 +168,55 @@ export default function Home(props) {
         console.log('list of users home', response.data.result);
         if (response.data.result.length > 0) {
           const usersOfTA = response.data.result;
-          const curUserID = usersOfTA[0].user_unique_id;
-          const curUserTZ = usersOfTA[0].time_zone;
-          const curUserEI = usersOfTA[0].user_email_id;
-          const curUserP = usersOfTA[0].user_picture;
-          const curUserN = usersOfTA[0].user_name;
-          console.log('timezone', curUserTZ);
+          var curUserID = usersOfTA[0].user_unique_id;
+          var curUserTZ = usersOfTA[0].time_zone;
+          var curUserEI = usersOfTA[0].user_email_id;
+          var curUserP = usersOfTA[0].user_picture;
+          var curUserN = usersOfTA[0].user_name;
+
+          var uID, uTime_zone, uEmail, uPic, uName;
+          if (
+            document.cookie
+              .split(';')
+              .some((item) => item.trim().startsWith('patient_uid='))
+          ) {
+            uID = document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('patient_uid='))
+              .split('=')[1];
+            uTime_zone = document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('patient_timeZone='))
+              .split('=')[1];
+            uEmail = document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('patient_email='))
+              .split('=')[1];
+            uPic = document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('patient_pic='))
+              .split('=')[1];
+            uName = document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('patient_name='))
+              .split('=')[1];
+    
+            curUserID = uID;
+            curUserTZ = uTime_zone;
+            curUserEI = uEmail;
+            curUserP = uPic;
+            curUserN = uName;
+          }
+          else {
+            document.cookie = 'patient_name=' + curUserN;
+            document.cookie = 'patient_timeZone=' + curUserTZ;
+            document.cookie = 'patient_uid=' + curUserID;
+            document.cookie = 'patient_email=' + curUserEI;
+            document.cookie = 'patient_pic=' + curUserP;
+          }
           loginContext.setLoginState({
             ...loginContext.loginState,
-            usersOfTA: response.data.result,
+            usersOfTA: usersOfTA,
             curUser: curUserID,
             curUserTimeZone: curUserTZ,
             curUserEmail: curUserEI,
@@ -187,7 +227,6 @@ export default function Home(props) {
               picture: currentTaPicture
             }
           });
-          console.log(curUserID);
           console.log('timezone', curUserTZ);
           document.cookie = 'usersOfTA=' + JSON.stringify(usersOfTA); 
           console.log("usersOfTA from document cookies home ", usersOfTA)
@@ -941,18 +980,7 @@ export default function Home(props) {
               console.log("Checking UserAccessToken status is 400");
               let authorization_url =
                 'https://accounts.google.com/o/oauth2/token';
-              // if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-              //   console.log('base_url', BASE_URL.substring(8, 18));
-              //   CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-              //   CLIENT_SECRET =
-              //     process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-              //   console.log(CLIENT_ID, CLIENT_SECRET);
-              // } else {
-              //   console.log('base_url', BASE_URL.substring(8, 18));
-              //   CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-              //   CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-              //   console.log(CLIENT_ID, CLIENT_SECRET);
-              // }
+              
               var details = {
                 refresh_token: refreshToken,
                 client_id: CLIENT_ID,

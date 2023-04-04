@@ -133,50 +133,10 @@ export function Navigation() {
         })}
       >
         {user.user_name}
-        {/* {
-          document.cookie
-            .split('; ')
-            .find((row) => row.startsWith('patient_name='))
-            .split('=')[1]
-        } */}
       </option>
     ));
 
     console.log('document cookie', document.cookie);
-    if (
-      document.cookie
-        .split(';')
-        .some((item) => item.trim().startsWith('patient_name='))
-    ) {
-      if (
-        document.cookie
-          .split('; ')
-          .find((row) => row.startsWith('patient_name='))
-          .split('=')[1] == 'Loading'
-      ) {
-        console.log('do something here', listOfUsers);
-        if (listOfUsers[0]) {
-          console.log('document cookie set to first user');
-          document.cookie = 'patient_name=' + listOfUsers[0].user_name;
-          document.cookie = 'patient_timeZone=' + listOfUsers[0].time_zone;
-          document.cookie = 'patient_uid=' + listOfUsers[0].user_unique_id;
-          document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
-          document.cookie = 'patient_pic=' + listOfUsers[0].user_picture;
-        }
-      }
-    } else {
-      if (listOfUsers[0]) {
-        console.log('document cookie set to first user');
-        document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
-        document.cookie = 'patient_name=' + listOfUsers[0].user_name;
-        document.cookie = 'patient_timeZone=' + listOfUsers[0].time_zone;
-        document.cookie = 'patient_uid=' + listOfUsers[0].user_unique_id;
-        document.cookie = 'patient_pic=' + listOfUsers[0].user_picture;
-
-        console.log('document cookie set to loading');
-        document.cookie = 'patient_name=Loading';
-      }
-    }
     return elements;
   };
 
@@ -235,8 +195,42 @@ export function Navigation() {
                         padding: 0,
                         paddingRight: '1rem',
                       }}
-                    >
-                      {document.cookie
+                      >
+                        {
+                          loginContext.loginState.curUserPic ?
+                            (loginContext.loginState.curUserPic !== '' ?
+                              (<img
+                                src={loginContext.loginState.curUserPic}
+                                style={{
+                                  width: '45px',
+                                  height: '45px',
+                                  borderRadius: '100%',
+                                }}
+                              />
+                              ) : (
+                                <img
+                                  src={'/UserNoImage.png'}
+                                  style={{
+                                    width: '45px',
+                                    height: '45px',
+                                    borderRadius: '100%',
+                                  }}
+                                />
+                              )
+                            ) :
+                            (
+                            <img
+                              src={'/UserNoImage.png'}
+                              style={{
+                                width: '45px',
+                                height: '45px',
+                                borderRadius: '100%',
+                              }}
+                            />
+                          )
+                        }
+                            
+                      {/* {document.cookie
                         .split(';')
                         .some((item) =>
                           item.trim().startsWith('patient_pic=')
@@ -277,7 +271,7 @@ export function Navigation() {
                             borderRadius: '100%',
                           }}
                         />
-                      )}
+                      )} */}
                     </Col>
 
                     <Col
@@ -365,10 +359,11 @@ export function Navigation() {
                         >
                           <option selected disabled>
                             {
-                              document.cookie
-                                .split('; ')
-                                .find((row) => row.startsWith('patient_name='))
-                                .split('=')[1]
+                              // document.cookie
+                              //   .split('; ')
+                              //   .find((row) => row.startsWith('patient_name='))
+                              //   .split('=')[1]
+                                loginContext.loginState.curUserName
                             }
                           </option>
                           {userListRendered()}
