@@ -97,6 +97,17 @@ export default function AboutModal(props) {
     userPic = loginContext.loginState.curUserPic;
     userN = loginContext.loginState.curUserName;
   }
+  var currentTaPicture = loginContext.loginState.ta.picture;
+  if (
+    document.cookie
+      .split(';')
+      .some((item) => item.trim().startsWith('ta_pic='))
+  ) {
+    currentTaPicture = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('ta_pic='))
+      .split('=')[1];
+  }
   console.log(taID);
   const [imageChanged, setImageChanged] = useState(false);
   const [firstName, setFirstName] = useState('');
@@ -173,23 +184,8 @@ export default function AboutModal(props) {
   //const userID = loginContext.loginState.curUser;
 
   console.log('currentUser: ' + currentUser);
-  //const userID = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1];
 
-  // const getTAList = () => {
-  //   console.log('in getTAList: ' + currentUser);
-  //   axios
-  //     .get(BASE_URL + 'listAllTAUser/' + currentUser)
-  //     .then((response) => {
-  //       console.log(response.data);
-  //       setTaList(response.data.result);
-  //     })
-  //     .catch((err) => {
-  //       if (err.response) {
-  //         console.log(err.response);
-  //       }
-  //       console.log(err);
-  //     });
-  // };
+  
   useEffect(() => {
     console.log('yayayayayay');
     axios
@@ -384,13 +380,6 @@ export default function AboutModal(props) {
     );
   };
 
-  // if (document.cookie
-  //   .split(";")
-  //   .some(item => item.trim().startsWith("ta_uid="))
-  //   ) {
-  //     userID = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
-  //     console.log('userID', userID)
-  //   }
   console.log('userID', userID);
   console.log('ta_user_id', ta_user_id);
   console.log('taObject', taObject);
@@ -419,106 +408,144 @@ export default function AboutModal(props) {
       .split(';')
       .some((item) => item.trim().startsWith('usersOfTA='))) {
       console.log("got usersOfTA from document.cookie")
-
+  
       var usersOfTA_result = JSON.parse(document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('usersOfTA='))
+        .split('; ')
+        .find((row) => row.startsWith('usersOfTA='))
         .split('=')[1]);
-      
-        if (usersOfTA_result.length > 0) {
-          const usersOfTA = usersOfTA_result;
-          const curUserID = usersOfTA[0].user_unique_id;
-          const curUserTZ = usersOfTA[0].time_zone;
-          const curUserEI = usersOfTA[0].user_email_id;
-          const curUserN = usersOfTA[0].user_name;
-          if (loginContext.loginState.curUser == '') {
-            loginContext.setLoginState({
-              ...loginContext.loginState,
-              usersOfTA: usersOfTA_result,
-              curUser: curUserID,
-              curUserTimeZone: curUserTZ,
-              curUserEmail: curUserEI,
-              curUserName: curUserN,
-            });
-          } else {
-            loginContext.setLoginState({
-              ...loginContext.loginState,
-              usersOfTA: usersOfTA_result,
-            });
-          }
-          console.log(curUserID);
-        } else {
-          loginContext.setLoginState({
-            ...loginContext.loginState,
-            usersOfTA: usersOfTA_result,
-            curUser: '',
-            curUserTimeZone: '',
-            curUserEmail: '',
-            curUserName: '',
-          });
-          console.log('No User Found');
-        }
-      // ***********
-    }
-    else {
-      console.log("got usersOfTA from usersOfTA/ API call")
-      axios
-        .get(
-          BASE_URL +
-          'usersOfTA/' +
+        
+      if (usersOfTA_result.length > 0) {
+        const usersOfTA = usersOfTA_result;
+        var curUserID = usersOfTA[0].user_unique_id;
+        var curUserTZ = usersOfTA[0].time_zone;
+        var curUserEI = usersOfTA[0].user_email_id;
+        var curUserP = usersOfTA[0].user_picture;
+        var curUserN = usersOfTA[0].user_name;
+        var uID, uTime_zone, uEmail, uPic, uName;
+        if (
           document.cookie
+            .split(';')
+            .some((item) => item.trim().startsWith('patient_uid='))
+        ) {
+          uID = document.cookie
             .split('; ')
-            .find((row) => row.startsWith('ta_email='))
-            .split('=')[1]
-        )
-        .then((response) => {
-          console.log(response);
-          if (response.data.result.length > 0) {
-            const usersOfTA = response.data.result;
-            const curUserID = usersOfTA[0].user_unique_id;
-            const curUserTZ = usersOfTA[0].time_zone;
-            const curUserEI = usersOfTA[0].user_email_id;
-            const curUserN = usersOfTA[0].user_name;
-            // console.log('pog', loginContext.loginState.curUser)
-            if (loginContext.loginState.curUser == '') {
-              // edge case on refresh
+            .find((row) => row.startsWith('patient_uid='))
+            .split('=')[1];
+          uTime_zone = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('patient_timeZone='))
+            .split('=')[1];
+          uEmail = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('patient_email='))
+            .split('=')[1];
+          uPic = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('patient_pic='))
+            .split('=')[1];
+          uName = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('patient_name='))
+            .split('=')[1];
+    
+          curUserID = uID;
+          curUserTZ = uTime_zone;
+          curUserEI = uEmail;
+          curUserP = uPic;
+          curUserN = uName;
+        }
+        else {
+          document.cookie = 'patient_name=' + curUserN;
+          document.cookie = 'patient_timeZone=' + curUserTZ;
+          document.cookie = 'patient_uid=' + curUserID;
+          document.cookie = 'patient_email=' + curUserEI;
+          document.cookie = 'patient_pic=' + curUserP;
+        }
+        loginContext.setLoginState({
+          ...loginContext.loginState,
+          usersOfTA: usersOfTA,
+          curUser: curUserID,
+          curUserTimeZone: curUserTZ,
+          curUserEmail: curUserEI,
+          curUserPic: curUserP,
+          curUserName: curUserN,
+          ta: {
+            ...loginContext.loginState.ta,
+            picture: currentTaPicture
+          }
+        });
+      }
+      else {
+        loginContext.setLoginState({
+          ...loginContext.loginState,
+          usersOfTA: usersOfTA_result,
+          curUser: '',
+          curUserTimeZone: '',
+          curUserEmail: '',
+          curUserPic: '',
+          curUserName: '',
+          ta: {
+            ...loginContext.loginState.ta,
+            picture: currentTaPicture
+          }
+        });
+        console.log('No User Found');
+      }
+    }else {
+        console.log("got usersOfTA from usersOfTA/ API call")
+        axios
+          .get(
+            BASE_URL +
+            'usersOfTA/' +
+            document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('ta_email='))
+              .split('=')[1]
+          )
+          .then((response) => {
+            console.log("userOfTA response ", response);
+            if (response.data.result.length > 0) {
+              const usersOfTA = response.data.result;
+              const curUserID = usersOfTA[0].user_unique_id;
+              const curUserTZ = usersOfTA[0].time_zone;
+              const curUserEI = usersOfTA[0].user_email_id;
+              const curUserP = usersOfTA[0].user_picture;
+              const curUserN = usersOfTA[0].user_name;
               loginContext.setLoginState({
                 ...loginContext.loginState,
                 usersOfTA: response.data.result,
                 curUser: curUserID,
                 curUserTimeZone: curUserTZ,
                 curUserEmail: curUserEI,
+                curUserPic: curUserP,
                 curUserName: curUserN,
+                ta: {
+                  ...loginContext.loginState.ta,
+                  picture: currentTaPicture
+                }
               });
+              console.log(curUserID);
             } else {
               loginContext.setLoginState({
                 ...loginContext.loginState,
                 usersOfTA: response.data.result,
-                //curUser: curUserID
+                curUser: '',
+                curUserTimeZone: '',
+                curUserEmail: '',
+                curUserPic: '',
+                curUserName: '',
+                ta: {
+                  ...loginContext.loginState.ta,
+                  picture: currentTaPicture
+                }
               });
+              console.log('No User Found');
             }
-
-            console.log(curUserID);
-            // setUserID(curUserID);
-            // console.log(userID);
-            //GrabFireBaseRoutinesGoalsData();
-            // return userID;
-          } else {
-            loginContext.setLoginState({
-              ...loginContext.loginState,
-              usersOfTA: response.data.result,
-              curUser: '',
-              curUserTimeZone: '',
-              curUserEmail: '',
-              curUserName: '',
-            });
-            console.log('No User Found');
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
   }, [loginContext.loginState.reload, userID]);
 
   useEffect(() => {
@@ -1535,6 +1562,10 @@ export default function AboutModal(props) {
                     loginContext.setLoginState({
                       ...loginContext.loginState,
                       reload: !loginContext.loginState.reload,
+                      ta: {
+                        ...loginContext.loginState.ta,
+                        picture: currentTaPicture
+                      }
                     });
                     setDeleteUser(!deleteUser);
                     toggleCalled(!called);
@@ -1637,6 +1668,10 @@ export default function AboutModal(props) {
                       loginContext.setLoginState({
                         ...loginContext.loginState,
                         reload: true,
+                        ta: {
+                          ...loginContext.loginState.ta,
+                          picture: currentTaPicture
+                        }
                       });
                       history.push('/home');
                     });
@@ -2008,97 +2043,7 @@ export default function AboutModal(props) {
                     alt="Profile"
                   />
                 )}
-
-                {/* )} */}
-              </Col>
-              {/* <Col style={{ float: 'right' }} xs={4}>
-                <img alt="icon" src={photo} style={{ width: '100%' }} />
-              </Col> */}
-              {/*  <Col style={{ color: '#000000' }}>
-                <h1
-                  style={{
-                    fontSize: '24px',
-                    font: 'SF-Compact-Text-Semibold',
-                  }}
-                >
-                  Change Image
-                </h1>
-                <div
-                  style={{
-                    fontSize: '16px',
-                    textDecoration: 'underline',
-                  }}
-                >
-                  User's library
-                </div>
-              </Col>
-              <Col>
-                {aboutMeObject.have_pic === false ? (
-                  <FontAwesomeIcon icon={faImage} size="6x" />
-                ) : aboutMeObject.pic === '' ? (
-                  // <img
-                  //   style={{
-                  //     display: 'block',
-                  //     marginLeft: 'auto',
-                  //     marginRight: 'auto',
-                  //     width: '100%',
-                  //     height: '70px',
-                  //     marginTop: '50px',
-                  //     marginBottom: '50px',
-                  //   }}
-                  //   src={this.state.aboutMeObject.pic}
-                  //   alt="Profile"
-                  // />
-                  <div
-                    style={{
-                      display: 'block',
-                      float: 'right',
-                      width: '5rem',
-                      height: '5rem',
-                      objectFit: 'fill',
-                      // width: '100px',
-                      // height: '100px',
-                      border: 'none',
-                      borderRadius: '10px',
-                      backgroundColor: '#000000',
-                      marginBottom: '15px',
-                    }}
-                  ></div>
-                ) : (
-                  <img
-                    style={{
-                      display: 'block',
-                      float: 'right',
-                      marginLeft: 'auto',
-                      marginRight: 'auto',
-                      width: '5rem',
-                      height: '5rem',
-                      objectFit: 'cover',
-                      marginBottom: '15px',
-                    }}
-                    src={aboutMeObject.pic}
-                    alt="Profile"
-                  />
-                )}
-              </Col>
-              <Col xs={8}>
-                <label
-                  style={{
-                    marginBottom: '15px',
-                    color: '#000000',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Upload A New Image
-                </label>
-                <input
-                  style={{ color: 'transparent' }}
-                  accept="image/*"
-                  type="file"
-                  onChange={handleFileSelected}
-                  id="ProfileImage"
-                />
-              </Col> */}
+                </Col>
             </Row>
             <br />
             <Row>
@@ -2116,7 +2061,6 @@ export default function AboutModal(props) {
                 <Form.Control
                   type="date"
                   value={aboutMeObject.birth_date}
-                  // selected={aboutMeObject.birth_date}
                   onChange={(date) => {
                     console.log(date.target.value);
                     setAboutMeObject({
@@ -2171,21 +2115,6 @@ export default function AboutModal(props) {
                     }));
                   }}
                 />
-                {/* <input
-            class= "form-control"
-            type="text"
-            placeholder="Enter phone number"
-            value={this.state.aboutMeObject.phone_number}
-            // value={this.state.aboutMeObject.phone_number}
-            // onChange={(e) => {
-            //   let temp = this.state.aboutMeObject
-            //   temp.phone_number = e
-            //   this.setState(
-            //     {
-            //       aboutMeObject: temp,
-            //     });
-            // }}
-            /> */}
               </Col>
             </Row>
           </Form.Group>
@@ -3011,7 +2940,11 @@ export default function AboutModal(props) {
                     document.cookie = 'patient_pic=' + userPhoto;
                     loginContext.setLoginState({
                       ...loginContext.loginState,
-                      curUserPic: userPhoto
+                      curUserPic: userPhoto,
+                      ta: {
+                        ...loginContext.loginState.ta,
+                        picture: currentTaPicture
+                      }
                     });}
                 }}
               >

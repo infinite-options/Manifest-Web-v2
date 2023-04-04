@@ -67,6 +67,7 @@ function SocialLogin(props) {
   const [accessExpiresIn, setAccessExpiresIn] = useState('');
   const [alreadyExists, setAlreadyExists] = useState(false);
 
+
   const alreadyExistsModal = () => {
     const headerStyle = {
       border: 'none',
@@ -417,6 +418,7 @@ function SocialLogin(props) {
             alreadyExists={alreadyExists}
             setAlreadyExists={setAlreadyExists}
           />
+
         </Col>
         <Col></Col>
       </Row>

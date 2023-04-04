@@ -80,20 +80,6 @@ export function Admin() {
   let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
   let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
 
-  // useEffect(() => {
-  //   if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-  //     console.log('base_url', BASE_URL.substring(8, 18));
-  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-  //     console.log(CLIENT_ID, CLIENT_SECRET);
-  //   } else {
-  //     console.log('base_url', BASE_URL.substring(8, 18));
-  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-  //     console.log(CLIENT_ID, CLIENT_SECRET);
-  //   }
-  // });
-
   const listOfUsers = loginContext.loginState.usersOfTA;
   var selectedTA = loginContext.loginState.ta.id;
   // const currentUser = loginContext.loginState.curUser;
@@ -151,6 +137,19 @@ export function Admin() {
     userN = loginContext.loginState.curUserName;
   }
 
+  var currentTaPicture = loginContext.loginState.ta.picture;
+  if (
+    document.cookie
+      .split(';')
+      .some((item) => item.trim().startsWith('ta_pic='))
+  ) {
+    currentTaPicture = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('ta_pic='))
+      .split('=')[1];
+  }
+
+
   console.log(selectedTA, usrID, userN);
   const [called, toggleCalled] = useState(false);
   const [showNewUser, toggleNewUser] = useState(false);
@@ -199,6 +198,10 @@ export function Admin() {
   const [showAdvisors, setShowAdvisors] = useState(false);
   const [listPeople, setListPeople] = useState([]);
   const [listTaUser, setListTaUser] = useState([]);
+  const [currentTaID, setCurrentTaID] = useState('');
+  const [currentTaTimeZone, setCurrentTaTimeZone] = useState('');
+  const [currentTaPhoto, setCurrentTaPhoto] = useState('');
+
   // const [advisorList, setAdvisorList] = useState([]);
   let redirecturi = 'https://manifestmy.space';
 
@@ -242,10 +245,11 @@ export function Admin() {
         setListTaUser(response.data.result[0]);
         setTaFirstName(response.data.result[0].ta_first_name);
         setTaLastName(response.data.result[0].ta_last_name);
-        console.log(
-          'in TAProfile ta first name',
-          response.data.result[0].ta_first_name
-        );
+        setCurrentTaID(response.data.result[0].ta_unique_id);
+        setCurrentTaTimeZone(response.data.result[0].ta_time_zone);
+        setCurrentTaPhoto(response.data.result[0].ta_picture);
+        console.log('in TAProfile ta first name', response.data.result[0].ta_first_name);
+
       })
       .catch((error) => {
         console.log(error);
@@ -253,111 +257,180 @@ export function Admin() {
   }, []);
 
   const getUserOfTA = () => {
-    if (
-      document.cookie
-        .split(';')
-        .some((item) => item.trim().startsWith('usersOfTA='))
-    ) {
-      console.log('got usersOfTA from document.cookie');
 
-      var usersOfTA_result = JSON.parse(
-        document.cookie
-          .split('; ')
-          .find((row) => row.startsWith('usersOfTA='))
-          .split('=')[1]
-      );
-
+    if (document.cookie
+      .split(';')
+      .some((item) => item.trim().startsWith('usersOfTA='))) {
+      console.log("got usersOfTA from document.cookie")
+  
+      var usersOfTA_result = JSON.parse(document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('usersOfTA='))
+        .split('=')[1]);
+       
       if (usersOfTA_result.length > 0) {
         const usersOfTA = usersOfTA_result;
-        const curUserID = usersOfTA[0].user_unique_id;
-        const curUserTZ = usersOfTA[0].time_zone;
-        const curUserEI = usersOfTA[0].user_email_id;
-        const curUserN = usersOfTA[0].user_name;
-        if (loginContext.loginState.curUser == '') {
-          loginContext.setLoginState({
-            ...loginContext.loginState,
-            usersOfTA: usersOfTA_result,
-            curUser: curUserID,
-            curUserTimeZone: curUserTZ,
-            curUserEmail: curUserEI,
-            curUserName: curUserN,
-          });
-        } else {
-          loginContext.setLoginState({
-            ...loginContext.loginState,
-            usersOfTA: usersOfTA_result,
-          });
+        var curUserID = usersOfTA[0].user_unique_id;
+        var curUserTZ = usersOfTA[0].time_zone;
+        var curUserEI = usersOfTA[0].user_email_id;
+        var curUserP = usersOfTA[0].user_picture;
+        var curUserN = usersOfTA[0].user_name;
+        var uID, uTime_zone, uEmail, uPic, uName;
+        if (
+          document.cookie
+            .split(';')
+            .some((item) => item.trim().startsWith('patient_uid='))
+        ) {
+          uID = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('patient_uid='))
+            .split('=')[1];
+          uTime_zone = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('patient_timeZone='))
+            .split('=')[1];
+          uEmail = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('patient_email='))
+            .split('=')[1];
+          uPic = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('patient_pic='))
+            .split('=')[1];
+          uName = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('patient_name='))
+            .split('=')[1];
+    
+          curUserID = uID;
+          curUserTZ = uTime_zone;
+          curUserEI = uEmail;
+          curUserP = uPic;
+          curUserN = uName;
         }
-        console.log(curUserID);
-      } else {
+        else {
+          document.cookie = 'patient_name=' + curUserN;
+          document.cookie = 'patient_timeZone=' + curUserTZ;
+          document.cookie = 'patient_uid=' + curUserID;
+          document.cookie = 'patient_email=' + curUserEI;
+          document.cookie = 'patient_pic=' + curUserP;
+        }
+        loginContext.setLoginState({
+          ...loginContext.loginState,
+          usersOfTA: usersOfTA,
+          curUser: curUserID,
+          curUserTimeZone: curUserTZ,
+          curUserEmail: curUserEI,
+          curUserPic: curUserP,
+          curUserName: curUserN,
+          ta: {
+            ...loginContext.loginState.ta,
+            picture: currentTaPicture
+          }
+        });
+      }
+      else {
         loginContext.setLoginState({
           ...loginContext.loginState,
           usersOfTA: usersOfTA_result,
           curUser: '',
           curUserTimeZone: '',
           curUserEmail: '',
+          curUserPic: '',
           curUserName: '',
+          ta: {
+            ...loginContext.loginState.ta,
+            picture: currentTaPicture
+          }
         });
         console.log('No User Found');
       }
+
       // ***********
     } else {
       console.log('got usersOfTA from usersOfTA/ API call');
       axios
         .get(
           BASE_URL +
+
             'usersOfTA/' +
             document.cookie
               .split('; ')
               .find((row) => row.startsWith('ta_email='))
               .split('=')[1]
-        )
-        .then((response) => {
-          console.log('list of users home', response.data.result);
-          if (response.data.result.length > 0) {
-            const usersOfTA = response.data.result;
-            const curUserID = usersOfTA[0].user_unique_id;
-            const curUserTZ = usersOfTA[0].time_zone;
-            const curUserEI = usersOfTA[0].user_email_id;
-            const curUserP = usersOfTA[0].user_picture;
-            const curUserN = usersOfTA[0].user_name;
-            console.log('timezone', curUserTZ);
-            loginContext.setLoginState({
-              ...loginContext.loginState,
-              usersOfTA: response.data.result,
-              curUser: curUserID,
-              curUserTimeZone: curUserTZ,
-              curUserEmail: curUserEI,
-              curUserPic: curUserP,
-              curUserName: curUserN,
-            });
-            console.log(curUserID);
-            console.log('timezone', curUserTZ);
-          } else {
-            console.log('No User Found');
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+
+          )
+          .then((response) => {
+            console.log("userOfTA response ", response);
+            if (response.data.result.length > 0) {
+              const usersOfTA = response.data.result;
+              const curUserID = usersOfTA[0].user_unique_id;
+              const curUserTZ = usersOfTA[0].time_zone;
+              const curUserEI = usersOfTA[0].user_email_id;
+              const curUserP = usersOfTA[0].user_picture;
+              const curUserN = usersOfTA[0].user_name;
+              loginContext.setLoginState({
+                ...loginContext.loginState,
+                usersOfTA: response.data.result,
+                curUser: curUserID,
+                curUserTimeZone: curUserTZ,
+                curUserEmail: curUserEI,
+                curUserPic: curUserP,
+                curUserName: curUserN,
+                ta: {
+                  ...loginContext.loginState.ta,
+                  picture: currentTaPicture
+                }
+              });
+              console.log(curUserID);
+            } else {
+              loginContext.setLoginState({
+                ...loginContext.loginState,
+                usersOfTA: response.data.result,
+                curUser: '',
+                curUserTimeZone: '',
+                curUserEmail: '',
+                curUserPic: '',
+                curUserName: '',
+                ta: {
+                  ...loginContext.loginState.ta,
+                  picture: currentTaPicture
+                }
+              });
+              console.log('No User Found');
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+
   };
 
   const UpdatePerson = async (event) => {
     var phone_number;
+    var employer;
     if (listPeople[0] && listPeople[0].phone_number === 'undefined') {
       phone_number = '';
-    } else {
+
+      employer = ''
+    }
+    else {
       phone_number = listPeople[0].phone_number;
+      employer = listPeople[0].employer;
     }
     let body = {
       // user_id: listPeople[0].user_uid,
-      ta_unique_id: listTaUser[0].ta_unique_id,
+
+      // ta_unique_id: listTaUser[0].ta_unique_id,
+      ta_unique_id: currentTaID,
+
       first_name: taFirstName,
       last_name: taLastName,
       phone_number: listPeople[0].phone_number,
       employer: listPeople[0].employer,
-      ta_time_zone: listTaUser[0].ta_time_zone,
+      // ta_time_zone: listTaUser[0].ta_time_zone,
+      ta_time_zone:currentTaTimeZone,
       ta_photo_url: taPhoto,
       ta_picture: taImage,
     };
@@ -372,25 +445,39 @@ export function Admin() {
     Object.entries(body).forEach((entry) => {
       formData.append(entry[0], entry[1]);
     });
-    console.log(
-      'updateTA ta_picture in formdata = ',
-      formData.getAll('ta_picture')
-    );
 
-    try {
-      const response = await axios({
-        method: 'post',
-        url: BASE_URL + 'UpdateTA',
-        data: formData,
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      console.log('updateTA RESPONSE : ', response.data);
-      toggleConfirmed(true);
-      toggleCalled(!called);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    // Object.entries(body).forEach((entry) => {
+    //   if (entry[0] === 'ta_picture') {
+    //     if (entry[1].name !== undefined) {
+    //       if (typeof entry[1].name == 'string') {
+    //         formData.append(entry[0], entry[1]);
+    //       }
+    //     }
+    //   } else if (entry[1] instanceof Object) {
+    //     entry[1] = JSON.stringify(entry[1]);
+    //     formData.append(entry[0], entry[1]);
+    //   } else {
+    //     formData.append(entry[0], entry[1]);
+    //   }
+    // });
+    // formData.append('ta_picture', taImage);
+    console.log("updateTA ta_picture in formdata = ", formData.getAll("ta_picture"));
+    
+      try {
+        const response = await axios({
+          method: "post",
+          url: BASE_URL + 'UpdateTA',
+          data: formData,
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        console.log("updateTA RESPONSE : ", response.data);
+        // toggleConfirmed(true);
+        // toggleCalled(!called);
+      } catch(error) {
+        console.log(error)
+      }
+  }
+
 
   const getTAofUser = () => {
     axios
@@ -1083,6 +1170,10 @@ export function Admin() {
                             curUserEmail: users.user_email_id,
                             curUserPic: users.user_picture,
                             curUserName: users.user_name,
+                            ta: {
+                              ...loginContext.loginState.ta,
+                              picture: currentTaPicture
+                            }
                           });
                         }}
                       >
@@ -1816,6 +1907,10 @@ export function Admin() {
                   loginContext.setLoginState({
                     ...loginContext.loginState,
                     reload: !loginContext.loginState.reload,
+                    ta: {
+                      ...loginContext.loginState.ta,
+                      picture: currentTaPicture
+                    }
                   });
                 }}
               >
@@ -1876,6 +1971,10 @@ export function Admin() {
                   loginContext.setLoginState({
                     ...loginContext.loginState,
                     reload: !loginContext.loginState.reload,
+                    ta: {
+                      ...loginContext.loginState.ta,
+                      picture: currentTaPicture
+                    }
                   });
                 }}
               >
@@ -2042,6 +2141,10 @@ export function Admin() {
       loginContext.setLoginState({
         ...loginContext.loginState,
         reload: !loginContext.loginState.reload,
+        ta: {
+          ...loginContext.loginState.ta,
+          picture: currentTaPicture
+        }
       });
       history.push('/home');
     });
@@ -2064,6 +2167,10 @@ export function Admin() {
       loginContext.setLoginState({
         ...loginContext.loginState,
         reload: !loginContext.loginState.reload,
+        ta: {
+          ...loginContext.loginState.ta,
+          picture: currentTaPicture
+        }
       });
       history.push('/home');
     });
@@ -2088,6 +2195,7 @@ export function Admin() {
       .post(BASE_URL + 'addNewUser', body)
       .then((response) => {
         console.log(response.data);
+
         axios
           .get(
             BASE_URL +
@@ -2131,6 +2239,16 @@ export function Admin() {
         //   ...loginContext.loginState,
         //   reload: !loginContext.loginState.reload,
         // });
+
+        loginContext.setLoginState({
+          ...loginContext.loginState,
+          reload: !loginContext.loginState.reload,
+          ta: {
+            ...loginContext.loginState.ta,
+            picture: currentTaPicture
+          }
+        });
+
       })
       .catch((error) => {
         console.log('its in landing page');
@@ -2512,7 +2630,9 @@ export function Admin() {
                 <Row>
                   <Col xs={3}></Col>
                   <Col> Your Users ({listOfUsers.length})</Col>
+
                   <Col xs={3}></Col>
+
                 </Row>
                 <div class="listofusers">
                   {listOfUsers.map((users) => {
@@ -2536,6 +2656,10 @@ export function Admin() {
                             curUserEmail: users.user_email_id,
                             curUserPic: users.user_picture,
                             curUserName: users.user_name,
+                            ta: {
+                              ...loginContext.loginState.ta,
+                              picture: currentTaPicture
+                            }
                           });
                         }}
                       >
@@ -2674,33 +2798,45 @@ export function Admin() {
                       width: '40%',
                       marginLeft: '30%',
                     }}
-                  >
-                    <h6>Change Image</h6>
 
-                    <div
-                      onClick={() => {
-                        toggleUploadImage(!showUploadImage);
-                      }}
-                      style={{
-                        marginLeft: '12px',
-                        textDecoration: 'underline',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      Upload from Computer
-                    </div>
-                    <UploadImage
-                      photoUrl={taPhotoURL}
-                      setPhotoUrl={setTaPhoto}
-                      currentUserId={userID}
-                    />
-                    <GooglePhotos
-                      photoUrl={taPhotoURL}
-                      setPhotoUrl={setTaPhoto}
-                    />
-                  </Row>
-                </Col>
-                <Col
+                    src={currentTaPhoto}
+                    alt="TA Profile"
+                  />
+                )}
+          </Row>
+          <Row style={{
+            width: '40%',
+            marginLeft: '30%',
+          }}>
+          <h6>Change Image</h6>
+                
+                <div
+                  onClick={() => {
+                    toggleUploadImage(!showUploadImage);
+                  }}
+                  style={{
+                    marginLeft: '12px',
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Upload from Computer
+                </div>
+                <UploadImage
+                  photoUrl={taPhotoURL}
+                  setPhotoUrl={setTaPhoto}
+                  currentUserId={userID}
+                />
+                <GooglePhotos photoUrl={taPhotoURL} setPhotoUrl={setTaPhoto} />
+          </Row>
+          </Col>
+                <Col style={{
+                  marginTop: '50px'
+                }}>
+          <Form.Group>
+            <Row>
+                
+                  <label
                   style={{
                     marginTop: '50px',
                   }}
@@ -2929,6 +3065,7 @@ export function Admin() {
                     ...loginContext.loginState.ta,
                     id: '',
                     email: '',
+                    picture: ''
                   },
                   usersOfTA: [],
                   curUser: '',

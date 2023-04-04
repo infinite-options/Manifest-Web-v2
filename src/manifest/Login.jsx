@@ -174,8 +174,8 @@ export default function Login() {
   let uid = window.location.href.split('=')[1];
   console.log(uid);
 
-  let redirecturi = 'https://manifestmy.life';
-  // let redirecturi = 'http://localhost:3000';
+  // let redirecturi = 'https://manifestmy.life';
+  let redirecturi = 'http://localhost:3000';
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -193,6 +193,7 @@ export default function Login() {
     // Request authorization code and obtain user consent,  method of the code client to trigger the user flow
     codeClient.requestCode();
   }
+
 
   useEffect(() => {
     /* global google */
@@ -271,6 +272,7 @@ export default function Login() {
       });
     }
   }, [getAuthorizationCode]);
+
 
   const handleSubmit = (event) => {
     event.preventDefault();

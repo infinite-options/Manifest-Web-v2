@@ -71,18 +71,6 @@ export default function HomeLHS(props) {
   const inRange = [];
   const currentUser = props.theCurrentUserID;
   const goalOrRoutineFlag = props.goalOrRoutineFlag;
-  //var currentUser = ''
-
-  // if (
-  //     document.cookie
-  //       .split(";")
-  //       .some(item => item.trim().startsWith("patient_uid="))
-  //   ) {
-  //     currentUser = document.cookie.split('; ').find(row => row.startsWith('patient_uid=')).split('=')[1]
-  //   } else {
-  //     currentUser = props.theCurrentUserID;
-  //   }
-
   const [listOfBlocks, setlistOfBlocks] = useState([]);
   const [historyGot, setHG] = useState([]);
   const [toggleActions, setToggleActions] = useState(false);
@@ -216,31 +204,6 @@ export default function HomeLHS(props) {
     [props.getStepsEndPoint]
   );
 
-  // useEffect(() => {
-  //   setHG([]);
-  //   setTAData([]);
-  //   setPatientData([]);
-
-  //   axios
-  //     .get(BASE_URL + 'listAllTAForCopy')
-  //     .then((response) => {
-  //       console.log('res.data.res = ', response.data.result);
-  //       setTAData(response.data.result);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-
-  //   axios
-  //     .get(BASE_URL + 'listAllUsersForCopy')
-  //     .then((response) => {
-  //       setPatientData(response.data.result);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // }, [props.currentUser]);
-
   const listAllTAandUsersForCopy = () => {
     setHG([]);
     setTAData([]);
@@ -267,11 +230,6 @@ export default function HomeLHS(props) {
   }
 
   const copyPicker = () => {
-    // console.log('in FireBase, showCopyModal', showCopyModal)
-    //var taToCopyTo = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
-    // var taToCopyTo = '-1'
-    // var patients = []
-    // var patientToCopyTo = '-1'
     console.log(allTAData);
     if (showCopyPicker) {
       return (
@@ -356,11 +314,6 @@ export default function HomeLHS(props) {
   };
 
   const copyModal = () => {
-    // console.log('in FireBase, showCopyModal', showCopyModal)
-    //var taToCopyTo = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
-    // var taToCopyTo = '-1'
-    // var patients = []
-    // var patientToCopyTo = '-1'
     console.log(allTAData);
     if (showCopyModal[0]) {
       return (
@@ -402,24 +355,6 @@ export default function HomeLHS(props) {
             <br></br>
             <div>Select trusted advisor to copy to</div>
             <div>
-              {/* <select
-                            style={{width: '90%', border: 'none'}}
-                            onChange={e => {
-                                console.log(JSON.parse(e.target.value))
-                                setTAToCopyTo(JSON.parse(e.target.value))
-                            }}
-                        >
-                            <option value='-1'>Select</option>
-                           {allTAData.map((ta) => (
-                               <option value={JSON.stringify({
-                                   name: ta.name,
-                                   ta_unique_id: ta.ta_unique_id,
-                                   users: ta.users
-                               })}>
-                                   {ta.name}
-                               </option>
-                           ))}
-                        </select> */}
               {taDropdown()}
             </div>
             <br></br>
@@ -466,9 +401,6 @@ export default function HomeLHS(props) {
                   } else if (!patientToCopyTo.user_name) {
                     alert('Select a Patient');
                   } else {
-                    // toggleCopyModalPatients([true, ''])
-                    // toggleCopyModalConfirm(true)
-
                     var myObj = {
                       user_id: patientToCopyTo.user_unique_id,
                       gr_id: copiedRoutineID,
@@ -670,12 +602,6 @@ export default function HomeLHS(props) {
 
                               gr.start_day_and_time =
                                 x[i].gr_start_day_and_time;
-
-                              // const first_notifications = x[i].notifications[0];
-                              // const second_notifications = x[i].notifications[1];
-                              // console.log(first_notifications);
-                              // console.log(second_notifications);
-
                               for (
                                 let k = 0;
                                 k < x[i].notifications.length;
@@ -911,9 +837,6 @@ export default function HomeLHS(props) {
       );
     }
     return (
-      // <select style={{width: '90%', border: 'none'}} disabled>
-      //     <option>Select</option>
-      // </select>
       <select
         style={{ width: '90%', border: 'none' }}
         onChange={(e) => {
@@ -964,9 +887,6 @@ export default function HomeLHS(props) {
       );
     }
     return (
-      // <select style={{width: '90%', border: 'none'}} disabled>
-      //     <option>Select</option>
-      // </select>
       <select
         style={{ width: '90%', border: 'none' }}
         onChange={(e) => {
@@ -992,11 +912,6 @@ export default function HomeLHS(props) {
   };
 
   const copyModal2 = () => {
-    // console.log('in FireBase, showCopyModal', showCopyModal)
-    //var taToCopyTo = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
-    // var taToCopyTo = '-1'
-    // var patients = []
-    // var patientToCopyTo = '-1'
     console.log(allTAData);
     if (showCopyModal2[0]) {
       return (
@@ -1114,11 +1029,6 @@ export default function HomeLHS(props) {
   };
 
   const copyModalPatients = () => {
-    // console.log('in FireBase, showCopyModal', showCopyModal)
-    //var taToCopyTo = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
-    // var taToCopyTo = '-1'
-    // var patients = []
-    // var patientToCopyTo = '-1'
     console.log(taToCopyTo);
     if (showCopyModalPatients[0]) {
       return (
@@ -1228,11 +1138,6 @@ export default function HomeLHS(props) {
   };
 
   const copyModalTA = () => {
-    // console.log('in FireBase, showCopyModal', showCopyModal)
-    //var taToCopyTo = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
-    // var taToCopyTo = '-1'
-    // var patients = []
-    // var patientToCopyTo = '-1'
     console.log(taToCopyTo);
     if (showCopyModalTA[0]) {
       return (
@@ -1343,12 +1248,6 @@ export default function HomeLHS(props) {
   };
 
   const copyModalConfirm = () => {
-    // console.log('in FireBase, showCopyModal', showCopyModal)
-    //var taToCopyTo = document.cookie.split('; ').find(row => row.startsWith('ta_uid=')).split('=')[1]
-    // var taToCopyTo = '-1'
-    // var patients = []
-    // var patientToCopyTo = '-1'
-    //console.log(allTAData)
     if (showCopyModalConfirm) {
       return (
         <div
@@ -1383,9 +1282,6 @@ export default function HomeLHS(props) {
               patientToCopyTo,
               showCopyModal[1]
             )}
-            {/* <div>{showCopyModal[1]}</div>
-                    <div>{taToCopyTo.name}, {taToCopyTo.ta_unique_id}</div>
-                    <div>{patientToCopyTo.user_name}, {patientToCopyTo.user_unique_id}</div> */}
             <div>
               Routine: {copiedRoutineName}, {copiedRoutineID}
             </div>

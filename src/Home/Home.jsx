@@ -52,6 +52,7 @@ export default function Home(props) {
   console.log('In home');
   const loginContext = useContext(LoginContext);
   var selectedUser = loginContext.loginState.curUser;
+  var currentTaPicture = loginContext.loginState.ta.picture;
   console.log(loginContext.loginState.curUser);
   if (
     document.cookie.split(';').some((item) => item.trim().startsWith('ta_uid='))
@@ -59,6 +60,16 @@ export default function Home(props) {
     selectedUser = document.cookie
       .split('; ')
       .find((row) => row.startsWith('ta_uid='))
+      .split('=')[1];
+  }
+  if (
+    document.cookie
+      .split(';')
+      .some((item) => item.trim().startsWith('ta_pic='))
+  ) {
+    currentTaPicture = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('ta_pic='))
       .split('=')[1];
   }
 
@@ -157,37 +168,69 @@ export default function Home(props) {
         console.log('list of users home', response.data.result);
         if (response.data.result.length > 0) {
           const usersOfTA = response.data.result;
-          const curUserID = usersOfTA[0].user_unique_id;
-          const curUserTZ = usersOfTA[0].time_zone;
-          const curUserEI = usersOfTA[0].user_email_id;
-          const curUserP = usersOfTA[0].user_picture;
-          const curUserN = usersOfTA[0].user_name;
-          console.log('timezone', curUserTZ);
+          var curUserID = usersOfTA[0].user_unique_id;
+          var curUserTZ = usersOfTA[0].time_zone;
+          var curUserEI = usersOfTA[0].user_email_id;
+          var curUserP = usersOfTA[0].user_picture;
+          var curUserN = usersOfTA[0].user_name;
+
+          var uID, uTime_zone, uEmail, uPic, uName;
+          if (
+            document.cookie
+              .split(';')
+              .some((item) => item.trim().startsWith('patient_uid='))
+          ) {
+            uID = document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('patient_uid='))
+              .split('=')[1];
+            uTime_zone = document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('patient_timeZone='))
+              .split('=')[1];
+            uEmail = document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('patient_email='))
+              .split('=')[1];
+            uPic = document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('patient_pic='))
+              .split('=')[1];
+            uName = document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('patient_name='))
+              .split('=')[1];
+    
+            curUserID = uID;
+            curUserTZ = uTime_zone;
+            curUserEI = uEmail;
+            curUserP = uPic;
+            curUserN = uName;
+          }
+          else {
+            document.cookie = 'patient_name=' + curUserN;
+            document.cookie = 'patient_timeZone=' + curUserTZ;
+            document.cookie = 'patient_uid=' + curUserID;
+            document.cookie = 'patient_email=' + curUserEI;
+            document.cookie = 'patient_pic=' + curUserP;
+          }
           loginContext.setLoginState({
             ...loginContext.loginState,
-            usersOfTA: response.data.result,
+            usersOfTA: usersOfTA,
             curUser: curUserID,
             curUserTimeZone: curUserTZ,
             curUserEmail: curUserEI,
             curUserPic: curUserP,
             curUserName: curUserN,
+            ta: {
+              ...loginContext.loginState.ta,
+              picture: currentTaPicture
+            }
           });
-          console.log(curUserID);
           console.log('timezone', curUserTZ);
           document.cookie = 'usersOfTA=' + JSON.stringify(usersOfTA); 
           console.log("usersOfTA from document cookies home ", usersOfTA)
-
-          //GoogleEvents();
-          // return userID;
         } else {
-          // const usersOfTA = 'Loading';
-          // loginContext.setLoginState({
-          //   ...loginContext.loginState,
-          //   usersOfTA: response.data.result,
-          //   curUser: '',
-          //   curUserTimeZone: '',
-          //   curUserEmail: '',
-          // });
           console.log('No User Found');
         }
       })
@@ -202,19 +245,6 @@ export default function Home(props) {
   //   getUserOfTA();
   // }, []);
   console.log('list of users home', loginContext.loginState.reload);
-  // useEffect(() => {
-  //   if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-  //     console.log('base_url', BASE_URL.substring(8, 18));
-  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-  //     console.log(CLIENT_ID, CLIENT_SECRET);
-  //   } else {
-  //     console.log('base_url', BASE_URL.substring(8, 18));
-  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-  //     console.log(CLIENT_ID, CLIENT_SECRET);
-  //   }
-  // }, [loginContext.loginState.reload]);
 
   /*----------------------------Use states to define variables----------------------------*/
   const [signedin, setSignedIn] = useState(false);
@@ -231,6 +261,7 @@ export default function Home(props) {
   const [events, setEvents] = useState([]);
   const [hightlight, setHightlight] = useState('');
   const [GREButtonSelection, setGREButtonSelection] = useState('Routines');
+  const [isLoading, setLoading] = useState(true);
   const [stateValue, setStateValue] = useState({
     itemToEdit: {
       title: '',
@@ -921,13 +952,13 @@ export default function Home(props) {
         console.log('in events', response);
         let url =
           'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
-        loginContext.setLoginState({
-          ...loginContext.loginState,
-          ta: {
-            id: '200-000002',
-            email: response['data']['ta_email_id'],
-          },
-        });
+        // loginContext.setLoginState({
+        //   ...loginContext.loginState,
+        //   ta: {
+        //     id: '200-000002',
+        //     email: response['data']['ta_email_id'],
+        //   },
+        // });
         setEmail(response['data']['ta_email_id']);
         setSignedIn(true);
         var old_at = response['data']['ta_google_auth_token'];
@@ -950,18 +981,7 @@ export default function Home(props) {
               console.log("Checking UserAccessToken status is 400");
               let authorization_url =
                 'https://accounts.google.com/o/oauth2/token';
-              // if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-              //   console.log('base_url', BASE_URL.substring(8, 18));
-              //   CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-              //   CLIENT_SECRET =
-              //     process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-              //   console.log(CLIENT_ID, CLIENT_SECRET);
-              // } else {
-              //   console.log('base_url', BASE_URL.substring(8, 18));
-              //   CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-              //   CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-              //   console.log(CLIENT_ID, CLIENT_SECRET);
-              // }
+              
               var details = {
                 refresh_token: refreshToken,
                 client_id: CLIENT_ID,
@@ -1496,508 +1516,7 @@ function toggleShowEvents(props) {
 
       return [a_time, b_time];
     };
-
-    // useEffect(() => {
-    //   if (userID == '') return;
-    //   console.log(
-    //     'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-    //     [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
-    //   );
-
-    //   axios
-    //     .get(url + userID)
-    //     .then((response) => {
-    //       console.log(
-    //         'here: Obtained user information with res = ',
-    //         response.data.result
-    //       );
-    //       const temp = [];
-
-    //       for (let i = 0; i < response.data.result.length; i++) {
-    //         temp.push(response.data.result[i]);
-    //       }
-    //       temp.sort((a, b) => {
-    //         const [a_start, b_start] = [
-    //           a.gr_start_day_and_time,
-    //           b.gr_start_day_and_time,
-    //         ];
-    //         const [a_end, b_end] = [
-    //           a.gr_end_day_and_time,
-    //           b.gr_end_day_and_time,
-    //         ];
-    //         const [a_start_time, b_start_time] = getTimes(
-    //           a.gr_start_day_and_time,
-    //           b.gr_start_day_and_time
-    //         );
-    //         const [a_end_time, b_end_time] = getTimes(
-    //           a.gr_end_day_and_time,
-    //           b.gr_end_day_and_time
-    //         );
-
-    //         if (a_start_time < b_start_time) return -1;
-    //         else if (a_start_time > b_start_time) return 1;
-    //         else {
-    //           if (a_end_time < b_end_time) return -1;
-    //           else if (a_end_time > b_end_time) return 1;
-    //           else {
-    //             if (a_start < b_start) return -1;
-    //             else if (a_start > b_start) return 1;
-    //             else {
-    //               if (a_end < b_end) return -1;
-    //               else if (a_end > b_end) return 1;
-    //             }
-    //           }
-    //         }
-
-    //         return 0;
-    //       });
-
-    //       console.log('homeTemp = ', temp);
-
-    //       setGetGoalsEndPoint(temp);
-    //       if (response.data.result && response.data.result.length !== 0) {
-    //         let x = response.data.result;
-    //         console.log('response', x);
-    //         x.sort((a, b) => {
-    //           let datetimeA = new Date(
-    //             a['gr_start_day_and_time'].replace(/-/g, '/')
-    //           );
-
-    //           let datetimeB = new Date(
-    //             b['gr_start_day_and_time'].replace(/-/g, '/')
-    //           );
-
-    //           let timeA =
-    //             new Date(datetimeA).getHours() * 60 +
-    //             new Date(datetimeA).getMinutes();
-
-    //           let timeB =
-    //             new Date(datetimeB).getHours() * 60 +
-    //             new Date(datetimeB).getMinutes();
-
-    //           return timeA - timeB;
-    //         });
-
-    //         let gr_array = [];
-
-    //         for (let i = 0; i < x.length; ++i) {
-    //           let gr = {};
-    //           gr.audio = '';
-    //           gr.datetime_completed = x[i].gr_datetime_completed;
-    //           gr.datetime_started = x[i].gr_datetime_started;
-    //           gr.end_day_and_time = x[i].gr_end_day_and_time;
-    //           gr.expected_completion_time = x[i].expected_completion_time;
-    //           gr.gr_unique_id = x[i].gr_unique_id;
-
-    //           gr.is_available = x[i].is_available.toLowerCase() === 'true';
-
-    //           gr.is_complete = x[i].is_complete.toLowerCase() === 'true';
-    //           gr.is_displayed_today =
-    //             x[i].is_displayed_today.toLowerCase() === 'true';
-    //           gr.is_in_progress = x[i].is_in_progress.toLowerCase() === 'true';
-    //           gr.is_persistent = x[i].is_persistent.toLowerCase() === 'true';
-    //           gr.is_sublist_available =
-    //             x[i].is_sublist_available.toLowerCase() === 'true';
-    //           gr.is_timed = x[i].is_timed.toLowerCase() === 'true';
-
-    //           gr.photo = x[i].photo;
-    //           gr.repeat = x[i].repeat.toLowerCase() === 'true';
-    //           gr.repeat_type = x[i].repeat_type || 'Never';
-    //           gr.repeat_ends_on = x[i].repeat_ends_on;
-    //           gr.repeat_every = x[i].repeat_every;
-    //           gr.repeat_frequency = x[i].repeat_frequency;
-    //           gr.repeat_occurences = x[i].repeat_occurences;
-
-    //           const repeat_week_days_json = JSON.parse(x[i].repeat_week_days);
-
-    //           if (repeat_week_days_json) {
-    //             gr.repeat_week_days = {
-    //               0:
-    //                 repeat_week_days_json.Sunday &&
-    //                 repeat_week_days_json.Sunday.toLowerCase() === 'true'
-    //                   ? 'Sunday'
-    //                   : '',
-    //               1:
-    //                 repeat_week_days_json.Monday &&
-    //                 repeat_week_days_json.Monday.toLowerCase() === 'true'
-    //                   ? 'Monday'
-    //                   : '',
-    //               2:
-    //                 repeat_week_days_json.Tuesday &&
-    //                 repeat_week_days_json.Tuesday.toLowerCase() === 'true'
-    //                   ? 'Tuesday'
-    //                   : '',
-    //               3:
-    //                 repeat_week_days_json.Wednesday &&
-    //                 repeat_week_days_json.Wednesday.toLowerCase() === 'true'
-    //                   ? 'Wednesday'
-    //                   : '',
-    //               4:
-    //                 repeat_week_days_json.Thursday &&
-    //                 repeat_week_days_json.Thursday.toLowerCase() === 'true'
-    //                   ? 'Thursday'
-    //                   : '',
-    //               5:
-    //                 repeat_week_days_json.Friday &&
-    //                 repeat_week_days_json.Friday.toLowerCase() === 'true'
-    //                   ? 'Friday'
-    //                   : '',
-    //               6:
-    //                 repeat_week_days_json.Saturday &&
-    //                 repeat_week_days_json.Saturday.toLowerCase() === 'true'
-    //                   ? 'Saturday'
-    //                   : '',
-    //             };
-    //           } else {
-    //             gr.repeat_week_days = {
-    //               0: '',
-    //               1: '',
-    //               2: '',
-    //               3: '',
-    //               4: '',
-    //               5: '',
-    //               6: '',
-    //             };
-    //           }
-
-    //           gr.start_day_and_time = x[i].gr_start_day_and_time;
-
-    //           for (let k = 0; k < x[i].notifications.length; ++k) {
-    //             const first_notifications = x[i].notifications[k];
-    //             if (first_notifications) {
-    //               if (first_notifications.user_ta_id.charAt(0) === '1') {
-    //                 gr.user_notifications = {
-    //                   before: {
-    //                     is_enabled:
-    //                       first_notifications.before_is_enable.toLowerCase() ===
-    //                       'true',
-    //                     is_set:
-    //                       first_notifications.before_is_set.toLowerCase() ===
-    //                       'true',
-    //                     message: first_notifications.before_message,
-    //                     time: first_notifications.before_time,
-    //                   },
-    //                   during: {
-    //                     is_enabled:
-    //                       first_notifications.during_is_enable.toLowerCase() ===
-    //                       'true',
-    //                     is_set:
-    //                       first_notifications.during_is_set.toLowerCase() ===
-    //                       'true',
-    //                     message: first_notifications.during_message,
-    //                     time: first_notifications.during_time,
-    //                   },
-    //                   after: {
-    //                     is_enabled:
-    //                       first_notifications.after_is_enable.toLowerCase() ===
-    //                       'true',
-    //                     is_set: first_notifications.after_is_set.toLowerCase(),
-    //                     message: first_notifications.after_message,
-    //                     time: first_notifications.after_time,
-    //                   },
-    //                 };
-    //               } else if (
-    //                 first_notifications.user_ta_id.charAt(0) === '2' &&
-    //                 first_notifications.user_ta_id === stateValue.ta_people_id
-    //               ) {
-    //                 gr.ta_notifications = {
-    //                   before: {
-    //                     is_enabled:
-    //                       first_notifications.before_is_enable.toLowerCase() ===
-    //                       'true',
-    //                     is_set:
-    //                       first_notifications.before_is_set.toLowerCase() ===
-    //                       'true',
-    //                     message: first_notifications.before_message,
-    //                     time: first_notifications.before_time,
-    //                   },
-    //                   during: {
-    //                     is_enabled:
-    //                       first_notifications.during_is_enable.toLowerCase() ===
-    //                       'true',
-    //                     is_set: first_notifications.during_is_set.toLowerCase(),
-    //                     message: first_notifications.during_message,
-    //                     time: first_notifications.during_time,
-    //                   },
-    //                   after: {
-    //                     is_enabled:
-    //                       first_notifications.after_is_enable.toLowerCase() ===
-    //                       'true',
-    //                     is_set:
-    //                       first_notifications.after_is_set.toLowerCase() ===
-    //                       'true',
-    //                     message: first_notifications.after_message,
-    //                     time: first_notifications.after_time,
-    //                   },
-    //                 };
-    //               }
-    //             }
-    //           }
-    //           let filtered_notifications = [];
-    //           for (let k = 0; k < x[i].notifications.length; ++k) {
-    //             const first_notifications = x[i].notifications[k];
-    //             if (first_notifications) {
-    //               if (first_notifications.user_ta_id.charAt(0) === '1') {
-    //                 filtered_notifications.push(first_notifications);
-    //               } else if (
-    //                 first_notifications.user_ta_id.charAt(0) === '2' &&
-    //                 first_notifications.user_ta_id === stateValue.ta_people_id
-    //               ) {
-    //                 filtered_notifications.push(first_notifications);
-    //               }
-    //             }
-    //           }
-    //           gr.notifications = filtered_notifications;
-    //           // if (!gr.ta_notifications) {
-    //           //   gr.ta_notifications = {
-    //           //     before: {
-    //           //       is_enabled: false,
-    //           //       is_set: false,
-    //           //       message: "",
-    //           //       time: gr.user_notifications.before.time,
-    //           //     },
-    //           //     during: {
-    //           //       is_enabled: false,
-    //           //       is_set: false,
-    //           //       message: "",
-    //           //       time: gr.user_notifications.during.time,
-    //           //     },
-    //           //     after: {
-    //           //       is_enabled: false,
-    //           //       is_set: false,
-    //           //       message: "",
-    //           //       time: gr.user_notifications.after.time,
-    //           //     },
-    //           //   };
-    //           // }
-
-    //           // console.log(gr);
-    //           gr.title = x[i].gr_title;
-    //           // console.log('X', x);
-    //           // console.log(gr.title, gr.is_sublist_available);
-    //           var goalDate = new Date(gr.end_day_and_time.replace(/-/g, '/'));
-    //           console.log(goalDate);
-    //           //For Today Goals and Routines
-    //           let startOfDay = moment(goalDate);
-    //           let endOfDay = moment(goalDate);
-    //           let begOfTheDay = startOfDay.startOf('day');
-    //           let endOfTheDay = endOfDay.endOf('day');
-    //           // console.log(begOfTheDay);
-    //           // console.log(endOfTheDay);
-    //           let todayStartDate = new Date(begOfTheDay.format('MM/DD/YYYY'));
-    //           let todayEndDate = new Date(endOfTheDay.format('MM/DD/YYYY'));
-    //           todayStartDate.setHours(0, 0, 0);
-    //           todayEndDate.setHours(23, 59, 59);
-    //           // console.log(todayStartDate);
-    //           // console.log(todayEndDate);
-    //           // console.log(goalDate);
-
-    //           //For Week Goals and Routines
-    //           let startWeek = moment(goalDate);
-    //           let endWeek = moment(goalDate);
-    //           let startDay = startWeek.startOf('week');
-    //           let endDay = endWeek.endOf('week');
-    //           // console.log(startDay);
-    //           // console.log(endDay);
-    //           let startDate = new Date(startDay.format('MM/DD/YYYY'));
-    //           let endDate = new Date(endDay.format('MM/DD/YYYY'));
-    //           startDate.setHours(0, 0, 0);
-    //           endDate.setHours(23, 59, 59);
-    //           //console.log(startDate);
-    //           //console.log(endDate);
-
-    //           //For Months Goals and Routines
-    //           let startMonth = moment(goalDate);
-    //           let endMonth = moment(goalDate);
-    //           let startDayMonth = startMonth.startOf('month');
-    //           let endDayMonth = endMonth.endOf('month');
-    //           // console.log(startDayMonth);
-    //           // console.log(endDayMonth);
-    //           let monthStartDate = new Date(startDayMonth.format('MM/DD/YYYY'));
-    //           let monthEndDate = new Date(endDayMonth.format('MM/DD/YYYY'));
-    //           monthStartDate.setHours(0, 0, 0);
-    //           monthEndDate.setHours(23, 59, 59);
-    //           // console.log(monthStartDate);
-    //           // console.log(monthEndDate);
-
-    //           if (
-    //             stateValue.calendarView === 'Day' &&
-    //             goalDate.getTime() > todayStartDate.getTime() &&
-    //             goalDate.getTime() < todayEndDate.getTime()
-    //           ) {
-    //             gr_array.push(gr);
-    //           }
-    //           if (
-    //             stateValue.calendarView === 'Week' &&
-    //             goalDate.getTime() > startDate.getTime() &&
-    //             goalDate.getTime() < endDate.getTime()
-    //           ) {
-    //             gr_array.push(gr);
-    //           }
-    //           // if (
-    //           //   this.state.calendarView === "Month" &&
-    //           //   goalDate.getTime() > monthStartDate.getTime() &&
-    //           //   goalDate.getTime() < monthEndDate.getTime()
-    //           // ) {
-    //           //   gr_array.push(gr);
-    //           // }
-    //           // console.log(gr_array);
-    //           if (x[i]['is_persistent'].toLowerCase() === 'true') {
-    //             // routine_ids.push(i);
-
-    //             // routine_ids.push(x[i]["gr_unique_id"]);
-    //             // routine.push(x[i]);
-
-    //             if (
-    //               stateValue.calendarView === 'Day' &&
-    //               goalDate.getTime() > todayStartDate.getTime() &&
-    //               goalDate.getTime() < todayEndDate.getTime()
-    //             ) {
-    //               routine_ids.push(gr['gr_unique_id']);
-    //               routine.push(gr);
-    //             }
-    //             if (
-    //               stateValue.calendarView === 'Week' &&
-    //               goalDate.getTime() > todayStartDate.getTime() &&
-    //               goalDate.getTime() < todayEndDate.getTime()
-    //             ) {
-    //               routine_ids.push(gr['gr_unique_id']);
-    //               routine.push(gr);
-    //             }
-    //             // if (
-    //             //   this.state.calendarView === "Month" &&
-    //             //   goalDate.getTime() > monthStartDate.getTime() &&
-    //             //   goalDate.getTime() < monthEndDate.getTime()
-    //             // ) {
-    //             //   routine_ids.push(gr["gr_unique_id"]);
-    //             //   routine.push(gr);
-    //             // }
-    //           }
-    //           if (x[i]['is_persistent'].toLowerCase() === 'false') {
-    //             // goal_ids.push(i);
-
-    //             // goal_ids.push(x[i]["gr_unique_id"]);
-    //             // goal.push(x[i]);
-
-    //             if (
-    //               stateValue.calendarView === 'Day' &&
-    //               goalDate.getTime() > todayStartDate.getTime() &&
-    //               goalDate.getTime() < todayEndDate.getTime()
-    //             ) {
-    //               goal_ids.push(gr['gr_unique_id']);
-    //               goal.push(gr);
-    //             }
-    //             if (
-    //               stateValue.calendarView === 'Week' &&
-    //               goalDate.getTime() > startDate.getTime() &&
-    //               goalDate.getTime() < endDate.getTime()
-    //             ) {
-    //               goal_ids.push(gr['gr_unique_id']);
-    //               goal.push(gr);
-    //             }
-    //             // if (
-    //             //   this.state.calendarView === "Month" &&
-    //             //   goalDate.getTime() > monthStartDate.getTime() &&
-    //             //   goalDate.getTime() < monthEndDate.getTime()
-    //             // ) {
-    //             //   goal_ids.push(gr["gr_unique_id"]);
-    //             //   goal.push(gr);
-    //             // }
-    //           }
-    //         }
-
-    //         setStateValue((prevState) => {
-    //           return {
-    //             ...prevState,
-    //             originalGoalsAndRoutineArr: gr_array,
-    //             goals: goal,
-    //             addNewGRModalShow: false,
-    //             routine_ids: routine_ids,
-    //             goal_ids: goal_ids,
-    //             routines: routine,
-    //           };
-    //         });
-    //         setEditingRTS({
-    //           ...editingRTS,
-    //           gr_array: gr_array,
-    //         });
-    //         setEditingATS({
-    //           ...editingATS,
-    //           gr_array: gr_array,
-    //         });
-    //       } else {
-    //         setStateValue((prevState) => {
-    //           return {
-    //             ...prevState,
-    //             originalGoalsAndRoutineArr: [],
-    //             goals: goal,
-    //             addNewGRModalShow: false,
-    //             routine_ids: routine_ids,
-    //             goal_ids: goal_ids,
-    //             routines: routine,
-    //           };
-    //         });
-    //       }
-
-    //       // console.log(this.state.goals);
-    //       // console.log(stateValue);
-    //     })
-    //     .catch((error) => {
-    //       console.log('Error in getting goals and routines ' + error);
-    //     });
-    // }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
-
-//   function GetUserAcessToken() {
-//     let url = BASE_URL + 'usersToken/';
-//     let user_id = userID;
-//     let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
-//     let endofWeek = moment(stateValue.dateContext).add(6, 'days');
-//     let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
-
-//     const getTimes = (a_day_time, b_day_time) => {
-//       const [a_start_time, b_start_time] = [
-//         a_day_time.substring(10, a_day_time.length),
-//         b_day_time.substring(10, b_day_time.length),
-//       ];
-//       const [a_HMS, b_HMS] = [
-//         a_start_time
-//           .substring(0, a_start_time.length - 3)
-//           .replace(/\s{1,}/, '')
-//           .split(':'),
-//         b_start_time
-//           .substring(0, b_start_time.length - 3)
-//           .replace(/\s{1,}/, '')
-//           .split(':'),
-//       ];
-//       const [a_parity, b_parity] = [
-//         a_start_time
-//           .substring(a_start_time.length - 3, a_start_time.length)
-//           .replace(/\s{1,}/, ''),
-//         b_start_time
-//           .substring(b_start_time.length - 3, b_start_time.length)
-//           .replace(/\s{1,}/, ''),
-//       ];
-
-//       let [a_time, b_time] = [0, 0];
-//       if (a_parity === 'PM' && a_HMS[0] !== '12') {
-//         const hoursInt = parseInt(a_HMS[0]) + 12;
-//         a_HMS[0] = `${hoursInt}`;
-//       } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
-
-//       if (b_parity === 'PM' && b_HMS[0] !== '12') {
-//         const hoursInt = parseInt(b_HMS[0]) + 12;
-//         b_HMS[0] = `${hoursInt}`;
-//       } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
-
-//       for (let i = 0; i < a_HMS.length; i++) {
-//         a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
-//         b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
-//       }
-
-//       return [a_time, b_time];
-//     };
-      
       const getTimes = (a_day_time, b_day_time) => {
           const [a_start_time, b_start_time] = [
               a_day_time.substring(10, a_day_time.length),
@@ -2135,19 +1654,7 @@ function toggleShowEvents(props) {
                 console.log('in events if');
                 let authorization_url =
                   'https://accounts.google.com/o/oauth2/token';
-                //   if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-                //     console.log('base_url', BASE_URL.substring(8, 18));
-                //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-                //     CLIENT_SECRET =
-                //       process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-                //     console.log(CLIENT_ID, CLIENT_SECRET);
-                //   } else {
-                //     console.log('base_url', BASE_URL.substring(8, 18));
-                //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-                //     CLIENT_SECRET =
-                //       process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-                //     console.log(CLIENT_ID, CLIENT_SECRET);
-                //   }
+                
                 var details = {
                   refresh_token: refreshToken,
                   client_id: CLIENT_ID,
@@ -2276,119 +1783,7 @@ function toggleShowEvents(props) {
           console.log('Error in events' + error);
         });
     }, [GREButtonSelection, userID, stateValue.dateContext, editingEvent.editing]);
-//   }
 
-  // function GoogleEvents() {
-  //   let url = BASE_URL + 'calenderEvents/';
-  //   let start = stateValue.dateContext.format('YYYY-MM-DD') + 'T00:00:00-07:00';
-  //   let endofWeek = moment(stateValue.dateContext).add(6, 'days');
-  //   let end = endofWeek.format('YYYY-MM-DD') + 'T23:59:59-07:00';
-  //   let id = userID;
-
-  //   const getTimes = (a_day_time, b_day_time) => {
-  //     const [a_start_time, b_start_time] = [
-  //       a_day_time.substring(10, a_day_time.length),
-  //       b_day_time.substring(10, b_day_time.length),
-  //     ];
-  //     const [a_HMS, b_HMS] = [
-  //       a_start_time
-  //         .substring(0, a_start_time.length - 3)
-  //         .replace(/\s{1,}/, '')
-  //         .split(':'),
-  //       b_start_time
-  //         .substring(0, b_start_time.length - 3)
-  //         .replace(/\s{1,}/, '')
-  //         .split(':'),
-  //     ];
-  //     const [a_parity, b_parity] = [
-  //       a_start_time
-  //         .substring(a_start_time.length - 3, a_start_time.length)
-  //         .replace(/\s{1,}/, ''),
-  //       b_start_time
-  //         .substring(b_start_time.length - 3, b_start_time.length)
-  //         .replace(/\s{1,}/, ''),
-  //     ];
-
-  //     let [a_time, b_time] = [0, 0];
-  //     if (a_parity === 'PM' && a_HMS[0] !== '12') {
-  //       const hoursInt = parseInt(a_HMS[0]) + 12;
-  //       a_HMS[0] = `${hoursInt}`;
-  //     } else if (a_parity === 'AM' && a_HMS[0] === '12') a_HMS[0] = '00';
-
-  //     if (b_parity === 'PM' && b_HMS[0] !== '12') {
-  //       const hoursInt = parseInt(b_HMS[0]) + 12;
-  //       b_HMS[0] = `${hoursInt}`;
-  //     } else if (b_parity === 'AM' && b_HMS[0] === '12') b_HMS[0] = '00';
-
-  //     for (let i = 0; i < a_HMS.length; i++) {
-  //       a_time += Math.pow(60, a_HMS.length - i - 1) * parseInt(a_HMS[i]);
-  //       b_time += Math.pow(60, b_HMS.length - i - 1) * parseInt(b_HMS[i]);
-  //     }
-
-  //     return [a_time, b_time];
-  //   };
-  //   useEffect(() => {
-  //     if (userID == '') return;
-  //     console.log(
-  //       'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-  //       [userID, editingEvent.editing]
-  //     );
-
-  //     axios
-  //       .post(
-  //         url + id.toString() + ',' + start.toString() + ',' + end.toString()
-  //       )
-  //       .then((response) => {
-  //         console.log('day events ', response.data);
-  //         const temp = [];
-
-  //         for (let i = 0; i < response.data.length; i++) {
-  //           temp.push(response.data[i]);
-  //         }
-  //         temp.sort((a, b) => {
-  //           const [a_start, b_start] = [
-  //             a['start']['dateTime'],
-  //             b['start']['dateTime'],
-  //           ];
-
-  //           const [a_end, b_end] = [a['end']['dateTime'], b['end']['dateTime']];
-
-  //           const [a_start_time, b_start_time] = getTimes(
-  //             a['start']['dateTime'],
-  //             b['start']['dateTime']
-  //           );
-  //           const [a_end_time, b_end_time] = getTimes(
-  //             a['end']['dateTime'],
-  //             b['end']['dateTime']
-  //           );
-
-  //           if (a_start_time < b_start_time) return -1;
-  //           else if (a_start_time > b_start_time) return 1;
-  //           else {
-  //             if (a_end_time < b_end_time) return -1;
-  //             else if (a_end_time > b_end_time) return 1;
-  //             else {
-  //               if (a_start < b_start) return -1;
-  //               else if (a_start > b_start) return 1;
-  //               else {
-  //                 if (a_end < b_end) return -1;
-  //                 else if (a_end > b_end) return 1;
-  //               }
-  //             }
-  //           }
-
-  //           return 0;
-  //         });
-
-  //         console.log('homeTemp = ', temp);
-
-  //         setEvents(temp);
-  //       })
-  //       .catch((error) => {
-  //         console.log('here: Error in getting goals and routines ' + error);
-  //       });
-  //   }, [userID, stateValue.dateContext, stateValue.todayDateObject]);
-  // }
   useEffect(() => {
     if (userID == '') return;
     if (GREButtonSelection == "Events") return;
@@ -2396,10 +1791,6 @@ function toggleShowEvents(props) {
       'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
       [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
     );
-    // if (GREButtonSelection == "Events") {
-    //     GetUserAcessToken();
-    // }
-    // else {
     let getGoalOrRoutineUrl = BASE_URL + 'getroutines/';
     if (GREButtonSelection == "Goals") {
       getGoalOrRoutineUrl = BASE_URL + 'getgoals/';
@@ -2407,21 +1798,15 @@ function toggleShowEvents(props) {
     axios
       .get(getGoalOrRoutineUrl + userID)
       .then((response) => {
+        setLoading(false);
         console.log(
           'here: Obtained user information with res = ',
           response.data.result
         );
         GrabFireBaseRoutinesData(response);
-      })
-    // }
-       
+      })       
   }, [GREButtonSelection, userID]);
-      // [GREButtonSelection, userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   function GrabFireBaseRoutinesData(response) {
-    // let url = BASE_URL + 'getroutines/';
-    // if(GREButtonSelection == "Goals"){
-    //     url = BASE_URL + 'getgoals/';
-    // }
     let routine = [];
     let routine_ids = [];
     let goal = [];
@@ -2468,21 +1853,6 @@ function toggleShowEvents(props) {
 
       return [a_time, b_time];
     };
-
-    // useEffect(() => {
-    //   if (userID == '') return;
-    //   console.log(
-    //     'here: Change made to editing, re-render triggered. About to get user information, [userID, editingRTS.editing, editingATS.editing, editingIS.editing] = ',
-    //     [userID, editingRTS.editing, editingATS.editing, editingIS.editing]
-    //   );
-
-    //   axios
-    //     .get(url + userID)
-    //     .then((response) => {
-    //       console.log(
-    //         'here: Obtained user information with res = ',
-    //         response.data.result
-    //       );
            const temp = [];
 
           for (let i = 0; i < response.data.result.length; i++) {
@@ -2738,29 +2108,6 @@ function toggleShowEvents(props) {
               }
               gr.notifications = filtered_notifications;
 
-              // if (!gr.ta_notifications) {
-              //   gr.ta_notifications = {
-              //     before: {
-              //       is_enabled: false,
-              //       is_set: false,
-              //       message: "",
-              //       time: gr.user_notifications.before.time,
-              //     },
-              //     during: {
-              //       is_enabled: false,
-              //       is_set: false,
-              //       message: "",
-              //       time: gr.user_notifications.during.time,
-              //     },
-              //     after: {
-              //       is_enabled: false,
-              //       is_set: false,
-              //       message: "",
-              //       time: gr.user_notifications.after.time,
-              //     },
-              //   };
-              // }
-
               // console.log(gr);
               gr.title = x[i].gr_title;
               // console.log('X', x);
@@ -2824,20 +2171,7 @@ function toggleShowEvents(props) {
               ) {
                 gr_array.push(gr);
               }
-              // if (
-              //   this.state.calendarView === "Month" &&
-              //   goalDate.getTime() > monthStartDate.getTime() &&
-              //   goalDate.getTime() < monthEndDate.getTime()
-              // ) {
-              //   gr_array.push(gr);
-              // }
-              // console.log(gr_array);
               if (x[i]['is_persistent'].toLowerCase() === 'true') {
-                // routine_ids.push(i);
-
-                // routine_ids.push(x[i]["gr_unique_id"]);
-                // routine.push(x[i]);
-
                 if (
                   stateValue.calendarView === 'Day' &&
                   goalDate.getTime() > todayStartDate.getTime() &&
@@ -2854,20 +2188,8 @@ function toggleShowEvents(props) {
                   routine_ids.push(gr['gr_unique_id']);
                   routine.push(gr);
                 }
-                // if (
-                //   this.state.calendarView === "Month" &&
-                //   goalDate.getTime() > monthStartDate.getTime() &&
-                //   goalDate.getTime() < monthEndDate.getTime()
-                // ) {
-                //   routine_ids.push(gr["gr_unique_id"]);
-                //   routine.push(gr);
-                // }
               }
               if (x[i]['is_persistent'].toLowerCase() === 'false') {
-                // goal_ids.push(i);
-
-                // goal_ids.push(x[i]["gr_unique_id"]);
-                // goal.push(x[i]);
 
                 if (
                   stateValue.calendarView === 'Day' &&
@@ -2885,14 +2207,6 @@ function toggleShowEvents(props) {
                   goal_ids.push(gr['gr_unique_id']);
                   goal.push(gr);
                 }
-                // if (
-                //   this.state.calendarView === "Month" &&
-                //   goalDate.getTime() > monthStartDate.getTime() &&
-                //   goalDate.getTime() < monthEndDate.getTime()
-                // ) {
-                //   goal_ids.push(gr["gr_unique_id"]);
-                //   goal.push(gr);
-                // }
               }
             }
 
@@ -2928,11 +2242,6 @@ function toggleShowEvents(props) {
               };
             });
           }
-    //     })
-    //     .catch((error) => {
-    //       console.log('Error in getting goals and routines ' + error);
-    //     });
-    // }, [userID, editingRTS.editing, editingATS.editing, editingIS.editing]);
   }
   useEffect(() => console.log('here: 4'), [editingRTS.editing]);
 
@@ -3035,49 +2344,6 @@ function toggleShowEvents(props) {
                     }}
                   >
                     <MiniNavigation activeButtonSelection={"calendar"} />
-                    {/* <Button
-                      className={classes.buttonSelection}
-                      onClick={() => {
-                        toggleShowEvents();
-                        getAccessToken();
-                        setSignedIn(true);
-                      }}
-                      id="one"
-                    >
-                      Events
-                    </Button>
-                    <Button
-                      className={classes.buttonSelection}
-                      onClick={toggleShowGoal}
-                      id="one"
-                    >
-                      Goals
-                    </Button>
-                    <Button
-                      className={
-                        pageURL[3] === 'home'
-                          ? classes.buttonSelected
-                          : classes.buttonSelection
-                      }
-                      onClick={toggleShowRoutine}
-                      id="one"
-                    >
-                      Routines
-                    </Button>
-                    <Button
-                      className={
-                        editingRTS.editing === true
-                          ? classes.addActiveButton
-                          : classes.addButton
-                      }
-                      id="one"
-                      onClick={() => {
-                        console.log('Clicked add RTS');
-                        setEditingRTS(newRTSState);
-                      }}
-                    >
-                      Add Routine +
-                    </Button> */}
                     <Button
                       className={classes.buttonSelection}
                       onClick={() => {
@@ -3147,6 +2413,15 @@ function toggleShowEvents(props) {
                     </Button>
 
                     <div style={{ flex: '1' }}>
+                    {isLoading ?
+                      (
+                        <div>
+                          <br></br>
+                          <br></br>
+                          <h1>Loading...</h1>
+                        </div>
+                      ): ""
+                    }
                       {userID != '' && GREButtonSelection=='Routines' && (
                         <HomeLHS
                           theCurrentUserID={userID}
@@ -3211,23 +2486,7 @@ function toggleShowEvents(props) {
                           events={events}
                           setEvents={setEvents}
                           timeZone={userTime_zone}
-                          //setEvent={setEditingEvent}
-                          //newEvent={newEditingEventState}
-                          // rID={routineID}
-                          // setrID={setRoutineID}
-                          // newIS={newEditingISState}
-                          // setIS={setEditingIS}
-                          // aID={actionID}
-                          // setaID={setActionID}
                           editEvent={editingEvent.editing}
-                          // editATS={editingATS.editing}
-                          // editIS={editingIS.editing}
-                          // getGoalsEndPoint={events}
-                          // setGetGoalsEndPoint={setEvents}
-                          // getActionsEndPoint={getActionsEndPoint}
-                          // setGetActionsEndPoint={setGetActionsEndPoint}
-                          // getStepsEndPoint={getStepsEndPoint}
-                          // setGetStepsEndPoint={setGetStepsEndPoint}
                           showDeleteRecurringModal={
                             stateValue.showDeleteRecurringModal
                           }
@@ -3271,32 +2530,7 @@ function toggleShowEvents(props) {
                                   justifyContent: 'center',
                                   alignItems: 'center',
                                 }}
-                                // onClick={(e) => {
-                                //   curWeek();
-                                // }}
                               >
-                                {/* {0 <= today.format('D') - curDate.format('D') &&
-                                today.format('D') - curDate.format('D') <= 6 &&
-                                today.format('M') - curDate.format('M') ===
-                                  0 ? (
-                                  <p
-                                    style={{
-                                      font: 'normal normal bold 28px SF Pro',
-                                      paddingBottom: '0px',
-                                    }}
-                                  >
-                                    This week
-                                  </p>
-                                ) : (
-                                  <p
-                                    style={{
-                                      font: 'normal normal bold 28px SF Pro',
-                                      paddingBottom: '0px',
-                                    }}
-                                  >
-                                    Week of {startWeek.format('D MMMM YYYY')}{' '}
-                                  </p>
-                                )} */}
                                 {startWeek.format('MMMM YYYY')}
                               </Col>
 
@@ -3349,26 +2583,7 @@ function toggleShowEvents(props) {
                                   alignItems: 'center',
                                 }}
                               >
-                                {/* <FontAwesomeIcon
-                                  style={{ cursor: 'pointer' }}
-                                  icon={faCalendarDay}
-                                  size="2x"
-                                  onClick={(e) => {
-                                    stateValue.calendarView === 'Week'
-                                      ? setStateValue((prevState) => {
-                                          return {
-                                            ...prevState,
-                                            calendarView: 'Day',
-                                          };
-                                        })
-                                      : setStateValue((prevState) => {
-                                          return {
-                                            ...prevState,
-                                            calendarView: 'Week',
-                                          };
-                                        });
-                                  }}
-                                /> */}
+                                
                                 <img
                                   src="/WeeklyCal.png"
                                   style={{
@@ -3505,26 +2720,6 @@ function toggleShowEvents(props) {
                                   alignItems: 'center',
                                 }}
                               >
-                                {/* <FontAwesomeIcon
-                                  style={{ cursor: 'pointer' }}
-                                  icon={faCalendarWeek}
-                                  size="2x"
-                                  onClick={(e) => {
-                                    stateValue.calendarView === 'Week'
-                                      ? setStateValue((prevState) => {
-                                          return {
-                                            ...prevState,
-                                            calendarView: 'Day',
-                                          };
-                                        })
-                                      : setStateValue((prevState) => {
-                                          return {
-                                            ...prevState,
-                                            calendarView: 'Week',
-                                          };
-                                        });
-                                  }}
-                                /> */}
                                 <img
                                   src="/DailyCal.png"
                                   style={{
@@ -3551,45 +2746,6 @@ function toggleShowEvents(props) {
                                 />
                               </Col>
 
-                              {/* <Col
-                                md="auto"
-                                style={{ textAlign: 'center', width: '70%' }}
-                                
-                              >
-                                <p
-                                  style={{
-                                    font: 'normal normal bold 28px SF Pro',
-                                    paddingBottom: '0px',
-                                  }}
-                                >
-                                  {stateValue.todayDateObject.format('dddd')}{' '}
-                                  {stateValue.todayDateObject.get('date')}{' '}
-                                  {stateValue.todayDateObject.format('MMMM')}{' '}
-                                  {getYear()}{' '}
-                                </p>
-
-                               
-                              </Col> */}
-
-                              {/* <Col
-                                style={{
-                                  width: '10%',
-                                  textAlign: 'right',
-                                  paddingTop: '1rem',
-                                  marginRight: '1rem',
-                                }}
-                              >
-                                <FontAwesomeIcon
-                                  // style={{ marginLeft: "50%" }}
-                                  style={{ float: 'right', cursor: 'pointer' }}
-                                  icon={faCalendar}
-                                  size="2x"
-                                  className="X"
-                                  onClick={(e) => {
-                                    curDay();
-                                  }}
-                                />
-                              </Col> */}
                               <Col
                                 xs={1}
                                 style={{

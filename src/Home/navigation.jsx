@@ -82,52 +82,22 @@ export function Navigation() {
   const currentUser = loginContext.loginState.curUser;
   const curUserPic = loginContext.loginState.curUserPic;
   const curUserName = loginContext.loginState.curUserName;
+  var currentTaPicture = loginContext.loginState.ta.picture;
+  console.log("logincontext", loginContext)
+  console.log("logincontext current TA Picture", currentTaPicture)
   var curUserID = '';
   var curUserTZ = '';
 
   let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
   let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-  const [taImage, setTaImage] = useState('');
   const [userImage, setUserImage] = useState('');
   console.log(currentUser, curUserPic);
   
-  // useEffect(() => {
-  //   if (BASE_URL.substring(8, 18) == 'gyn3vgy3fb') {
-  //     console.log('base_url', BASE_URL.substring(8, 18));
-  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
-  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
-  //     console.log(CLIENT_ID, CLIENT_SECRET);
-  //   } else {
-  //     console.log('base_url', BASE_URL.substring(8, 18));
-  //     CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-  //     CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
-  //     console.log(CLIENT_ID, CLIENT_SECRET);
-  //   }
-  // }, []);
-
-  
-  useEffect(() => {
-    setUserImage(curUserPic);
-    if (
-      document.cookie
-        .split(';')
-        .some((item) => item.trim().startsWith('ta_pic='))
-    ) {
-      setTaImage( document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('ta_pic='))
-        .split('=')[1]) 
-    }
-    console.log("hiiiiiiiiii", taImage.toString());
-  });
-  // useEffect(() => {
-  //   setUserImage(curUserPic);
-  // }, [currentUser]);
   console.log(CLIENT_ID, CLIENT_SECRET);
   const [taListCreated, toggleGetTAList] = useState(false);
   const [patientName, setPatientName] = useState('');
 
-  let redirecturi = 'https://manifestmy.space';
+  let redirecturi = 'https://manifestmy.life';
   console.log(redirecturi);
   console.log('document cookie', document.cookie);
   if (
@@ -138,7 +108,7 @@ export function Navigation() {
       .find((row) => row.startsWith('ta_uid='))
       .split('=')[1];
   }
-
+  
   console.log('User list', listOfUsers);
   console.log('Cur ta', selectedUser);
 
@@ -163,50 +133,10 @@ export function Navigation() {
         })}
       >
         {user.user_name}
-        {/* {
-          document.cookie
-            .split('; ')
-            .find((row) => row.startsWith('patient_name='))
-            .split('=')[1]
-        } */}
       </option>
     ));
 
     console.log('document cookie', document.cookie);
-    if (
-      document.cookie
-        .split(';')
-        .some((item) => item.trim().startsWith('patient_name='))
-    ) {
-      if (
-        document.cookie
-          .split('; ')
-          .find((row) => row.startsWith('patient_name='))
-          .split('=')[1] == 'Loading'
-      ) {
-        console.log('do something here', listOfUsers);
-        if (listOfUsers[0]) {
-          console.log('document cookie set to first user');
-          document.cookie = 'patient_name=' + listOfUsers[0].user_name;
-          document.cookie = 'patient_timeZone=' + listOfUsers[0].time_zone;
-          document.cookie = 'patient_uid=' + listOfUsers[0].user_unique_id;
-          document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
-          document.cookie = 'patient_pic=' + listOfUsers[0].user_picture;
-        }
-      }
-    } else {
-      if (listOfUsers[0]) {
-        console.log('document cookie set to first user');
-        document.cookie = 'patient_email=' + listOfUsers[0].user_email_id;
-        document.cookie = 'patient_name=' + listOfUsers[0].user_name;
-        document.cookie = 'patient_timeZone=' + listOfUsers[0].time_zone;
-        document.cookie = 'patient_uid=' + listOfUsers[0].user_unique_id;
-        document.cookie = 'patient_pic=' + listOfUsers[0].user_picture;
-
-        console.log('document cookie set to loading');
-        document.cookie = 'patient_name=Loading';
-      }
-    }
     return elements;
   };
 
@@ -265,8 +195,42 @@ export function Navigation() {
                         padding: 0,
                         paddingRight: '1rem',
                       }}
-                    >
-                      {document.cookie
+                      >
+                        {
+                          loginContext.loginState.curUserPic ?
+                            (loginContext.loginState.curUserPic !== '' ?
+                              (<img
+                                src={loginContext.loginState.curUserPic}
+                                style={{
+                                  width: '45px',
+                                  height: '45px',
+                                  borderRadius: '100%',
+                                }}
+                              />
+                              ) : (
+                                <img
+                                  src={'/UserNoImage.png'}
+                                  style={{
+                                    width: '45px',
+                                    height: '45px',
+                                    borderRadius: '100%',
+                                  }}
+                                />
+                              )
+                            ) :
+                            (
+                            <img
+                              src={'/UserNoImage.png'}
+                              style={{
+                                width: '45px',
+                                height: '45px',
+                                borderRadius: '100%',
+                              }}
+                            />
+                          )
+                        }
+                            
+                      {/* {document.cookie
                         .split(';')
                         .some((item) =>
                           item.trim().startsWith('patient_pic=')
@@ -307,7 +271,7 @@ export function Navigation() {
                             borderRadius: '100%',
                           }}
                         />
-                      )}
+                      )} */}
                     </Col>
 
                     <Col
@@ -373,13 +337,13 @@ export function Navigation() {
                               curUserPic: JSON.parse(e.target.value)
                                 .user_picture,
                               curUserName: JSON.parse(e.target.value).user_name,
+                              ta: {
+                                ...loginContext.loginState.ta,
+                                picture: currentTaPicture
+                              }
                             });
-                            // setUserImage(
-                            //   JSON.parse(e.target.value).user_picture
-                            // );
 
                             toggleGetTAList(false);
-                            // toggleGetUnassignedList(false);
 
                             setPatientName(
                               JSON.parse(e.target.value).user_name
@@ -395,20 +359,13 @@ export function Navigation() {
                         >
                           <option selected disabled>
                             {
-                              document.cookie
-                                .split('; ')
-                                .find((row) => row.startsWith('patient_name='))
-                                .split('=')[1]
+                              // document.cookie
+                              //   .split('; ')
+                              //   .find((row) => row.startsWith('patient_name='))
+                              //   .split('=')[1]
+                                loginContext.loginState.curUserName
                             }
                           </option>
-                          {/* <option selected disabled>
-                            {
-                              document.cookie
-                                .split('; ')
-                                .find((row) => row.startsWith('patient_name='))
-                                .split('=')[1]
-                            }
-                          </option> */}
                           {userListRendered()}
                         </select>
                       </Row>
@@ -457,7 +414,7 @@ export function Navigation() {
                     }}
                   >
                     {' '}
-                    {taImage === '' ? (
+                    {currentTaPicture === '' || currentTaPicture === 'undefined'? (
                       <img
                         src={'/UserNoImage.png'}
                         alt="Default Image"
@@ -471,7 +428,7 @@ export function Navigation() {
                       />
                     ) : (
                       <img
-                        src={taImage}
+                        src={currentTaPicture}
                         alt="Default Image"
                         style={{
                           width: '45px',

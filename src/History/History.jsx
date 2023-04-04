@@ -107,6 +107,17 @@ export default function MainPage(props) {
     setCU(userID);
     setTZ(userTime_zone);
   }
+  var currentTaPicture = loginContext.loginState.ta.picture;
+  if (
+    document.cookie
+      .split(';')
+      .some((item) => item.trim().startsWith('ta_pic='))
+  ) {
+    currentTaPicture = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('ta_pic='))
+      .split('=')[1];
+  }
   console.log('currentUser: ' + currentUser);
 
   const inRange = [];
@@ -203,32 +214,10 @@ export default function MainPage(props) {
             });
           }
         }
-
-        // for (var j = 0; j < thisWeek.length; j++) {
-        //   for (var i = 0; i < response.data.result.length; i++) {
-        //     // console.log(response.data.result[i].date_affected);
-        //     console.log(response.data.result[i].date_affected);
-        //     if (thisWeek[j] === response.data.result[i].date_affected) {
-        //       historyGot.push(response.data.result[i]);
-        //     } else {
-        //       historyGot.push({
-        //         id: '',
-        //         user_id: '',
-        //         date: '',
-        //         date_affected: '',
-        //         details: '',
-        //       });
-        //     }
-        //   }
-        //   // historyGot.push(response.data.result[i]);
-        // }
-        // setHG(historyGot);
         console.log('hgot = ', historyGot);
         setCurDate(m);
         console.log(currentDate);
         cleanData(historyGot, currentDate);
-        // console.log(response.data.result[1].details);
-        // cleanData(historyGot, currentDate);
       })
       .catch((error) => {
         console.log(error);
@@ -246,27 +235,67 @@ export default function MainPage(props) {
         
       if (usersOfTA_result.length > 0) {
         const usersOfTA = usersOfTA_result;
-        const curUserID = usersOfTA[0].user_unique_id;
-        const curUserTZ = usersOfTA[0].time_zone;
-        const curUserEI = usersOfTA[0].user_email_id;
-        const curUserN = usersOfTA[0].user_name;
-        if (loginContext.loginState.curUser == '') {
-          loginContext.setLoginState({
-            ...loginContext.loginState,
-            usersOfTA: usersOfTA_result,
-            curUser: curUserID,
-            curUserTimeZone: curUserTZ,
-            curUserEmail: curUserEI,
-            curUserName: curUserN,
-          });
-        } else {
-          loginContext.setLoginState({
-            ...loginContext.loginState,
-            usersOfTA: usersOfTA_result,
-          });
+        var curUserID = usersOfTA[0].user_unique_id;
+        var curUserTZ = usersOfTA[0].time_zone;
+        var curUserEI = usersOfTA[0].user_email_id;
+        var curUserP = usersOfTA[0].user_picture;
+        var curUserN = usersOfTA[0].user_name;
+        var uID, uTime_zone, uEmail, uPic, uName;
+        if (
+          document.cookie
+            .split(';')
+            .some((item) => item.trim().startsWith('patient_uid='))
+        ) {
+          uID = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('patient_uid='))
+            .split('=')[1];
+          uTime_zone = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('patient_timeZone='))
+            .split('=')[1];
+          uEmail = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('patient_email='))
+            .split('=')[1];
+          uPic = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('patient_pic='))
+            .split('=')[1];
+          uName = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('patient_name='))
+            .split('=')[1];
+    
+          curUserID = uID;
+          curUserTZ = uTime_zone;
+          curUserEI = uEmail;
+          curUserP = uPic;
+          curUserN = uName;
         }
-        console.log(curUserID);
-      } else {
+        else {
+          document.cookie = 'patient_name=' + curUserN;
+          document.cookie = 'patient_timeZone=' + curUserTZ;
+          document.cookie = 'patient_uid=' + curUserID;
+          document.cookie = 'patient_email=' + curUserEI;
+          document.cookie = 'patient_pic=' + curUserP;
+        }
+        //***** 
+        loginContext.setLoginState({
+          ...loginContext.loginState,
+          usersOfTA: usersOfTA,
+          curUser: curUserID,
+          curUserTimeZone: curUserTZ,
+          curUserEmail: curUserEI,
+          curUserPic: curUserP,
+          curUserName: curUserN,
+          ta: {
+            ...loginContext.loginState.ta,
+            picture: currentTaPicture
+          }
+        });
+      }
+      else {
         loginContext.setLoginState({
           ...loginContext.loginState,
           usersOfTA: usersOfTA_result,
@@ -274,60 +303,67 @@ export default function MainPage(props) {
           curUserTimeZone: '',
           curUserEmail: '',
           curUserName: '',
+          ta: {
+            ...loginContext.loginState.ta,
+            picture: currentTaPicture
+          }
         });
         console.log('No User Found');
       }
-      // ***********
-    }
-    else {
-      console.log("got usersOfTA from usersOfTA/ API call")
-      axios
-        .get(
-          BASE_URL +
-          'usersOfTA/' +
-          document.cookie
-            .split('; ')
-            .find((row) => row.startsWith('ta_email='))
-            .split('=')[1]
-        )
-        .then((response) => {
-          console.log("userOfTA response ", response);
-          if (response.data.result.length > 0) {
-            const usersOfTA = response.data.result;
-            const curUserID = usersOfTA[0].user_unique_id;
-            const curUserTZ = usersOfTA[0].time_zone;
-            const curUserEI = usersOfTA[0].user_email_id;
-            const curUserN = usersOfTA[0].user_name;
-            loginContext.setLoginState({
-              ...loginContext.loginState,
-              usersOfTA: response.data.result,
-              curUser: curUserID,
-              curUserTimeZone: curUserTZ,
-              curUserEmail: curUserEI,
-              curUserName: curUserN,
-            });
-            console.log(curUserID);
-            // setUserID(curUserID);
-            // console.log(userID);
-            // GrabFireBaseRoutinesGoalsData();
-            // return userID;
-          } else {
-            loginContext.setLoginState({
-              ...loginContext.loginState,
-              usersOfTA: response.data.result,
-              curUser: '',
-              curUserTimeZone: '',
-              curUserEmail: '',
-              curUserName: '',
-            });
-            console.log('No User Found');
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  }, [
+    }else {
+        console.log("got usersOfTA from usersOfTA/ API call")
+        axios
+          .get(
+            BASE_URL +
+            'usersOfTA/' +
+            document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('ta_email='))
+              .split('=')[1]
+          )
+          .then((response) => {
+            console.log("userOfTA response ", response);
+            if (response.data.result.length > 0) {
+              const usersOfTA = response.data.result;
+              const curUserID = usersOfTA[0].user_unique_id;
+              const curUserTZ = usersOfTA[0].time_zone;
+              const curUserEI = usersOfTA[0].user_email_id;
+              const curUserN = usersOfTA[0].user_name;
+              loginContext.setLoginState({
+                ...loginContext.loginState,
+                usersOfTA: response.data.result,
+                curUser: curUserID,
+                curUserTimeZone: curUserTZ,
+                curUserEmail: curUserEI,
+                curUserName: curUserN,
+                ta: {
+                  ...loginContext.loginState.ta,
+                  picture: currentTaPicture
+                }
+              });
+              console.log(curUserID);
+            } else {
+              loginContext.setLoginState({
+                ...loginContext.loginState,
+                usersOfTA: response.data.result,
+                curUser: '',
+                curUserTimeZone: '',
+                curUserEmail: '',
+                curUserName: '',
+                ta: {
+                  ...loginContext.loginState.ta,
+                  picture: currentTaPicture
+                }
+              });
+              console.log('No User Found');
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+  },
+    [
     loginContext.loginState.loggedIn,
     loginContext.loginState.reload,
     currentUser,

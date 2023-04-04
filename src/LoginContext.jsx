@@ -10,6 +10,7 @@ export const LoginInitState = {
   ta: {
     id: '',
     email: '',
+    picture: ''
   },
   usersOfTA: [],
   curUser: '',
