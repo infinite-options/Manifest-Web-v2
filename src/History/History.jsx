@@ -280,7 +280,6 @@ export default function MainPage(props) {
           document.cookie = 'patient_email=' + curUserEI;
           document.cookie = 'patient_pic=' + curUserP;
         }
-        //***** 
         loginContext.setLoginState({
           ...loginContext.loginState,
           usersOfTA: usersOfTA,
@@ -302,6 +301,7 @@ export default function MainPage(props) {
           curUser: '',
           curUserTimeZone: '',
           curUserEmail: '',
+          curUserPic: '',
           curUserName: '',
           ta: {
             ...loginContext.loginState.ta,
@@ -328,6 +328,7 @@ export default function MainPage(props) {
               const curUserID = usersOfTA[0].user_unique_id;
               const curUserTZ = usersOfTA[0].time_zone;
               const curUserEI = usersOfTA[0].user_email_id;
+              const curUserP = usersOfTA[0].user_picture;
               const curUserN = usersOfTA[0].user_name;
               loginContext.setLoginState({
                 ...loginContext.loginState,
@@ -335,6 +336,7 @@ export default function MainPage(props) {
                 curUser: curUserID,
                 curUserTimeZone: curUserTZ,
                 curUserEmail: curUserEI,
+                curUserPic: curUserP,
                 curUserName: curUserN,
                 ta: {
                   ...loginContext.loginState.ta,
@@ -349,6 +351,7 @@ export default function MainPage(props) {
                 curUser: '',
                 curUserTimeZone: '',
                 curUserEmail: '',
+                curUserPic: '',
                 curUserName: '',
                 ta: {
                   ...loginContext.loginState.ta,

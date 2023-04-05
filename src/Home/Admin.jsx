@@ -404,12 +404,37 @@ export function Admin() {
     }
   };
 
+  const UploadTAImage = async (event) => {
+    let body = {
+      ta_unique_id: currentTaID,
+      ta_photo_url: taPhoto,
+      ta_picture: taImage,
+    }
+    if (typeof body.ta_photo_url !== 'string') {
+      body.ta_photo_url = '';
+    }
+    let formData = new FormData();
+    Object.entries(body).forEach((entry) => {
+      formData.append(entry[0], entry[1]);
+    });
+    try {
+      const response = await axios({
+        method: 'post',
+        url: BASE_URL + 'UploadTAImage',
+        data: formData,
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      console.log('UploadTAImage RESPONSE : ', response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const UpdatePerson = async (event) => {
     var phone_number;
     var employer;
     if (listPeople[0] && listPeople[0].phone_number === 'undefined') {
       phone_number = '';
-
       employer = '';
     } else {
       phone_number = listPeople[0].phone_number;
@@ -420,23 +445,22 @@ export function Admin() {
 
       // ta_unique_id: listTaUser[0].ta_unique_id,
       ta_unique_id: currentTaID,
-
       first_name: taFirstName,
       last_name: taLastName,
       phone_number: listPeople[0].phone_number,
       employer: listPeople[0].employer,
       // ta_time_zone: listTaUser[0].ta_time_zone,
       ta_time_zone: currentTaTimeZone,
-      ta_photo_url: taPhoto,
-      ta_picture: taImage,
+      // ta_photo_url: taPhoto,
+      // ta_picture: taImage,
     };
     console.log('updateTA body', body);
-    if (typeof body.ta_photo_url === 'string') {
+    // if (typeof body.ta_photo_url === 'string') {
       // body.photo_url = body.people_pic;
       // body.people_pic = '';
-    } else {
-      body.ta_photo_url = '';
-    }
+    // } else {
+    //   body.ta_photo_url = '';
+    // }
     let formData = new FormData();
     Object.entries(body).forEach((entry) => {
       formData.append(entry[0], entry[1]);
@@ -677,6 +701,15 @@ export function Admin() {
       });
   };
 
+  useEffect(() => {
+    if (taImage !== null) {
+      const salt = Math.floor(Math.random() * 9999999999);
+      let image_name = taImage.name;
+      image_name = image_name + salt.toString();
+      setTaPhotoURL(URL.createObjectURL(taImage));
+      console.log('upload URL:', taPhotoURL);
+    }
+  }, [taImage])
   //upload from computer for TA
   const uploadImageModal = () => {
     return (
@@ -704,7 +737,7 @@ export function Admin() {
               }
             }}
           />
-          <Button
+          {/* <Button
             variant="dark"
             onClick={() => {
               console.log('here: uploading image');
@@ -721,7 +754,7 @@ export function Admin() {
             }}
           >
             Upload
-          </Button>
+          </Button> */}
           <img
             src={taPhotoURL || 'http://via.placeholder.com/400x300'}
             alt="Uploaded images"
@@ -734,6 +767,7 @@ export function Admin() {
           <Button
             variant="secondary"
             onClick={() => {
+              setTaPhotoURL('');
               toggleUploadImage(false);
             }}
           >
@@ -742,14 +776,26 @@ export function Admin() {
           <Button
             variant="primary"
             onClick={() => {
+              if (taImage === null) {
+                alert('Please select an image to upload');
+                return;
+              }
               console.log('here: Confirming changes');
               setTaPhoto(taPhotoURL);
+              setCurrentTaPhoto(taPhotoURL);
               toggleUploadImage(false);
               console.log('confirm URL: ', taPhotoURL);
-              // if (taPhotoURL) {
-              //   document.cookie = 'ta_pic=' + taPhotoURL;
-              // }
-              // UpdatePerson();
+              if (taPhotoURL) {
+                document.cookie = 'ta_pic=' + taPhotoURL;
+                loginContext.setLoginState({
+                  ...loginContext.loginState,
+                  ta: {
+                    ...loginContext.loginState.ta,
+                    picture: taPhotoURL,
+                  },
+                });
+              }
+              UploadTAImage();
             }}
           >
             Confirm
@@ -2748,18 +2794,16 @@ export function Admin() {
               justifyContent: 'center',
             }}
           >
-            <Row
-              style={{
-                height: '300px',
-              }}
-            >
-              <Row
-                style={{
-                  width: '40%',
-                  marginLeft: '30%',
-                }}
-              >
-                {taPhoto == '' ? (
+            <div>
+              <Row style={{
+                height: '300px'
+              }}>
+          <Col>
+          <Row style={{
+            width: '40%',
+            marginLeft: '30%',
+          }}>
+          {taPhoto == '' ? (
                   <img
                     style={{
                       display: 'block',
@@ -2782,194 +2826,179 @@ export function Admin() {
                       objectFit: 'cover',
                       marginTop: '15px',
                     }}
-                    src={taPhoto}
+                    src={currentTaPhoto}
                     alt="TA Profile"
                   />
                 )}
-              </Row>
-              <Row
-                style={{
-                  width: '40%',
-                  marginLeft: '30%',
-                }}
-                src={currentTaPhoto}
-                alt="TA Profile"
-              />
+          </Row>
+          <Row style={{
+            width: '40%',
+            marginLeft: '30%',
+          }}>
+          <h6>Change Image</h6>
+                
+                <div
+                  onClick={() => {
+                    toggleUploadImage(!showUploadImage);
+                  }}
+                  style={{
+                    marginLeft: '12px',
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Upload from Computer
+                </div>
+                <UploadImage
+                  photoUrl={taPhotoURL}
+                  setPhotoUrl={setTaPhoto}
+                  currentUserId={userID}
+                />
+                <GooglePhotos photoUrl={taPhotoURL} setPhotoUrl={setTaPhoto} />
+          </Row>
+          </Col>
+                <Col style={{
+                  marginTop: '50px'
+                }}>
+          <Form.Group>
+            <Row>
+                
+                  <label
+                  style={{
+                    marginTop: '5px',
+                    marginRight: '10px',
+                    fontWeight: 'bolder',
+                    color: '#000000',
+                  }}
+                >
+                  First Name:
+                </label>
+                
+                  <TextField
+                        id="taFirstName"
+                        placeholder="Loading"
+                        value={taFirstName}
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          console.log("first name update",e.target.value);
+                          setTaFirstName(e.target.value)
+                        }}
+                  >
+                  </TextField>
             </Row>
-            <Row
-              style={{
-                width: '40%',
-                marginLeft: '30%',
-              }}
-            >
-              <h6>Change Image</h6>
-
-              <div
-                onClick={() => {
-                  toggleUploadImage(!showUploadImage);
-                }}
+            <Row>
+                <label
+                  style={{
+                    marginTop: '5px',
+                    marginRight: '10px',
+                    fontWeight: 'bolder',
+                    color: '#000000',
+                  }}
+                >
+                  Last Name:
+                </label>
+                <TextField
+                        id="taLastName"
+                        placeholder="Loading"
+                        value={taLastName}
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          console.log("last name update",e.target.value);
+                          setTaLastName(e.target.value)
+                        }}
+                  >
+                </TextField>
+            </Row>
+            
+            <Row>
+                <label
+                  style={{
+                    marginTop: '5px',
+                    marginRight: '10px',
+                    fontWeight: 'bolder',
+                    color: '#000000',
+                  }}
+                >
+                  Email: 
+                </label>
+                <div
+                  style={{
+                    marginTop: '5px',
+                    marginRight: '10px',
+                    color: '#000000',
+                  }}
+                >
+                  {document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('ta_email='))
+                .split('=')[1]}
+                </div>
+            </Row>
+          <Row>
+                <label
+                  style={{
+                    marginTop: '5px',
+                    marginRight: '10px',
+                    fontWeight: 'bolder',
+                    color: '#000000',
+                  }}
+                >
+                  User ID:
+                </label>
+                <div
+                  style={{
+                    marginTop: '5px',
+                    marginRight: '10px',
+                    color: '#000000',
+                  }}
+                >
+                  {document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('ta_uid='))
+                .split('=')[1]}
+                </div>
+            </Row>
+            <br />
+            <br />
+            <Row>
+            <div>
+            <button
                 style={{
-                  marginLeft: '12px',
-                  textDecoration: 'underline',
-                  cursor: 'pointer',
+                  color: '#000000',
+                  border: 'solid',
+                  borderWidth: '2px',
+                  borderRadius: '25px',
+                }}
+                onClick={() => {
+                  // if (taPhotoURL) {
+                  //     setTaPhoto(taPhotoURL);
+                  //     document.cookie = 'ta_pic=' + taPhotoURL;
+                  //   }
+                  UpdatePerson();
                 }}
               >
-                Upload from Computer
-              </div>
-              <UploadImage
-                photoUrl={taPhotoURL}
-                setPhotoUrl={setTaPhoto}
-                currentUserId={userID}
-              />
-              <GooglePhotos photoUrl={taPhotoURL} setPhotoUrl={setTaPhoto} />
+                Save Changes
+              </button>
+              <button
+                style={{
+                  color: '#000000',
+                  border: 'solid',
+                  borderWidth: '2px',
+                  borderRadius: '25px',
+                  marginLeft: '20px',
+                }}
+                onClick={() => {
+                  
+                }}
+              >
+                Cancel
+              </button>
+            </div>
             </Row>
-          </Col>
-          <Col
-            style={{
-              marginTop: '50px',
-            }}
-          >
-            <Row>
-              <Col>
-                <Form.Group>
-                  <Row>
-                    <label
-                      style={{
-                        marginTop: '5px',
-                        marginRight: '10px',
-                        fontWeight: 'bolder',
-                        color: '#000000',
-                      }}
-                    >
-                      First Name:
-                    </label>
-
-                    <TextField
-                      id="taFirstName"
-                      placeholder="Loading"
-                      value={taFirstName}
-                      onChange={(e) => {
-                        e.stopPropagation();
-                        console.log('first name update', e.target.value);
-                        setTaFirstName(e.target.value);
-                      }}
-                    ></TextField>
-                  </Row>
-                  <Row>
-                    <label
-                      style={{
-                        marginTop: '5px',
-                        marginRight: '10px',
-                        fontWeight: 'bolder',
-                        color: '#000000',
-                      }}
-                    >
-                      Last Name:
-                    </label>
-                    <TextField
-                      id="taLastName"
-                      placeholder="Loading"
-                      value={taLastName}
-                      onChange={(e) => {
-                        e.stopPropagation();
-                        console.log('last name update', e.target.value);
-                        setTaLastName(e.target.value);
-                      }}
-                    ></TextField>
-                  </Row>
-
-                  <Row>
-                    <label
-                      style={{
-                        marginTop: '5px',
-                        marginRight: '10px',
-                        fontWeight: 'bolder',
-                        color: '#000000',
-                      }}
-                    >
-                      Email:
-                    </label>
-
-                    <div
-                      style={{
-                        marginTop: '5px',
-                        marginRight: '10px',
-                        color: '#000000',
-                      }}
-                    >
-                      {
-                        document.cookie
-                          .split('; ')
-                          .find((row) => row.startsWith('ta_email='))
-                          .split('=')[1]
-                      }
-                    </div>
-                  </Row>
-                  <Row>
-                    <label
-                      style={{
-                        marginTop: '5px',
-                        marginRight: '10px',
-                        fontWeight: 'bolder',
-                        color: '#000000',
-                      }}
-                    >
-                      User ID:
-                    </label>
-
-                    <div
-                      style={{
-                        marginTop: '5px',
-                        marginRight: '10px',
-                        color: '#000000',
-                      }}
-                    >
-                      {
-                        document.cookie
-                          .split('; ')
-                          .find((row) => row.startsWith('ta_uid='))
-                          .split('=')[1]
-                      }
-                    </div>
-                  </Row>
-                  <br />
-                  <br />
-                  <Row>
-                    <div>
-                      <button
-                        style={{
-                          color: '#000000',
-                          border: 'solid',
-                          borderWidth: '2px',
-                          borderRadius: '25px',
-                        }}
-                        onClick={() => {
-                          if (taPhotoURL) {
-                            setTaPhoto(taPhotoURL);
-                            document.cookie = 'ta_pic=' + taPhotoURL;
-                          }
-                          UpdatePerson();
-                        }}
-                      >
-                        Save Changes
-                      </button>
-                      <button
-                        style={{
-                          color: '#000000',
-                          border: 'solid',
-                          borderWidth: '2px',
-                          borderRadius: '25px',
-                          marginLeft: '20px',
-                        }}
-                        onClick={() => {}}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </Row>
-                </Form.Group>
-              </Col>
+            </Form.Group>
+            </Col>
             </Row>
+            </div>
 
             <div class="con">
               <button
