@@ -200,7 +200,7 @@ export function Admin() {
   const [currentTaPhoto, setCurrentTaPhoto] = useState('');
 
   // const [advisorList, setAdvisorList] = useState([]);
-  let redirecturi = 'https://manifestmy.space';
+  let redirecturi = 'https://manifestmy.life';
 
   console.log('taListUser', taListUser.length);
 
@@ -217,6 +217,12 @@ export function Admin() {
             .some((item) => item.trim().startsWith('ta_pic='))
         ) {
           setTaPhoto(
+            document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('ta_pic='))
+              .split('=')[1]
+          );
+          setCurrentTaPhoto(
             document.cookie
               .split('; ')
               .find((row) => row.startsWith('ta_pic='))

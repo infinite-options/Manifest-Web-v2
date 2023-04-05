@@ -2345,7 +2345,11 @@ function toggleShowEvents(props) {
                   >
                     <MiniNavigation activeButtonSelection={"calendar"} />
                     <Button
-                      className={classes.buttonSelection}
+                      className={
+                        GREButtonSelection === 'Events'
+                          ? classes.buttonSelected
+                          : classes.buttonSelection
+                      }
                       onClick={() => {
                         toggleShowEvents();
                         getAccessToken();
@@ -2357,7 +2361,11 @@ function toggleShowEvents(props) {
                       Events
                     </Button>
                     <Button
-                      className={classes.buttonSelection}
+                      className={
+                        GREButtonSelection === 'Goals'
+                          ? classes.buttonSelected
+                          : classes.buttonSelection
+                      }
                       onClick={()=>{
                         toggleShowGoal()
                         setGREButtonSelection("Goals")
@@ -2368,7 +2376,7 @@ function toggleShowEvents(props) {
                     </Button>
                     <Button
                       className={
-                        pageURL[3] === 'home'
+                        GREButtonSelection === 'Routines'
                           ? classes.buttonSelected
                           : classes.buttonSelection
                       }
