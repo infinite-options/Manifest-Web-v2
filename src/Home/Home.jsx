@@ -50,8 +50,8 @@ export default function Home(props) {
   let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
   let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
   
-  let CLIENT_ID_CALENDAR = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-  let CLIENT_SECRET_CALENDAR = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
+  let CLIENT_ID_SPACE = process.env.REACT_APP_GOOGLE_CLIENT_ID_SPACE;
+  let CLIENT_SECRET_SPACE = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_SPACE;
   console.log('In home');
   const loginContext = useContext(LoginContext);
   var selectedUser = loginContext.loginState.curUser;
@@ -987,8 +987,8 @@ export default function Home(props) {
               
               var details = {
                 refresh_token: refreshToken,
-                client_id: CLIENT_ID_CALENDAR,
-                client_secret: CLIENT_SECRET_CALENDAR,
+                client_id: CLIENT_ID_SPACE,
+                client_secret: CLIENT_SECRET_SPACE,
                 grant_type: 'refresh_token',
               };
 
