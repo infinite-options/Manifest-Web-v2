@@ -186,18 +186,18 @@ export default function AboutModal(props) {
   console.log('currentUser: ' + currentUser);
 
   
-  useEffect(() => {
-    console.log('yayayayayay');
-    axios
-      .get(BASE_URL + 'ListAllTAUser/' + userID)
-      .then((response) => {
-        console.log('listAllTAUser', response.data.result);
-        setTaList(response.data.result);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [called, people]);
+  // useEffect(() => {
+  //   console.log('yayayayayay');
+  //   axios
+  //     .get(BASE_URL + 'ListAllTAUser/' + userID)
+  //     .then((response) => {
+  //       console.log('listAllTAUser', response.data.result);
+  //       setTaList(response.data.result);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }, [called, people]);
   //upload from computer for TA
   const uploadImageModal = () => {
     return (
@@ -567,6 +567,8 @@ export default function AboutModal(props) {
     axios
       .get(url + userID) //this.props.theCurrentUserId)
       .then((response) => {
+        console.log("About Me - Important people", response.data.result_important_people);
+        setTaList(response.data.result_important_people)
         if (response.data.result.length !== 0) {
           console.log('aboutMe res = ', response.data.result);
           let details = response.data.result[0];
