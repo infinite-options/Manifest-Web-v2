@@ -987,8 +987,8 @@ export default function Home(props) {
               
               var details = {
                 refresh_token: refreshToken,
-                client_id: CLIENT_ID_SPACE,
-                client_secret: CLIENT_SECRET_SPACE,
+                client_id: CLIENT_ID,
+                client_secret: CLIENT_SECRET,
                 grant_type: 'refresh_token',
               };
 
