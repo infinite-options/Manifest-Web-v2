@@ -49,6 +49,9 @@ const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 export default function Home(props) {
   let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
   let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+  
+  let CLIENT_ID_CALENDAR = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+  let CLIENT_SECRET_CALENDAR = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
   console.log('In home');
   const loginContext = useContext(LoginContext);
   var selectedUser = loginContext.loginState.curUser;
@@ -984,8 +987,8 @@ export default function Home(props) {
               
               var details = {
                 refresh_token: refreshToken,
-                client_id: CLIENT_ID,
-                client_secret: CLIENT_SECRET,
+                client_id: CLIENT_ID_CALENDAR,
+                client_secret: CLIENT_SECRET_CALENDAR,
                 grant_type: 'refresh_token',
               };
 

@@ -46,8 +46,8 @@ export default function EventLHS(props) {
   console.log('curdate today firebase props ', props.editEvent);
   console.log('curdate today firebase props ', document.cookie);
 
-  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID_LIFE;
-  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET_LIFE;
+  let CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+  let CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
   const history = useHistory();
   const inRange = [];
   const loginContext = useContext(LoginContext);
