@@ -554,12 +554,13 @@ export default function AboutModal(props) {
       .get(BASE_URL + 'listPeople/' + userID)
       .then((response) => {
         console.log('listPeople', response.data.result.result);
+        setTaList(response.data.result.result)
         setListPeople(response.data.result.result);
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [called, people]);
+  }, [called, people, loginContext.loginState.reload, userID]);
 
   function grabFireBaseAboutMeData() {
     let url = BASE_URL + 'aboutme/';
@@ -568,7 +569,6 @@ export default function AboutModal(props) {
       .get(url + userID) //this.props.theCurrentUserId)
       .then((response) => {
         console.log("About Me - Important people", response.data.result_important_people);
-        setTaList(response.data.result_important_people)
         if (response.data.result.length !== 0) {
           console.log('aboutMe res = ', response.data.result);
           let details = response.data.result[0];
