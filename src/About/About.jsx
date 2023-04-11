@@ -902,6 +902,16 @@ export default function AboutModal(props) {
   }
 
   function newInputSubmit() {
+    let motivationJSON = [
+        motivation0,
+        motivation1,
+        motivation2,
+        motivation3,
+        motivation4,
+      ];
+    let importantJSON = [feelings0, feelings1, feelings2, feelings3, feelings4];
+    let happyJSON = [happy0, happy1, happy2, happy3, happy4];
+
     const body = {
       user_id: userID,
       first_name: firstName,
@@ -916,6 +926,9 @@ export default function AboutModal(props) {
       major_events: aboutMeObject.major_events,
       phone_number: aboutMeObject.phone_number,
       birth_date: aboutMeObject.birth_date,
+      motivation: motivationJSON,
+      important: importantJSON,
+      happy: happyJSON,
     };
     console.log('body', body);
     if (aboutMeObject.phone_number === 'undefined') {
@@ -962,7 +975,7 @@ export default function AboutModal(props) {
     });
     formData.append('picture', userImage);
     for (let value of formData.values()) {
-      console.log(value);
+      console.log("Formdata values: ",value);
     }
     axios
       .post(BASE_URL + 'updateAboutMe', formData)
@@ -989,46 +1002,46 @@ export default function AboutModal(props) {
         console.log('Error updating Details', err);
       });
 
-    let motivationJSON = {
-      user_id: userID,
-      motivation: [
-        motivation0,
-        motivation1,
-        motivation2,
-        motivation3,
-        motivation4,
-      ],
-    };
+    // let motivationJSON = {
+    //   user_id: userID,
+    //   motivation: [
+    //     motivation0,
+    //     motivation1,
+    //     motivation2,
+    //     motivation3,
+    //     motivation4,
+    //   ],
+    // };
 
-    console.log(motivationJSON);
+    // console.log(motivationJSON);
 
-    axios
-      .post(BASE_URL + 'updateMotivation', motivationJSON)
-      .then((response) => {
-        console.log(response);
-      });
+    // axios
+    //   .post(BASE_URL + 'updateMotivation', motivationJSON)
+    //   .then((response) => {
+    //     console.log(response);
+    //   });
 
-    let importantJSON = {
-      user_id: userID,
-      important: [feelings0, feelings1, feelings2, feelings3, feelings4],
-    };
+    // let importantJSON = {
+    //   user_id: userID,
+    //   important: [feelings0, feelings1, feelings2, feelings3, feelings4],
+    // };
 
-    console.log(importantJSON);
+    // console.log(importantJSON);
 
-    axios.post(BASE_URL + 'updateImportant', importantJSON).then((response) => {
-      console.log(response);
-    });
+    // axios.post(BASE_URL + 'updateImportant', importantJSON).then((response) => {
+    //   console.log(response);
+    // });
 
-    let happyJSON = {
-      user_id: userID,
-      happy: [happy0, happy1, happy2, happy3, happy4],
-    };
+    // let happyJSON = {
+    //   user_id: userID,
+    //   happy: [happy0, happy1, happy2, happy3, happy4],
+    // };
 
-    console.log(happyJSON);
+    // console.log(happyJSON);
 
-    axios.post(BASE_URL + 'updateHappy', happyJSON).then((response) => {
-      console.log(response);
-    });
+    // axios.post(BASE_URL + 'updateHappy', happyJSON).then((response) => {
+    //   console.log(response);
+    // });
   }
 
   // grabFireBaseAboutMeData()
