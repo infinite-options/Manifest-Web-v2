@@ -39,6 +39,7 @@
     "react-bootstrap-timezone-picker": "^2.0.1",
     "react-card-flip": "^1.1.1",
     "react-chartjs-2": "^2.11.1",
+    "react-csv": "^2.2.2",
     "react-datepicker": "^4.1.1",
     "react-day-picker": "^7.4.8",
     "react-dom": "^16.13.1",

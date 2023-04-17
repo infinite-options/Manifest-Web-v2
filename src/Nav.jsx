@@ -14,25 +14,27 @@ import GoogleEventComponent from './Home/GoogleEventComponent';
 import AboutUs from '../src/manifest/AboutUs';
 import UserSignUp from './manifest/UserSignUp';
 import { Admin } from './Home/Admin';
+import Download from 'Home/Download';
 // Nav here will take all the adress from children page to this and give
 // it to the switch route
 
 function Nav(authLevel, isAuth) {
   return (
     <Switch>
-      <Route exact path="/" component={Landing} />
-      <Route exact path="/login" component={Login} />
+      {/* <Route exact path="/" component={Landing} /> */}
+      {/* <Route exact path="/login" component={Login} /> */}
       <Route exact path="/home" component={Home} />
+      {/* <Route exact path="/download" component={Download} /> */}
       {/* <Route exact path="/events" component={Events} /> */}
       <Route exact path="/eventcomponent" component={GoogleEventComponent} />
       {/* <Route exact path="/goalhome" component={GoalHome} /> */}
       <Route exact path="/history" component={History} />
       <Route exact path="/applesignup/:uid" component={AppleSignUp} />
-      <Route exact path="/signup" component={SignUp} />
+      {/* <Route exact path="/signup" component={SignUp} /> */}
       <Route exact path="/about" component={AboutModal} />
       <Route exact path="/aboutus" component={AboutUs} />
       <Route exact path="/privacy" component={Privacy} />
-      <Route exact path="/addUser" component={UserSignUp} />
+      {/* <Route exact path="/addUser" component={UserSignUp} /> */}
       <Route exact path="/admin" component={Admin} />
     </Switch>
   );

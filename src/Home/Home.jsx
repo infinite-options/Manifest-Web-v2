@@ -178,11 +178,17 @@ export default function Home(props) {
           var curUserN = usersOfTA[0].user_name;
 
           var uID, uTime_zone, uEmail, uPic, uName;
-          if (
+          if ((
             document.cookie
               .split(';')
-              .some((item) => item.trim().startsWith('patient_uid='))
-          ) {
+              .some((item) => item.trim().startsWith('patient_name='))
+          )
+            && (document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('patient_name='))
+              .split('=')[1] !== 'Loading')
+          )
+            {
             uID = document.cookie
               .split('; ')
               .find((row) => row.startsWith('patient_uid='))

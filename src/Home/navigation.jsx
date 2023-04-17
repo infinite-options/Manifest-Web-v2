@@ -83,7 +83,7 @@ export function Navigation() {
   const curUserPic = loginContext.loginState.curUserPic;
   const curUserName = loginContext.loginState.curUserName;
   var currentTaPicture = loginContext.loginState.ta.picture;
-  console.log("logincontext", loginContext)
+  console.log("logincontext in nav", loginContext)
   console.log("logincontext current TA Picture", currentTaPicture)
   var curUserID = '';
   var curUserTZ = '';
@@ -359,11 +359,7 @@ export function Navigation() {
                         >
                           <option selected disabled>
                             {
-                              // document.cookie
-                              //   .split('; ')
-                              //   .find((row) => row.startsWith('patient_name='))
-                              //   .split('=')[1]
-                                loginContext.loginState.curUserName
+                              loginContext.loginState.curUserName                            
                             }
                           </option>
                           {userListRendered()}

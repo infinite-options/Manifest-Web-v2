@@ -9,16 +9,22 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import { Navigation } from './Home/navigation';
 import Nav from '../src/Nav';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
-import MiniNavigation from './manifest/miniNavigation';
-
+import UserSignUp from './manifest/UserSignUp';
+import Login from 'manifest/Login';
+import Landing from '../src/manifest/Landing';
+import SignUp from '../src/manifest/SignUp';
+import Download from 'Home/Download';
 /* Main function for all the pages and elements */
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 function getFaviconEl() {
   return document.getElementById('favicon');
 }
+
 export default function App() {
+
   const [loginState, setLoginState] = useState(LoginInitState);
-  console.log('login State');
+  const isSignedIn = loginState.loggedIn;
+  console.log('login State App.js', loginState.loggedIn);
   console.log(loginState.loggedIn);
   useEffect(
     () => console.log('curUser = ', loginState.curUser),
@@ -40,18 +46,26 @@ export default function App() {
 
   return (
     <Router>
-      <LoginContext.Provider
-        value={{
-          loginState: loginState,
-          setLoginState: setLoginState,
-        }}
-      >
-        <div>
-          <Navigation />
-          <Nav />
-        </div>
-      </LoginContext.Provider>
-
+          <LoginContext.Provider
+          value={{
+            loginState: loginState,
+            setLoginState: setLoginState,
+          }}
+          >
+        {isSignedIn ? (
+          <>
+            <Navigation />
+            <Nav />
+          </>) : (
+            <>
+              <Route exact path="/" component={Landing} />
+              <Route exact path="/login" component={Login} />
+              <Route exact path="/signup" component={SignUp} />
+              <Route exact path="/addUser" component={UserSignUp} />
+              {/* <Route exact path="/download" component={Download} /> */}
+            </>
+        )}
+          </LoginContext.Provider>
     </Router>
   );
 }
