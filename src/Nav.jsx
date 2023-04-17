@@ -14,7 +14,7 @@ import GoogleEventComponent from './Home/GoogleEventComponent';
 import AboutUs from '../src/manifest/AboutUs';
 import UserSignUp from './manifest/UserSignUp';
 import { Admin } from './Home/Admin';
-import Download from 'Home/Download';
+// import Download from 'Home/Download';
 // Nav here will take all the adress from children page to this and give
 // it to the switch route
 

@@ -13,7 +13,8 @@ import UserSignUp from './manifest/UserSignUp';
 import Login from 'manifest/Login';
 import Landing from '../src/manifest/Landing';
 import SignUp from '../src/manifest/SignUp';
-import Download from 'Home/Download';
+// import Download from 'Home/Download';
+
 /* Main function for all the pages and elements */
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 function getFaviconEl() {
@@ -61,7 +62,7 @@ export default function App() {
               <Route exact path="/" component={Landing} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/signup" component={SignUp} />
-              <Route exact path="/addUser" component={UserSignUp} />
+              <Route exact path="/addUser" comRefactponent={UserSignUp} />
               {/* <Route exact path="/download" component={Download} /> */}
             </>
         )}
