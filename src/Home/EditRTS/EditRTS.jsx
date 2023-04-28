@@ -363,7 +363,7 @@ const EditRTS = (props) => {
         await axios
           .post(BASE_URL + 'updateGR', formData)
           .then((_) => {
-            console.log('editrts', _);
+            console.log('editrts 1', _);
             const gr_array_index =
               editingRTSContext.editingRTS.gr_array.findIndex(
                 (elt) =>

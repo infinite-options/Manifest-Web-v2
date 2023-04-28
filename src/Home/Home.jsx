@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import Button from '@material-ui/core/Button';
 import makeStyles from '@material-ui/core/styles/makeStyles';
+import { Modal } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import './Home.css';
@@ -15,7 +16,11 @@ import {
   faCalendar,
   faCalendarDay,
   faCalendarWeek,
+  faDownload,
+  faUpload,
+
 } from '@fortawesome/free-solid-svg-icons';
+import { FaFileDownload, FaCloudUploadAlt } from 'react-icons/fa';
 import 'react-datepicker/dist/react-datepicker.css';
 import HomeLHS from './GoalsRoutinesLHS';
 import EventLHS from './EventLHS';
@@ -42,6 +47,8 @@ import EditISContext from './EditIS/EditISContext';
 import EditIS from './EditIS/EditIS';
 import LoginContext from '../LoginContext';
 import MiniNavigation from '../manifest/miniNavigation';
+import UploadCSV from './Upload';
+import Download from './Download';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
@@ -157,6 +164,7 @@ export default function Home(props) {
   /* useEffect() is used to render API calls as minimumly
   as possible based on past experience, if not included 
   causes alarms and excessive rendering */
+
   const getUserOfTA = () => {
     axios
       .get(
@@ -271,6 +279,32 @@ export default function Home(props) {
   const [hightlight, setHightlight] = useState('');
   const [GREButtonSelection, setGREButtonSelection] = useState('Routines');
   const [isLoading, setLoading] = useState(true);
+  const [goalsOrRoutinesList, setGoalsOrRoutinesList] = useState([]);
+  const [getData, setGetData] = useState("");
+  // const [showUploadButton, setShowUploadButton] = useState(false);
+  const [openUploadModal, setOpenUploadModal] = useState(false);
+  const [openDownloadModal, setOpenDownloadModal] = useState(false);
+
+  // useEffect(() => {
+  // //   setLoading(true)
+  // let getGoalOrRoutineUrl = BASE_URL + 'getroutines/';
+  //   if (GREButtonSelection == "Goals") {
+  //     getGoalOrRoutineUrl = BASE_URL + 'getgoals/';
+  //   }
+  //   axios
+  //     .get(getGoalOrRoutineUrl + userID)
+  //     .then((response) => {
+  //       setLoading(false);
+  //       console.log(
+  //         'here: Obtained user information with res = ',
+  //         response.data.result
+  //       );
+  //       console.log("txt ??", getData);
+  //       setGoalsOrRoutinesList(response.data.result);
+  //       GrabFireBaseRoutinesData(response);
+  //     })
+  // }, [getData])
+  
   const [stateValue, setStateValue] = useState({
     itemToEdit: {
       title: '',
@@ -1793,6 +1827,8 @@ function toggleShowEvents(props) {
         });
     }, [GREButtonSelection, userID, stateValue.dateContext, editingEvent.editing]);
 
+  
+
   useEffect(() => {
     if (userID == '') return;
     if (GREButtonSelection == "Events") return;
@@ -1812,9 +1848,11 @@ function toggleShowEvents(props) {
           'here: Obtained user information with res = ',
           response.data.result
         );
+        console.log("txt ??", getData);
+        setGoalsOrRoutinesList(response.data.result);
         GrabFireBaseRoutinesData(response);
-      })       
-  }, [GREButtonSelection, userID]);
+      })
+  }, [GREButtonSelection, userID, getData]);
   function GrabFireBaseRoutinesData(response) {
     let routine = [];
     let routine_ids = [];
@@ -2352,13 +2390,17 @@ function toggleShowEvents(props) {
                       minHeight: '1440px',
                     }}
                   >
+                    
                     <MiniNavigation activeButtonSelection={"calendar"} />
+                    <Row>
+                    <Col xs={11}>
                     <Button
                       className={
                         GREButtonSelection === 'Events'
                           ? classes.buttonSelected
                           : classes.buttonSelection
                       }
+                      style={{maxWidth: '90px'}}
                       onClick={() => {
                         toggleShowEvents();
                         getAccessToken();
@@ -2375,6 +2417,7 @@ function toggleShowEvents(props) {
                           ? classes.buttonSelected
                           : classes.buttonSelection
                       }
+                      style={{maxWidth: '90px'}}
                       onClick={()=>{
                         toggleShowGoal()
                         setGREButtonSelection("Goals")
@@ -2389,6 +2432,7 @@ function toggleShowEvents(props) {
                           ? classes.buttonSelected
                           : classes.buttonSelection
                       }
+                      style={{maxWidth: '90px'}}
                       onClick={()=>{
                         toggleShowRoutine()
                         setGREButtonSelection("Routines")
@@ -2428,7 +2472,64 @@ function toggleShowEvents(props) {
                     >
                       Add {`${GREButtonSelection}`} +
                     </Button>
-
+                      </Col>
+                      <Col style={{
+                            marginLeft: '-0.5rem',
+                            marginTop: '0.3rem',
+                            marginBottom: '0.5rem',
+                          }}
+                      >
+                        <Row>
+                          <FaFileDownload
+                            size={20}
+                            style={{
+                              cursor: 'pointer',
+                            }}
+                            icon={FaFileDownload}
+                            onClick={()=>setOpenDownloadModal(true)}
+                            ></FaFileDownload>                          
+                    <Modal
+                      show={openDownloadModal}
+                      onHide={()=>setOpenDownloadModal(false)}
+                    >
+                      <Modal.Header>Download Goals and Routines</Modal.Header>
+                      <Modal.Body>
+                        <Download list={goalsOrRoutinesList} />
+                      </Modal.Body>
+                    </Modal>
+                    </Row>
+                    <Row></Row>
+                        <Row
+                          style={{
+                          }}
+                        >
+                    {console.log("txt UploadCSV", goalsOrRoutinesList)}
+                    
+                    <FaCloudUploadAlt
+                    size={20}
+                    style={{
+                      cursor: 'pointer',
+                    }}
+                    onClick={()=>setOpenUploadModal(true)}
+                    ></FaCloudUploadAlt>
+                    
+                    <Modal
+                      show={openUploadModal}
+                      onHide={() => {
+                        setOpenUploadModal(false);
+                      }
+                      }
+                    >
+                      <Modal.Header>Upload Goals or Routines</Modal.Header>
+                      <Modal.Body>
+                        <UploadCSV list={goalsOrRoutinesList} getUpdate={setGetData}></UploadCSV>
+                      </Modal.Body>
+                      </Modal>
+                      
+                    </Row>
+                    </Col>
+                    </Row>
+                      
                     <div style={{ flex: '1' }}>
                     {isLoading ?
                       (
