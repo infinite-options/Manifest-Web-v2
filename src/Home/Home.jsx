@@ -285,25 +285,30 @@ export default function Home(props) {
   const [openUploadModal, setOpenUploadModal] = useState(false);
   const [openDownloadModal, setOpenDownloadModal] = useState(false);
 
-  // useEffect(() => {
-  // //   setLoading(true)
-  // let getGoalOrRoutineUrl = BASE_URL + 'getroutines/';
-  //   if (GREButtonSelection == "Goals") {
-  //     getGoalOrRoutineUrl = BASE_URL + 'getgoals/';
-  //   }
-  //   axios
-  //     .get(getGoalOrRoutineUrl + userID)
-  //     .then((response) => {
-  //       setLoading(false);
-  //       console.log(
-  //         'here: Obtained user information with res = ',
-  //         response.data.result
-  //       );
-  //       console.log("txt ??", getData);
-  //       setGoalsOrRoutinesList(response.data.result);
-  //       GrabFireBaseRoutinesData(response);
-  //     })
-  // }, [getData])
+  useEffect(() => {
+  //   setLoading(true)
+  let getGoalOrRoutineUrl = BASE_URL + 'getroutines/';
+    if (GREButtonSelection == "Goals") {
+      getGoalOrRoutineUrl = BASE_URL + 'getgoals/';
+    }
+    axios
+      .get(getGoalOrRoutineUrl + userID)
+      .then((response) => {
+        setLoading(false);
+        console.log(
+          'here: Obtained user information with res = ',
+          response.data.result
+        );
+        console.log("txt???", getData);
+        console.log("txt??? after getData", response.data.result);
+
+        setGoalsOrRoutinesList(response.data.result);
+        GrabFireBaseRoutinesData(response);
+
+        console.log("abc getGoalsEndPoint", getGoalsEndPoint)
+        console.log("abc statavelue", stateValue.routines)
+      })
+  }, [getData])
   
   const [stateValue, setStateValue] = useState({
     itemToEdit: {
@@ -1472,6 +1477,8 @@ function toggleShowEvents(props) {
             timeZone={userTime_zone}
             getGoalsEndPoint={getRoutinesEndPoint}
             setGetGoalsEndPoint={setGetRoutinesEndPoint}
+            // getGoalsEndPoint={getGoalsEndPoint}
+            // setGetGoalsEndPoint={setGetGoalsEndPoint}
             routines={stateValue.routines}
             dateContext={stateValue.dateContext}
             BASE_URL={stateValue.BASE_URL}
@@ -1482,6 +1489,8 @@ function toggleShowEvents(props) {
             timeZone={userTime_zone}
             getGoalsEndPoint={getRoutinesEndPoint}
             setGetGoalsEndPoint={setGetRoutinesEndPoint}
+            // getGoalsEndPoint={getGoalsEndPoint}
+            // setGetGoalsEndPoint={setGetGoalsEndPoint}
             routines={stateValue.goals}
             dateContext={stateValue.dateContext}
             BASE_URL={stateValue.BASE_URL}
@@ -1852,8 +1861,11 @@ function toggleShowEvents(props) {
         setGoalsOrRoutinesList(response.data.result);
         GrabFireBaseRoutinesData(response);
       })
-  }, [GREButtonSelection, userID, getData]);
+  }, [GREButtonSelection, userID]);
+  
   function GrabFireBaseRoutinesData(response) {
+    console.log("txt ?? in grabfirebase");
+    console.log("txt??? in grabfirebase", response);
     let routine = [];
     let routine_ids = [];
     let goal = [];
@@ -1945,6 +1957,7 @@ function toggleShowEvents(props) {
           console.log('homeTemp = ', temp);
 
           setGetRoutinesEndPoint(temp);
+          setGetGoalsEndPoint(temp);
           if (response.data.result && response.data.result.length !== 0) {
             let x = response.data.result;
             console.log('response', x);
@@ -2256,7 +2269,7 @@ function toggleShowEvents(props) {
                 }
               }
             }
-
+            console.log("abc routine ",routine)
             setStateValue((prevState) => {
               return {
                 ...prevState,
@@ -2277,6 +2290,7 @@ function toggleShowEvents(props) {
               gr_array: gr_array,
             });
           } else {
+            // console.log("99abcf ",routine)
             setStateValue((prevState) => {
               return {
                 ...prevState,
@@ -2522,7 +2536,7 @@ function toggleShowEvents(props) {
                     >
                       <Modal.Header>Upload Goals or Routines</Modal.Header>
                       <Modal.Body>
-                        <UploadCSV list={goalsOrRoutinesList} getUpdate={setGetData}></UploadCSV>
+                        <UploadCSV list={goalsOrRoutinesList} setGetData={setGetData}></UploadCSV>
                       </Modal.Body>
                       </Modal>
                       
@@ -2556,8 +2570,10 @@ function toggleShowEvents(props) {
                           editRTS={editingRTS.editing}
                           editATS={editingATS.editing}
                           editIS={editingIS.editing}
-                          getGoalsEndPoint={getRoutinesEndPoint}
-                          setGetGoalsEndPoint={setGetRoutinesEndPoint}
+                          // getGoalsEndPoint={getRoutinesEndPoint}
+                          // setGetGoalsEndPoint={setGetRoutinesEndPoint}
+                          getGoalsEndPoint={getGoalsEndPoint}
+                          setGetGoalsEndPoint={setGetGoalsEndPoint}
                           getActionsEndPoint={getActionsEndPoint}
                           setGetActionsEndPoint={setGetActionsEndPoint}
                           getStepsEndPoint={getStepsEndPoint}
@@ -2584,8 +2600,10 @@ function toggleShowEvents(props) {
                           editRTS={editingRTS.editing}
                           editATS={editingATS.editing}
                           editIS={editingIS.editing}
-                          getGoalsEndPoint={getRoutinesEndPoint}
-                          setGetGoalsEndPoint={setGetRoutinesEndPoint}
+                          // getGoalsEndPoint={getRoutinesEndPoint}
+                          // setGetGoalsEndPoint={setGetRoutinesEndPoint}
+                          getGoalsEndPoint={getGoalsEndPoint}
+                          setGetGoalsEndPoint={setGetGoalsEndPoint}
                           getActionsEndPoint={getActionsEndPoint}
                           setGetActionsEndPoint={setGetActionsEndPoint}
                           getStepsEndPoint={getStepsEndPoint}

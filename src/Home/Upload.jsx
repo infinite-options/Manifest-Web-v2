@@ -138,7 +138,7 @@ export default function UploadCSV(props) {
                     }
                 }
             })
-            props.getUpdate(array);
+            props.setGetData(array);
         }
         return "successful";
     }
