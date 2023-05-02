@@ -41,7 +41,7 @@ export default function UploadCSV(props) {
                         let obj = {
                             ...gr,
                             repeat_week_days: result['repeat_week_days'],
-                            notifications: result['notifications'],
+                            // notifications: result['notifications'],
                             gr_title: gr['gr_title'] ? gr['gr_title'] : result['gr_title'],
                             gr_completed: null,//-
                             is_sublist_available: result['is_sublist_available'], //-
@@ -83,9 +83,9 @@ export default function UploadCSV(props) {
                                 is_timed: obj.is_timed,
                                 is_sublist_available: obj.is_sublist_available,
                                 photo_url: obj.gr_photo,
-                                notifications: obj.notifications,
-                                ta_notifications: { "before": { "is_enabled": "False", "is_set": false, "message": "", "time": "00:00:00" }, "during": { "is_enabled": "False", "is_set": false, "message": "", "time": "00:00:00" }, "after": { "is_enabled": "False", "is_set": false, "message": "", "time": "00:00:00" } },
-                                user_notifications: { "before": { "is_enabled": "False", "is_set": false, "message": "", "time": "00:00:00" }, "during": { "is_enabled": "False", "is_set": false, "message": "", "time": "00:00:00" }, "after": { "is_enabled": "False", "is_set": false, "message": "", "time": "00:00:00" } },
+                                // notifications: obj.notifications,
+                                ta_notifications: { "before": { "is_enabled": obj.ta_before_is_enable, "is_set": obj.ta_before_is_set, "message": obj.ta_before_message, "time": obj.ta_before_time }, "during": { "is_enabled": obj.ta_during_is_enable, "is_set": obj.ta_during_is_set, "message": obj.ta_during_message, "time": obj.ta_during_time }, "after": { "is_enabled": obj.ta_after_is_enable, "is_set": obj.ta_after_is_set, "message": obj.ta_after_message, "time": obj.ta_after_time } },
+                                user_notifications: { "before": { "is_enabled": obj.user_before_is_enable, "is_set": obj.user_before_is_set, "message": obj.user_before_message, "time": obj.user_before_time }, "during": { "is_enabled": obj.user_during_is_enable, "is_set": obj.user_during_is_set, "message": obj.user_during_message, "time": obj.user_during_time }, "after": { "is_enabled": obj.user_after_is_enable, "is_set": obj.user_after_is_set, "message": obj.user_after_message, "time": obj.user_after_time } },
                                 user_id: obj.user_id, 
                                 is_in_progress: obj.is_in_progress,
                                 status: obj.status,
@@ -111,6 +111,8 @@ export default function UploadCSV(props) {
                                 .post(BASE_URL + 'updateGR', formData)
                                 .then((_) => {
                                     console.log("txt $$$$$$", gr['gr_unique_id'], " - updated");
+                                    console.log("txt $$$$$$ : props")
+                                    props.getUploadAck(uploadGRObj);
                                 })
                                 .catch((err) => {
                                     if (err.response) {
@@ -138,7 +140,7 @@ export default function UploadCSV(props) {
                     }
                 }
             })
-            props.setGetData(array);
+            // props.getUploadAck("success");
         }
         return "successful";
     }
@@ -155,11 +157,23 @@ export default function UploadCSV(props) {
             return dt;
         }
     }
+
     function validateStartEndDates(startdt, enddt) {
         var start = new Date(Date.parse(startdt));
         var end = new Date(Date.parse(enddt));
         if (start > end) return false;
         else return true;
+    }
+
+    function validateDuration(time) {
+        var re = new RegExp("^\d+:\d{2}:\d{2}$");
+        if (re.test(time)) {
+            console.log("Valid duration", time);
+            return true;
+        } else {
+            console.log("Invalid duration", time);
+            return false;
+        }
     }
 
     const validateGR = array => {
@@ -188,7 +202,39 @@ export default function UploadCSV(props) {
                 gr['user_id'] = userID;
                 gr['is_in_progress'] = gr['is_in_progress'].toLowerCase() === 'true' ? 'True' : 'False';
                 gr['status'] = (gr['status'] === "not started" || gr['status'] === "in progress" || gr['status'] === "completed") ? gr['status'] : "not started";
-                gr['gr_expected_completion_time'] = gr['gr_expected_completion_time'] ? gr['gr_expected_completion_time'] : "00:00:00";
+                gr['gr_expected_completion_time'] = gr['gr_expected_completion_time'] && validateDuration(gr['gr_expected_completion_time']) ? gr['gr_expected_completion_time'] : "00:00:00";
+
+                // user notifications
+                gr['user_before_is_enable'] = gr['user_before_is_enable'].toLowerCase() === 'true' ? 'True' : 'False';
+                gr['user_before_is_set'] = gr['user_before_is_set'].toLowerCase() === 'true' ? 'True' : 'False';
+                gr['user_before_message'] = gr['user_before_message'];
+                gr['user_before_time'] = gr['user_before_time'] && validateDuration(gr['user_before_time']) ? gr['user_before_time'] : "00:00:00";
+
+                gr['user_during_is_enable'] = gr['user_during_is_enable'].toLowerCase() === 'true' ? 'True' : 'False';
+                gr['user_during_is_set'] = gr['user_during_is_set'].toLowerCase() === 'true' ? 'True' : 'False';
+                gr['user_during_message'] = gr['user_during_message'];
+                gr['user_during_time'] = gr['user_during_time'] && validateDuration(gr['user_during_time']) ? gr['user_during_time'] : "00:00:00";
+
+                gr['user_after_is_enable'] = gr['user_after_is_enable'].toLowerCase() === 'true' ? 'True' : 'False';
+                gr['user_after_is_set'] = gr['user_after_is_set'].toLowerCase() === 'true' ? 'True' : 'False';
+                gr['user_after_message'] = gr['user_after_message'];
+                gr['user_after_time'] = gr['user_after_time'] && validateDuration(gr['user_after_time']) ? gr['user_after_time'] : "00:00:00";
+
+                // ta notifications
+                gr['ta_before_is_enable'] = gr['ta_before_is_enable'].toLowerCase() === 'true' ? 'True' : 'False';
+                gr['ta_before_is_set'] = gr['ta_before_is_set'].toLowerCase() === 'true' ? 'True' : 'False';
+                gr['ta_before_message'] = gr['ta_before_message'];
+                gr['ta_before_time'] = gr['ta_before_time'] && validateDuration(gr['ta_before_time']) ? gr['ta_before_time'] : "00:00:00";
+
+                gr['ta_during_is_enable'] = gr['ta_during_is_enable'].toLowerCase() === 'true' ? 'True' : 'False';
+                gr['ta_during_is_set'] = gr['ta_during_is_set'].toLowerCase() === 'true' ? 'True' : 'False';
+                gr['ta_during_message'] = gr['ta_during_message'];
+                gr['ta_during_time'] = gr['ta_during_time'] && validateDuration(gr['ta_during_time']) ? gr['ta_during_time'] : "00:00:00";
+
+                gr['ta_after_is_enable'] = gr['ta_after_is_enable'].toLowerCase() === 'true' ? 'True' : 'False';
+                gr['ta_after_is_set'] = gr['ta_after_is_set'].toLowerCase() === 'true' ? 'True' : 'False';
+                gr['ta_after_message'] = gr['ta_after_message'];
+                gr['ta_after_time'] = gr['ta_after_time'] && validateDuration(gr['ta_after_time']) ? gr['ta_after_time'] : "00:00:00";
 
                 if (validateDateTime(gr['gr_start_day_and_time']) === "" || validateDateTime(gr['gr_end_day_and_time']) === "") {
                     console.log("Incorrect Dates");
@@ -213,7 +259,7 @@ export default function UploadCSV(props) {
                     console.log('obj has no repeat_ends_on date')
                     errorAlerts.push(gr['gr_title'] + ' : Please mention the date this Routine should end on.');
                 }
-                console.log("txt ????????????????????????????", gr, "\n,", Object.keys(gr));
+                console.log("txt : GR keys", gr, "\n,", Object.keys(gr));
             }
         })
         if (errorAlerts.length > 1) {
@@ -221,10 +267,10 @@ export default function UploadCSV(props) {
             alert(errorAlerts.join("\n\n"));
         }
         else {
-            // console.log("txt ????????", array[0]);
             compareLists(array);
         }
     }
+    
     const addNewGR = (gr) => {
         // let obj = {
         //     ...gr,
@@ -259,9 +305,9 @@ export default function UploadCSV(props) {
             is_timed: gr['is_timed'],
             is_sublist_available: 'False',
             photo_url: undefined,// default
-            notifications: "",
-            ta_notifications: { "before": { "is_enabled": "False", "is_set": false, "message": "", "time": "00:00:00" }, "during": { "is_enabled": "False", "is_set": false, "message": "", "time": "00:00:00" }, "after": { "is_enabled": "False", "is_set": false, "message": "", "time": "00:00:00" } },
-            user_notifications: { "before": { "is_enabled": "False", "is_set": false, "message": "", "time": "00:00:00" }, "during": { "is_enabled": "False", "is_set": false, "message": "", "time": "00:00:00" }, "after": { "is_enabled": "False", "is_set": false, "message": "", "time": "00:00:00" } },
+            // notifications: "",
+            ta_notifications: { "before": { "is_enabled": gr.ta_before_is_enable, "is_set": gr.ta_before_is_set, "message": gr.ta_before_message, "time": gr.ta_before_time }, "during": { "is_enabled": gr.ta_during_is_enable, "is_set": gr.ta_during_is_set, "message": gr.ta_during_message, "time": gr.ta_during_time }, "after": { "is_enabled": gr.ta_after_is_enable, "is_set": gr.ta_after_is_set, "message": gr.ta_after_message, "time": gr.ta_after_time } },
+            user_notifications: { "before": { "is_enabled": gr.user_before_is_enable, "is_set": gr.user_before_is_set, "message": gr.user_before_message, "time": gr.user_before_time }, "during": { "is_enabled": gr.user_during_is_enable, "is_set": gr.user_during_is_set, "message": gr.user_during_message, "time": gr.user_during_time }, "after": { "is_enabled": gr.user_after_is_enable, "is_set": gr.user_after_is_set, "message": gr.user_after_message, "time": gr.user_after_time } },
             user_id: userID,
             is_in_progress: gr['is_in_progress'],
             status: gr['status'],
@@ -290,6 +336,8 @@ export default function UploadCSV(props) {
             .then((_) => {
                 insert_status = "insert successful";
                 console.log("txt $$$$$$", gr['gr_unique_id'], " - inserted");
+                console.log("txt $$$$$$ : props")
+                props.getUploadAck(addGRobj);
             })
             .catch((err) => {
                 if (err.response) {
@@ -318,14 +366,14 @@ export default function UploadCSV(props) {
         csvHeader = csvHeader.map(header => header.replace(/\r$/, ''));
         console.log("txt headers : ", csvHeader);
 
-        if(csvHeader.length!==23) alert("Incorrect file headers. The upload file has to have the exact same column headers as the download file. We recommend you download a file and edit that.")
+        if(csvHeader.length!==47) alert("Incorrect file headers. The upload file has to have the exact same column headers as the download file. We recommend you download a file and edit that.")
         const csvRows = string.slice(string.indexOf("\n") + 1).replaceAll('"', '').split("\n");
         // console.log("csvHeader", csvHeader);
 
         const array = csvRows.map(i => {
           var values = i.split(",");
           values = values.map(val => val.replace(/\r$/, ''));
-        console.log("txt rows : ", values);
+          console.log("txt rows : ", values);
 
           const obj = csvHeader.reduce((object, header, index) => {
             object[header] = values[index];
@@ -334,10 +382,8 @@ export default function UploadCSV(props) {
           return obj;
         });
         // console.log("txt", array);
-        // var status = compareLists(array);
         // setArray(array);
         validateGR(array);
-        // props.getUpdate(compareLists(array));
     };
     
     const handleOnSubmit = (e) => {

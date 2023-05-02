@@ -10,6 +10,10 @@ export default function Download(props) {
     .split('; ')
     .find((row) => row.startsWith('patient_uid='))
     .split('=')[1])
+  const [taID, setTaID] = useState(document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('ta_uid='))
+    .split('=')[1])
   const [goalsOrRoutinesList, setGoalsOrRoutinesList] = useState({ ...props.list });
   const [grFileName, setGRFileName] = useState("Goals-Routines");
   const [showDownloadAck, setShowDownloadAck] = useState(false);
@@ -24,13 +28,15 @@ export default function Download(props) {
     { label: 'gr_title', key: 'gr_title' },
     { label: 'user_id', key: 'user_id' },
     // { label: 'gr_completed', key: 'gr_completed' },
-    { label: 'gr_photo', key: 'gr_photo' },
-    // { label: 'notifications', key: 'notifications' },
-    { label: 'gr_datetime_completed', key: 'gr_datetime_completed' },
-    { label: 'gr_datetime_started', key: 'gr_datetime_started' },
+    { label: 'gr_start_day_and_time', key: 'gr_start_day_and_time' },
     { label: 'gr_end_day_and_time', key: 'gr_end_day_and_time' },
     { label: 'gr_expected_completion_time', key: 'gr_expected_completion_time' },
-    { label: 'gr_start_day_and_time', key: 'gr_start_day_and_time' },
+    { label: 'repeat', key: 'repeat' },
+    { label: 'repeat_type', key: 'repeat_type' },
+    { label: 'repeat_ends_on', key: 'repeat_ends_on' },
+    { label: 'repeat_every', key: 'repeat_every' },
+    { label: 'repeat_frequency', key: 'repeat_frequency' },
+    { label: 'repeat_occurences', key: 'repeat_occurences' },
     { label: 'is_available', key: 'is_available' },
     { label: 'is_complete', key: 'is_complete' },
     { label: 'is_displayed_today', key: 'is_displayed_today' },
@@ -38,30 +44,127 @@ export default function Download(props) {
     { label: 'is_persistent', key: 'is_persistent' },
     { label: 'is_sublist_available', key: 'is_sublist_available' },
     { label: 'is_timed', key: 'is_timed' },
-    { label: 'repeat', key: 'repeat' },
-    { label: 'repeat_ends_on', key: 'repeat_ends_on' },
-    { label: 'repeat_every', key: 'repeat_every' },
-    { label: 'repeat_frequency', key: 'repeat_frequency' },
-    { label: 'repeat_occurences', key: 'repeat_occurences' },
-    { label: 'repeat_type', key: 'repeat_type' },
+    { label: 'gr_photo', key: 'gr_photo' },
+    // { label: 'notifications', key: 'notifications' },
+    { label: 'gr_datetime_started', key: 'gr_datetime_started' },
+    { label: 'gr_datetime_completed', key: 'gr_datetime_completed' },
     // { label: 'repeat_week_days', key: 'repeat_week_days' },
     { label: 'status', key: 'status' },
+
+    { label: 'user_before_is_enable', key: 'user_before_is_enable'},
+    { label: 'user_before_is_set', key: 'user_before_is_set' },
+    { label: 'user_before_message', key: 'user_before_message'},
+    { label: 'user_before_time', key: 'user_before_time' },
+
+    { label: 'user_during_is_enable', key: 'user_during_is_enable'},
+    { label: 'user_during_is_set', key: 'user_during_is_set' },
+    { label: 'user_during_message', key: 'user_during_message'},
+    { label: 'user_during_time', key: 'user_during_time' },
+
+    { label: 'user_after_is_enable', key: 'user_after_is_enable'},
+    { label: 'user_after_is_set', key: 'user_after_is_set' },
+    { label: 'user_after_message', key: 'user_after_message'},
+    { label: 'user_after_time', key: 'user_after_time' },
+
+    { label: 'ta_before_is_enable', key: 'ta_before_is_enable'},
+    { label: 'ta_before_is_set', key: 'ta_before_is_set' },
+    { label: 'ta_before_message', key: 'ta_before_message'},
+    { label: 'ta_before_time', key: 'ta_before_time' },
+
+    { label: 'ta_during_is_enable', key: 'ta_during_is_enable'},
+    { label: 'ta_during_is_set', key: 'ta_during_is_set' },
+    { label: 'ta_during_message', key: 'ta_during_message'},
+    { label: 'ta_during_time', key: 'ta_during_time' },
+
+    { label: 'ta_after_is_enable', key: 'ta_after_is_enable'},
+    { label: 'ta_after_is_set', key: 'ta_after_is_set' },
+    { label: 'ta_after_message', key: 'ta_after_message'},
+    { label: 'ta_after_time', key: 'ta_after_time' },
     
 ];
   useEffect(() => {
-    // let userID = '100-000286';
-    // axios
-    //   .get(BASE_URL + 'getroutines/' + userID)
-    //     .then((response) => {
-    //         console.log(
-    //             'here: Obtained user information with res = ',
-    //             response.data.result.keys
-    //         );
-    //         console.log("here: Obtained user information with res = ", typeof (dataInCSV));
     if (goalsOrRoutinesList && goalsOrRoutinesList.length>=0) {
       let data1 = [];
       goalsOrRoutinesList.map(item => {
-        console.log("here: Obtained user information with res = ", item)
+
+        var ta_notifications = {
+          before: {
+            is_enabled: false,
+            is_set: false,
+            message: '',
+            time: '',
+          },
+          during: {
+            is_enabled: false,
+            is_set: false,
+            message: '',
+            time: '',
+          },
+          after: {
+            is_enabled: false,
+            is_set: false,
+            message: '',
+            time: '',
+          },
+        };
+        var user_notifications = {
+          before: {
+            is_enabled: false,
+            is_set: false,
+            message: '',
+            time: 0,
+          },
+          during: {
+            is_enabled: false,
+            is_set: false,
+            message: '',
+            time: 0,
+          },
+          after: {
+            is_enabled: false,
+            is_set: false,
+            message: '',
+            time: 0,
+          },
+        }
+
+        var taNotification = item.notifications.find(notification => notification.user_ta_id === taID);
+        if (taNotification && taNotification.length !== 0) {
+          ta_notifications.before.is_enabled = taNotification.before_is_enable;
+          ta_notifications.before.is_set = taNotification.before_is_set;
+          ta_notifications.before.message = taNotification.before_message;
+          ta_notifications.before.time = taNotification.before_time;
+
+          ta_notifications.during.is_enabled = taNotification.during_is_enable;
+          ta_notifications.during.is_set = taNotification.during_is_set;
+          ta_notifications.during.message = taNotification.during_message;
+          ta_notifications.during.time = taNotification.during_time;
+
+          ta_notifications.after.is_enabled = taNotification.after_is_enable;
+          ta_notifications.after.is_set = taNotification.after_is_set;
+          ta_notifications.after.message = taNotification.after_message;
+          ta_notifications.after.time = taNotification.after_time;
+        }
+
+        var userNotification = item.notifications.find(notification => notification.user_ta_id === userID);
+        if (userNotification && userNotification.length !== 0) {
+          user_notifications.before.is_enabled = userNotification.before_is_enable;
+          user_notifications.before.is_set = userNotification.before_is_set;
+          user_notifications.before.message = userNotification.before_message;
+          user_notifications.before.time = userNotification.before_time;
+
+          user_notifications.during.is_enabled = userNotification.during_is_enable;
+          user_notifications.during.is_set = userNotification.during_is_set;
+          user_notifications.during.message = userNotification.during_message;
+          user_notifications.during.time = userNotification.during_time;
+
+          user_notifications.after.is_enabled = userNotification.after_is_enable;
+          user_notifications.after.is_set = userNotification.after_is_set;
+          user_notifications.after.message = userNotification.after_message;
+          user_notifications.after.time = userNotification.after_time;
+        }
+
+        console.log("txt here: Obtained user information with res = ", userNotification)
         data1.push({
           gr_unique_id: item.gr_unique_id,
           gr_title: item.gr_title,
@@ -81,16 +184,44 @@ export default function Download(props) {
           is_persistent: item.is_persistent,
           is_sublist_available: item.is_sublist_available,
           is_timed: item.is_timed,
-          // notifications: {
-          //   ...item.notifications[0],
-          // },
+          // notifications: { ...result.notification_id },
           repeat: item.repeat,
           repeat_ends_on: item.repeat_ends_on,
           repeat_every: item.repeat_every,
           repeat_frequency: item.repeat_frequency,
           repeat_occurences: item.repeat_occurences,
           repeat_type: item.repeat_type,
-          status: item.status
+          status: item.status,
+
+          user_before_is_enable : user_notifications.before.is_enabled,
+          user_before_is_set : user_notifications.before.is_set,
+          user_before_message : user_notifications.before.message,
+          user_before_time : user_notifications.before.time,
+
+          user_during_is_enable : user_notifications.during.is_enabled,
+          user_during_is_set : user_notifications.during.is_set,
+          user_during_message : user_notifications.during.message,
+          user_during_time : user_notifications.during.time,
+
+          user_after_is_enable : user_notifications.after.is_enabled,
+          user_after_is_set : user_notifications.after.is_set,
+          user_after_message : user_notifications.after.message,
+          user_after_time: user_notifications.after.time,
+          
+          ta_before_is_enable : ta_notifications.before.is_enabled,
+          ta_before_is_set : ta_notifications.before.is_set,
+          ta_before_message : ta_notifications.before.message,
+          ta_before_time : ta_notifications.before.time,
+
+          ta_during_is_enable : ta_notifications.during.is_enabled,
+          ta_during_is_set : ta_notifications.during.is_set,
+          ta_during_message : ta_notifications.during.message,
+          ta_during_time : ta_notifications.during.time,
+
+          ta_after_is_enable : ta_notifications.after.is_enabled,
+          ta_after_is_set : ta_notifications.after.is_set,
+          ta_after_message : ta_notifications.after.message,
+          ta_after_time : ta_notifications.after.time,
           // repeat_week_days: item.repeat_week_days.replaceAll(',','\t'),
         })
       })

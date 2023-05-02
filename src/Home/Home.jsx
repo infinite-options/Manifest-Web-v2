@@ -285,6 +285,10 @@ export default function Home(props) {
   const [openUploadModal, setOpenUploadModal] = useState(false);
   const [openDownloadModal, setOpenDownloadModal] = useState(false);
 
+  const getUploadAck = (ack) => {
+    setGetData(ack);
+  }
+
   useEffect(() => {
   //   setLoading(true)
   let getGoalOrRoutineUrl = BASE_URL + 'getroutines/';
@@ -299,7 +303,7 @@ export default function Home(props) {
           'here: Obtained user information with res = ',
           response.data.result
         );
-        console.log("txt???", getData);
+        console.log("txt??? getData : ", getData);
         console.log("txt??? after getData", response.data.result);
 
         setGoalsOrRoutinesList(response.data.result);
@@ -2536,7 +2540,7 @@ function toggleShowEvents(props) {
                     >
                       <Modal.Header>Upload Goals or Routines</Modal.Header>
                       <Modal.Body>
-                        <UploadCSV list={goalsOrRoutinesList} setGetData={setGetData}></UploadCSV>
+                        <UploadCSV list={goalsOrRoutinesList} getUploadAck={getUploadAck}></UploadCSV>
                       </Modal.Body>
                       </Modal>
                       
