@@ -38,33 +38,118 @@ export default function UploadCSV(props) {
                     // console.log("txt : corresponding GR : ", result)
                     if (result !== 'undefined' || result.length>0) {
                         
-                        let obj = {
-                            ...gr,
-                            repeat_week_days: result['repeat_week_days'],
-                            // notifications: result['notifications'],
+                        // let obj = {
+                        //     ...gr,
+                        //     repeat_week_days: result['repeat_week_days'],
+                        //     // notifications: result['notifications'],
+                        //     gr_title: gr['gr_title'] ? gr['gr_title'] : result['gr_title'],
+                        //     gr_completed: null,//-
+                        //     is_sublist_available: result['is_sublist_available'], //-
+                        //     gr_unique_id: gr['gr_unique_id'],//-
+                        //     gr_photo: result['gr_photo']//-
+                        // }
+
+                        // GR object from imported csv for comparison against corresponding GR in the DB
+                        var obj = {
+                            gr_completed: null,
+                            gr_datetime_completed: gr.gr_datetime_completed,
+                            gr_datetime_started: gr.gr_datetime_started,
                             gr_title: gr['gr_title'] ? gr['gr_title'] : result['gr_title'],
-                            gr_completed: null,//-
-                            is_sublist_available: result['is_sublist_available'], //-
-                            gr_unique_id: gr['gr_unique_id'],//-
-                            gr_photo: result['gr_photo']//-
+                            repeat: gr.repeat,
+                            repeat_frequency: gr.repeat_frequency,
+                            repeat_every: gr.repeat_every,
+                            repeat_type: gr.repeat_type,
+                            repeat_ends_on: gr.repeat_ends_on,
+                            repeat_occurences: gr.repeat_occurences,
+                            repeat_week_days: result['repeat_week_days'], //no update
+                            is_available: gr.is_available,
+                            is_persistent: gr.is_persistent,
+                            is_complete: gr.is_complete,
+                            is_displayed_today: gr.is_displayed_today,
+                            is_timed: gr.is_timed,
+                            is_sublist_available: result['is_sublist_available'],
+                            gr_photo: result['gr_photo'],
+                            user_id: gr.user_id, 
+                            is_in_progress: gr.is_in_progress,
+                            status: gr.status,
+                            gr_start_day_and_time: gr.gr_start_day_and_time,
+                            gr_end_day_and_time: gr.gr_end_day_and_time,
+                            gr_expected_completion_time: gr.gr_expected_completion_time,
+                            gr_unique_id: gr['gr_unique_id'],
                         }
 
                         console.log("txt in existing GR", result);
                         console.log("txt in imported CSV", obj);
 
-                        // check all keys and edit gr if there is a change
-                        // if edited, update in db
+                        // compare each GR from the imported csv against corresponding GR in the database and update DB if there is a change
                         var isEqual = _.isMatch(result, obj);
-                        
                         console.log("txt isEqual - ", obj['gr_unique_id'], isEqual);
-                        
-                        if (isEqual === true) {
+
+                        // compare TA notifications from imported csv against existing notification list
+                        var ta_notifications = { "before": { "is_enabled": gr.ta_before_is_enable, "is_set": gr.ta_before_is_set, "message": gr.ta_before_message, "time": gr.ta_before_time }, "during": { "is_enabled": gr.ta_during_is_enable, "is_set": gr.ta_during_is_set, "message": gr.ta_during_message, "time": gr.ta_during_time }, "after": { "is_enabled": gr.ta_after_is_enable, "is_set": gr.ta_after_is_set, "message": gr.ta_after_message, "time": gr.ta_after_time } };
+                        var taNotification = result.notifications.find(notification => notification.user_ta_id === taID);
+                        if (taNotification && taNotification.length !== 0) { 
+                            var isTANotificationEqual;
+                            if (taNotification.before_is_enable === gr.ta_before_is_enable &&
+                                taNotification.before_is_set === gr.ta_before_is_set &&
+                                taNotification.before_message === gr.ta_before_message &&
+                                taNotification.before_time === gr.ta_before_time &&
+
+                                taNotification.during_is_enable === gr.ta_during_is_enable &&
+                                taNotification.during_is_set === gr.ta_during_is_set &&
+                                taNotification.during_message === gr.ta_during_message &&
+                                taNotification.during_time === gr.ta_during_time &&
+
+                                taNotification.after_is_enable === gr.ta_after_is_enable &&
+                                taNotification.after_is_set === gr.ta_after_is_set &&
+                                taNotification.after_message === gr.ta_after_message &&
+                                taNotification.after_time === gr.ta_after_time
+                            ) {
+                                isTANotificationEqual = true;
+                                console.log("txt ta notifications equal");
+                            }
+                        }
+                        else {
+                            isTANotificationEqual = false;
+                        }
+                        console.log("txt isTANotificationEqual - ", obj['gr_unique_id'], isTANotificationEqual);
+
+                        // compare user notifications from imported csv against existing notification list
+                        var user_notifications = { "before": { "is_enabled": gr.user_before_is_enable, "is_set": gr.user_before_is_set, "message": gr.user_before_message, "time": gr.user_before_time }, "during": { "is_enabled": gr.user_during_is_enable, "is_set": gr.user_during_is_set, "message": gr.user_during_message, "time": gr.user_during_time }, "after": { "is_enabled": gr.user_after_is_enable, "is_set": gr.user_after_is_set, "message": gr.user_after_message, "time": gr.user_after_time } };
+                        var userNotification = result.notifications.find(notification => notification.user_ta_id === userID);
+                        console.log("txt user notifications db : ",userNotification, "\n user txt notifications csv :", user_notifications)
+                        if (userNotification && userNotification.length !== 0) {
+                            var isUserNotificationEqual;
+                            if (userNotification.before_is_enable === gr.user_before_is_enable &&
+                                userNotification.before_is_set === gr.user_before_is_set &&
+                                userNotification.before_message === gr.user_before_message &&
+                                userNotification.before_time === gr.user_before_time &&
+
+                                userNotification.during_is_enable === gr.user_during_is_enable &&
+                                userNotification.during_is_set === gr.user_during_is_set &&
+                                userNotification.during_message === gr.user_during_message &&
+                                userNotification.during_time === gr.user_during_time &&
+
+                                userNotification.after_is_enable === gr.user_after_is_enable &&
+                                userNotification.after_is_set === gr.user_after_is_set &&
+                                userNotification.after_message === gr.user_after_message &&
+                                userNotification.after_time === gr.user_after_time
+                            ) {
+                                isUserNotificationEqual = true;
+                                console.log("txt user notifications equal");
+                            }
+                        }
+                        else {
+                            isUserNotificationEqual = false;
+                        }
+                        console.log("txt isUserNotificationEqual - ", obj['gr_unique_id'], isUserNotificationEqual);
+
+                        if (isEqual === true && isTANotificationEqual === true && isUserNotificationEqual === true) {
                             console.log("txt : ", obj['gr_unique_id'], " - no update required");
                         }
                         else {
-                            // props.getUpdate(gr);
-
-                            var uploadGRObj = {
+                            // payload for updateGR API call
+                            var updateGRObj = {
                                 audio: '',
                                 datetime_completed: obj.gr_datetime_completed,
                                 datetime_started: obj.gr_datetime_started,
@@ -83,9 +168,8 @@ export default function UploadCSV(props) {
                                 is_timed: obj.is_timed,
                                 is_sublist_available: obj.is_sublist_available,
                                 photo_url: obj.gr_photo,
-                                // notifications: obj.notifications,
-                                ta_notifications: { "before": { "is_enabled": obj.ta_before_is_enable, "is_set": obj.ta_before_is_set, "message": obj.ta_before_message, "time": obj.ta_before_time }, "during": { "is_enabled": obj.ta_during_is_enable, "is_set": obj.ta_during_is_set, "message": obj.ta_during_message, "time": obj.ta_during_time }, "after": { "is_enabled": obj.ta_after_is_enable, "is_set": obj.ta_after_is_set, "message": obj.ta_after_message, "time": obj.ta_after_time } },
-                                user_notifications: { "before": { "is_enabled": obj.user_before_is_enable, "is_set": obj.user_before_is_set, "message": obj.user_before_message, "time": obj.user_before_time }, "during": { "is_enabled": obj.user_during_is_enable, "is_set": obj.user_during_is_set, "message": obj.user_during_message, "time": obj.user_during_time }, "after": { "is_enabled": obj.user_after_is_enable, "is_set": obj.user_after_is_set, "message": obj.user_after_message, "time": obj.user_after_time } },
+                                ta_notifications: ta_notifications,
+                                user_notifications: user_notifications,
                                 user_id: obj.user_id, 
                                 is_in_progress: obj.is_in_progress,
                                 status: obj.status,
@@ -93,10 +177,10 @@ export default function UploadCSV(props) {
                                 end_day_and_time: obj.gr_end_day_and_time,
                                 expected_completion_time: obj.gr_expected_completion_time,
                                 gr_unique_id: obj.gr_unique_id,
-                                ta_people_id: obj.ta_people_id 
+                                ta_people_id: taID,
                             }
                             let formData = new FormData();
-                            Object.entries(uploadGRObj).forEach((entry) => {
+                            Object.entries(updateGRObj).forEach((entry) => {
                                 console.log('test-entry: ', entry);
                                 if (typeof entry[1] == 'string') {
                                     formData.append(entry[0], entry[1]);
@@ -110,9 +194,8 @@ export default function UploadCSV(props) {
                             axios
                                 .post(BASE_URL + 'updateGR', formData)
                                 .then((_) => {
-                                    console.log("txt $$$$$$", gr['gr_unique_id'], " - updated");
-                                    console.log("txt $$$$$$ : props")
-                                    props.getUploadAck(uploadGRObj);
+                                    console.log("txt : ", gr['gr_unique_id'], " - updated");
+                                    props.getUploadAck(updateGRObj);
                                 })
                                 .catch((err) => {
                                     if (err.response) {
@@ -132,7 +215,7 @@ export default function UploadCSV(props) {
                     }
                 }
                 else {
-                    // no ide given, create one
+                    // no gr_unique_id given, create one
                     console.log("txt : new row with no GR ID")
                     if ('gr_title' in gr && gr['gr_title']) { 
                         var insert_status = addNewGR(gr);
@@ -140,7 +223,6 @@ export default function UploadCSV(props) {
                     }
                 }
             })
-            // props.getUploadAck("success");
         }
         return "successful";
     }
@@ -259,7 +341,7 @@ export default function UploadCSV(props) {
                     console.log('obj has no repeat_ends_on date')
                     errorAlerts.push(gr['gr_title'] + ' : Please mention the date this Routine should end on.');
                 }
-                console.log("txt : GR keys", gr, "\n,", Object.keys(gr));
+                // console.log("txt : GR keys", gr, "\n,", Object.keys(gr));
             }
         })
         if (errorAlerts.length > 1) {
