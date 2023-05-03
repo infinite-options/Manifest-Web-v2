@@ -959,6 +959,7 @@ export default class WeekRoutines extends Component {
   weekViewItems = () => {
     // this creates the events adjusting their div size to reflecting the time it's slotted for
     var res = [];
+    // console.log("99abcd ",this.props.routines)
     var arr = this.props.routines;
     let dic = this.sortRoutines();
     for (let i = 0; i < arr.length; i++) {
