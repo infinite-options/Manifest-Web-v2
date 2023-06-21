@@ -5,6 +5,8 @@ import axios from 'axios';
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
 export default function UploadCSV(props) {
+    var newGR = 0;
+    var GRlist = [];
     // const editingRTSContext = useContext(EditRTSContext);
     const [file, setFile] = useState();
     // const [array, setArray] = useState([]);
@@ -35,20 +37,9 @@ export default function UploadCSV(props) {
                 if ("gr_unique_id" in gr && gr['gr_unique_id']) {
                     console.log("txt : gr_unique_id = ", gr['gr_unique_id']);
                     var result = list.find(lst => lst.gr_unique_id.replaceAll('"', '') === gr['gr_unique_id'].replaceAll('"', ''));
-                    // console.log("txt : corresponding GR : ", result)
-                    if (result !== 'undefined' || result.length>0) {
-                        
-                        // let obj = {
-                        //     ...gr,
-                        //     repeat_week_days: result['repeat_week_days'],
-                        //     // notifications: result['notifications'],
-                        //     gr_title: gr['gr_title'] ? gr['gr_title'] : result['gr_title'],
-                        //     gr_completed: null,//-
-                        //     is_sublist_available: result['is_sublist_available'], //-
-                        //     gr_unique_id: gr['gr_unique_id'],//-
-                        //     gr_photo: result['gr_photo']//-
-                        // }
-
+                    // console.log("txt : corresponding GR ", result, " & GR is", gr)
+                    if (!result || result !== 'undefined' || result.length > 0) {
+                        console.log("***this ", result)
                         // GR object from imported csv for comparison against corresponding GR in the DB
                         var obj = {
                             gr_completed: null,
@@ -69,7 +60,7 @@ export default function UploadCSV(props) {
                             is_timed: gr.is_timed,
                             is_sublist_available: result['is_sublist_available'],
                             gr_photo: result['gr_photo'],
-                            user_id: gr.user_id, 
+                            user_id: gr.user_id,
                             is_in_progress: gr.is_in_progress,
                             status: gr.status,
                             gr_start_day_and_time: gr.gr_start_day_and_time,
@@ -88,7 +79,7 @@ export default function UploadCSV(props) {
                         // compare TA notifications from imported csv against existing notification list
                         var ta_notifications = { "before": { "is_enabled": gr.ta_before_is_enable, "is_set": gr.ta_before_is_set, "message": gr.ta_before_message, "time": gr.ta_before_time }, "during": { "is_enabled": gr.ta_during_is_enable, "is_set": gr.ta_during_is_set, "message": gr.ta_during_message, "time": gr.ta_during_time }, "after": { "is_enabled": gr.ta_after_is_enable, "is_set": gr.ta_after_is_set, "message": gr.ta_after_message, "time": gr.ta_after_time } };
                         var taNotification = result.notifications.find(notification => notification.user_ta_id === taID);
-                        if (taNotification && taNotification.length !== 0) { 
+                        if (taNotification && taNotification.length !== 0) {
                             var isTANotificationEqual;
                             if (taNotification.before_is_enable === gr.ta_before_is_enable &&
                                 taNotification.before_is_set === gr.ta_before_is_set &&
@@ -117,7 +108,7 @@ export default function UploadCSV(props) {
                         // compare user notifications from imported csv against existing notification list
                         var user_notifications = { "before": { "is_enabled": gr.user_before_is_enable, "is_set": gr.user_before_is_set, "message": gr.user_before_message, "time": gr.user_before_time }, "during": { "is_enabled": gr.user_during_is_enable, "is_set": gr.user_during_is_set, "message": gr.user_during_message, "time": gr.user_during_time }, "after": { "is_enabled": gr.user_after_is_enable, "is_set": gr.user_after_is_set, "message": gr.user_after_message, "time": gr.user_after_time } };
                         var userNotification = result.notifications.find(notification => notification.user_ta_id === userID);
-                        console.log("txt user notifications db : ",userNotification, "\n user txt notifications csv :", user_notifications)
+                        console.log("txt user notifications db : ", userNotification, "\n user txt notifications csv :", user_notifications)
                         if (userNotification && userNotification.length !== 0) {
                             var isUserNotificationEqual;
                             if (userNotification.before_is_enable === gr.user_before_is_enable &&
@@ -170,7 +161,7 @@ export default function UploadCSV(props) {
                                 photo_url: obj.gr_photo,
                                 ta_notifications: ta_notifications,
                                 user_notifications: user_notifications,
-                                user_id: obj.user_id, 
+                                user_id: obj.user_id,
                                 is_in_progress: obj.is_in_progress,
                                 status: obj.status,
                                 start_day_and_time: obj.gr_start_day_and_time,
@@ -209,33 +200,101 @@ export default function UploadCSV(props) {
                         // add this goal/routine in db
                         console.log("txt : no corresponding GR found")
                         if ('gr_title' in gr && gr['gr_title']) {
-                            var insert_status = addNewGR(gr);
-                            console.log("txt : no corresponding GR found for ", gr['gr_title'] ," - creating new gr row - ", insert_status);
+                            // var insert_status = addNewGR(gr);
+                            createNewGRList(gr)
+                            newGR++;
+                            // console.log("txt : no corresponding GR found for ", gr['gr_title'] ," - creating new gr row - ", insert_status);
                         }
                     }
                 }
                 else {
                     // no gr_unique_id given, create one
                     console.log("txt : new row with no GR ID")
-                    if ('gr_title' in gr && gr['gr_title']) { 
-                        var insert_status = addNewGR(gr);
-                        console.log("txt : creating new gr row", gr['gr_title'], " - ",insert_status)
+                    if ('gr_title' in gr && gr['gr_title']) {
+                        // var insert_status = addNewGR(gr);
+                        createNewGRList(gr)
+                        newGR++;
+                        // console.log("txt : creating new gr row", gr['gr_title'], " - ",insert_status)
                     }
                 }
             })
+            // newGRcount(newGR)
+            console.log(" Total new GRs received = ", newGR);
+            console.log(" GRlist ", GRlist);
+            let body = { newGRCount: newGR };
+            console.log(" body ", body)
+            axios
+                .post(BASE_URL + 'createGR_IDs', body)
+                .then((response) => {
+                    console.log("txt response : ", response)
+                    let id_list = response.data.result.data;
+                    console.log("txt id_list : ", id_list)
+                    if (id_list.length === GRlist.length) {
+                        console.log("successfuly created new GR IDs and notification IDs for each new GR in the uploaded file")
+                        for (let idx in GRlist) {
+                            let addGRobj = GRlist[idx]
+                            addGRobj['gr_unique_id'] = id_list[idx]['gr_id']
+                            addGRobj['ta_notfication_id'] = id_list[idx]['ta_notfication_id']
+                            addGRobj['user_notfication_id'] = id_list[idx]['user_notification_id']
+                            console.log(" addGRobj ", addGRobj)
+                            let formData = new FormData();
+                            Object.entries(addGRobj).forEach((entry) => {
+                                console.log('test-entry: ', entry);
+                                if (typeof entry[1] == 'string') {
+                                    formData.append(entry[0], entry[1]);
+                                } else if (entry[1] instanceof Object) {
+                                    entry[1] = JSON.stringify(entry[1]);
+                                    formData.append(entry[0], entry[1]);
+                                } else {
+                                    formData.append(entry[0], entry[1]);
+                                }
+                            });
+                            console.log(" formData ", formData)
+                            var res = axios
+                                .post(BASE_URL + 'uploadGR', formData)
+                                .then((_) => {
+                                    // insert_status = "insert successful";
+                                    console.log("txt $$$$$$", addGRobj['gr_unique_id'], " - inserted");
+                                    console.log("txt $$$$$$ : props")
+                                    props.getUploadAck(addGRobj);
+                                })
+                                .catch((err) => {
+                                    if (err.response) {
+                                        console.log(err.response);
+                                    }
+                                    // insert_status = "insert failed";
+                                    console.log(err);
+                                });
+                            console.log("Add GR result = ", res);
+                        }
+                    }
+                    else {
+                        console.log("failed to create new GR IDs and notification IDs for all new GRs in the uploaded file. Try Upload again")
+                    }
+                })
+                .catch((err) => {
+                    if (err.response) {
+                        console.log(err.response);
+                    }
+                    console.log(err);
+                });
         }
         return "successful";
     }
 
+    // function newGRcount(newGR) {
+    //     console.log(" Total new GRs received = ", newGR);
+    // }
     function validateDateTime(dt) {
+        console.log("&&** ", dt , " = date")
         var date = new Date(Date.parse(dt));
-        // console.log("txt date : ", dt, " - ", date);
+        console.log("txt date : ", dt, " - ", date);
         if (date.toString() === "Invalid Date") {
-            // console.log("txt date : ", dt, " -returning ", "")
+            console.log("txt date : ", dt, " -returning ", "")
             return "";
         }
         else {
-            // console.log("txt date : ",dt, " -returning ",dt)
+            console.log("txt date : ",dt, " -returning ",dt)
             return dt;
         }
     }
@@ -353,21 +412,9 @@ export default function UploadCSV(props) {
         }
     }
     
-    const addNewGR = (gr) => {
-        // let obj = {
-        //     ...gr,
-            // audio: '',
-            // is_sublist_available: 'False',
-            // repeat_week_days: { "0": "", "1": "", "2": "", "3": "", "4": "", "5": "", "6": "" },
-            // photo_url: undefined,// default
-            // notifications: "",
-            // ta_notifications: { "before": { "is_enabled": "False", "is_set": false, "message": "", "time": "00:00:00" }, "during": { "is_enabled": "False", "is_set": false, "message": "", "time": "00:00:00" }, "after": { "is_enabled": "False", "is_set": false, "message": "", "time": "00:00:00" } },
-            // user_notifications: { "before": { "is_enabled": "False", "is_set": false, "message": "", "time": "00:00:00" }, "during": { "is_enabled": "False", "is_set": false, "message": "", "time": "00:00:00" }, "after": { "is_enabled": "False", "is_set": false, "message": "", "time": "00:00:00" } },
-            // gr_unique_id: undefined,
-            // photo: null,
-            // gr_completed: null,
-            // ta_people_id: taID
-        // }
+    // const delay = ms => new Promise(res => setTimeout(res, ms));
+
+    const createNewGRList = (gr) => {
         var addGRobj = {
             audio: '',
             datetime_completed: gr.gr_datetime_completed,
@@ -412,24 +459,74 @@ export default function UploadCSV(props) {
                 formData.append(entry[0], entry[1]);
             }
         });
-        var insert_status;
-        axios
-            .post(BASE_URL + 'addGR', formData)
-            .then((_) => {
-                insert_status = "insert successful";
-                console.log("txt $$$$$$", gr['gr_unique_id'], " - inserted");
-                console.log("txt $$$$$$ : props")
-                props.getUploadAck(addGRobj);
-            })
-            .catch((err) => {
-                if (err.response) {
-                    console.log(err.response);
-                }
-                insert_status = "insert failed";
-                console.log(err);
-            });
-        return insert_status;
+        GRlist.push(addGRobj)
     }
+
+    // const addNewGR = async (gr) => {
+    //     var addGRobj = {
+    //         audio: '',
+    //         datetime_completed: gr.gr_datetime_completed,
+    //         datetime_started: gr.gr_datetime_started,
+    //         title: gr.gr_title,
+    //         repeat: gr.repeat,
+    //         repeat_frequency: gr.repeat_frequency,
+    //         repeat_every: gr.repeat_every,
+    //         repeat_type: gr['repeat_type'],
+    //         repeat_ends_on: gr['repeat_ends_on'],
+    //         repeat_occurences: gr['repeat_occurences'],
+    //         repeat_week_days: { "0": "", "1": "", "2": "", "3": "", "4": "", "5": "", "6": "" },
+    //         is_available: gr['is_available'],
+    //         is_persistent: gr['is_persistent'],
+    //         is_complete: gr['is_complete'],
+    //         is_displayed_today: gr['is_displayed_today'],
+    //         is_timed: gr['is_timed'],
+    //         is_sublist_available: 'False',
+    //         photo_url: undefined,// default
+    //         // notifications: "",
+    //         ta_notifications: { "before": { "is_enabled": gr.ta_before_is_enable, "is_set": gr.ta_before_is_set, "message": gr.ta_before_message, "time": gr.ta_before_time }, "during": { "is_enabled": gr.ta_during_is_enable, "is_set": gr.ta_during_is_set, "message": gr.ta_during_message, "time": gr.ta_during_time }, "after": { "is_enabled": gr.ta_after_is_enable, "is_set": gr.ta_after_is_set, "message": gr.ta_after_message, "time": gr.ta_after_time } },
+    //         user_notifications: { "before": { "is_enabled": gr.user_before_is_enable, "is_set": gr.user_before_is_set, "message": gr.user_before_message, "time": gr.user_before_time }, "during": { "is_enabled": gr.user_during_is_enable, "is_set": gr.user_during_is_set, "message": gr.user_during_message, "time": gr.user_during_time }, "after": { "is_enabled": gr.user_after_is_enable, "is_set": gr.user_after_is_set, "message": gr.user_after_message, "time": gr.user_after_time } },
+    //         user_id: userID,
+    //         is_in_progress: gr['is_in_progress'],
+    //         status: gr['status'],
+    //         start_day_and_time: gr['gr_start_day_and_time'],
+    //         end_day_and_time: gr['gr_end_day_and_time'],
+    //         expected_completion_time: gr['gr_expected_completion_time'],
+    //         gr_unique_id: undefined,
+    //         ta_people_id: taID,
+    //         photo: null
+    //     }
+    //     let formData = new FormData();
+    //     Object.entries(addGRobj).forEach((entry) => {
+    //         console.log('test-entry: ', entry);
+    //         if (typeof entry[1] == 'string') {
+    //             formData.append(entry[0], entry[1]);
+    //         } else if (entry[1] instanceof Object) {
+    //             entry[1] = JSON.stringify(entry[1]);
+    //             formData.append(entry[0], entry[1]);
+    //         } else {
+    //             formData.append(entry[0], entry[1]);
+    //         }
+    //     });
+    //     var insert_status;
+
+    //     var res = await axios
+    //         .post(BASE_URL + 'addGR', formData)
+    //         .then((_) => {
+    //             insert_status = "insert successful";
+    //             console.log("txt $$$$$$", gr['gr_unique_id'], " - inserted");
+    //             console.log("txt $$$$$$ : props")
+    //             props.getUploadAck(addGRobj);
+    //         })
+    //         .catch((err) => {
+    //             if (err.response) {
+    //                 console.log(err.response);
+    //             }
+    //             insert_status = "insert failed";
+    //             console.log(err);
+    //         });
+    //     console.log("Add GR result = ", res);
+    //     return insert_status;
+    // }
 
     const fileReader = new FileReader();
 
