@@ -49,6 +49,7 @@ import LoginContext from '../LoginContext';
 import MiniNavigation from '../manifest/miniNavigation';
 import UploadCSV from './Upload';
 import Download from './Download';
+import QuickEditModal from './QuickEditModal';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
@@ -284,11 +285,16 @@ export default function Home(props) {
   // const [showUploadButton, setShowUploadButton] = useState(false);
   const [openUploadModal, setOpenUploadModal] = useState(false);
   const [openDownloadModal, setOpenDownloadModal] = useState(false);
+  const [quickEditModalVisible, setQuickEditModalVisible] = useState(false);
 
   const getUploadAck = (ack) => {
     setGetData(ack);
   }
 
+  const closeQuickEditModal = () => {
+    setQuickEditModalVisible(false);
+  };
+  
   useEffect(() => {
   //   setLoading(true)
   let getGoalOrRoutineUrl = BASE_URL + 'getroutines/';
@@ -2343,6 +2349,7 @@ function toggleShowEvents(props) {
         selection----------------------------*/
     <div>
       {/* <div style={{ height: '3px' }}></div> */}
+        <QuickEditModal quickEditModalVisible={quickEditModalVisible} closeQuickEditModal={closeQuickEditModal} goalsOrRoutinesList={goalsOrRoutinesList} GREButtonSelection={GREButtonSelection} getUploadAck={getUploadAck}></QuickEditModal>
       <EditRTSContext.Provider
         value={{
           editingRTS: editingRTS,
@@ -2408,7 +2415,6 @@ function toggleShowEvents(props) {
                       minHeight: '1440px',
                     }}
                   >
-                    
                     <MiniNavigation activeButtonSelection={"calendar"} />
                     <Row>
                     <Col xs={11}>
@@ -2489,6 +2495,14 @@ function toggleShowEvents(props) {
                       }}
                     >
                       Add {`${GREButtonSelection}`} +
+                    </Button>
+                    <Button
+                    className={classes.buttonSelected}
+                    onClick={()=>{
+                      console.log("printing ", goalsOrRoutinesList)
+                      setQuickEditModalVisible(true)
+                    }}>
+                      Quick Edit
                     </Button>
                       </Col>
                       <Col style={{
