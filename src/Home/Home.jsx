@@ -49,7 +49,7 @@ import LoginContext from '../LoginContext';
 import MiniNavigation from '../manifest/miniNavigation';
 import UploadCSV from './Upload';
 import Download from './Download';
-import QuickEditModal from './QuickEditModal';
+import QuickEditModal from './QuickEditTable';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;

@@ -21,10 +21,16 @@ import {
   DialogContent,
   DialogActions,
   InputLabel,
-  InputAdornment
+  InputAdornment,
+  Accordion,
+  AccordionSummary,
+//   ExpandMoreIcon,
+  AccordionDetails
 } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen, faTrashAlt, faSave, faPlus, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faTrashAlt, faSave, faPlus, faChevronDown, faChevronUp, faList } from '@fortawesome/free-solid-svg-icons';
+import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
+
 import MyTable from './Acc';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
@@ -114,12 +120,14 @@ export default function QuickEditModal(props) {
         repeatEndsOn: item.repeat_ends_on,
         repeatEndsAfter: item.repeat_occurences,
         availableToUser: item.is_available === 'True' ? 'Yes' : 'No',
+        sublistAvailable: item.is_sublist_available
       };
     });
-    // console.log("printing this ", initialRows )
+    console.log("printing this ", initialRows )
     return initialRows;
   }
   const [editingIndex, setEditingIndex] = useState(-1);
+  const [expandIndex, setExpandIndex] = useState(-1);
   const [routineID, setRoutineID] = useState('');
   const [routineName, setRoutineName] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -215,6 +223,10 @@ export default function QuickEditModal(props) {
     resetForm();
   };
 
+  const handleAccordion = (index) => {
+    expandIndex===index ? setExpandIndex(-1) : setExpandIndex(index);
+  }
+    
   const resetForm = () => {
     setRoutineID('');
     setRoutineName('');
@@ -410,7 +422,7 @@ export default function QuickEditModal(props) {
     <Dialog open={props.quickEditModalVisible} onClose={props.closeQuickEditModal} maxWidth="lg">
       <DialogTitle>Quick Edit</DialogTitle>
       <DialogContent>
-        <MyTable></MyTable>
+        {/* <MyTable></MyTable> */}
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -423,6 +435,7 @@ export default function QuickEditModal(props) {
             </TableHead>
             <TableBody>
               {rows.map((row, index) => (
+                <>
                 <TableRow key={index}>
                   <TableCell>
                     {isRowBeingEdited(index) ? (
@@ -528,17 +541,55 @@ export default function QuickEditModal(props) {
                   </TableCell>
                   <TableCell>
                     {isRowBeingEdited(index) ? (
-                      // <Button onClick={() => handleSaveRow(index)}>Save</Button>
                         <FontAwesomeIcon style={{margin:'4px'}} icon={faSave} size="lg" onClick={() => handleSaveRow(index)}/>
                     ) : (
-                    //   <Button onClick={() => handleEditRow(index)}>Edit</Button>
                         <FontAwesomeIcon style={{ margin: '4px' }} icon={faPen} onClick={() => handleEditRow(index)} />
                     )}
-                    {/* <Button onClick={() => handleDeleteRow(index)}>Delete</Button> */}
                     <FontAwesomeIcon style={{ margin: '4px' }} icon={faTrashAlt} onClick={() => handleDeleteRow(index)} />
-                    <FontAwesomeIcon icon={faChevronDown} />
+                    {/* {
+                    expandIndex === index ?
+                    <FontAwesomeIcon icon={faChevronUp} onClick={()=>handleCollapseRow(index)}/>
+                    : <FontAwesomeIcon icon={faChevronDown} onClick={()=>handleExpandRow(index)}/>
+                    } */}
+                    {
+                        row.sublistAvailable === 'False' ?
+                        <PlaylistAddIcon
+                        onMouseOver={(event) => {
+                          event.target.style.color = '#48D6D2';
+                        }}
+                        onMouseOut={(event) => {
+                          event.target.style.color = '#000000';
+                        }}
+                        style={{ color: '#000000', cursor: 'pointer' }}
+                        onClick={(e) => {
+                          e.target.style.color = '#000000';
+                          handleAccordion(index);
+                        }}
+                      />
+                      : <FontAwesomeIcon icon={faList} onMouseOver={(event) => {
+                        event.target.style.color = '#48D6D2';
+                      }}
+                      onMouseOut={(event) => {
+                        event.target.style.color = '#000000';
+                      }}
+                      style={{ color: '#000000', cursor: 'pointer' }}
+                      onClick={(e) => {
+                        e.target.style.color = '#000000';
+                        handleAccordion(index);
+                      }}/>
+                    }
                   </TableCell>
                 </TableRow>
+                {expandIndex === index &&
+                <TableRow>
+                    <TableCell colSpan={9}>
+                        <AccordionDetails>
+                            <MyTable routineID={row.routineID}></MyTable>
+                        </AccordionDetails>
+                    </TableCell>
+                </TableRow>
+                }
+                </>
               ))}
             </TableBody>
             <TableFooter>
@@ -640,16 +691,6 @@ export default function QuickEditModal(props) {
         </TableContainer>
       </DialogContent>
       <DialogActions>
-        {/* <Button
-          style={{
-            color: '#fff',
-            backgroundColor: '#000',
-            '&:hover': {
-              backgroundColor: '#111',
-            }
-          }
-          }
-          onClick={handleSave}>Save</Button> */}
         <Button onClick={props.closeQuickEditModal}>Close</Button>
       </DialogActions>
     </Dialog>
