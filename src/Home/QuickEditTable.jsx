@@ -584,7 +584,7 @@ export default function QuickEditModal(props) {
                 <TableRow>
                     <TableCell colSpan={9}>
                         <AccordionDetails>
-                            <MyTable routineID={row.routineID}></MyTable>
+                            <MyTable routineID={row.routineID} getUploadAck={props.getUploadAck}></MyTable>
                         </AccordionDetails>
                     </TableCell>
                 </TableRow>
