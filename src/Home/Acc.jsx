@@ -31,6 +31,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import axios from 'axios';
 import moment from 'moment';
 import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
+import QuickEditIS from './QuickEditIS';
 
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 
@@ -312,7 +313,7 @@ const MyTable = (props) => {
   }
   const updateAT = (at, originalAT) => {
     var updateATobj = {
-      audio: originalAT.audio,
+      audio: '',
       datetime_completed: at.endDate + " " + at.endTime24h,
       datetime_started: at.startDate + " " + at.startTime24h,
       is_available: at.availableToUser === 'Yes' ? 'True' : 'False',
@@ -330,7 +331,7 @@ const MyTable = (props) => {
       gr_id: props.routineID,
       id: originalAT.at_unique_id,
       user_id: userID,
-      photo: null
+      photo: originalAT.at_photo
     }
     let formData = new FormData();
     Object.entries(updateATobj).forEach((entry) => {
@@ -480,8 +481,20 @@ const MyTable = (props) => {
                 {/* <Button onClick={() => handleDeleteRow(index)}>Delete</Button> */}
                 <FontAwesomeIcon style={{ margin: '4px' }} icon={faTrashAlt} onClick={() => handleDeleteRow(index)} />
                 {
-                        row.sublistAvailable === 'False' ?
-                        <PlaylistAddIcon
+                        row.sublistAvailable === 'True' ?
+                        <FontAwesomeIcon icon={faList} onMouseOver={(event) => {
+                          event.target.style.color = '#48D6D2';
+                        }}
+                        onMouseOut={(event) => {
+                          event.target.style.color = '#000000';
+                        }}
+                        style={{ color: '#000000', cursor: 'pointer' }}
+                        onClick={(e) => {
+                          e.target.style.color = '#000000';
+                          handleAccordion(index);
+                        }} />
+                      :
+                      <PlaylistAddIcon
                         onMouseOver={(event) => {
                           event.target.style.color = '#48D6D2';
                         }}
@@ -494,17 +507,6 @@ const MyTable = (props) => {
                           handleAccordion(index);
                         }}
                       />
-                      : <FontAwesomeIcon icon={faList} onMouseOver={(event) => {
-                        event.target.style.color = '#48D6D2';
-                      }}
-                      onMouseOut={(event) => {
-                        event.target.style.color = '#000000';
-                      }}
-                      style={{ color: '#000000', cursor: 'pointer' }}
-                      onClick={(e) => {
-                        e.target.style.color = '#000000';
-                        handleAccordion(index);
-                      }}/>
                     }
                   </TableCell>
                 </TableRow>
@@ -512,7 +514,7 @@ const MyTable = (props) => {
                 <TableRow>
                     <TableCell colSpan={9}>
                         <AccordionDetails>
-                            <MyTable></MyTable>
+                            <QuickEditIS actionTaskID={row.actionTaskID} getUploadAck={props.getUploadAck}></QuickEditIS>
                         </AccordionDetails>
                     </TableCell>
                 </TableRow>

@@ -8,6 +8,7 @@ import Box from '@material-ui/core/Box';
 import './Home.css';
 import { Container, Row, Col } from 'react-bootstrap';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import QuickEdit from '../images/QuickEdit.png';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -2424,7 +2425,7 @@ function toggleShowEvents(props) {
                           ? classes.buttonSelected
                           : classes.buttonSelection
                       }
-                      style={{maxWidth: '90px'}}
+                      style={{maxWidth: '80px'}}
                       onClick={() => {
                         toggleShowEvents();
                         getAccessToken();
@@ -2441,7 +2442,7 @@ function toggleShowEvents(props) {
                           ? classes.buttonSelected
                           : classes.buttonSelection
                       }
-                      style={{maxWidth: '90px'}}
+                      style={{maxWidth: '80px'}}
                       onClick={()=>{
                         toggleShowGoal()
                         setGREButtonSelection("Goals")
@@ -2456,7 +2457,7 @@ function toggleShowEvents(props) {
                           ? classes.buttonSelected
                           : classes.buttonSelection
                       }
-                      style={{maxWidth: '90px'}}
+                      style={{maxWidth: '80px'}}
                       onClick={()=>{
                         toggleShowRoutine()
                         setGREButtonSelection("Routines")
@@ -2471,6 +2472,7 @@ function toggleShowEvents(props) {
                           ? classes.addActiveButton
                           : classes.addButton
                       }
+                      style={{ maxWidth: '70px' }}
                       id="one"
                       onClick={() => {
                         console.log('Clicked add RTS');
@@ -2494,15 +2496,17 @@ function toggleShowEvents(props) {
                         console.log("new RTS state", RTSstate );
                       }}
                     >
-                      Add {`${GREButtonSelection}`} +
+                      Add {`${GREButtonSelection}`}
                     </Button>
                     <Button
-                    className={classes.buttonSelected}
+                    // className={classes.addButton}
+                    style={{ maxWidth: '30px', margin: '0px' }}
                     onClick={()=>{
                       console.log("printing ", goalsOrRoutinesList)
                       setQuickEditModalVisible(true)
                     }}>
-                      Quick Edit
+                          <img className={classes.infoImage} src={QuickEdit} alt='Quick Edit'></img>
+                      {/* Quick Edit */}
                     </Button>
                       </Col>
                       <Col style={{
