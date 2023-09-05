@@ -15,7 +15,8 @@ import Landing from '../src/manifest/Landing';
 import SignUp from '../src/manifest/SignUp';
 import UploadCSV from 'Home/Upload';
 import Download from 'Home/Download';
-
+import Privacy from 'Home/Privacy';
+import AboutUs from 'manifest/AboutUs';
 /* Main function for all the pages and elements */
 const BASE_URL = process.env.REACT_APP_SERVER_BASE_URI;
 function getFaviconEl() {
@@ -66,6 +67,8 @@ export default function App() {
               <Route exact path="/addUser" component={UserSignUp} />
               <Route exact path="/download" component={Download} /> 
               <Route exact path="/uploadCSV" component={UploadCSV} />
+              <Route exact path="/privacy" component={Privacy} />
+              <Route exact path="/aboutus" component={AboutUs} />
             </>
         )}
           </LoginContext.Provider>

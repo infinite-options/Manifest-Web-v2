@@ -138,7 +138,7 @@ const QuickEditIS = (props) => {
       const updatedRows = [...instructionSteps];
       if (updatedRows[index].instructionStepID !== '') {
         console.log("printing verdict instruction step- DELETE API ", updatedRows[index].instructionStep)
-        // delete AT API call
+        // delete IS API call
         let body = { is_id: updatedRows[index].instructionStepID };
         axios.post(BASE_URL + 'deleteIS', body)
         .then((res) => {
